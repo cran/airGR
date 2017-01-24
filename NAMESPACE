@@ -1,0 +1,62 @@
+#####################################
+##              Load DLL           ##
+#####################################
+useDynLib(airGR)
+
+
+
+#####################################
+##            S3 methods           ##
+#####################################
+S3method("plot", "OutputsModel")
+
+
+
+#####################################
+##               Export            ##
+#####################################
+export(Calibration)
+export(Calibration_Michel)
+export(CreateCalibOptions)
+export(CreateInputsCrit)
+export(CreateInputsModel)
+export(CreateRunOptions)
+export(DataAltiExtrapolation_Valery)
+export(ErrorCrit)
+export(ErrorCrit_KGE)
+export(ErrorCrit_KGE2)
+export(ErrorCrit_NSE)
+export(ErrorCrit_RMSE)
+export(PEdaily_Oudin)
+export(RunModel)
+export(RunModel_CemaNeige)
+export(RunModel_CemaNeigeGR4J)
+export(RunModel_CemaNeigeGR5J)
+export(RunModel_CemaNeigeGR6J)
+export(RunModel_GR1A)
+export(RunModel_GR2M)
+export(RunModel_GR4H)
+export(RunModel_GR4J)
+export(RunModel_GR5J)
+export(RunModel_GR6J)
+export(SeriesAggreg)
+export(TransfoParam)
+export(TransfoParam_CemaNeige)
+export(TransfoParam_GR1A)
+export(TransfoParam_GR2M)
+export(TransfoParam_GR4H)
+export(TransfoParam_GR4J)
+export(TransfoParam_GR5J)
+export(TransfoParam_GR6J)
+export(plot.OutputsModel)
+export(plot_OutputsModel)
+
+
+
+#####################################
+##               Import            ##
+#####################################
+import(stats)
+import(graphics)
+import(grDevices)
+import(utils)

@@ -1,0 +1,49 @@
+Package: airGR
+Type: Package
+Title: Suite of GR Hydrological Models for Precipitation-Runoff
+        Modelling
+Version: 1.0.5.12
+Date: 2017-01-23
+Authors@R: c(
+  person("Laurent", "Coron", role = c("aut", "trl")),
+  person("Charles", "Perrin", role = c("aut", "ths")),
+  person("Claude", "Michel", role = c("aut", "ths")),
+  person("Vazken", "Andréassian", role = c("ctb", "ths")),
+  person("Pierre", "Brigode", role = c("ctb")),
+  person("Olivier", "Delaigue", role = c("cre", "ctb"), email = "airGR@irstea.fr"),
+  person("Nicolas", "Le Moine", role = c("ctb")),
+  person("Thibaut", "Mathevet", role = c("ctb")),
+  person("Safouane", "Mouelhi", role = c("ctb")),
+  person("Ludovic", "Oudin", role = c("ctb")),
+  person("Raji", "Pushpalatha", role = c("ctb")),
+  person("Guillaume", "Thirel", role = c("ctb")),
+  person("Audrey", "Valéry", role = c("ctb"))
+  )
+Depends: R (>= 3.0.1)
+Description: Hydrological modelling tools developed
+  at Irstea-Antony (HBAN Research Unit, France). The package includes several conceptual
+  rainfall-runoff models (GR4H, GR4J, GR5J, GR6J, GR2M, GR1A), a snowmelt module (CemaNeige)
+  and the associated functions for their calibration and evaluation. Use help(airGR) for package description.
+License: GPL-2
+URL: https://webgr.irstea.fr/airGR/?lang=en
+NeedsCompilation: yes
+Encoding: UTF-8
+VignetteBuilder: knitr
+Suggests: knitr
+Packaged: 2017-01-23 15:50:33 UTC; olivier.delaigue
+Author: Laurent Coron [aut, trl],
+  Charles Perrin [aut, ths],
+  Claude Michel [aut, ths],
+  Vazken Andréassian [ctb, ths],
+  Pierre Brigode [ctb],
+  Olivier Delaigue [cre, ctb],
+  Nicolas Le Moine [ctb],
+  Thibaut Mathevet [ctb],
+  Safouane Mouelhi [ctb],
+  Ludovic Oudin [ctb],
+  Raji Pushpalatha [ctb],
+  Guillaume Thirel [ctb],
+  Audrey Valéry [ctb]
+Maintainer: Olivier Delaigue <airGR@irstea.fr>
+Repository: CRAN
+Date/Publication: 2017-01-24 01:08:51

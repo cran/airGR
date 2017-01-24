@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title>Introduction</title>
+
+<script type="text/javascript">
+window.onload = function() {
+  var imgs = document.getElementsByTagName('img'), i, img;
+  for (i = 0; i < imgs.length; i++) {
+    img = imgs[i];
+    // center an image if it is the only element of its parent
+    if (img.parentElement.childElementCount === 1)
+      img.parentElement.style.textAlign = 'center';
+  }
+};
+</script>
+
+<!-- Styles for R syntax highlighter -->
+<style type="text/css">
+   pre .operator,
+   pre .paren {
+     color: rgb(104, 118, 135)
+   }
+
+   pre .literal {
+     color: #990073
+   }
+
+   pre .number {
+     color: #099;
+   }
+
+   pre .comment {
+     color: #998;
+     font-style: italic
+   }
+
+   pre .keyword {
+     color: #900;
+     font-weight: bold
+   }
+
+   pre .identifier {
+     color: rgb(0, 0, 0);
+   }
+
+   pre .string {
+     color: #d14;
+   }
+</style>
+
+<!-- R syntax highlighter -->
+<script type="text/javascript">
+var hljs=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/</gm,"&lt;")}function f(r,q,p){return RegExp(q,"m"+(r.cI?"i":"")+(p?"g":""))}function b(r){for(var p=0;p<r.childNodes.length;p++){var q=r.childNodes[p];if(q.nodeName=="CODE"){return q}if(!(q.nodeType==3&&q.nodeValue.match(/\s+/))){break}}}function h(t,s){var p="";for(var r=0;r<t.childNodes.length;r++){if(t.childNodes[r].nodeType==3){var q=t.childNodes[r].nodeValue;if(s){q=q.replace(/\n/g,"")}p+=q}else{if(t.childNodes[r].nodeName=="BR"){p+="\n"}else{p+=h(t.childNodes[r])}}}if(/MSIE [678]/.test(navigator.userAgent)){p=p.replace(/\r/g,"\n")}return p}function a(s){var r=s.className.split(/\s+/);r=r.concat(s.parentNode.className.split(/\s+/));for(var q=0;q<r.length;q++){var p=r[q].replace(/^language-/,"");if(e[p]){return p}}}function c(q){var p=[];(function(s,t){for(var r=0;r<s.childNodes.length;r++){if(s.childNodes[r].nodeType==3){t+=s.childNodes[r].nodeValue.length}else{if(s.childNodes[r].nodeName=="BR"){t+=1}else{if(s.childNodes[r].nodeType==1){p.push({event:"start",offset:t,node:s.childNodes[r]});t=arguments.callee(s.childNodes[r],t);p.push({event:"stop",offset:t,node:s.childNodes[r]})}}}}return t})(q,0);return p}function k(y,w,x){var q=0;var z="";var s=[];function u(){if(y.length&&w.length){if(y[0].offset!=w[0].offset){return(y[0].offset<w[0].offset)?y:w}else{return w[0].event=="start"?y:w}}else{return y.length?y:w}}function t(D){var A="<"+D.nodeName.toLowerCase();for(var B=0;B<D.attributes.length;B++){var C=D.attributes[B];A+=" "+C.nodeName.toLowerCase();if(C.value!==undefined&&C.value!==false&&C.value!==null){A+='="'+m(C.value)+'"'}}return A+">"}while(y.length||w.length){var v=u().splice(0,1)[0];z+=m(x.substr(q,v.offset-q));q=v.offset;if(v.event=="start"){z+=t(v.node);s.push(v.node)}else{if(v.event=="stop"){var p,r=s.length;do{r--;p=s[r];z+=("</"+p.nodeName.toLowerCase()+">")}while(p!=v.node);s.splice(r,1);while(r<s.length){z+=t(s[r]);r++}}}}return z+m(x.substr(q))}function j(){function q(x,y,v){if(x.compiled){return}var u;var s=[];if(x.k){x.lR=f(y,x.l||hljs.IR,true);for(var w in x.k){if(!x.k.hasOwnProperty(w)){continue}if(x.k[w] instanceof Object){u=x.k[w]}else{u=x.k;w="keyword"}for(var r in u){if(!u.hasOwnProperty(r)){continue}x.k[r]=[w,u[r]];s.push(r)}}}if(!v){if(x.bWK){x.b="\\b("+s.join("|")+")\\s"}x.bR=f(y,x.b?x.b:"\\B|\\b");if(!x.e&&!x.eW){x.e="\\B|\\b"}if(x.e){x.eR=f(y,x.e)}}if(x.i){x.iR=f(y,x.i)}if(x.r===undefined){x.r=1}if(!x.c){x.c=[]}x.compiled=true;for(var t=0;t<x.c.length;t++){if(x.c[t]=="self"){x.c[t]=x}q(x.c[t],y,false)}if(x.starts){q(x.starts,y,false)}}for(var p in e){if(!e.hasOwnProperty(p)){continue}q(e[p].dM,e[p],true)}}function d(B,C){if(!j.called){j();j.called=true}function q(r,M){for(var L=0;L<M.c.length;L++){if((M.c[L].bR.exec(r)||[null])[0]==r){return M.c[L]}}}function v(L,r){if(D[L].e&&D[L].eR.test(r)){return 1}if(D[L].eW){var M=v(L-1,r);return M?M+1:0}return 0}function w(r,L){return L.i&&L.iR.test(r)}function K(N,O){var M=[];for(var L=0;L<N.c.length;L++){M.push(N.c[L].b)}var r=D.length-1;do{if(D[r].e){M.push(D[r].e)}r--}while(D[r+1].eW);if(N.i){M.push(N.i)}return f(O,M.join("|"),true)}function p(M,L){var N=D[D.length-1];if(!N.t){N.t=K(N,E)}N.t.lastIndex=L;var r=N.t.exec(M);return r?[M.substr(L,r.index-L),r[0],false]:[M.substr(L),"",true]}function z(N,r){var L=E.cI?r[0].toLowerCase():r[0];var M=N.k[L];if(M&&M instanceof Array){return M}return false}function F(L,P){L=m(L);if(!P.k){return L}var r="";var O=0;P.lR.lastIndex=0;var M=P.lR.exec(L);while(M){r+=L.substr(O,M.index-O);var N=z(P,M);if(N){x+=N[1];r+='<span class="'+N[0]+'">'+M[0]+"</span>"}else{r+=M[0]}O=P.lR.lastIndex;M=P.lR.exec(L)}return r+L.substr(O,L.length-O)}function J(L,M){if(M.sL&&e[M.sL]){var r=d(M.sL,L);x+=r.keyword_count;return r.value}else{return F(L,M)}}function I(M,r){var L=M.cN?'<span class="'+M.cN+'">':"";if(M.rB){y+=L;M.buffer=""}else{if(M.eB){y+=m(r)+L;M.buffer=""}else{y+=L;M.buffer=r}}D.push(M);A+=M.r}function G(N,M,Q){var R=D[D.length-1];if(Q){y+=J(R.buffer+N,R);return false}var P=q(M,R);if(P){y+=J(R.buffer+N,R);I(P,M);return P.rB}var L=v(D.length-1,M);if(L){var O=R.cN?"</span>":"";if(R.rE){y+=J(R.buffer+N,R)+O}else{if(R.eE){y+=J(R.buffer+N,R)+O+m(M)}else{y+=J(R.buffer+N+M,R)+O}}while(L>1){O=D[D.length-2].cN?"</span>":"";y+=O;L--;D.length--}var r=D[D.length-1];D.length--;D[D.length-1].buffer="";if(r.starts){I(r.starts,"")}return R.rE}if(w(M,R)){throw"Illegal"}}var E=e[B];var D=[E.dM];var A=0;var x=0;var y="";try{var s,u=0;E.dM.buffer="";do{s=p(C,u);var t=G(s[0],s[1],s[2]);u+=s[0].length;if(!t){u+=s[1].length}}while(!s[2]);if(D.length>1){throw"Illegal"}return{r:A,keyword_count:x,value:y}}catch(H){if(H=="Illegal"){return{r:0,keyword_count:0,value:m(C)}}else{throw H}}}function g(t){var p={keyword_count:0,r:0,value:m(t)};var r=p;for(var q in e){if(!e.hasOwnProperty(q)){continue}var s=d(q,t);s.language=q;if(s.keyword_count+s.r>r.keyword_count+r.r){r=s}if(s.keyword_count+s.r>p.keyword_count+p.r){r=p;p=s}}if(r.language){p.second_best=r}return p}function i(r,q,p){if(q){r=r.replace(/^((<[^>]+>|\t)+)/gm,function(t,w,v,u){return w.replace(/\t/g,q)})}if(p){r=r.replace(/\n/g,"<br>")}return r}function n(t,w,r){var x=h(t,r);var v=a(t);var y,s;if(v){y=d(v,x)}else{return}var q=c(t);if(q.length){s=document.createElement("pre");s.innerHTML=y.value;y.value=k(q,c(s),x)}y.value=i(y.value,w,r);var u=t.className;if(!u.match("(\\s|^)(language-)?"+v+"(\\s|$)")){u=u?(u+" "+v):v}if(/MSIE [678]/.test(navigator.userAgent)&&t.tagName=="CODE"&&t.parentNode.tagName=="PRE"){s=t.parentNode;var p=document.createElement("div");p.innerHTML="<pre><code>"+y.value+"</code></pre>";t=p.firstChild.firstChild;p.firstChild.cN=s.cN;s.parentNode.replaceChild(p.firstChild,s)}else{t.innerHTML=y.value}t.className=u;t.result={language:v,kw:y.keyword_count,re:y.r};if(y.second_best){t.second_best={language:y.second_best.language,kw:y.second_best.keyword_count,re:y.second_best.r}}}function o(){if(o.called){return}o.called=true;var r=document.getElementsByTagName("pre");for(var p=0;p<r.length;p++){var q=b(r[p]);if(q){n(q,hljs.tabReplace)}}}function l(){if(window.addEventListener){window.addEventListener("DOMContentLoaded",o,false);window.addEventListener("load",o,false)}else{if(window.attachEvent){window.attachEvent("onload",o)}else{window.onload=o}}}var e={};this.LANGUAGES=e;this.highlight=d;this.highlightAuto=g;this.fixMarkup=i;this.highlightBlock=n;this.initHighlighting=o;this.initHighlightingOnLoad=l;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="\\b(0[xX][a-fA-F0-9]+|(\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)";this.BNR="\\b(0b[01]+)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.ER="(?![\\s\\S])";this.BE={b:"\\\\.",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.BNM={cN:"number",b:this.BNR,r:0};this.inherit=function(r,s){var p={};for(var q in r){p[q]=r[q]}if(s){for(var q in s){p[q]=s[q]}}return p}}();hljs.LANGUAGES.cpp=function(){var a={keyword:{"false":1,"int":1,"float":1,"while":1,"private":1,"char":1,"catch":1,"export":1,virtual:1,operator:2,sizeof:2,dynamic_cast:2,typedef:2,const_cast:2,"const":1,struct:1,"for":1,static_cast:2,union:1,namespace:1,unsigned:1,"long":1,"throw":1,"volatile":2,"static":1,"protected":1,bool:1,template:1,mutable:1,"if":1,"public":1,friend:2,"do":1,"return":1,"goto":1,auto:1,"void":2,"enum":1,"else":1,"break":1,"new":1,extern:1,using:1,"true":1,"class":1,asm:1,"case":1,typeid:1,"short":1,reinterpret_cast:2,"default":1,"double":1,register:1,explicit:1,signed:1,typename:1,"try":1,"this":1,"switch":1,"continue":1,wchar_t:1,inline:1,"delete":1,alignof:1,char16_t:1,char32_t:1,constexpr:1,decltype:1,noexcept:1,nullptr:1,static_assert:1,thread_local:1,restrict:1,_Bool:1,complex:1},built_in:{std:1,string:1,cin:1,cout:1,cerr:1,clog:1,stringstream:1,istringstream:1,ostringstream:1,auto_ptr:1,deque:1,list:1,queue:1,stack:1,vector:1,map:1,set:1,bitset:1,multiset:1,multimap:1,unordered_set:1,unordered_map:1,unordered_multiset:1,unordered_multimap:1,array:1,shared_ptr:1}};return{dM:{k:a,i:"</",c:[hljs.CLCM,hljs.CBLCLM,hljs.QSM,{cN:"string",b:"'\\\\?.",e:"'",i:"."},{cN:"number",b:"\\b(\\d+(\\.\\d*)?|\\.\\d+)(u|U|l|L|ul|UL|f|F)"},hljs.CNM,{cN:"preprocessor",b:"#",e:"$"},{cN:"stl_container",b:"\\b(deque|list|queue|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<",e:">",k:a,r:10,c:["self"]}]}}}();hljs.LANGUAGES.r={dM:{c:[hljs.HCM,{cN:"number",b:"\\b0[xX][0-9a-fA-F]+[Li]?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+(?:[eE][+\\-]?\\d*)?L\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+\\.(?!\\d)(?:i\\b)?",e:hljs.IMMEDIATE_RE,r:1},{cN:"number",b:"\\b\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"keyword",b:"(?:tryCatch|library|setGeneric|setGroupGeneric)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\.",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\d+(?![\\w.])",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\b(?:function)",e:hljs.IMMEDIATE_RE,r:2},{cN:"keyword",b:"(?:if|in|break|next|repeat|else|for|return|switch|while|try|stop|warning|require|attach|detach|source|setMethod|setClass)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"literal",b:"(?:NA|NA_integer_|NA_real_|NA_character_|NA_complex_)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"literal",b:"(?:NULL|TRUE|FALSE|T|F|Inf|NaN)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"identifier",b:"[a-zA-Z.][a-zA-Z0-9._]*\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"<\\-(?!\\s*\\d)",e:hljs.IMMEDIATE_RE,r:2},{cN:"operator",b:"\\->|<\\-",e:hljs.IMMEDIATE_RE,r:1},{cN:"operator",b:"%%|~",e:hljs.IMMEDIATE_RE},{cN:"operator",b:">=|<=|==|!=|\\|\\||&&|=|\\+|\\-|\\*|/|\\^|>|<|!|&|\\||\\$|:",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"%",e:"%",i:"\\n",r:1},{cN:"identifier",b:"`",e:"`",r:0},{cN:"string",b:'"',e:'"',c:[hljs.BE],r:0},{cN:"string",b:"'",e:"'",c:[hljs.BE],r:0},{cN:"paren",b:"[[({\\])}]",e:hljs.IMMEDIATE_RE,r:0}]}};
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 13px;
+}
+
+body {
+  max-width: 800px;
+  margin: auto;
+  padding: 1em;
+  line-height: 20px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 {
+   font-size:2.2em;
+}
+
+h2 {
+   font-size:1.8em;
+}
+
+h3 {
+   font-size:1.4em;
+}
+
+h4 {
+   font-size:1.0em;
+}
+
+h5 {
+   font-size:0.9em;
+}
+
+h6 {
+   font-size:0.8em;
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre, img {
+  max-width: 100%;
+}
+pre {
+  overflow-x: auto;
+}
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code {
+  font-size: 92%;
+  border: 1px solid #ccc;
+}
+
+code[class] {
+  background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * {
+      background: transparent !important;
+      color: black !important;
+      filter:none !important;
+      -ms-filter: none !important;
+   }
+
+   body {
+      font-size:12pt;
+      max-width:100%;
+   }
+
+   a, a:visited {
+      text-decoration: underline;
+   }
+
+   hr {
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote {
+      padding-right: 1em;
+      page-break-inside: avoid;
+   }
+
+   tr, img {
+      page-break-inside: avoid;
+   }
+
+   img {
+      max-width: 100% !important;
+   }
+
+   @page :left {
+      margin: 15mm 20mm 15mm 10mm;
+   }
+
+   @page :right {
+      margin: 15mm 10mm 15mm 20mm;
+   }
+
+   p, h2, h3 {
+      orphans: 3; widows: 3;
+   }
+
+   h2, h3 {
+      page-break-after: avoid;
+   }
+}
+</style>
+
+
+
+</head>
+
+<body>
+<h1>Introduction</h1>
+
+<p><strong>airGR</strong> is a package which brings into the <a href="https://cran.r-project.org/"><strong>R software</strong></a> the hydrological modelling tools used and developed at the <a href="https://webgr.irstea.fr/?lang=en">Catchment Hydrology Team</a> at <a href="http://www.irstea.fr/en/">Irstea (France)</a>, including the <a href="https://webgr.irstea.fr/modeles/?lang=en"><strong>GR rainfall-runoff models</strong></a> and a snowmelt and accumulation model, <strong>CemaNeige</strong>. Each model core is coded in <strong>Fortran</strong> to ensure low computational time. The other package functions (i.e. mainly the calibration algorithm and the efficiency criteria calculation) are coded in <strong>R</strong>. </p>
+
+<p>The <strong>airGR</strong> package has been designed to fulfil two major requirements: to facilitate the use by non-expert users and to allow flexibility regarding the addition of external criteria, models or calibration algorithms. The names of the functions and their arguments were chosen to this end. <strong>airGR</strong> also contains basics plotting facilities. </p>
+
+<p>Six hydrological models and one snowmelt and accumulation model are implemented in <strong>airGR</strong>. The snow model can be used alone or together with the daily hydrological models. </p>
+
+<p>The models can be called within <strong>airGR</strong> using the following functions: </p>
+
+<ul>
+<li><code>RunModel_GR4H()</code>: four-parameter hourly lumped hydrological model [@mathevet_quels_2005] </li>
+<li><code>RunModel_GR4J()</code>: four-parameter daily lumped hydrological model [@perrin_improvement_2003] </li>
+<li><code>RunModel_GR5J()</code>: five-parameter daily lumped hydrological model [@le_moine_bassin_2008] </li>
+<li><code>RunModel_GR6J()</code>: six-parameter daily lumped hydrological model [@pushpalatha_downward_2011] </li>
+<li><code>RunModel_GR2M()</code>: two-parameter monthly lumped hydrological model [@mouelhi_vers_2003; @mouelhi_stepwise_2006] </li>
+<li><code>RunModel_GR1A()</code>: one-parameter yearly lumped hydrological model [@mouelhi_vers_2003; @mouelhi_linking_2006] </li>
+<li><code>RunModel_CemaNeige()</code>: two-parameter degree-day snowmelt and accumulation model [@valery_as_2014] </li>
+<li><code>RunModel_CemaNeigeGR4J()</code>: combined use of <strong>GR4J</strong> and <strong>CemaNeige</strong> </li>
+<li><code>RunModel_CemaNeigeGR5J()</code>: combined use of <strong>GR5J</strong> and <strong>CemaNeige</strong> </li>
+<li><code>RunModel_CemaNeigeGR6J()</code>: combined use of <strong>GR6J</strong> and <strong>CemaNeige</strong> </li>
+</ul>
+
+<p>The <a href="https://webgr.irstea.fr/modeles/modele-de-prevision-grp/?lang=en"><strong>GRP</strong></a> forecasting model and the <a href="https://webgr.irstea.fr/modeles/otamin/?lang=en"><strong>Otamin</strong></a> predictive uncertainty tool are not availabe in <strong>airGR</strong>.</p>
+
+<h1>Loading data</h1>
+
+<p>In the following example, we use a data sample contained in the package. For real applications, the user has to import its data into <strong>R</strong> and to prepare it with an adequate data.frame format as described below.</p>
+
+<p>First, it is necessary to load the <strong>airGR</strong> package:</p>
+
+<pre><code class="r">library(airGR)
+</code></pre>
+
+<p>This is an example of a <code>data.frame</code> of hydrometeorological observations time series for a fictional catchment included in the <strong>airGR</strong> package that contains:</p>
+
+<ul>
+<li><em>DatesR</em>: dates in the POSIXt format </li>
+<li><em>P</em>: average precipitation [mm/day]</li>
+<li><em>T</em>: catchment average air temperature [&#8451;]</li>
+<li><em>E</em>: catchment average potential evapotranspiration [mm/day]</li>
+<li><em>Qls</em>: outlet discharge [l/s]</li>
+<li><em>Qmm</em>: outlet discharge [mm/day]</li>
+</ul>
+
+<pre><code class="r">data(L0123001)
+summary(BasinObs)
+</code></pre>
+
+<pre><code>##      DatesR                 P                T                 E        
+##  Min.   :1984-01-01   Min.   : 0.000   Min.   :-18.700   Min.   :0.000  
+##  1st Qu.:1991-04-02   1st Qu.: 0.000   1st Qu.:  4.100   1st Qu.:0.600  
+##  Median :1998-07-02   Median : 0.300   Median :  9.100   Median :1.400  
+##  Mean   :1998-07-02   Mean   : 2.915   Mean   :  9.147   Mean   :1.764  
+##  3rd Qu.:2005-10-01   3rd Qu.: 3.600   3rd Qu.: 14.500   3rd Qu.:2.900  
+##  Max.   :2012-12-31   Max.   :66.800   Max.   : 28.400   Max.   :5.500  
+##                                                                         
+##       Qls             Qmm         
+##  Min.   :   70   Min.   : 0.0168  
+##  1st Qu.: 1643   1st Qu.: 0.3943  
+##  Median : 4070   Median : 0.9768  
+##  Mean   : 6134   Mean   : 1.4720  
+##  3rd Qu.: 7889   3rd Qu.: 1.8933  
+##  Max.   :99500   Max.   :23.8800  
+##  NA&#39;s   :755     NA&#39;s   :755
+</code></pre>
+
+<p>The usual functions (e.g. <code>read.table()</code>) can be used to load real-case datasets.</p>
+
+<h1>Preparation of functions inputs</h1>
+
+<p>To run a model, the functions of the <strong>airGR</strong> package (e.g. the models, calibration and criteria calculation functions) require data and options with specific formats.</p>
+
+<p>To facilitate the use of the package, there are several functions dedicated to the creation of these objects:</p>
+
+<ul>
+<li><code>CreateInputsModel()</code>: prepares the inputs for the different hydrological models (times series of dates, rainfall, observed streamflow, etc.)</li>
+<li><code>CreateRunOptions()</code>: prepares the options for the hydrological model run (warm-up period, calibration period, etc.)</li>
+<li><code>CreateInputsCrit()</code>: prepares the options in order to compute efficiency criterions (choice of the criterion, choice of the transformation on streamflows: &ldquo;log&rdquo;, &ldquo;root&rdquo;, etc.)</li>
+<li><code>CreateCalibOptions()</code>: prepares the options for the hydrological model calibration algorithm (choice of parameters to optimize, predefined values for uncalibrated parameters, etc.)</li>
+</ul>
+
+<h2>InputsModel object</h2>
+
+<p>To run a GR hydrologic model, the user has to prepare the input data with the <code>CreateInputsModel()</code> function.
+As arguments, this function needs the function name corresponding to the model the user wants to run, a vector of dates, a vector of precipitation and a vector of potential evapotranspiration.</p>
+
+<p>In the example below, we already have the potential evapotranspiration. If the user doesn&#39;t have these data, it is possible to compute it with the <a href="http://dx.doi.org/10.1016/j.jhydrol.2004.08.026">Oudin&#39;s formula</a> with the <code>PEdaily_Oudin()</code> function (this function only needs julian days, daily average air temperature and latitude).</p>
+
+<p>Missing values (<code>NA</code>) of precipitation (or potential evapotranspiration) are <strong>not allowed</strong>.</p>
+
+<pre><code class="r">InputsModel &lt;- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$DatesR,
+                                 Precip = BasinObs$P, PotEvap = BasinObs$E)
+str(InputsModel)
+</code></pre>
+
+<pre><code>## List of 3
+##  $ DatesR : POSIXlt[1:10593], format: &quot;1984-01-01&quot; &quot;1984-01-02&quot; ...
+##  $ Precip : num [1:10593] 4.1 15.9 0.8 0 0 0 0 0 2.9 0 ...
+##  $ PotEvap: num [1:10593] 0.2 0.2 0.3 0.3 0.1 0.3 0.4 0.4 0.5 0.5 ...
+##  - attr(*, &quot;class&quot;)= chr [1:3] &quot;InputsModel&quot; &quot;daily&quot; &quot;GR&quot;
+</code></pre>
+
+<h2>RunOptions object</h2>
+
+<p>The <code>CreateRunOptions()</code> function allows to prepare the options required to the <code>RunModel*()</code> functions, which are the actual models functions.</p>
+
+<p>The user must at least define the following arguments:</p>
+
+<ul>
+<li><code>FUN_MOD</code>: the name of the model function to run</li>
+<li><code>InputsModel</code>: the associated inputs data</li>
+<li><code>IndPeriod_Run</code>: the period on which the model is run</li>
+</ul>
+
+<p>To select a period for which the user wants to run the model, select the corresponding indexes for different time periods (not the POSIXt dates), as follows:</p>
+
+<pre><code class="r">Ind_Run &lt;- seq(which(format(BasinObs$DatesR, format = &quot;%d/%m/%Y %H:%M&quot;)==&quot;01/01/1990 00:00&quot;), 
+               which(format(BasinObs$DatesR, format = &quot;%d/%m/%Y %H:%M&quot;)==&quot;31/12/1999 00:00&quot;))
+str(Ind_Run)
+</code></pre>
+
+<pre><code>##  int [1:3652] 2193 2194 2195 2196 2197 2198 2199 2200 2201 2202 ...
+</code></pre>
+
+<p>The intialization of hydrological models is of the utmost importance. Indeed, an inaccurate intialisation causes poor quality streamflow simulations during the earliest stages of the running period. For example, in the GR models, the reservoirs levels are by default set to 50 % of their capacity, which may be far from their ideal value. Two solutions are offered to accurately initialize the GR models in <strong>airGR</strong>: manually predefining the initial states or running the models during a warm up period before the actual running period. It is generally advised to set up this warm up period to be equal or superior to one year. </p>
+
+<p>As a consequence, it is possible to define in <code>CreateRunOptions()</code> the following arguments:</p>
+
+<ul>
+<li><code>IniStates</code>: the initial states of the 2 unit hydrographs (20 + 40 = 60 units)</li>
+<li><code>IniResLevels</code>: the initial levels of the production and routing stores</li>
+<li><code>IndPeriod_WarmUp</code>: the warm-up period used to run the model, to be defined in the same format as <code>IndPeriod_Run</code></li>
+</ul>
+
+<pre><code class="r">RunOptions &lt;- CreateRunOptions(FUN_MOD = RunModel_GR4J,
+                               InputsModel = InputsModel, IndPeriod_Run = Ind_Run,
+                               IniStates = NULL, IniResLevels = NULL, IndPeriod_WarmUp = NULL)
+</code></pre>
+
+<pre><code>## Warning in CreateRunOptions(FUN_MOD = RunModel_GR4J, InputsModel = InputsModel, :     Model warm-up period not defined -&gt; default configuration used 
+##      The year preceding the run period is used
+</code></pre>
+
+<pre><code>## Warning in CreateRunOptions(FUN_MOD = RunModel_GR4J, InputsModel = InputsModel, :     Model states initialisation not defined -&gt; default configuration used
+</code></pre>
+
+<pre><code class="r">str(RunOptions)
+</code></pre>
+
+<pre><code>## List of 6
+##  $ IndPeriod_WarmUp: int [1:365] 1828 1829 1830 1831 1832 1833 1834 1835 1836 1837 ...
+##  $ IndPeriod_Run   : int [1:3652] 2193 2194 2195 2196 2197 2198 2199 2200 2201 2202 ...
+##  $ IniStates       : num [1:67] 0 0 0 0 0 0 0 0 0 0 ...
+##  $ IniResLevels    : num [1:2] 0.3 0.5
+##  $ Outputs_Cal     : chr &quot;Qsim&quot;
+##  $ Outputs_Sim     : chr [1:16] &quot;DatesR&quot; &quot;PotEvap&quot; &quot;Precip&quot; &quot;Prod&quot; ...
+##  - attr(*, &quot;class&quot;)= chr [1:3] &quot;RunOptions&quot; &quot;GR&quot; &quot;daily&quot;
+</code></pre>
+
+<p>The <code>CreateRunOptions()</code> function returns warnings if the default initialization options are used:</p>
+
+<ul>
+<li><code>IniStates</code> and <code>IniResLevels</code> are automatically set to initialize all the model states at 0, except for the production and routing stores which are initialised at 50 % of their capacity</li>
+<li><code>IndPeriod_WarmUp</code> default setting ensures a one-year warm-up using the time steps preceding the <code>IndPeriod_Run</code>, if available<br/></li>
+</ul>
+
+<h2>InputsCrit object</h2>
+
+<p>The <code>CreateInputsCrit()</code> function allows to prepare the input in order to calculate a criterion. It is possible to define the following arguments:</p>
+
+<ul>
+<li><code>FUN_CRIT</code>: the name of the error criterion function (they are introduced later on)</li>
+<li><code>InputsModel</code>: the inputs of the hydrological model previously prepared by the <code>CeateInputsModel()</code> function</li>
+<li><code>RunOptions</code>: the options of the hydrological model previously prepared by the <code>CreateRunOptions()</code> function </li>
+<li><code>Qobs</code>: the observed streamflows expressed in <em>mm/time step</em></li>
+</ul>
+
+<p>Missing values (<code>NA</code>) are <strong>allowed</strong> for observed streamflows.</p>
+
+<pre><code class="r">InputsCrit &lt;- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
+                               RunOptions = RunOptions, Qobs = BasinObs$Qmm[Ind_Run])
+str(InputsCrit)
+</code></pre>
+
+<pre><code>## List of 5
+##  $ BoolCrit  : logi [1:3652] TRUE TRUE TRUE TRUE TRUE TRUE ...
+##  $ Qobs      : num [1:3652] 1.99 1.8 2.86 2.4 3.31 ...
+##  $ transfo   : chr &quot;&quot;
+##  $ Ind_zeroes: NULL
+##  $ epsilon   : NULL
+##  - attr(*, &quot;class&quot;)= chr &quot;InputsCrit&quot;
+</code></pre>
+
+<h2>CalibOptions object</h2>
+
+<p>The user needs to prepare the calibration options with the <code>CreateCalibOptions()</code>function. For that, it is necessary to define the following arguments:</p>
+
+<ul>
+<li><code>FUN_MOD</code>: the name of the model function</li>
+<li><code>FUN_CALIB</code>: the name of the calibration algorithm</li>
+</ul>
+
+<pre><code class="r">CalibOptions &lt;- CreateCalibOptions(FUN_MOD = RunModel_GR4J, FUN_CALIB = Calibration_Michel)
+str(CalibOptions)
+</code></pre>
+
+<pre><code>## List of 3
+##  $ FixedParam       : logi [1:4] NA NA NA NA
+##  $ SearchRanges     : num [1:2, 1:4] 4.59e-05 2.18e+04 -1.09e+04 1.09e+04 4.59e-05 ...
+##  $ StartParamDistrib: num [1:3, 1:4] 169.017 247.151 432.681 -2.376 -0.649 ...
+##  - attr(*, &quot;class&quot;)= chr [1:3] &quot;CalibOptions&quot; &quot;GR4J&quot; &quot;HBAN&quot;
+</code></pre>
+
+<h1>Criteria</h1>
+
+<p>The evaluation of the quality of a simulation is estimated through the calculation of criteria. These criteria can be used both as objective-functions during the calibration of the model, or as a measure for evaluating its control performance.</p>
+
+<p>The package offers the possibility to use different criteria:</p>
+
+<ul>
+<li><code>ErrorCrit_RMSE()</code>: Root mean square error (RMSE)</li>
+<li><code>ErrorCrit_NSE()</code>: Nash-Sutcliffe model efficiency coefficient (NSE)</li>
+<li><code>ErrorCrit_KGE()</code>: Kling-Gupta efficiency criterion (KGE)</li>
+<li><code>ErrorCrit_KGE2()</code>: modified Kling-Gupta efficiency criterion (KGE&#39;)</li>
+</ul>
+
+<p>It is also possible to create user-defined criteria. For doing that, it is only necessary to define the function in <strong>R</strong> following the same syntax that the criteria functions included in <strong>airGR</strong>.</p>
+
+<h1>Calibration</h1>
+
+<p>The objective of the calibration algorithm is to identify the model parameters: by comparing the model outputs with observed data, this algorithm determines the combination of parameters that represents the best the behavior of the watershed.</p>
+
+<p>In the <strong>airGR</strong> package, a function called <code>Calibration_Michel()</code> is implemented. This functions allows running a calibration with the package models.
+The calibration algorithm optimizes the error criterion selected as objective-function. This algorithm works in two steps:</p>
+
+<ol>
+<li>a screening of the parameters space is performed using either a rough predefined grid or a user-defined list of parameter sets</li>
+<li>a simple steepest descent local search algorithm is performed from the best set of parameters found at the first step</li>
+</ol>
+
+<pre><code class="r">OutputsCalib &lt;- Calibration_Michel(InputsModel = InputsModel, RunOptions = RunOptions,
+                                   InputsCrit = InputsCrit, CalibOptions = CalibOptions,
+                                   FUN_MOD = RunModel_GR4J, FUN_CRIT = ErrorCrit_NSE)
+</code></pre>
+
+<pre><code>## Grid-Screening in progress (
+</code></pre>
+
+<pre><code>## 0%
+</code></pre>
+
+<pre><code>## 20%
+</code></pre>
+
+<pre><code>## 40%
+</code></pre>
+
+<pre><code>## 60%
+</code></pre>
+
+<pre><code>## 80%
+</code></pre>
+
+<pre><code>##  100%)
+</code></pre>
+
+<pre><code>##   Screening completed (81 runs)
+</code></pre>
+
+<pre><code>##       Param =  247.151 ,   -0.020 ,   83.096 ,    2.384
+</code></pre>
+
+<pre><code>##       Crit NSE[Q]       = 0.7685
+</code></pre>
+
+<pre><code>## Steepest-descent local search in progress
+</code></pre>
+
+<pre><code>##   Calibration completed (20 iterations, 226 runs)
+</code></pre>
+
+<pre><code>##       Param =  257.238 ,    1.012 ,   88.235 ,    2.208
+</code></pre>
+
+<pre><code>##       Crit NSE[Q]       = 0.7985
+</code></pre>
+
+<pre><code class="r">Param &lt;- OutputsCalib$ParamFinalR
+Param
+</code></pre>
+
+<pre><code>## [1] 257.237556   1.012237  88.234673   2.207958
+</code></pre>
+
+<p>The <code>Calibration_Michel()</code> function is the only one implemented in the <strong>airGR</strong> package to calibrate the model, but the user can implement its own calibration function.</p>
+
+<p>This function returns a vector with the parameters of the chosen model, which means that the number of values can differ depending on the model that is used. It is possible to use the <code>Calibration_Michel()</code> function with user-implemented hydrological models. </p>
+
+<h1>Validation</h1>
+
+<p>This step assess the predictive capacity of the model. Validation is defined as the estimation of the accuracy of the model on datasets that are not used in its construction, and in particular its calibration.
+The classical way to perform a validation is to keep data from a period separated from the calibration period. If possible, this control period should correspond to climatic situations rather that differ from those of the calibration period in order to better point out the qualities and weakness of the model. This exercise is necessary for assessing the robustness of the model, that is to say its ability to keep stable performances outside the calibration conditions.</p>
+
+<p>Performing a model validation with <strong>airGR</strong> is similar to running a simulation (see below). </p>
+
+<h1>Simulation</h1>
+
+<h2>Simulation run</h2>
+
+<p>To run a model, the user has to use the <code>RunModel*()</code> functions (<code>InputsModel</code>, <code>RunOptions</code> and parameters).
+All the data needed have already been prepared.</p>
+
+<pre><code class="r">OutputsModel &lt;- RunModel_GR4J(InputsModel = InputsModel, RunOptions = RunOptions, Param = Param)
+str(OutputsModel)
+</code></pre>
+
+<pre><code>## List of 16
+##  $ DatesR  : POSIXlt[1:3652], format: &quot;1990-01-01&quot; &quot;1990-01-02&quot; ...
+##  $ PotEvap : num [1:3652] 0.3 0.4 0.4 0.3 0.1 0.1 0.1 0.2 0.2 0.3 ...
+##  $ Precip  : num [1:3652] 0 9.3 3.2 7.3 0 0 0 0 0.1 0.2 ...
+##  $ Prod    : num [1:3652] 196 199 199 201 200 ...
+##  $ AE      : num [1:3652] 0.2833 0.4 0.4 0.3 0.0952 ...
+##  $ Perc    : num [1:3652] 0.645 0.696 0.703 0.74 0.725 ...
+##  $ PR      : num [1:3652] 0.645 5.946 2.383 4.992 0.725 ...
+##  $ Q9      : num [1:3652] 1.78 1.52 3.86 3.17 3.45 ...
+##  $ Q1      : num [1:3652] 0.2 0.195 0.271 0.387 0.365 ...
+##  $ Rout    : num [1:3652] 53.9 53.6 55.3 56.1 56.9 ...
+##  $ Exch    : num [1:3652] 0.181 0.18 0.177 0.197 0.207 ...
+##  $ AExch   : num [1:3652] 0.362 0.36 0.353 0.393 0.414 ...
+##  $ QR      : num [1:3652] 2.05 1.99 2.36 2.55 2.78 ...
+##  $ QD      : num [1:3652] 0.381 0.375 0.447 0.584 0.572 ...
+##  $ Qsim    : num [1:3652] 2.43 2.37 2.8 3.14 3.35 ...
+##  $ StateEnd: num [1:67] 188.5 48.9 NA NA NA ...
+##  - attr(*, &quot;class&quot;)= chr [1:3] &quot;OutputsModel&quot; &quot;daily&quot; &quot;GR&quot;
+</code></pre>
+
+<h2>Results preview</h2>
+
+<p>Although it is possible for the user to design its own graphics from the outputs of the <code>RunModel*()</code> functions, the <strong>airGR</strong> package offers the possibility to make use of the <code>plot.OutputsModel()</code> function (or <code>plotl()</code> with a <code>OutputsModel</code> object). This function returns a dashboard of results including various graphs (depending on the model used): </p>
+
+<ul>
+<li>time series of total precipitation and simulated streamflows (and observed streamflows if provided)</li>
+<li>interannual median monthly simulated streamflows (and monthly observed streamflows if provided)</li>
+<li>cumulative frequency plot for simulated streamflows (and for observed streamflows if provided)</li>
+<li>correlation plot between simulated and observed streamflows (if observed streamflows provided)</li>
+</ul>
+
+<pre><code class="r">plot(OutputsModel, Qobs = BasinObs$Qmm[Ind_Run])
+</code></pre>
+
+<p>Moreover, if the CemaNeige model is used, the temperature and the simulated snowpack time series are plotted. </p>
+
+<h2>Efficiency criterion</h2>
+
+<p>To evaluate the efficiency of the model, it is possible to use the same criterion as defined at the calibration step or to use an other criterion.</p>
+
+<pre><code class="r">OutputsCrit &lt;- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
+</code></pre>
+
+<pre><code>## Crit. NSE[Q] = 0.7985
+</code></pre>
+
+<pre><code class="r">OutputsCrit &lt;- ErrorCrit_KGE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
+</code></pre>
+
+<pre><code>## Crit. KGE[Q] = 0.7855
+</code></pre>
+
+<pre><code>##  SubCrit. KGE[Q] cor(sim, obs, &quot;pearson&quot;) = 0.8983 
+##  SubCrit. KGE[Q] sd(sim)/sd(obs)          = 0.8163 
+##  SubCrit. KGE[Q] mean(sim)/mean(obs)      = 1.0439
+</code></pre>
+
+</body>
+
+</html>

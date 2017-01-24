@@ -1,0 +1,35 @@
+year    <- sub("-.*", "", meta$Date)
+version <- meta$Version
+note    <- sprintf("R package version %s", version)
+
+
+citHeader("To cite airGR in publications use these two references:")
+
+bibentry(bibtype="Article",
+	title = "airGR: A Suite of Lumped Hydrological Models in an R-Package",
+    author = personList(as.person("L. Coron"), as.person("G. Thirel"), as.person("O. Delaigue"), as.person("C. Perrin"), as.person("V. Andréassian")),
+	journal = "Environmental Modelling and Software",
+  	year = "submitted",       
+        textVersion = 
+        paste("Coron, L., Thirel, G., Delaigue, O., Perrin, C. and Andréassian, V.",
+	          "(submitted).", 
+              "airGR: A Suite of Lumped Hydrological Models in an R-Package.",
+              "Environmental Modelling and Software.",
+              sep = " ")
+         )
+
+bibentry(bibtype="Manual",
+	title = "airGR: Suite of GR Hydrological Models for Precipitation-Runoff Modelling",
+    author = personList(as.person("L. Coron"), as.person("C. Perrin"), as.person("C. Michel")),
+	journal = "R News",
+  	year = year,
+    note = note,
+    url = "https://webgr.irstea.fr/airGR/?lang=en",
+        textVersion = 
+        paste("Coron, L., Perrin, C. and Michel, C.",
+			  year,
+              "airGR: Suite of GR Hydrological Models for Precipitation-Runoff Modelling.",
+              note,
+              "https://webgr.irstea.fr/airGR/?lang=en.",
+              sep = " ")
+         )
