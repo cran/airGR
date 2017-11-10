@@ -153,7 +153,7 @@ C**********************************************************************
       DOUBLEPRECISION MISC(NMISC)
       DOUBLEPRECISION P1,E,Q
       DOUBLEPRECISION A,B,C,EN,ER,PN,PR,PS,WS,tanHyp,AR
-      DOUBLEPRECISION PERC,PRUH1,PRUH2,EXCH,QR,QD,QR1
+      DOUBLEPRECISION PERC,PRUH1,PRUH2,EXCH,QR,QD,QRExp
       DOUBLEPRECISION AE,AEXCH1,AEXCH2
       INTEGER K
 
@@ -180,6 +180,7 @@ C Production store
 	  
       AE=ER+P1
       St(1)=St(1)-ER
+	  PS=0.
       PR=0.
       ELSE
       EN=0.
@@ -256,19 +257,19 @@ C Update of exponential store
       IF(AR.LT.-33.)AR=-33.
 
       IF(AR.GT.7.)THEN
-      QR1=St(3)+Param(6)/EXP(AR)
+      QRExp=St(3)+Param(6)/EXP(AR)
       GOTO 3
       ENDIF
 
       IF(AR.LT.-7.)THEN
-      QR1=Param(6)*EXP(AR)
+      QRExp=Param(6)*EXP(AR)
       GOTO 3
       ENDIF
 
-      QR1=Param(6)*LOG(EXP(AR)+1.)
+      QRExp=Param(6)*LOG(EXP(AR)+1.)
     3 CONTINUE
 
-      St(3)=St(3)-QR1
+      St(3)=St(3)-QRExp
 
 C Runoff from direct branch QD
       AEXCH2=EXCH
@@ -276,26 +277,30 @@ C Runoff from direct branch QD
       QD=MAX(0.d0,StUH2(1)+EXCH)
 
 C Total runoff
-      Q=QR+QD+QR1
+      Q=QR+QD+QRExp
       IF(Q.LT.0.) Q=0.
 
 C Variables storage
-      MISC( 1)=E             ! PE     ! observed potential evapotranspiration [mm/day]
-      MISC( 2)=P1            ! Precip ! observed total precipitation [mm/day]
-      MISC( 3)=St(1)         ! Prod   ! production store level (St(1)) [mm]
-      MISC( 4)=AE            ! AE     ! actual evapotranspiration [mm/day]
-      MISC( 5)=PERC          ! Perc   ! percolation (PERC) [mm/day]
-      MISC( 6)=PR            ! PR     ! PR=PN-PS+PERC [mm/day]
-      MISC( 7)=StUH1(1)      ! Q9     ! outflow from UH1 (Q9) [mm/day]
-      MISC( 8)=StUH2(1)      ! Q1     ! outflow from UH2 (Q1) [mm/day]
-      MISC( 9)=St(2)         ! Rout   ! routing store level (St(2)) [mm]
-      MISC(10)=EXCH          ! Exch   ! potential third-exchange between catchments (EXCH) [mm/day]
-      MISC(11)=AEXCH1+AEXCH2+EXCH ! AExch  ! actual total exchange between catchments (AEXCH1+AEXCH2+EXCH) [mm/day]
-      MISC(12)=QR            ! QR     ! outflow from routing store (QR) [mm/day]
-      MISC(13)=QR1           ! QR1    ! outflow from exponential store (QR1) [mm/day]
-      MISC(14)=St(3)         ! Exp    ! exponential store level (St(3)) (negative) [mm]
-      MISC(15)=QD            ! QD     ! outflow from UH2 branch after exchange (QD) [mm/day]
-      MISC(16)=Q             ! Qsim   ! simulated outflow at catchment outlet [mm/day]
+      MISC( 1)=E                  ! PE     ! observed potential evapotranspiration [mm/day]
+      MISC( 2)=P1                 ! Precip ! observed total precipitation [mm/day]
+      MISC( 3)=St(1)              ! Prod   ! production store level (St(1)) [mm]
+      MISC( 4)=PN                 ! Pn     ! net rainfall [mm/day]
+      MISC( 5)=PS                 ! Ps     ! part of Ps filling the production store [mm/day]
+      MISC( 6)=AE                 ! AE     ! actual evapotranspiration [mm/day]
+      MISC( 7)=PERC               ! Perc   ! percolation (PERC) [mm/day]
+      MISC( 8)=PR                 ! PR     ! PR=PN-PS+PERC [mm/day]
+      MISC( 9)=StUH1(1)           ! Q9     ! outflow from UH1 (Q9) [mm/day]
+      MISC(10)=StUH2(1)           ! Q1     ! outflow from UH2 (Q1) [mm/day]
+      MISC(11)=St(2)              ! Rout   ! routing store level (St(2)) [mm]
+      MISC(12)=EXCH               ! Exch   ! potential third-exchange between catchments (EXCH) [mm/day]
+      MISC(13)=AEXCH1 		        ! AExch1 ! actual exchange between catchments from routing store (AEXCH1) [mm/day]
+      MISC(14)=AEXCH2             ! AExch2 ! actual exchange between catchments from direct branch (after UH2) (AEXCH2) [mm/day]
+      MISC(15)=AEXCH1+AEXCH2+EXCH ! AExch  ! actual total exchange between catchments (AEXCH1+AEXCH2+EXCH) [mm/day]
+      MISC(16)=QR                 ! QR     ! outflow from routing store (QR) [mm/day]
+      MISC(17)=QRExp              ! QRExp  ! outflow from exponential store (QRExp) [mm/day]
+      MISC(18)=St(3)              ! Exp    ! exponential store level (St(3)) (negative) [mm]
+      MISC(19)=QD                 ! QD     ! outflow from UH2 branch after exchange (QD) [mm/day]
+      MISC(20)=Q                  ! Qsim   ! simulated outflow at catchment outlet [mm/day]
 
 
       ENDSUBROUTINE

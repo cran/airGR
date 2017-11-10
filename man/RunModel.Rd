@@ -1,10 +1,16 @@
 \encoding{UTF-8}
+
+
 \name{RunModel}
 \alias{RunModel}
 \title{Run with the provided hydrological model function}
+
+
 \usage{
 RunModel(InputsModel, RunOptions, Param, FUN_MOD)
 }
+
+
 \arguments{
 \item{InputsModel}{[object of class \emph{InputsModel}] see \code{\link{CreateInputsModel}} for details}
 
@@ -12,14 +18,20 @@ RunModel(InputsModel, RunOptions, Param, FUN_MOD)
 
 \item{Param}{[numeric] vector of model parameters}
 
-\item{FUN_MOD}{[function] hydrological model function (e.g. RunModel_GR4J, RunModel_CemaNeigeGR4J)}
+\item{FUN_MOD}{[function] hydrological model function (e.g. \code{\link{RunModel_GR4J}}, \code{\link{RunModel_CemaNeigeGR4J}})}
 }
+
+
 \value{
 [list] see \code{\link{RunModel_GR4J}} or \code{\link{RunModel_CemaNeigeGR4J}} for details
 }
+
+
 \description{
 Function which performs a single model run with the provided function over the selected period.
 }
+
+
 \examples{
 library(airGR)
 
@@ -51,10 +63,14 @@ InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsMo
                                 RunOptions = RunOptions, Qobs = BasinObs$Qmm[Ind_Run])
 OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
 }
+
+
 \author{
-Laurent Coron (June 2014)
+Laurent Coron
 }
+
+
 \seealso{
-\code{\link{RunModel_GR4J}}, \code{\link{RunModel_CemaNeigeGR4J}}, \code{\link{CreateInputsModel}}, \code{\link{CreateRunOptions}}.
+\code{\link{RunModel_GR4J}}, \code{\link{RunModel_CemaNeigeGR4J}}, \code{\link{CreateInputsModel}}, \code{\link{CreateRunOptions}}, \code{\link{CreateIniStates}}.
 }
 

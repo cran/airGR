@@ -1,12 +1,20 @@
 \encoding{UTF-8}
+
+
 \name{DataAltiExtrapolation_Valery}
 \alias{DataAltiExtrapolation_Valery}
+
+
 \title{Altitudinal extrapolation of precipitation and temperature series described by A. Valery}
+
+
 \usage{
 DataAltiExtrapolation_Valery(DatesR, Precip, PrecipScale = TRUE,
   TempMean, TempMin = NULL, TempMax = NULL,
   ZInputs, HypsoData, NLayers, verbose = TRUE)
 }
+
+
 \arguments{
 \item{DatesR}{[POSIXt] vector of dates}
 
@@ -26,7 +34,7 @@ DataAltiExtrapolation_Valery(DatesR, Precip, PrecipScale = TRUE,
 
 \item{NLayers}{[numeric] integer giving the number of elevation layers requested [-]}
 
-\item{verbose}{(optional) [boolean] boolean indicating if the function is run in verbose mode or not, default=TRUE}
+\item{verbose}{(optional) [boolean] boolean indicating if the function is run in verbose mode or not, default = \code{TRUE}}
 }
 \value{
 list containing the extrapolated series of precip. and air temp. on each elevation layer
@@ -39,19 +47,27 @@ list containing the extrapolated series of precip. and air temp. on each elevati
            \emph{$ZLayers             }  \tab  [numeric] vector of median elevation for each layer                              \cr
          }
 }
+
+
 \description{
 Function which extrapolates the precipitation and air temperature series for different elevation layers (method from Valéry, 2010).
 }
+
+
 \details{
-Elevation layers of equal surface are created the 101 elevation quantiles (\emph{HypsoData}) 
-and the number requested elevation layers (\emph{NLayers}). \cr
+Elevation layers of equal surface are created the 101 elevation quantiles (\code{HypsoData}) 
+and the number requested elevation layers (\code{NLayers}). \cr
 Forcing data (precipitation and air temperature) are extrapolated using gradients from Valery (2010).
-(e.g. gradP=0.0004 [m-1] for France and gradT=0.434 [°C/100m] for January, 1st). \cr
-This function is used by the \emph{CreateInputsModel} function. \cr
+(e.g. gradP = 0.0004 [m-1] for France and gradT = 0.434 [°C/100m] for January, 1st). \cr
+This function is used by the \code{\link{CreateInputsModel}} function.
 }
+
+
 \author{
 Laurent Coron, Audrey Valéry, Pierre Brigode, Olivier Delaigue, Guillaume Thirel
 }
+
+
 \references{
 Turcotte, R., L.-G. Fortin, V. Fortin, J.-P. Fortin and J.-P. Villeneuve (2007), 
       Operational analysis of the spatial distribution and the temporal evolution of the snowpack water equivalent 
@@ -60,6 +76,8 @@ Turcotte, R., L.-G. Fortin, V. Fortin, J.-P. Fortin and J.-P. Villeneuve (2007),
       et évaluation sur 380 bassins versants, PhD thesis (in french), AgroParisTech, Paris, France. \cr
   USACE (1956), Snow Hydrology, pp. 437, U.S. Army Coprs of Engineers (USACE) North Pacific Division, Portland, Oregon, USA.
 }
+
+
 \seealso{
 \code{\link{CreateInputsModel}}, \code{\link{RunModel_CemaNeigeGR4J}}
 }

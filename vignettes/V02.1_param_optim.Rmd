@@ -1,0 +1,171 @@
+---
+title: "Plugging in new calibration algorithms in airGR"
+author: "François Bourgin"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Plugging in new calibration algorithms}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+
+```{r, warning=FALSE, include=FALSE, fig.keep='none', results='hide'}
+library(airGR)
+library(DEoptim)
+library(hydroPSO)
+library(Rmalschains)
+# source("airGR.R")
+
+```
+
+
+
+# Introduction
+
+## Scope
+
+The Michel's calibration strategy (`Calibration_Michel()` function) is the calibration algorithm proposed in **airGR**. However, other optimization methods can be used in combination with **airGR**.
+We show here how to use different R packages to perform parameter estimation.
+
+In this vignette, we use the **GR4J** model to illustrate the different optimization strategies.
+In particular, we assume that the R global environment contains input climate data, observed discharge and functions from the **airGR** [Get Started](V01_get_started.html) vignette, as shown below.
+Please note that the calibration period is defined in the `CreateRunOptions()` function .
+
+```{r, warning=FALSE, fig.keep='none', results='hide', fig.height=10, fig.width=10, eval=TRUE, echo=FALSE, message=FALSE}
+example("Calibration_Michel", echo = FALSE, ask = FALSE)
+```
+```{r, echo=TRUE, eval=FALSE}
+example("Calibration_Michel")
+```
+
+
+Regarding the different optimization strategies presented here, we refer to each package for in-depth information about the description of the methods used.
+
+Please note that this vignette is only for illustration purposes and does not provide any guidance about which optimization strategies is recommended for the family of the **GR** models.
+
+## Definition of the necessary function
+
+Parameter estimation can be performed by defining a function that takes a parameter set as input and returns the value of the performance criterion.
+There are two important steps: the transformation of parameters to real space and the computation of the value of the performance criterion.
+Here we choose to minimize the root mean square error.
+
+The change of the repository from the "real" parameter space to a "transformed" space ensures homogeneity of displacement in the different dimensions of the parameter space during the step-by-step procedure of the calibration algorithm of the model.
+
+
+```{r, warning=FALSE, results='hide'}
+OptimGR4J <- function(Param_Optim) {
+  ## Transformation of the parameter set to real space
+  Param_Optim_Vre <- airGR::TransfoParam_GR4J(ParamIn = Param_Optim,
+                                              Direction = "TR")
+  ## Simulation given a parameter set
+  OutputsModel <- airGR::RunModel_GR4J(InputsModel = InputsModel,
+                                       RunOptions = RunOptions,
+                                       Param = Param_Optim_Vre)
+  ## Computation of the value of the performance criteria
+  OutputsCrit <- airGR::ErrorCrit_RMSE(InputsCrit = InputsCrit,
+                                       OutputsModel = OutputsModel,
+                                       verbose = FALSE)
+  return(OutputsCrit$CritValue)
+}
+```
+
+
+In addition, we need to define the lower and upper bounds of the four **GR4J** parameters in the transformed parameter space:
+```{r, warning=FALSE, results='hide'}
+lowerGR4J <- rep(-9.99, times = 4)
+upperGR4J <- rep(+9.99, times = 4)
+```
+
+# Local optimization
+
+We start with a local optimization strategy by using the PORT routines (using the `nlminb()` of the `stats` package) and by setting a starting point in the transformed parameter space:
+```{r, warning=FALSE, results='hide'}
+startGR4J <- c(4.1, 3.9, -0.9, -8.7)
+optPORT <- stats::nlminb(start = startGR4J, 
+                         objective = OptimGR4J,
+                         lower = lowerGR4J, upper = upperGR4J,
+                         control = list(trace = 1))
+```
+The RMSE value reaches a local minimum value after 35 iterations.
+
+We can also try a multi-start approach to test the consistency of the local optimization.
+Here we use the same grid used for the filtering step of the Michel's calibration strategy (`Calibration_Michel()` function).
+For each starting point, a local optimization is performed.
+```{r, warning=FALSE, results='hide'}
+startGR4J <- expand.grid(data.frame(CalibOptions$StartParamDistrib))
+optPORT_ <- function(x) {
+  opt <- stats::nlminb(start = x, 
+                       objective = OptimGR4J,
+                       lower = lowerGR4J, upper = upperGR4J,
+                       control = list(trace = 1))
+}
+list_opt <- apply(startGR4J, 1, optPORT_)
+```
+
+We can then extract the best parameter sets and the value of the performance criteria:
+```{r, warning=FALSE, results='hide'}
+list_par <- t(sapply(list_opt, function(x) x$par))
+list_obj <- sapply(list_opt, function(x) x$objective)
+df_port  <- data.frame(list_par, RMSE = list_obj)
+```
+
+As can be seen below, the optimum performance criterion values (column *objective*) can differ from the global optimum value in many cases, resulting in various parameter sets.
+```{r, warning=FALSE}
+summary(df_port)
+```
+
+The existence of several local minima illustrates the importance of defining an appropriate starting point or of using a multi-start strategy or a global optimization strategy.
+
+
+# Global optimization
+
+Global optimization is most often used when facing a complex response surface, with multiple local mimina.
+Here we use the following R implementation of some popular strategies:
+
+* [DEoptim: differential evolution](https://cran.r-project.org/package=DEoptim)
+* [hydroPSO: particle swarm](https://cran.r-project.org/package=hydroPSO)
+* [Rmalschains: memetic algorithms](https://cran.r-project.org/package=Rmalschains)
+
+## Differential Evolution
+```{r, warning=FALSE, results='hide'}
+optDE <- DEoptim::DEoptim(fn = OptimGR4J,
+                          lower = lowerGR4J, upper = upperGR4J,
+                          control = DEoptim::DEoptim.control(NP = 40, trace = 10))
+```
+
+
+## Particle Swarm
+```{r, warning=FALSE, results='hide', message=FALSE}
+optPSO <- hydroPSO::hydroPSO(fn = OptimGR4J,
+                             lower = lowerGR4J, upper = upperGR4J,
+                             control = list(write2disk = FALSE, verbose = FALSE))
+```
+
+## MA-LS-Chains
+```{r, warning=FALSE, results='hide'}
+optMALS <- Rmalschains::malschains(fn = OptimGR4J,
+                                   lower = lowerGR4J, upper = upperGR4J, 
+                                   maxEvals = 2000)
+```
+
+# Results
+
+As it can be seen in the table below, the four additional optimization strategies tested lead to very close optima.
+
+```{r, warning=FALSE, echo=FALSE}
+data.frame(Algo = c("Michel", "PORT", "DE", "PSO", "MA-LS"), 
+           round(rbind(
+                                                OutputsCalib$ParamFinalR                          ,
+             airGR::TransfoParam_GR4J(ParamIn = optPORT$par                    , Direction = "TR"),
+             airGR::TransfoParam_GR4J(ParamIn = as.numeric(optDE$optim$bestmem), Direction = "TR"),
+             airGR::TransfoParam_GR4J(ParamIn = as.numeric(optPSO$par)         , Direction = "TR"),
+             airGR::TransfoParam_GR4J(ParamIn = optMALS$sol                    , Direction = "TR")),
+             digits = 3))
+
+```
+
+<!-- This is an expected result because the response surface for quadratic performance criteria of the **GR4J** model is generally sufficiently well defined in the transformed parameter space to allow using a local optimization strategy instead of a more time consuming global optimization strategy. -->
+
+
+

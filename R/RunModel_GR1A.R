@@ -9,7 +9,7 @@ RunModel_GR1A <- function(InputsModel,RunOptions,Param){
       if(inherits(InputsModel,"GR"         )==FALSE){ stop("InputsModel must be of class 'GR'          \n"); return(NULL); }  
       if(inherits(RunOptions,"RunOptions"  )==FALSE){ stop("RunOptions must be of class 'RunOptions'   \n"); return(NULL); }  
       if(inherits(RunOptions,"GR"          )==FALSE){ stop("RunOptions must be of class 'GR'           \n"); return(NULL); }  
-      if(!is.vector(Param)){ stop("Param must be a vector \n"); return(NULL); }
+      if(!is.vector(Param) | !is.numeric(Param)){ stop("Param must be a numeric vector \n"); return(NULL); }
       if(sum(!is.na(Param))!=NParam){ stop(paste("Param must be a vector of length ",NParam," and contain no NA \n",sep="")); return(NULL); }
       Param <- as.double(Param);
 
@@ -20,6 +20,10 @@ RunModel_GR1A <- function(InputsModel,RunOptions,Param){
       if("all" %in% RunOptions$Outputs_Sim){ IndOutputs <- as.integer(1:length(FortranOutputs)); 
       } else { IndOutputs <- which(FortranOutputs %in% RunOptions$Outputs_Sim);  }
 
+    ##Output_data_preparation
+      IndPeriod2     <- (length(RunOptions$IndPeriod_WarmUp)+1):LInputSeries;
+      ExportDatesR   <- "DatesR"   %in% RunOptions$Outputs_Sim;
+      ExportStateEnd <- "StateEnd" %in% RunOptions$Outputs_Sim;
     
     BOOL_Fortran <- FALSE; if(BOOL_Fortran){
     ##Call_fortan
@@ -56,9 +60,6 @@ RunModel_GR1A <- function(InputsModel,RunOptions,Param){
         
     
     ##Output_data_preparation
-      IndPeriod2     <- (length(RunOptions$IndPeriod_WarmUp)+1):LInputSeries;
-      ExportDatesR   <- "DatesR"   %in% RunOptions$Outputs_Sim;
-      ExportStateEnd <- "StateEnd" %in% RunOptions$Outputs_Sim;
       ##OutputsModel_only
       if(ExportDatesR==FALSE & ExportStateEnd==FALSE){
         OutputsModel <- lapply(seq_len(RESULTS$NOutputs), function(i) RESULTS$Outputs[IndPeriod2,i]);

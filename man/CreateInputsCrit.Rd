@@ -1,11 +1,19 @@
 \encoding{UTF-8}
+
+
 \name{CreateInputsCrit}
 \alias{CreateInputsCrit}
+
+
 \title{Creation of the InputsCrit object required to the ErrorCrit functions}
+
+
 \usage{
 CreateInputsCrit(FUN_CRIT, InputsModel, RunOptions, Qobs, BoolCrit = NULL,
   transfo = "", Ind_zeroes = NULL, epsilon = NULL)
 }
+
+
 \arguments{
 \item{FUN_CRIT}{[function] error criterion function (e.g. ErrorCrit_RMSE, ErrorCrit_NSE)}
 
@@ -17,12 +25,14 @@ CreateInputsCrit(FUN_CRIT, InputsModel, RunOptions, Qobs, BoolCrit = NULL,
 
 \item{BoolCrit}{(optional) [boolean] boolean giving the time steps to consider in the computation (all time steps are consider by default)}
 
-\item{transfo}{(optional) [character] name of the transformation (e.g. "", "sqrt", "log", "inv", "sort")}
+\item{transfo}{(optional) [character] name of the transformation (e.g. \code{""}, \code{"sqrt"}, \code{"log"}, \code{"inv"}, \code{"sort"})}
 
 \item{Ind_zeroes}{(optional) [numeric] indices of the time steps where zeroes are observed}
 
 \item{epsilon}{(optional) [numeric] epsilon to add to all Qobs and Qsim if \emph{$Ind_zeroes} is not empty}
 }
+
+
 \value{
 [list] object of class \emph{InputsCrit} containing the data required to evaluate the model outputs; it can include the following:
          \tabular{ll}{
@@ -33,13 +43,19 @@ CreateInputsCrit(FUN_CRIT, InputsModel, RunOptions, Qobs, BoolCrit = NULL,
          \emph{$epsilon   }  \tab   [numeric] epsilon to add to all Qobs and Qsim if \emph{$Ind_zeroes} is not empty \cr
          }
 }
+
+
 \description{
-Creation of the InputsCrit object required to the ErrorCrit functions.
+Creation of the \emph{InputsCrit} object required to the \code{ErrorCrit*} functions.
 }
+
+
 \details{
-Users wanting to use FUN_CRIT functions that are not included in 
+Users wanting to use \code{FUN_CRIT} functions that are not included in 
 the package must create their own InputsCrit object accordingly.
 }
+
+
 \examples{
 library(airGR)
 
@@ -97,9 +113,13 @@ InputsCrit <- CreateInputsCrit(FUN_CRIT = ErrorCrit_KGE,
                                Qobs = BasinObs$Qmm[Ind_Run], BoolCrit = BoolCrit, transfo = transfo)
 OutputsCrit <- ErrorCrit_KGE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
 }
+
+
 \author{
-Laurent Coron (June 2014)
+Laurent Coron
 }
+
+
 \seealso{
 \code{\link{RunModel}}, \code{\link{CreateInputsModel}}, \code{\link{CreateRunOptions}}, \code{\link{CreateCalibOptions}}
 }

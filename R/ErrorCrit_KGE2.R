@@ -48,14 +48,16 @@ ErrorCrit_KGE2 <- function(InputsCrit,OutputsModel, warnings = TRUE, verbose = T
   ##Other_variables_preparation
   meanVarObs <- mean(VarObs[!TS_ignore]);
   meanVarSim <- mean(VarSim[!TS_ignore]);
-  iCrit           <- 0;
-  SubCritNames    <- NULL;
-  SubCritValues   <- NULL;
+  iCrit           <- 0
+  SubCritPrint    <- NULL
+  SubCritNames    <- NULL
+  SubCritValues   <- NULL
 
 
 ##SubErrorCrit_____KGE_rPearson__________________
   iCrit <- iCrit+1;
-  SubCritNames[iCrit]  <- paste(CritName," cor(sim, obs, \"pearson\") =", sep = "")
+  SubCritPrint[iCrit]  <- paste(CritName," cor(sim, obs, \"pearson\") =", sep = "")
+  SubCritNames[iCrit]  <- "r"
   SubCritValues[iCrit] <- NA;
   Numer <- sum( (VarObs[!TS_ignore]-meanVarObs)*(VarSim[!TS_ignore]-meanVarSim) );
   Deno1 <- sqrt( sum((VarObs[!TS_ignore]-meanVarObs)^2) );
@@ -65,9 +67,10 @@ ErrorCrit_KGE2 <- function(InputsCrit,OutputsModel, warnings = TRUE, verbose = T
   if(is.numeric(Crit) & is.finite(Crit)){ SubCritValues[iCrit] <- Crit; }
 
 
-##SubErrorCrit_____KGE_gama______________________
+##SubErrorCrit_____KGE_gamma______________________
   iCrit <- iCrit+1;
-  SubCritNames[iCrit]  <-  paste(CritName," sd(sim)/sd(obs)          =", sep = "")
+  SubCritPrint[iCrit]  <-  paste(CritName," cv(sim)/cv(obs)          =", sep = "")
+  SubCritNames[iCrit]  <- "gamma"
   SubCritValues[iCrit] <- NA;
   if(meanVarSim==0){ if(sd(VarSim[!TS_ignore])==0){ CVsim <- 1; } else { CVsim <- 99999; } } else { CVsim <- sd(VarSim[!TS_ignore])/meanVarSim; }
   if(meanVarObs==0){ if(sd(VarObs[!TS_ignore])==0){ CVobs <- 1; } else { CVobs <- 99999; } } else { CVobs <- sd(VarObs[!TS_ignore])/meanVarObs; }
@@ -77,7 +80,8 @@ ErrorCrit_KGE2 <- function(InputsCrit,OutputsModel, warnings = TRUE, verbose = T
 
 ##SubErrorCrit_____KGE_beta______________________
   iCrit <- iCrit+1;
-  SubCritNames[iCrit]  <-  paste(CritName," mean(sim)/mean(obs)      =", sep = "")
+  SubCritPrint[iCrit]  <-  paste(CritName," mean(sim)/mean(obs)      =", sep = "")
+  SubCritNames[iCrit]  <- "beta"
   SubCritValues[iCrit] <- NA;
   if(meanVarSim==0 & meanVarObs==0){ Crit <- 1; } else { Crit <- meanVarSim/meanVarObs ; }
   if(is.numeric(Crit) & is.finite(Crit)){ SubCritValues[iCrit] <- Crit; }
@@ -92,7 +96,7 @@ ErrorCrit_KGE2 <- function(InputsCrit,OutputsModel, warnings = TRUE, verbose = T
 ##Verbose______________________________________
   if(verbose) {
     message("Crit. ", CritName, " = ", sprintf("%.4f", CritValue))
-    message(paste("\tSubCrit.", SubCritNames, sprintf("%.4f", SubCritValues), "\n", sep = " "))
+    message(paste("\tSubCrit.", SubCritPrint, sprintf("%.4f", SubCritValues), "\n", sep = " "))
   }
   
 

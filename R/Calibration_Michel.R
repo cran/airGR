@@ -341,12 +341,7 @@ Calibration_Michel <- function(InputsModel, RunOptions, InputsCrit, CalibOptions
       VectPace <- NewParamOptimT-OldParamOptimT
       for (iC in 1:NParam) {
         if (OptimParam[iC]) { 
-          if (VectPace[iC] != 0) {
-            PaceDiag[iC] <- CLG * PaceDiag[iC] + (1-CLG) * VectPace[iC]
-          }
-          if (VectPace[iC] == 0) {
-            PaceDiag[iC] <- CLG*PaceDiag[iC]
-          }
+          PaceDiag[iC] <- CLG * PaceDiag[iC] + (1-CLG) * VectPace[iC]
         }
       }
     } else {
@@ -381,7 +376,7 @@ Calibration_Michel <- function(InputsModel, RunOptions, InputsCrit, CalibOptions
       Param <- CandidatesParamR[iNew, ]
       OutputsModel <- FUN_MOD(InputsModel, RunOptions, Param)
       ##Calibration_criterion_computation
-      OutputsCrit <- FUN_CRIT(InputsCrit, OutputsModel, verbose = FALSE)      
+      OutputsCrit <- FUN_CRIT(InputsCrit, OutputsModel, verbose = FALSE)
       if (OutputsCrit$CritValue*OutputsCrit$Multiplier < CritOptim) {
         CritOptim <- OutputsCrit$CritValue*OutputsCrit$Multiplier
         iNewOptim <- iNew

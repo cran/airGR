@@ -48,16 +48,18 @@ ErrorCrit_KGE <- function(InputsCrit,OutputsModel, warnings = TRUE, verbose = TR
   ##Other_variables_preparation
   meanVarObs <- mean(VarObs[!TS_ignore]);
   meanVarSim <- mean(VarSim[!TS_ignore]);
-  iCrit           <- 0;
-  SubCritNames    <- NULL;
-  SubCritValues   <- NULL;
+  iCrit           <- 0
+  SubCritPrint    <- NULL
+  SubCritNames    <- NULL
+  SubCritValues   <- NULL
 
 
 
 ##SubErrorCrit_____KGE_rPearson__________________
   iCrit <- iCrit+1;
-  SubCritNames[iCrit]  <- paste(CritName," cor(sim, obs, \"pearson\") =", sep = "")
+  SubCritPrint[iCrit]  <- paste(CritName," cor(sim, obs, \"pearson\") =", sep = "")
   SubCritValues[iCrit] <- NA;
+  SubCritNames[iCrit]  <- "r"
   Numer <- sum( (VarObs[!TS_ignore]-meanVarObs)*(VarSim[!TS_ignore]-meanVarSim) );
   Deno1 <- sqrt( sum((VarObs[!TS_ignore]-meanVarObs)^2) );
   Deno2 <- sqrt( sum((VarSim[!TS_ignore]-meanVarSim)^2) );
@@ -68,8 +70,9 @@ ErrorCrit_KGE <- function(InputsCrit,OutputsModel, warnings = TRUE, verbose = TR
 
 ##SubErrorCrit_____KGE_alpha_____________________
   iCrit <- iCrit+1;
-  SubCritNames[iCrit]  <-  paste(CritName," sd(sim)/sd(obs)          =", sep = "")
+  SubCritPrint[iCrit]  <-  paste(CritName," sd(sim)/sd(obs)          =", sep = "")
   SubCritValues[iCrit] <- NA;
+  SubCritNames[iCrit]  <- "alpha"
   Numer <- sd(VarSim[!TS_ignore]); 
   Denom <- sd(VarObs[!TS_ignore]); 
   if(Numer==0 & Denom==0){ Crit <- 1; } else { Crit <- Numer/Denom ; }
@@ -78,8 +81,9 @@ ErrorCrit_KGE <- function(InputsCrit,OutputsModel, warnings = TRUE, verbose = TR
 
 ##SubErrorCrit_____KGE_beta______________________  
   iCrit <- iCrit+1;
-  SubCritNames[iCrit]  <-  paste(CritName," mean(sim)/mean(obs)      =", sep = "")
+  SubCritPrint[iCrit]  <-  paste(CritName," mean(sim)/mean(obs)      =", sep = "")
   SubCritValues[iCrit] <- NA;
+  SubCritNames[iCrit]  <- "beta"
   if(meanVarSim==0 & meanVarObs==0){ Crit <- 1; } else { Crit <- meanVarSim/meanVarObs ; }
   if(is.numeric(Crit) & is.finite(Crit)){ SubCritValues[iCrit] <- Crit; }
   
@@ -93,7 +97,7 @@ ErrorCrit_KGE <- function(InputsCrit,OutputsModel, warnings = TRUE, verbose = TR
 ##Verbose______________________________________
   if(verbose) {
     message("Crit. ", CritName, " = ", sprintf("%.4f", CritValue))
-    message(paste("\tSubCrit.", SubCritNames, sprintf("%.4f", SubCritValues), "\n", sep = " "))
+    message(paste("\tSubCrit.", SubCritPrint, sprintf("%.4f", SubCritValues), "\n", sep = " "))
   }
   
 

@@ -1,8 +1,11 @@
-CreateRunOptions <- function(FUN_MOD,InputsModel,IndPeriod_WarmUp=NULL,IndPeriod_Run,IniStates=NULL,IniResLevels=NULL,
-                             Outputs_Cal=NULL,Outputs_Sim="all",RunSnowModule=TRUE,MeanAnSolidPrecip=NULL, verbose = TRUE){
+CreateRunOptions <- function(FUN_MOD, InputsModel, IndPeriod_WarmUp = NULL, IndPeriod_Run, IniStates = NULL, IniResLevels = NULL, 
+                             Outputs_Cal = NULL, Outputs_Sim = "all", RunSnowModule, MeanAnSolidPrecip = NULL,  verbose = TRUE) {
+  
+  if (!missing(RunSnowModule)) {
+    warning("argument RunSnowModule is deprecated; please adapt FUN_MOD instead.", call. = FALSE)
+  }
 
-
-  ObjectClass <- NULL;
+  ObjectClass <- NULL
 
   ##check_FUN_MOD
     BOOL <- FALSE;
@@ -61,11 +64,11 @@ CreateRunOptions <- function(FUN_MOD,InputsModel,IndPeriod_WarmUp=NULL,IndPeriod
   ##check_IndPeriod_WarmUp
     WTxt <- NULL;
     if(is.null(IndPeriod_WarmUp)){
-      WTxt <- paste(WTxt,"\t Model warm-up period not defined -> default configuration used \n",sep="");
+      WTxt <- paste(WTxt,"\t Model warm up period not defined -> default configuration used \n",sep="");
       ##If_the_run_period_starts_at_the_very_beginning_of_the_time_series
       if(IndPeriod_Run[1]==as.integer(1)){
         IndPeriod_WarmUp <- as.integer(0);
-        WTxt <- paste(WTxt,"\t    No data were found for model warm-up! \n",sep="");
+        WTxt <- paste(WTxt,"\t    No data were found for model warm up! \n",sep="");
       ##We_look_for_the_longest_period_preceeding_the_run_period_with_a_maximum_of_one_year
       } else {
         TmpDateR <- InputsModel$DatesR[IndPeriod_Run[1]] - 365*24*60*60; ### minimal date to start the warmup        
@@ -77,7 +80,7 @@ CreateRunOptions <- function(FUN_MOD,InputsModel,IndPeriod_WarmUp=NULL,IndPeriod
         if(length(IndPeriod_WarmUp)*TimeStep/(365*24*60*60)>=1){ 
         WTxt <- paste(WTxt,"\t    The year preceding the run period is used \n",sep="");
         } else {
-        WTxt <- paste(WTxt,"\t    Less than a year (without missing values) was found for model warm-up: \n",sep="");
+        WTxt <- paste(WTxt,"\t    Less than a year (without missing values) was found for model warm up: \n",sep="");
         WTxt <- paste(WTxt,"\t    (",length(IndPeriod_WarmUp)," time-steps are used for initialisation) \n",sep=""); 
         }
       }
@@ -87,41 +90,103 @@ CreateRunOptions <- function(FUN_MOD,InputsModel,IndPeriod_WarmUp=NULL,IndPeriod
       if(!is.numeric(IndPeriod_WarmUp)){ stop("IndPeriod_Run must be a vector of numeric values \n"); return(NULL); } 
       if(storage.mode(IndPeriod_WarmUp)!="integer"){ stop("IndPeriod_Run should be of type integer \n"); return(NULL); } 
       if(identical(IndPeriod_WarmUp,as.integer(0))){
-        WTxt <- paste(WTxt,"\t No warm-up period is used! \n",sep=""); }
+        WTxt <- paste(WTxt,"\t No warm up period is used! \n",sep=""); }
       if((IndPeriod_Run[1]-1)!=tail(IndPeriod_WarmUp,1) & !identical(IndPeriod_WarmUp,as.integer(0))){ 
-        WTxt <- paste(WTxt,"\t Model warm-up period is not directly before the model run period \n",sep=""); }
+        WTxt <- paste(WTxt,"\t Model warm up period is not directly before the model run period \n",sep=""); }
     }
     if(!is.null(WTxt) & verbose){ warning(WTxt); }
 
-
-  ##check_IniStates_and_IniResLevels
-    if(is.null(IniStates) & is.null(IniResLevels) & verbose){ 
-      warning("\t Model states initialisation not defined -> default configuration used \n"); }
+    
+    ## check IniResLevels    
+    if ("GR" %in% ObjectClass & ("monthly" %in% ObjectClass | "daily" %in% ObjectClass | "hourly" %in% ObjectClass)) {
+      if (!is.null(IniResLevels)) {
+        if (!is.vector(IniResLevels) | !is.numeric(IniResLevels) | any(is.na(IniResLevels))) {
+          stop("IniResLevels must be a vector of numeric values \n")
+          return(NULL)
+        }
+        if ((identical(FUN_MOD, RunModel_GR4H) |
+             identical(FUN_MOD, RunModel_GR4J) | identical(FUN_MOD, RunModel_CemaNeigeGR4J) |
+             identical(FUN_MOD, RunModel_GR5J) | identical(FUN_MOD, RunModel_CemaNeigeGR5J) |
+             identical(FUN_MOD, RunModel_GR2M)) &
+            length(IniResLevels) != 2) {
+          stop("The length of IniResLevels must be 2 for the chosen FUN_MOD \n")
+          return(NULL)
+        }
+        if ((identical(FUN_MOD,RunModel_GR6J) | identical(FUN_MOD,RunModel_CemaNeigeGR6J)) &
+            length(IniResLevels) != 3) {
+          stop("The length of IniResLevels must be 3 for the chosen FUN_MOD \n")
+          return(NULL)
+        }
+      } else if (is.null(IniStates)) {
+        if (identical(FUN_MOD, RunModel_GR6J) | identical(FUN_MOD, RunModel_CemaNeigeGR6J)) {
+          IniResLevels <- as.double(c(0.3, 0.5, 0))
+        } else {
+          IniResLevels <- as.double(c(0.3, 0.5, NA))
+        }
+      }
+    } else {
+      if (!is.null(IniResLevels)) {
+        stop("IniResLevels can only be used with monthly or daily or hourly GR models \n")
+      }
+    }
+  ## check IniStates
+    if (is.null(IniStates) & is.null(IniResLevels) & verbose) {
+      warning("\t Model states initialisation not defined -> default configuration used \n")
+    }
+    if (!is.null(IniStates) & !is.null(IniResLevels) & verbose) {
+      warning("\t IniStates and IniResLevels are both defined -> Store levels are taken from IniResLevels \n")
+    }
     if("CemaNeige" %in% ObjectClass){ NLayers <- length(InputsModel$LayerPrecip); } else { NLayers <- 0; }
     NState <- NULL;
-    if("GR" %in% ObjectClass | "CemaNeige" %in% ObjectClass){ 
-      if("hourly"  %in% ObjectClass){ NState <- 3*24*20 + 7; }
-      if("daily"   %in% ObjectClass){ if (identical(FUN_MOD,RunModel_GR5J)){NState <- 2*20 + 2*NLayers + 7; } else {NState <- 3*20 + 2*NLayers + 7; }}
+    if("GR" %in% ObjectClass | "CemaNeige" %in% ObjectClass){
+      if("hourly"  %in% ObjectClass){ NState <- 7 + 3*24*20 }
+      if("daily"   %in% ObjectClass){ NState <- 7 + 3*20 + 2*NLayers }
       if("monthly" %in% ObjectClass){ NState <- 2; }
       if("yearly"  %in% ObjectClass){ NState <- 1; }
     }
-    if(!is.null(IniStates)){
-      if(!is.vector( IniStates)   ){ stop("IniStates must be a vector of numeric values \n"); return(NULL);  }
-      if(!is.numeric(IniStates)   ){ stop("IniStates must be a vector of numeric values \n"); return(NULL);  }
-      if(length(IniStates)!=NState){ stop(paste("The length of IniStates must be ",NState," for the chosen FUN_MOD \n",sep="")); return(NULL);  }
-    } else {
-      IniStates <- as.double(rep(0.0,NState));
-    }
-    if("GR" %in% ObjectClass & ("monthly" %in% ObjectClass | "daily" %in% ObjectClass | "hourly" %in% ObjectClass)){
-      if(!is.null(IniResLevels)){
-        if(!is.vector(IniResLevels) ){ stop("IniResLevels must be a vector of numeric values \n"); return(NULL);  }
-        if(!is.numeric(IniResLevels)){ stop("IniResLevels must be a vector of numeric values \n"); return(NULL);  }
-        if(length(IniResLevels)!=2 ) { stop("The length of IniStates must be 2 for the chosen FUN_MOD \n"); return(NULL);  }
-      } else {
-        IniResLevels <- as.double(c(0.3,0.5));
+    if (!is.null(IniStates)) {
+      if (!inherits(IniStates, "IniStates")) {
+        stop("IniStates must be an object of class IniStates\n")
+        return(NULL)
       }
+      if (sum(ObjectClass %in% class(IniStates)) < 2) {
+        stop(paste0("Non convenient IniStates for this FUN_MOD\n"))
+        return(NULL)
+      }
+      if (identical(FUN_MOD, RunModel_GR1A) & !is.null(IniStates)) { ## GR1A
+        stop(paste0("IniStates is not available for this FUN_MOD\n"))
+        return(NULL)
+      }
+      if ((identical(FUN_MOD, RunModel_GR5J) | identical(FUN_MOD, RunModel_CemaNeigeGR5J)) & !all(is.na(IniStates$UH$UH1))) { ## GR5J
+        stop(paste0("Non convenient IniStates for this FUN_MOD. In IniStates, UH1 has to be a vector of NA for GR5J \n"))
+        return(NULL)
+      }
+      if ((identical(FUN_MOD, RunModel_GR6J) | identical(FUN_MOD, RunModel_CemaNeigeGR6J)) & is.na(IniStates$Store$Exp)) { ## GR6J
+        stop(paste0("Non convenient IniStates for this FUN_MOD. GR6J needs an exponential store value in IniStates \n"))
+        return(NULL)
+      }
+      if (!(identical(FUN_MOD, RunModel_GR6J) | identical(FUN_MOD, RunModel_CemaNeigeGR6J)) & !is.na(IniStates$Store$Exp)) { ## except GR6J
+        stop(paste0("Non convenient IniStates for this FUN_MOD. No exponential store value needed in IniStates \n"))
+        return(NULL)
+      }
+      # if (length(na.omit(unlist(IniStates))) != NState) {
+      #   stop(paste0("The length of IniStates must be ", NState, " for the chosen FUN_MOD \n"))
+      #   return(NULL)
+      # }
+      if (!"CemaNeige" %in% ObjectClass & any(is.na(IniStates$CemaNeigeLayers$G  ))) {
+        IniStates$CemaNeigeLayers$G   <- NULL
+      }
+      if (!"CemaNeige" %in% ObjectClass & any(is.na(IniStates$CemaNeigeLayers$eTG))) {
+        IniStates$CemaNeigeLayers$eTG <- NULL
+      }
+      IniStates$Store$Rest <- rep(NA, 4)
+      IniStates <- unlist(IniStates)
+      IniStates[is.na(IniStates)] <- 0
+      if ("monthly" %in% ObjectClass) {
+        IniStates <- IniStates[seq_len(NState)]
+        }
     } else {
-      if(!is.null(IniResLevels)){ stop("IniResLevels can only be used with monthly or daily or hourly GR models \n") }
+      IniStates <- as.double(rep(0.0, NState))
     }
 
 
@@ -132,11 +197,14 @@ CreateRunOptions <- function(FUN_MOD,InputsModel,IndPeriod_WarmUp=NULL,IndPeriod
       if(identical(FUN_MOD,RunModel_GR4H)){
         Outputs_all <- c(Outputs_all,"PotEvap","Precip","Prod","AE","Perc","PR","Q9","Q1","Rout","Exch","AExch","QR","QD","Qsim"); }
       if(identical(FUN_MOD,RunModel_GR4J) | identical(FUN_MOD,RunModel_CemaNeigeGR4J)){
-        Outputs_all <- c(Outputs_all,"PotEvap","Precip","Prod","AE","Perc","PR","Q9","Q1","Rout","Exch","AExch","QR","QD","Qsim"); }
+        Outputs_all <- c(Outputs_all,"PotEvap", "Precip", "Prod", "Pn", "Ps", "AE", "Perc", "PR", "Q9", "Q1", "Rout", "Exch",
+                         "AExch1", "AExch2", "AExch", "QR", "QD", "Qsim"); }
       if(identical(FUN_MOD,RunModel_GR5J) | identical(FUN_MOD,RunModel_CemaNeigeGR5J)){
-        Outputs_all <- c(Outputs_all,"PotEvap","Precip","Prod","AE","Perc","PR","Q9","Q1","Rout","Exch","AExch","QR","QD","Qsim"); }
+        Outputs_all <- c(Outputs_all,"PotEvap", "Precip", "Prod", "Pn", "Ps", "AE", "Perc", "PR", "Q9", "Q1", "Rout", "Exch",
+                         "AExch1", "AExch2", "AExch", "QR", "QD", "Qsim"); }
       if(identical(FUN_MOD,RunModel_GR6J) | identical(FUN_MOD,RunModel_CemaNeigeGR6J)){
-        Outputs_all <- c(Outputs_all,"PotEvap","Precip","Prod","AE","Perc","PR","Q9","Q1","Rout","Exch","AExch","QR","QR1","Exp","QD","Qsim"); }
+        Outputs_all <- c(Outputs_all,"PotEvap", "Precip", "Prod", "Pn", "Ps", "AE", "Perc", "PR", "Q9", "Q1", "Rout", "Exch",
+                         "AExch1", "AExch2", "AExch", "QR", "QRExp", "Exp", "QD", "Qsim"); }
       if(identical(FUN_MOD,RunModel_GR2M)){
         Outputs_all <- c(Outputs_all,"PotEvap","Precip","AE","Perc","P3","Exch","Prod","Rout","Qsim"); }
       if(identical(FUN_MOD,RunModel_GR1A)){
@@ -169,14 +237,6 @@ CreateRunOptions <- function(FUN_MOD,InputsModel,IndPeriod_WarmUp=NULL,IndPeriod
       Outputs_Cal <- Outputs_Cal[!duplicated(Outputs_Cal)];
 
 
-  ##check_RunSnowModule
-    if("CemaNeige" %in% ObjectClass){
-      if(!is.vector( RunSnowModule)){ stop("RunSnowModule must be a single boolean \n"); return(NULL);  }
-      if(!is.logical(RunSnowModule)){ stop("RunSnowModule must be either TRUE or FALSE \n"); return(NULL);  }
-      if(length(RunSnowModule)!=1  ){ stop("RunSnowModule must be either TRUE or FALSE \n"); return(NULL);  }
-    }
-
-
   ##check_MeanAnSolidPrecip
     if("CemaNeige" %in% ObjectClass & is.null(MeanAnSolidPrecip)){
       NLayers <- length(InputsModel$LayerPrecip);
@@ -200,16 +260,16 @@ CreateRunOptions <- function(FUN_MOD,InputsModel,IndPeriod_WarmUp=NULL,IndPeriod
 
 
   ##check_PliqAndMelt
-    if(RunSnowModule & "GR" %in% ObjectClass & "CemaNeige" %in% ObjectClass){
+    if("GR" %in% ObjectClass & "CemaNeige" %in% ObjectClass){
       if("PliqAndMelt" %in% Outputs_Cal == FALSE & "all" %in% Outputs_Cal == FALSE){
         WTxt <- NULL;
-        WTxt <- paste(WTxt,"\t PliqAndMelt was not defined in Outputs_Cal but is needed to feed the hydrological model with the snow module outputs \n",sep="");
+        WTxt <- paste(WTxt,"\t PliqAndMelt was not defined in Outputs_Cal but is needed to feed the hydrological model with the snow modele outputs \n",sep="");
         WTxt <- paste(WTxt,"\t -> it was automatically added \n",sep="");
         if(!is.null(WTxt) & verbose){ warning(WTxt); }
         Outputs_Cal <- c(Outputs_Cal,"PliqAndMelt"); }
       if("PliqAndMelt" %in% Outputs_Sim == FALSE & "all" %in% Outputs_Sim == FALSE){
         WTxt <- NULL;
-        WTxt <- paste(WTxt,"\t PliqAndMelt was not defined in Outputs_Sim but is needed to feed the hydrological model with the snow module outputs \n",sep="");
+        WTxt <- paste(WTxt,"\t PliqAndMelt was not defined in Outputs_Sim but is needed to feed the hydrological model with the snow modele outputs \n",sep="");
         WTxt <- paste(WTxt,"\t -> it was automatically added \n",sep="");
         if(!is.null(WTxt) & verbose){ warning(WTxt); }
         Outputs_Sim <- c(Outputs_Sim,"PliqAndMelt"); }
@@ -220,7 +280,7 @@ CreateRunOptions <- function(FUN_MOD,InputsModel,IndPeriod_WarmUp=NULL,IndPeriod
     RunOptions <- list(IndPeriod_WarmUp=IndPeriod_WarmUp,IndPeriod_Run=IndPeriod_Run,IniStates=IniStates,IniResLevels=IniResLevels,
                        Outputs_Cal=Outputs_Cal,Outputs_Sim=Outputs_Sim);
     if("CemaNeige" %in% ObjectClass){
-        RunOptions <- c(RunOptions,list(RunSnowModule=RunSnowModule,MeanAnSolidPrecip=MeanAnSolidPrecip));    }
+        RunOptions <- c(RunOptions,list(MeanAnSolidPrecip=MeanAnSolidPrecip));    }
     class(RunOptions) <- c("RunOptions",ObjectClass);
     return(RunOptions);
 

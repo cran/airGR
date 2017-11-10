@@ -2,7 +2,8 @@ RunModel_CemaNeigeGR5J <- function(InputsModel,RunOptions,Param){
 
     NParam <- 7;
     FortranOutputsCemaNeige <- c("Pliq","Psol","SnowPack","ThermalState","Gratio","PotMelt","Melt","PliqAndMelt", "Temp");
-    FortranOutputsMod       <- c("PotEvap","Precip","Prod","AE","Perc","PR","Q9","Q1","Rout","Exch","AExch","QR","QD","Qsim");
+    FortranOutputsMod <- c("PotEvap", "Precip", "Prod", "Pn", "Ps", "AE", "Perc", "PR", "Q9", "Q1", "Rout", "Exch",
+                        "AExch1", "AExch2", "AExch", "QR", "QD", "Qsim");
 
     ##Arguments_check
       if(inherits(InputsModel,"InputsModel")==FALSE){ stop("InputsModel must be of class 'InputsModel' \n"); return(NULL); }  
@@ -12,9 +13,24 @@ RunModel_CemaNeigeGR5J <- function(InputsModel,RunOptions,Param){
       if(inherits(RunOptions,"RunOptions"  )==FALSE){ stop("RunOptions must be of class 'RunOptions'   \n"); return(NULL); }  
       if(inherits(RunOptions,"GR"          )==FALSE){ stop("RunOptions must be of class 'GR'           \n"); return(NULL); }  
       if(inherits(RunOptions,"CemaNeige"   )==FALSE){ stop("RunOptions must be of class 'CemaNeige'    \n"); return(NULL); }  
-      if(!is.vector(Param)){ stop("Param must be a vector \n"); return(NULL); }
+      if(!is.vector(Param) | !is.numeric(Param)){ stop("Param must be a numeric vector \n"); return(NULL); }
       if(sum(!is.na(Param))!=NParam){ stop(paste("Param must be a vector of length ",NParam," and contain no NA \n",sep="")); return(NULL); }
       Param <- as.double(Param);
+      
+      Param_X1X3_threshold <- 1e-2
+      Param_X4_threshold   <- 0.5
+      if (Param[1L] < Param_X1X3_threshold) {
+        warning(sprintf("Param[1] (X1: production store capacity [mm]) < %.2f\n X1 set to %.2f", Param_X1X3_threshold, Param_X1X3_threshold))
+        Param[1L] <- Param_X1X3_threshold
+      }
+      if (Param[3L] < Param_X1X3_threshold) {
+        warning(sprintf("Param[3] (X3: routing store capacity [mm]) < %.2f\n X3 set to %.2f", Param_X1X3_threshold, Param_X1X3_threshold))
+        Param[3L] <- Param_X1X3_threshold
+      }
+      if (Param[4L] < Param_X4_threshold) {
+        warning(sprintf("Param[4] (X4: unit hydrograph time constant [d]) < %.2f\n X4 set to %.2f", Param_X4_threshold, Param_X4_threshold))
+        Param[4L] <- Param_X4_threshold
+      }      
 
     ##Input_data_preparation
       if(identical(RunOptions$IndPeriod_WarmUp,as.integer(0))){ RunOptions$IndPeriod_WarmUp <- NULL; }
@@ -31,14 +47,14 @@ RunModel_CemaNeigeGR5J <- function(InputsModel,RunOptions,Param){
 
 
     ##SNOW_MODULE________________________________________________________________________________##
-    if(RunOptions$RunSnowModule==TRUE){
+    if(inherits(RunOptions,"CemaNeige")==TRUE){
       if("all" %in% RunOptions$Outputs_Sim){ IndOutputsCemaNeige <- as.integer(1:length(FortranOutputsCemaNeige)); 
       } else { IndOutputsCemaNeige <- which(FortranOutputsCemaNeige %in% RunOptions$Outputs_Sim);  }
       CemaNeigeLayers <- list(); CemaNeigeStateEnd <- NULL; NameCemaNeigeLayers <- "CemaNeigeLayers";
 
     ##Call_DLL_CemaNeige_________________________
       for(iLayer in 1:NLayers){
-        StateStartCemaNeige <- RunOptions$IniStates[ (NStatesMod+2*(iLayer-1)+1):(NStatesMod+2*(iLayer-1)+2) ];
+        StateStartCemaNeige <- RunOptions$IniStates[(7+20+40) + c(iLayer, iLayer+NLayers)]
         RESULTS <- .Fortran("frun_CemaNeige",PACKAGE="airGR",
                         ##inputs
                             LInputs=LInputSeries,                                                          ### length of input and output series
@@ -70,7 +86,7 @@ RunModel_CemaNeigeGR5J <- function(InputsModel,RunOptions,Param){
       } ###ENDFOR_iLayer
       names(CemaNeigeLayers) <- paste("Layer",formatC(1:NLayers,width=2,flag="0"),sep="");
     } ###ENDIF_RunSnowModule
-    if(RunOptions$RunSnowModule==FALSE){
+    if(inherits(RunOptions,"CemaNeige")==FALSE){
       CemaNeigeLayers <- list(); CemaNeigeStateEnd <- NULL; NameCemaNeigeLayers <- NULL;
       CatchMeltAndPliq  <- InputsModel$Precip[IndPeriod1]; }
 
@@ -81,7 +97,7 @@ RunModel_CemaNeigeGR5J <- function(InputsModel,RunOptions,Param){
       } else { IndOutputsMod <- which(FortranOutputsMod %in% RunOptions$Outputs_Sim);  }
 
     ##Use_of_IniResLevels
-      if("IniResLevels" %in% RunOptions){
+      if(!is.null(RunOptions$IniResLevels)){
         RunOptions$IniStates[1] <- RunOptions$IniResLevels[1]*ParamMod[1];  ### production store level (mm)
         RunOptions$IniStates[2] <- RunOptions$IniResLevels[2]*ParamMod[3];  ### routing store level (mm)
       }
@@ -104,7 +120,16 @@ RunModel_CemaNeigeGR5J <- function(InputsModel,RunOptions,Param){
                      )
       RESULTS$Outputs[ round(RESULTS$Outputs ,3)==(-999.999)] <- NA;
       RESULTS$StateEnd[round(RESULTS$StateEnd,3)==(-999.999)] <- NA;
-      if(RunOptions$RunSnowModule & "Precip" %in% RunOptions$Outputs_Sim){ RESULTS$Outputs[,which(FortranOutputsMod[IndOutputsMod]=="Precip")] <- InputsModel$Precip[IndPeriod1]; }
+      if (ExportStateEnd) { 
+        RESULTS$StateEnd <- CreateIniStates(FUN_MOD = RunModel_CemaNeigeGR5J, InputsModel = InputsModel,
+                                            ProdStore = RESULTS$StateEnd[1L], RoutStore = RESULTS$StateEnd[2L], ExpStore = NULL,
+                                            UH1 = NULL, UH2 = RESULTS$StateEnd[(1:40)+(7+20)],
+                                            GCemaNeigeLayers = CemaNeigeStateEnd[seq_len(2*NLayers)[seq_len(2*NLayers) %% 2 == 1]],
+                                            eTGCemaNeigeLayers = CemaNeigeStateEnd[seq_len(2*NLayers)[seq_len(2*NLayers) %% 2 == 0]],
+                                            verbose = FALSE)
+      }
+      
+      if(inherits(RunOptions,"CemaNeige")==TRUE & "Precip" %in% RunOptions$Outputs_Sim){ RESULTS$Outputs[,which(FortranOutputsMod[IndOutputsMod]=="Precip")] <- InputsModel$Precip[IndPeriod1]; }
 
     ##Output_data_preparation
       ##OutputsModel_only
@@ -122,14 +147,14 @@ RunModel_CemaNeigeGR5J <- function(InputsModel,RunOptions,Param){
       if(ExportDatesR==FALSE & ExportStateEnd==TRUE){
         OutputsModel <- c( lapply(seq_len(RESULTS$NOutputs), function(i) RESULTS$Outputs[IndPeriod2,i]),
                            list(CemaNeigeLayers),
-                           list(c(RESULTS$StateEnd,CemaNeigeStateEnd)) );
+                           list(RESULTS$StateEnd) );
         names(OutputsModel) <- c(FortranOutputsMod[IndOutputsMod],NameCemaNeigeLayers,"StateEnd");      }
       ##DatesR_and_OutputsModel_and_SateEnd
       if(ExportDatesR==TRUE & ExportStateEnd==TRUE){
         OutputsModel <- c( list(InputsModel$DatesR[RunOptions$IndPeriod_Run]),
                            lapply(seq_len(RESULTS$NOutputs), function(i) RESULTS$Outputs[IndPeriod2,i]),
                            list(CemaNeigeLayers),
-                           list(c(RESULTS$StateEnd,CemaNeigeStateEnd)) );
+                           list(RESULTS$StateEnd) );
         names(OutputsModel) <- c("DatesR",FortranOutputsMod[IndOutputsMod],NameCemaNeigeLayers,"StateEnd");      }
 
     ##End

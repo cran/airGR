@@ -1,15 +1,23 @@
 \encoding{UTF-8}
+
+
 \name{CreateRunOptions}
 \alias{CreateRunOptions}
+
+
 \title{Creation of the RunOptions object required to the RunModel functions}
+
+
 \usage{
 CreateRunOptions(FUN_MOD, InputsModel, IndPeriod_WarmUp = NULL, IndPeriod_Run,
   IniStates = NULL, IniResLevels = NULL, Outputs_Cal = NULL,
-  Outputs_Sim = "all", RunSnowModule = TRUE, MeanAnSolidPrecip = NULL,
+  Outputs_Sim = "all", RunSnowModule, MeanAnSolidPrecip = NULL,
   verbose = TRUE)
 }
+
+
 \arguments{
-\item{FUN_MOD}{[function] hydrological model function (e.g. RunModel_GR4J, RunModel_CemaNeigeGR4J)}
+\item{FUN_MOD}{[function] hydrological model function (e.g. \code{\link{RunModel_GR4J}}, \code{\link{RunModel_CemaNeigeGR4J}})}
 
 \item{InputsModel}{[object of class \emph{InputsModel}] see \code{\link{CreateInputsModel}} for details}
 
@@ -17,70 +25,84 @@ CreateRunOptions(FUN_MOD, InputsModel, IndPeriod_WarmUp = NULL, IndPeriod_Run,
 
 \item{IndPeriod_Run}{[numeric] index of period to be used for the model run [-]}
 
-\item{IniStates}{(optional) [numeric] vector of initial model internal states [mm]}
+\item{IniStates}{(optional) [numeric] object of class \code{IniStates} [mm and °C], see \code{\link{CreateIniStates}} for details}
 
-\item{IniResLevels}{(optional) [numeric] vector of initial filling rates for production and routing stores (2 values between 0 and 1) [-]}
+\item{IniResLevels}{(optional) [numeric] vector of initial fillings for the GR stores (2 or 3 values according to the model) [- and/or mm]; see details}
 
 \item{Outputs_Cal}{(optional) [character] vector giving the outputs needed for the calibration \cr (e.g. c("Qsim")), the fewer outputs
  the faster the calibration}
 
-\item{Outputs_Sim}{(optional) [character] vector giving the requested outputs \cr (e.g. c("DatesR","Qsim","SnowPack")), default="all"}
+\item{Outputs_Sim}{(optional) [character] vector giving the requested outputs \cr (e.g. c(\code{"DatesR"}, \code{"Qsim"}, \code{"SnowPack"})), default = \code{"all"}}
 
-\item{RunSnowModule}{(optional) [boolean] option indicating whether CemaNeige should be activated, default=TRUE}
+\item{RunSnowModule}{(deprecated) [boolean] option indicating whether CemaNeige should be activated. Please adapt \code{FUN_MOD} instead}
 
+	
 \item{MeanAnSolidPrecip}{(optional) [numeric] vector giving the annual mean of average solid precipitation for each layer (computed from InputsModel if not defined) [mm/y]}
 
-\item{verbose}{(optional) [boolean] boolean indicating if the function is run in verbose mode or not, default=TRUE}
+\item{verbose}{(optional) [boolean] boolean indicating if the function is run in verbose mode or not, default = \code{TRUE}}
 }
+
+
 \value{
 [list] object of class \emph{RunOptions} containing the data required to evaluate the model outputs; it can include the following:
          \tabular{ll}{
          \emph{IndPeriod_WarmUp }  \tab  [numeric] index of period to be used for the model warm-up [-] \cr
          \emph{IndPeriod_Run    }  \tab  [numeric] index of period to be used for the model run [-] \cr
-         \emph{IniStates        }  \tab  [numeric] vector of initial model states [mm] \cr
-         \emph{IniResLevels     }  \tab  [numeric] vector of initial filling rates for production and routing stores [-] \cr
+         \emph{IniStates        }  \tab  [numeric] vector of initial model states [mm and °C] \cr
+         \emph{IniResLevels     }  \tab  [numeric] vector of initial filling rates for production and routing stores [-] and level fothe the exponential store for GR6J [mm]\cr
          \emph{Outputs_Cal      }  \tab  [character] character vector giving only the outputs needed for the calibration \cr
          \emph{Outputs_Sim      }  \tab  [character] character vector giving the requested outputs \cr
-         \emph{RunSnowModule    }  \tab  [boolean] option indicating whether CemaNeige should be activated \cr
          \emph{MeanAnSolidPrecip}  \tab  [numeric] vector giving the annual mean of average solid precipitation for each layer [mm/y] \cr
          }
 }
+
+
 \description{
-Creation of the RunOptions object required to the RunModel functions.
+Creation of the RunOptions object required to the \code{RunModel*} functions.
 }
+
+
 \details{
-Users wanting to use FUN_MOD functions that are not included in 
-the package must create their own RunOptions object accordingly.
+Users wanting to use \code{FUN_MOD} functions that are not included in 
+the package must create their own \code{RunOptions} object accordingly.
 
 ##### Initialisation options #####
 
 The model initialisation options can either be set to a default configuration or be defined by the user.
 
-This is done via three vectors: \cr \emph{IndPeriod_WarmUp}, \emph{IniStates}, \emph{IniResLevels}. \cr
+This is done via three vectors: \cr \code{IndPeriod_WarmUp}, \code{IniStates}, \code{IniResLevels}. \cr
 A default configuration is used for initialisation if these vectors are not defined.
 
 (1) Default initialisation options:
 
 \itemize{
-\item \emph{IndPeriod_WarmUp} default setting ensures a one-year warm-up using the time steps preceding the \emph{IndPeriod_Run}. 
+\item \code{IndPeriod_WarmUp} default setting ensures a one-year warm-up using the time steps preceding the \code{IndPeriod_Run}. 
 The actual length of this warm-up might be shorter depending on data availability (no missing value of climate inputs being allowed in model input series).
 
-\item \emph{IniStates} and \emph{IniResLevels} are automatically set to initialise all the model states at 0, except for the production and routing stores which are initialised at 50 \% of their capacity. This initialisation is made at the very beginning of the model call (i.e. at the beginning of \emph{IndPeriod_WarmUp} or at the beginning of IndPeriod_Run if the warm-up period is disabled).
+\item \code{IniStates} and \code{IniResLevels} are automatically set to initialise all the model states at 0, except for the production and routing stores which are respectively initialised at 30 \% and 50 \% of their capacity. In case GR6J is used, the exponential store is initialised by default with 0 mm. This initialisation is made at the very beginning of the model call (i.e. at the beginning of \code{IndPeriod_WarmUp} or at the beginning of \code{IndPeriod_Run} if the warm-up period is disabled).
 }
 
 (2) Customisation of initialisation options:
 
 \itemize{
-\item \emph{IndPeriod_WarmUp} can be used to specify the indices of the warm-up period (within the time-series prepared in InputsModel). \cr
-- remark 1:	for most common cases, indices corresponding to one or several years preceding \emph{IndPeriod_Run} are used (e.g. \emph{IndPeriod_WarmUp = 1000:1365} and \emph{IndPeriod_Run = 1366:5000)}. \cr
-However, it is also possible to perform a long-term initialisation if other indices than the warm-up ones are set in \emph{IndPeriod_WarmUp} (e.g. \emph{IndPeriod_WarmUp <- c( 1:5000 , 1:5000 , 1:5000 ,1000:1365 )}). \cr
-- remark 2:	it is also possible to completely disable the warm-up period when using \emph{IndPeriod_WarmUp = 0L}.
+\item \code{IndPeriod_WarmUp} can be used to specify the indices of the warm-up period (within the time series prepared in InputsModel).
+\itemize{
+\item remark 1:	for most common cases, indices corresponding to one or several years preceding \code{IndPeriod_Run} are used (e.g. \code{IndPeriod_WarmUp = 1000:1365} and \code{IndPeriod_Run = 1366:5000)}. \cr
+However, it is also possible to perform a long-term initialisation if other indices than the warm-up ones are set in \code{IndPeriod_WarmUp} (e.g. \code{IndPeriod_WarmUp = c(1:5000, 1:5000, 1:5000, 1000:1365)}). \cr
+\item remark 2:	it is also possible to completely disable the warm-up period when using \code{IndPeriod_WarmUp = 0L}. This is necessary if you want \code{IniStates} and/or \code{IniResLevels} to be the actual initial values of the model variables from your simulation (e.g. to perform a forecast form a given initial state). 
+}
+\item \code{IniStates} and \code{IniResLevels} can be used to specify the initial model states.
+\itemize{
+\item remark 1: \code{IniStates} and \code{IniResLevels} can not be used with GR1A. \cr
+\item remark 2:	if \code{IniStates} is used, two possibilities are offered:\cr
+- \code{IniStates} can be set to the \emph{$StateEnd} output of a previous \code{RunModel} call, as \emph{$StateEnd} already respects the correct format; \cr
+- \code{IniStates} can be created with the \code{\link{CreateIniStates}} function.
+\item remark 3:	in addition to \code{IniStates}, \code{IniResLevels} allows to set the filling rate of the production and routing stores for the GR models. For instance for GR4J and GR5J: \code{IniResLevels = c(0.3, 0.5)} should be used to obtain initial fillings of 30 \% and 50 \% for the production and routing stores, respectively. For GR6J, \code{IniResLevels = c(0.3, 0.5, 0)} shold be use to obtain initial fillings of 30 \% and 50 \% for the production, routing stores and 0 mm for the exponential store, respectively. \code{IniResLevels} is optional and can only be used if \code{IniStates} is also defined (the state values corresponding to these two other stores in \code{IniStates} are not used in such case).
+}
+}
+}
 
-\item \emph{IniStates} and \emph{IniResLevels} can be used to specify the initial model states. \cr
-- remark 1:	if \emph{IniStates} is used, all model states must be provided (e.g. 60 floats [mm] are required for GR4J, GR5J and GR6J; 60+2*NLayers floats [mm] are required for CemaNeigeGR4J, CemaNeigeGR5J and CemaNeigeGR6J; see fortran source code for details). \cr
-- remark 2:	in addition to \emph{IniStates}, \emph{IniResLevels} allows to set the filling rate of the production and routing stores for the GR models. For instance for GR4J, GR5J and GR6J: \emph{IniResLevels <- c(0.3,0.5)} should be used to obtain initial fillings of 30\% and 50\% for the production and routing stores, respectively.  \emph{IniResLevels} is optional and can only be used if \emph{IniStates} is also defined (the state values corresponding to these two stores in \emph{IniStates} are not used in such case). \cr \cr
-}
-}
+
 \examples{
 library(airGR)
 
@@ -112,10 +134,14 @@ InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsMo
                                 RunOptions = RunOptions, Qobs = BasinObs$Qmm[Ind_Run])
 OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
 }
+
+
 \author{
-Laurent Coron (June 2014)
+Laurent Coron, Olivier Delaigue, Guillaume Thirel
 }
+
+
 \seealso{
-\code{\link{RunModel}}, \code{\link{CreateInputsModel}}, \code{\link{CreateInputsCrit}}, \code{\link{CreateCalibOptions}}
+\code{\link{RunModel}}, \code{\link{CreateInputsModel}}, \code{\link{CreateInputsCrit}}, \code{\link{CreateCalibOptions}}, \code{\link{CreateIniStates}}
 }
 

@@ -1,12 +1,20 @@
 \encoding{UTF-8}
+
+
 \name{CreateInputsModel}
 \alias{CreateInputsModel}
+
+
 \title{Creation of the InputsModel object required to the RunModel functions}
+
+
 \usage{
 CreateInputsModel(FUN_MOD, DatesR, Precip, PrecipScale = TRUE, PotEvap = NULL,
   TempMean = NULL, TempMin = NULL, TempMax = NULL, ZInputs = NULL, HypsoData = NULL,
   NLayers = 5, verbose = TRUE)
 }
+
+
 \arguments{
 \item{FUN_MOD}{[function] hydrological model function (e.g. \code{RunModel_GR4J}, \code{RunModel_CemaNeigeGR4J})}
 
@@ -30,8 +38,10 @@ CreateInputsModel(FUN_MOD, DatesR, Precip, PrecipScale = TRUE, PotEvap = NULL,
 
 \item{NLayers}{(optional) [numeric] integer giving the number of elevation layers requested [-], required to create CemaNeige module inputs, default=5}
 
-\item{verbose}{(optional) [boolean] boolean indicating if the function is run in verbose mode or not, default= \code{TRUE}}
+\item{verbose}{(optional) [boolean] boolean indicating if the function is run in verbose mode or not, default = \code{TRUE}}
 }
+
+
 \value{
 [list] object of class \emph{InputsModel} containing the data required to evaluate the model outputs; it can include the following:
          \tabular{ll}{
@@ -43,13 +53,19 @@ CreateInputsModel(FUN_MOD, DatesR, Precip, PrecipScale = TRUE, PotEvap = NULL,
          \emph{$LayerFracSolidPrecip}  \tab   [list] list of time series of solid precipitation fraction (layer average) [-], \cr\tab defined if  \code{FUN_MOD} includes CemaNeige \cr \cr
          }
 }
+
+
 \description{
-Creation of the InputsModel object required to the RunModel functions.
+Creation of the \emph{InputsModel} object required to the \code{RunModel*} functions.
 }
+
+
 \details{
-Users wanting to use  \code{FUN_MOD} functions that are not included in 
+Users wanting to use \code{FUN_MOD} functions that are not included in 
 the package must create their own InputsModel object accordingly.
 }
+
+
 \examples{
 library(airGR)
 
@@ -82,9 +98,13 @@ InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsMo
 OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
 
 }
+
+
 \author{
-Laurent Coron (June 2014)
+Laurent Coron
 }
+
+
 \seealso{
 \code{\link{RunModel}}, \code{\link{CreateRunOptions}}, \code{\link{CreateInputsCrit}}, \code{\link{CreateCalibOptions}}, \code{\link{DataAltiExtrapolation_Valery}}
 }

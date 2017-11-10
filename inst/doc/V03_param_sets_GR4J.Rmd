@@ -1,0 +1,225 @@
+---
+title: "Generalist parameter sets for the GR4J model"
+bibliography: V00_airgr_ref.bib
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{GR4J parameter sets}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+# Introduction
+
+## Scope
+
+```{r, warning=FALSE, include=FALSE}
+library(airGR)
+options(digits = 3)
+```
+
+
+In the **airGR** package, the classical way to calibrate a model is to use the Michel's algorithm (see the  `Calibration_Michel()` function).
+
+The Michel's algorithm combines a global and a local approach. A screening is first performed either based on a rough predefined grid (considering various initial values for each parameter) or from a list of initial parameter sets. 
+The best set identified in this screening is then used as a starting point for the steepest descent local search algorithm.
+
+
+
+In some specific situations, for example if the calibration period is too short and by consequence non representative of the catchment behavior, a local calibration algorithm can give poor results.
+
+In this vignette, we show a method using a known parameter set that can be used as an alternative for the grid-screening calibration procedure, and we well compare to two methods using the `Calibration_Michel()` function. The generalist parameters sets introduced here are taken from @andreassian_seeking_2014.
+
+
+## Data preparation
+
+We load an example data set from the package and the GR4J parameter sets.
+
+```{r, warning=FALSE}
+
+## loading catchment data
+data(L0123001)
+
+## loading generalist parameter sets
+data(Param_Sets_GR4J)
+```
+
+The given GR4J **X4u** variable does not correspond to the actual GR4J **X4** parameter. As explained in @andreassian_seeking_2014 [section 2.1], the given GR4J **X4u** value has to be adjusted (rescaled) using catchment area (S) [km2] as follows: `X4 = X4u / 5.995 * S^0.3` (please= note that **the formula is erroneous in the publication**).
+
+It means we need first to transform the **X4** parameter.
+
+
+```{r, warning=FALSE}
+Param_Sets_GR4J$X4 <- Param_Sets_GR4J$X4u / 5.995 * BasinInfo$BasinArea^0.3
+Param_Sets_GR4J$X4u <- NULL
+Param_Sets_GR4J <- as.matrix(Param_Sets_GR4J)
+```
+
+Please, find below the summary of the `r nrow(Param_Sets_GR4J)` sets of the `r ncol(Param_Sets_GR4J)` parameters.
+
+```{r, warning=FALSE, echo=FALSE}
+summary(Param_Sets_GR4J)
+```
+
+## Object model preparation
+
+We assume that the R global environment contains data and functions from the **airGR** vignette.
+
+The calibration period has been defined from **1990-01-01** to **1990-02-28**, and the validation period from **1990-03-01** to **1999-12-31**.
+
+As a consequence, in this example the calibration period is very short, less than 6 months.
+
+```{r, warning=FALSE, include=TRUE}
+
+## preparation of the InputsModel object
+InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$DatesR, 
+                                 Precip = BasinObs$P, PotEvap = BasinObs$E)
+
+## ---- calibration step
+
+## short calibration period selection (< 6 months)
+Ind_Cal <- seq(which(format(BasinObs$DatesR, format = "%d/%m/%Y %H:%M")=="01/01/1990 00:00"), 
+               which(format(BasinObs$DatesR, format = "%d/%m/%Y %H:%M")=="28/02/1990 00:00"))
+
+## preparation of the RunOptions object for the calibration period
+RunOptions_Cal <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
+                               InputsModel = InputsModel, IndPeriod_Run = Ind_Cal)
+
+## efficiency criterion: Nash-Sutcliffe Efficiency
+InputsCrit_Cal  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
+                                    RunOptions = RunOptions_Cal, Qobs = BasinObs$Qmm[Ind_Cal])
+
+
+## ---- validation step
+
+## validation period selection
+Ind_Val <- seq(which(format(BasinObs$DatesR, format = "%d/%m/%Y %H:%M")=="01/03/1990 00:00"), 
+               which(format(BasinObs$DatesR, format = "%d/%m/%Y %H:%M")=="31/12/1999 00:00"))
+
+## preparation of the RunOptions object for the validation period
+RunOptions_Val <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
+                                   InputsModel = InputsModel, IndPeriod_Run = Ind_Val)
+
+## efficiency criterion (Nash-Sutcliffe Efficiency) on the validation period
+InputsCrit_Val  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
+                                RunOptions = RunOptions_Val, Qobs = BasinObs$Qmm[Ind_Val])
+
+```
+
+# Calibration of the GR4J model with the generalist parameter sets
+
+It is recommended to use the generalist parameter sets when the calibration period is less than 6 month.
+
+As shown in @andreassian_seeking_2014 [figure 4], a recommended way to use the `Param_Sets_GR4J` `data.frame` is to run the GR4J model with each parameter set and to select the best one according to an objective function (here we use the Nash-Sutcliffe Efficiency criterion).
+
+```{r, warning=FALSE, message=FALSE}
+OutputsCrit_Loop <- apply(Param_Sets_GR4J, 1, function(iParam) {
+  OutputsModel_Cal <- RunModel_GR4J(InputsModel = InputsModel, RunOptions = RunOptions_Cal,
+                                    Param = iParam)
+  OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit_Cal, OutputsModel = OutputsModel_Cal)
+  return(OutputsCrit$CritValue)
+})
+```
+
+Find below the `r nrow(Param_Sets_GR4J)` criteria corresponding to the different parameter sets.
+
+The criterion values are quite low (from `r OutputsCrit_Loop[which.min(OutputsCrit_Loop)]` to  `r OutputsCrit_Loop[which.max(OutputsCrit_Loop)]`), which can be expected as this does not represents an actual calibration.
+```{r, echo=FALSE}
+OutputsCrit_Loop
+```
+
+The parameter set corresponding to the best criterion is the following:
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+Param_Best <- unlist(Param_Sets_GR4J[which.max(OutputsCrit_Loop), ])
+Param_Best
+
+## validation
+OutputsModel_Val <- RunModel_GR4J(InputsModel = InputsModel, RunOptions = RunOptions_Val, Param = Param_Best)
+OutputsCrit_Val <- ErrorCrit_NSE(InputsCrit = InputsCrit_Val, OutputsModel = OutputsModel_Val)
+```
+
+Now we can compute the Nash-Sutcliffe Efficiency criterion on the validation period. A quite good value (`r OutputsCrit_Val$CritValue`) is found.
+
+
+
+# Calibration of the GR4J model with the built-in `Calibration_Michel()` function
+
+As seen above, the Michel's calibration algorithm is based on a local search procedure.
+
+It is **not recommanded** to use the `Calibration_Michel()` function when the **calibration period is less than 6 month**.
+We will show below its application on the same short period for two configurations of the grid-screening step to demonstrate that it is less efficient than the generalist parameters sets calibration.
+
+## GR4J parameter distributions quantiles used in the grid-screening step
+
+By default, the predefined grid used by the `Calibration_Michel()` function contains parameters quantiles computed after recursive calibrations on 1200 basins (from Australia, France and USA).
+
+
+```{r, warning=FALSE, message=FALSE}
+CalibOptions <- CreateCalibOptions(FUN_MOD = RunModel_GR4J, FUN_CALIB = Calibration_Michel)
+
+```
+
+```{r, warning=FALSE, message=FALSE, include=FALSE}
+## calibration
+OutputsCalib <- Calibration(InputsModel = InputsModel, RunOptions = RunOptions_Cal,
+                            InputsCrit = InputsCrit_Cal, CalibOptions = CalibOptions,
+                            FUN_MOD = RunModel_GR4J, FUN_CRIT = ErrorCrit_NSE, 
+                            FUN_CALIB = Calibration_Michel)
+OutputsModel_Cal <- RunModel(InputsModel = InputsModel, RunOptions = RunOptions_Cal, 
+                             Param = OutputsCalib$ParamFinalR, FUN = RunModel_GR4J)
+OutputsCrit_Cal <- ErrorCrit_NSE(InputsCrit = InputsCrit_Cal, OutputsModel = OutputsModel_Cal)
+
+
+## validation 
+OutputsModel_Val <- RunModel_GR4J(InputsModel = InputsModel, RunOptions = RunOptions_Val, Param = OutputsCalib$ParamFinalR)
+OutputsCrit_Val <- ErrorCrit_NSE(InputsCrit = InputsCrit_Val, OutputsModel = OutputsModel_Val)
+```
+
+The parameter set corresponding to the best criterion is the following:
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+names(OutputsCalib$ParamFinalR) <- paste0("X", 1:4)
+OutputsCalib$ParamFinalR
+```
+
+The Nash-Sutcliffe Efficiency criterion computed on the calibration period is better (`r OutputsCrit_Cal$CritValue`) than with the generalist parameter sets, but the one computed on the validation period is lower (`r OutputsCrit_Val$CritValue`).
+This shows that the generalist parameter sets give more robust model in this case.
+
+
+## GR4J parameter sets used in the grid-screening step
+
+It is also possible to give to the `CreateCalibOptions()` function a matrix of parameter sets used for the grid-screening calibration procedure.
+So, it possible is to use by this way the GR4J generalist parameter sets.
+
+```{r, warning=FALSE, message=FALSE}
+CalibOptions <- CreateCalibOptions(FUN_MOD = RunModel_GR4J, FUN_CALIB = Calibration_Michel,
+                                   StartParamList = Param_Sets_GR4J)
+```
+
+```{r, warning=FALSE, message=FALSE, include=FALSE}
+## calibration
+OutputsCalib <- Calibration(InputsModel = InputsModel, RunOptions = RunOptions_Cal,
+                            InputsCrit = InputsCrit_Cal, CalibOptions = CalibOptions,
+                            FUN_MOD = RunModel_GR4J, FUN_CRIT = ErrorCrit_NSE, 
+                            FUN_CALIB = Calibration_Michel)
+OutputsModel_Cal <- RunModel(InputsModel = InputsModel, RunOptions = RunOptions_Cal, 
+                         Param = OutputsCalib$ParamFinalR, FUN = RunModel_GR4J)
+OutputsCrit_Cal <- ErrorCrit_NSE(InputsCrit = InputsCrit_Cal, OutputsModel = OutputsModel_Cal)
+
+
+## validation 
+OutputsModel_Val <- RunModel_GR4J(InputsModel = InputsModel, RunOptions = RunOptions_Val, Param = OutputsCalib$ParamFinalR)
+OutputsCrit_Val <- ErrorCrit_NSE(InputsCrit = InputsCrit_Val, OutputsModel = OutputsModel_Val)
+```
+
+Here is the parameter set corresponding to the best criteria found.
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+names(OutputsCalib$ParamFinalR) <- paste0("X", 1:4)
+OutputsCalib$ParamFinalR
+```
+
+The results are the same here. The Nash-Sutcliffe Efficiency criterion computed on the calibration period is better (`r OutputsCrit_Cal$CritValue`), but the one computed on the validation period is just a little bit lower (`r OutputsCrit_Val$CritValue`) than the classical calibration.
+
+Generally, the advantage of using GR4J parameter sets rather than the GR4J generalist parameter quantiles is that they make more sense than a simple exploration of combinations of quantiles of parameter distributions (each parameter set represents a consistent ensemble). In addition, for the first step, the number of iterations is smaller (27 runs instead of 81), which can save time if one wants to run a very large number of calibrations.
+
+
+# References

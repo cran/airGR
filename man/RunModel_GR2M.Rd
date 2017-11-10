@@ -1,10 +1,18 @@
 \encoding{UTF-8}
+
+
 \name{RunModel_GR2M}
 \alias{RunModel_GR2M}
+
+
 \title{Run with the GR2M hydrological model}
+
+
 \usage{
 RunModel_GR2M(InputsModel, RunOptions, Param)
 }
+
+
 \arguments{
 \item{InputsModel}{[object of class \emph{InputsModel}] see \code{\link{CreateInputsModel}} for details}
 
@@ -16,24 +24,32 @@ GR2M X1      \tab production store capacity [mm]                 \cr
 GR2M X2      \tab groundwater exchange coefficient [-]    \cr
 }}
 }
+
+
 \value{
 [list] list containing the function outputs organised as follows:                                         
          \tabular{ll}{                                                                                         
          \emph{$DatesR  }          \tab [POSIXlt] series of dates                                                          \cr
          \emph{$PotEvap }          \tab [numeric] series of input potential evapotranspiration [mm/month]                  \cr
          \emph{$Precip  }          \tab [numeric] series of input total precipitation [mm/month]                           \cr
-         \emph{$Qsim    }          \tab [numeric] series of Qsim [mm/month]                                                \cr
-         \emph{$StateEnd}          \tab [numeric] states at the end of the run (production store level and routing store level) [mm] \cr
+         \emph{$Qsim    }          \tab [numeric] series of simulated discharge [mm/month]                                                \cr
+         \emph{$StateEnd}          \tab [numeric] states at the end of the run (production store level and routing store level) [mm], \cr\tab see \code{\link{CreateIniStates}} for more details \cr
          }                                                                                                     
          (refer to the provided references or to the package source code for further details on these model outputs)
 }
+
+
 \description{
 Function which performs a single run for the GR2M monthly lumped model over the test period.
 }
+
+
 \details{
 For further details on the model, see the references section.
 For further details on the argument structures and initialisation options, see \code{\link{CreateRunOptions}}.
 }
+
+
 \examples{
 library(airGR)
 
@@ -74,9 +90,13 @@ InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsMo
                                 RunOptions = RunOptions, Qobs = BasinObs$Qmm[Ind_Run])
 OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
 }
+
+
 \author{
-Laurent Coron, Claude Michel, Safouane Mouelhi (March 2015)
+Laurent Coron, Claude Michel, Safouane Mouelhi
 }
+
+
 \references{
 Mouelhi S. (2003), 
       Vers une chaîne cohérente de modèles pluie-débit conceptuels globaux aux pas de temps pluriannuel, annuel, mensuel et journalier,
@@ -86,3 +106,7 @@ Mouelhi S. (2003),
       Journal of Hydrology, 318(1-4), 200-214, doi:10.1016/j.jhydrol.2005.06.014.
 }
 
+
+\seealso{
+\code{\link{CreateInputsModel}}, \code{\link{CreateRunOptions}}, \code{\link{CreateIniStates}}.
+}

@@ -53,7 +53,7 @@
 	  St(2) = StateStart(2)
 
       DO I=1,2*NH
-      StUH2(I)=StateStart(7+I)
+      StUH2(I)=StateStart(7+NH+I)
       ENDDO
 
       !parameter values
@@ -96,7 +96,7 @@ c        MISC = -999.999
 	  StateEnd(1) = St(1)
 	  StateEnd(2) = St(2)
       DO K=1,2*NH
-      StateEnd(7+K)=StUH2(K)
+      StateEnd(7+NH+K)=StUH2(K)
       ENDDO
 
       RETURN
@@ -163,6 +163,7 @@ C Interception and production store
 	  ! fin speed-up  
       AE=ER+P1
       St(1)=St(1)-ER
+	  PS=0.
       PR=0.
       ELSE
       EN=0.
@@ -239,19 +240,21 @@ C Variables storage
       MISC( 1)=E             ! PE     ! observed potential evapotranspiration [mm/day]
       MISC( 2)=P1            ! Precip ! observed total precipitation [mm/day]
       MISC( 3)=St(1)         ! Prod   ! production store level (St(1)) [mm]
-      MISC( 4)=AE            ! AE     ! actual evapotranspiration [mm/day]
-      MISC( 5)=PERC          ! Perc   ! percolation (PERC) [mm/day]
-      MISC( 6)=PR            ! PR     ! PR=PN-PS+PERC [mm/day]
-      MISC( 7)=Q9            ! Q9     ! outflow from first branch (Q9) [mm/day]
-      MISC( 8)=Q1            ! Q1     ! outflow from second branch (Q1) [mm/day]
-      MISC( 9)=St(2)         ! Rout   ! routing store level (St(2)) [mm]
-      MISC(10)=EXCH          ! Exch   ! potential semi-exchange between catchments (EXCH) [mm/day]
-      MISC(11)=AEXCH1+AEXCH2 ! AExch  ! actual total exchange between catchments (AEXCH1+AEXCH2) [mm/day]
-      MISC(12)=QR            ! QR     ! outflow from routing store (QR) [mm/day]
-      MISC(13)=QD            ! QD     ! outflow from UH2 branch after exchange (QD) [mm/day]
-      MISC(14)=Q             ! Qsim   ! simulated outflow at catchment outlet [mm/day]
-
-
+      MISC( 4)=PN            ! Pn     ! net rainfall [mm/day]
+      MISC( 5)=PS            ! Ps     ! part of Ps filling the production store [mm/day]
+      MISC( 6)=AE            ! AE     ! actual evapotranspiration [mm/day]
+      MISC( 7)=PERC          ! Perc   ! percolation (PERC) [mm/day]
+      MISC( 8)=PR            ! PR     ! PR=PN-PS+PERC [mm/day]
+      MISC( 9)=Q9	         ! Q9     ! outflow from UH1 (Q9) [mm/day]
+      MISC(10)=Q1		     ! Q1     ! outflow from UH2 (Q1) [mm/day]
+      MISC(11)=St(2)         ! Rout   ! routing store level (St(2)) [mm]
+      MISC(12)=EXCH          ! Exch   ! potential semi-exchange between catchments (EXCH) [mm/day]
+      MISC(13)=AEXCH1 		 ! AExch1 ! actual exchange between catchments from branch 1 (AEXCH1) [mm/day]
+      MISC(14)=AEXCH2        ! AExch2 ! actual exchange between catchments from branch 2 (AEXCH2) [mm/day]
+      MISC(15)=AEXCH1+AEXCH2 ! AExch  ! actual total exchange between catchments (AEXCH1+AEXCH2) [mm/day]
+      MISC(16)=QR            ! QR     ! outflow from routing store (QR) [mm/day]
+      MISC(17)=QD            ! QD     ! outflow from UH2 branch after exchange (QD) [mm/day]
+      MISC(18)=Q             ! Qsim   ! simulated outflow at catchment outlet [mm/day]
 
 
       ENDSUBROUTINE

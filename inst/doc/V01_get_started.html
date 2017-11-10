@@ -203,9 +203,9 @@ hr {
 <body>
 <h1>Introduction</h1>
 
-<p><strong>airGR</strong> is a package which brings into the <a href="https://cran.r-project.org/"><strong>R software</strong></a> the hydrological modelling tools used and developed at the <a href="https://webgr.irstea.fr/?lang=en">Catchment Hydrology Team</a> at <a href="http://www.irstea.fr/en/">Irstea (France)</a>, including the <a href="https://webgr.irstea.fr/modeles/?lang=en"><strong>GR rainfall-runoff models</strong></a> and a snowmelt and accumulation model, <strong>CemaNeige</strong>. Each model core is coded in <strong>Fortran</strong> to ensure low computational time. The other package functions (i.e. mainly the calibration algorithm and the efficiency criteria calculation) are coded in <strong>R</strong>. </p>
+<p><strong>airGR</strong> is a package that brings into the <a href="https://cran.r-project.org/"><strong>R software</strong></a> the hydrological modelling tools used and developed at the <a href="https://webgr.irstea.fr/en/">Catchment Hydrology Research Group</a> at <a href="http://www.irstea.fr/en/">Irstea (France)</a>, including the <a href="https://webgr.irstea.fr/en/modeles/"><strong>GR rainfall-runoff models</strong></a> and a snowmelt and accumulation model, <a href="https://webgr.irstea.fr/en/modeles/modele-de-neige/"><strong>CemaNeige</strong></a>. Each model core is coded in <strong>Fortran</strong> to ensure low computational time. The other package functions (i.e. mainly the calibration algorithm and the efficiency criteria calculation) are coded in <strong>R</strong>. </p>
 
-<p>The <strong>airGR</strong> package has been designed to fulfil two major requirements: to facilitate the use by non-expert users and to allow flexibility regarding the addition of external criteria, models or calibration algorithms. The names of the functions and their arguments were chosen to this end. <strong>airGR</strong> also contains basics plotting facilities. </p>
+<p>The <strong>airGR</strong> package has been designed to fulfill two major requirements: to facilitate the use by non-expert users and to allow flexibility regarding the addition of external criteria, models or calibration algorithms. The names of the functions and their arguments were chosen to this end. <strong>airGR</strong> also contains basics plotting facilities. </p>
 
 <p>Six hydrological models and one snowmelt and accumulation model are implemented in <strong>airGR</strong>. The snow model can be used alone or together with the daily hydrological models. </p>
 
@@ -224,7 +224,9 @@ hr {
 <li><code>RunModel_CemaNeigeGR6J()</code>: combined use of <strong>GR6J</strong> and <strong>CemaNeige</strong> </li>
 </ul>
 
-<p>The <a href="https://webgr.irstea.fr/modeles/modele-de-prevision-grp/?lang=en"><strong>GRP</strong></a> forecasting model and the <a href="https://webgr.irstea.fr/modeles/otamin/?lang=en"><strong>Otamin</strong></a> predictive uncertainty tool are not availabe in <strong>airGR</strong>.</p>
+<p>The <a href="https://webgr.irstea.fr/en/modeles/modele-de-prevision-grp/"><strong>GRP</strong></a> forecasting model and the <a href="https://webgr.irstea.fr/en/modeles/otamin/"><strong>Otamin</strong></a> predictive uncertainty tool are not available in <strong>airGR</strong>.</p>
+
+<p>In this vignette, we show how to prepare and run a calibration and a simulation with airGR hydrological models.</p>
 
 <h1>Loading data</h1>
 
@@ -235,7 +237,7 @@ hr {
 <pre><code class="r">library(airGR)
 </code></pre>
 
-<p>This is an example of a <code>data.frame</code> of hydrometeorological observations time series for a fictional catchment included in the <strong>airGR</strong> package that contains:</p>
+<p>Below is presented an example of a <code>data.frame</code> of daily hydrometeorological observations time series for a fictional catchment included in the <strong>airGR</strong> package that contains:</p>
 
 <ul>
 <li><em>DatesR</em>: dates in the POSIXt format </li>
@@ -268,7 +270,7 @@ summary(BasinObs)
 ##  NA&#39;s   :755     NA&#39;s   :755
 </code></pre>
 
-<p>The usual functions (e.g. <code>read.table()</code>) can be used to load real-case datasets.</p>
+<p>The usual functions (e.g. <code>read.table()</code>) can be used to load real-case data sets.</p>
 
 <h1>Preparation of functions inputs</h1>
 
@@ -277,18 +279,18 @@ summary(BasinObs)
 <p>To facilitate the use of the package, there are several functions dedicated to the creation of these objects:</p>
 
 <ul>
-<li><code>CreateInputsModel()</code>: prepares the inputs for the different hydrological models (times series of dates, rainfall, observed streamflow, etc.)</li>
-<li><code>CreateRunOptions()</code>: prepares the options for the hydrological model run (warm-up period, calibration period, etc.)</li>
-<li><code>CreateInputsCrit()</code>: prepares the options in order to compute efficiency criterions (choice of the criterion, choice of the transformation on streamflows: &ldquo;log&rdquo;, &ldquo;root&rdquo;, etc.)</li>
+<li><code>CreateInputsModel()</code>: prepares the inputs for the different hydrological models (times series of dates, precipitation, observed discharge, etc.)</li>
+<li><code>CreateRunOptions()</code>: prepares the options for the hydrological model run (warm up period, calibration period, etc.)</li>
+<li><code>CreateInputsCrit()</code>: prepares the options in order to compute the efficiency criterion (choice of the criterion, choice of the transformation on discharge: &ldquo;log&rdquo;, &ldquo;sqrt&rdquo;, etc.)</li>
 <li><code>CreateCalibOptions()</code>: prepares the options for the hydrological model calibration algorithm (choice of parameters to optimize, predefined values for uncalibrated parameters, etc.)</li>
 </ul>
 
 <h2>InputsModel object</h2>
 
-<p>To run a GR hydrologic model, the user has to prepare the input data with the <code>CreateInputsModel()</code> function.
+<p>To run a GR hydrological model or CemaNeige, the user has to prepare the input data with the <code>CreateInputsModel()</code> function.
 As arguments, this function needs the function name corresponding to the model the user wants to run, a vector of dates, a vector of precipitation and a vector of potential evapotranspiration.</p>
 
-<p>In the example below, we already have the potential evapotranspiration. If the user doesn&#39;t have these data, it is possible to compute it with the <a href="http://dx.doi.org/10.1016/j.jhydrol.2004.08.026">Oudin&#39;s formula</a> with the <code>PEdaily_Oudin()</code> function (this function only needs julian days, daily average air temperature and latitude).</p>
+<p>In the example below, we already have the potential evapotranspiration. If the user does not have these data, it is possible to compute it with the <a href="http://dx.doi.org/10.1016/j.jhydrol.2004.08.026">Oudin&#39;s formula</a> with the <code>PEdaily_Oudin()</code> function (this function only needs Julian days, daily average air temperature and latitude).</p>
 
 <p>Missing values (<code>NA</code>) of precipitation (or potential evapotranspiration) are <strong>not allowed</strong>.</p>
 
@@ -326,14 +328,14 @@ str(Ind_Run)
 <pre><code>##  int [1:3652] 2193 2194 2195 2196 2197 2198 2199 2200 2201 2202 ...
 </code></pre>
 
-<p>The intialization of hydrological models is of the utmost importance. Indeed, an inaccurate intialisation causes poor quality streamflow simulations during the earliest stages of the running period. For example, in the GR models, the reservoirs levels are by default set to 50 % of their capacity, which may be far from their ideal value. Two solutions are offered to accurately initialize the GR models in <strong>airGR</strong>: manually predefining the initial states or running the models during a warm up period before the actual running period. It is generally advised to set up this warm up period to be equal or superior to one year. </p>
+<p>The initialization of hydrological models is of the utmost importance. Indeed, an inaccurate initialization causes poor quality discharge simulations during the earliest stages of the running period. For example, in the GR models, by default, the production and the routing store levels store level are respectively set to 30 % and 50 % of their capacity, which may be far from their ideal value. Two solutions are offered to accurately initialize the GR models in <strong>airGR</strong>: manually predefining the initial states (e.g. from a previous run) or running the models during a warm up period before the actual running period. It is generally advised to set up this warm up period to be equal or superior to one year. </p>
 
 <p>As a consequence, it is possible to define in <code>CreateRunOptions()</code> the following arguments:</p>
 
 <ul>
 <li><code>IniStates</code>: the initial states of the 2 unit hydrographs (20 + 40 = 60 units)</li>
 <li><code>IniResLevels</code>: the initial levels of the production and routing stores</li>
-<li><code>IndPeriod_WarmUp</code>: the warm-up period used to run the model, to be defined in the same format as <code>IndPeriod_Run</code></li>
+<li><code>IndPeriod_WarmUp</code>: the warm up period used to run the model, to be defined in the same format as <code>IndPeriod_Run</code></li>
 </ul>
 
 <pre><code class="r">RunOptions &lt;- CreateRunOptions(FUN_MOD = RunModel_GR4J,
@@ -341,11 +343,8 @@ str(Ind_Run)
                                IniStates = NULL, IniResLevels = NULL, IndPeriod_WarmUp = NULL)
 </code></pre>
 
-<pre><code>## Warning in CreateRunOptions(FUN_MOD = RunModel_GR4J, InputsModel = InputsModel, :     Model warm-up period not defined -&gt; default configuration used 
+<pre><code>## Warning in CreateRunOptions(FUN_MOD = RunModel_GR4J, InputsModel = InputsModel, :     Model warm up period not defined -&gt; default configuration used 
 ##      The year preceding the run period is used
-</code></pre>
-
-<pre><code>## Warning in CreateRunOptions(FUN_MOD = RunModel_GR4J, InputsModel = InputsModel, :     Model states initialisation not defined -&gt; default configuration used
 </code></pre>
 
 <pre><code class="r">str(RunOptions)
@@ -355,17 +354,17 @@ str(Ind_Run)
 ##  $ IndPeriod_WarmUp: int [1:365] 1828 1829 1830 1831 1832 1833 1834 1835 1836 1837 ...
 ##  $ IndPeriod_Run   : int [1:3652] 2193 2194 2195 2196 2197 2198 2199 2200 2201 2202 ...
 ##  $ IniStates       : num [1:67] 0 0 0 0 0 0 0 0 0 0 ...
-##  $ IniResLevels    : num [1:2] 0.3 0.5
+##  $ IniResLevels    : num [1:3] 0.3 0.5 NA
 ##  $ Outputs_Cal     : chr &quot;Qsim&quot;
-##  $ Outputs_Sim     : chr [1:16] &quot;DatesR&quot; &quot;PotEvap&quot; &quot;Precip&quot; &quot;Prod&quot; ...
+##  $ Outputs_Sim     : chr [1:20] &quot;DatesR&quot; &quot;PotEvap&quot; &quot;Precip&quot; &quot;Prod&quot; ...
 ##  - attr(*, &quot;class&quot;)= chr [1:3] &quot;RunOptions&quot; &quot;GR&quot; &quot;daily&quot;
 </code></pre>
 
 <p>The <code>CreateRunOptions()</code> function returns warnings if the default initialization options are used:</p>
 
 <ul>
-<li><code>IniStates</code> and <code>IniResLevels</code> are automatically set to initialize all the model states at 0, except for the production and routing stores which are initialised at 50 % of their capacity</li>
-<li><code>IndPeriod_WarmUp</code> default setting ensures a one-year warm-up using the time steps preceding the <code>IndPeriod_Run</code>, if available<br/></li>
+<li><code>IniStates</code> and <code>IniResLevels</code> are automatically set to initialize all the model states at 0, except for the production and routing stores, which are initialized at respectively 30% and 50 % of their capacity</li>
+<li><code>IndPeriod_WarmUp</code> default setting ensures a one-year warm up using the time steps preceding the <code>IndPeriod_Run</code>, if available<br/></li>
 </ul>
 
 <h2>InputsCrit object</h2>
@@ -373,13 +372,13 @@ str(Ind_Run)
 <p>The <code>CreateInputsCrit()</code> function allows to prepare the input in order to calculate a criterion. It is possible to define the following arguments:</p>
 
 <ul>
-<li><code>FUN_CRIT</code>: the name of the error criterion function (they are introduced later on)</li>
-<li><code>InputsModel</code>: the inputs of the hydrological model previously prepared by the <code>CeateInputsModel()</code> function</li>
+<li><code>FUN_CRIT</code>: the name of the error criterion function (the available functions are introduced later on)</li>
+<li><code>InputsModel</code>: the inputs of the hydrological model previously prepared by the <code>CreateInputsModel()</code> function</li>
 <li><code>RunOptions</code>: the options of the hydrological model previously prepared by the <code>CreateRunOptions()</code> function </li>
-<li><code>Qobs</code>: the observed streamflows expressed in <em>mm/time step</em></li>
+<li><code>Qobs</code>: the observed discharge expressed in <em>mm/time step</em></li>
 </ul>
 
-<p>Missing values (<code>NA</code>) are <strong>allowed</strong> for observed streamflows.</p>
+<p>Missing values (<code>NA</code>) are <strong>allowed</strong> for observed discharge.</p>
 
 <pre><code class="r">InputsCrit &lt;- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
                                RunOptions = RunOptions, Qobs = BasinObs$Qmm[Ind_Run])
@@ -397,7 +396,7 @@ str(InputsCrit)
 
 <h2>CalibOptions object</h2>
 
-<p>The user needs to prepare the calibration options with the <code>CreateCalibOptions()</code>function. For that, it is necessary to define the following arguments:</p>
+<p>Before using the automatic calibration tool, the user needs to prepare the calibration options with the <code>CreateCalibOptions()</code> function. For that, it is necessary to define the following arguments:</p>
 
 <ul>
 <li><code>FUN_MOD</code>: the name of the model function</li>
@@ -417,7 +416,7 @@ str(CalibOptions)
 
 <h1>Criteria</h1>
 
-<p>The evaluation of the quality of a simulation is estimated through the calculation of criteria. These criteria can be used both as objective-functions during the calibration of the model, or as a measure for evaluating its control performance.</p>
+<p>The evaluation of the quality of a simulation is estimated through the calculation of criteria. These criteria can be used both as objective-functions during the calibration of the model, or as a measure for evaluating its performance on a control period.</p>
 
 <p>The package offers the possibility to use different criteria:</p>
 
@@ -428,7 +427,7 @@ str(CalibOptions)
 <li><code>ErrorCrit_KGE2()</code>: modified Kling-Gupta efficiency criterion (KGE&#39;)</li>
 </ul>
 
-<p>It is also possible to create user-defined criteria. For doing that, it is only necessary to define the function in <strong>R</strong> following the same syntax that the criteria functions included in <strong>airGR</strong>.</p>
+<p>It is also possible to create user-defined criteria. For doing that, it is only necessary to define the function in <strong>R</strong> following the same syntax as the criteria functions included in <strong>airGR</strong>.</p>
 
 <h1>Calibration</h1>
 
@@ -447,46 +446,14 @@ The calibration algorithm optimizes the error criterion selected as objective-fu
                                    FUN_MOD = RunModel_GR4J, FUN_CRIT = ErrorCrit_NSE)
 </code></pre>
 
-<pre><code>## Grid-Screening in progress (
-</code></pre>
-
-<pre><code>## 0%
-</code></pre>
-
-<pre><code>## 20%
-</code></pre>
-
-<pre><code>## 40%
-</code></pre>
-
-<pre><code>## 60%
-</code></pre>
-
-<pre><code>## 80%
-</code></pre>
-
-<pre><code>##  100%)
-</code></pre>
-
-<pre><code>##   Screening completed (81 runs)
-</code></pre>
-
-<pre><code>##       Param =  247.151 ,   -0.020 ,   83.096 ,    2.384
-</code></pre>
-
-<pre><code>##       Crit NSE[Q]       = 0.7685
-</code></pre>
-
-<pre><code>## Steepest-descent local search in progress
-</code></pre>
-
-<pre><code>##   Calibration completed (20 iterations, 226 runs)
-</code></pre>
-
-<pre><code>##       Param =  257.238 ,    1.012 ,   88.235 ,    2.208
-</code></pre>
-
-<pre><code>##       Crit NSE[Q]       = 0.7985
+<pre><code>## Grid-Screening in progress (0% 20% 40% 60% 80% 100%)
+##   Screening completed (81 runs)
+##       Param =  247.151 ,   -0.020 ,   83.096 ,    2.384
+##       Crit NSE[Q]       = 0.7685
+## Steepest-descent local search in progress
+##   Calibration completed (20 iterations, 226 runs)
+##       Param =  257.238 ,    1.012 ,   88.235 ,    2.208
+##       Crit NSE[Q]       = 0.7985
 </code></pre>
 
 <pre><code class="r">Param &lt;- OutputsCalib$ParamFinalR
@@ -496,33 +463,35 @@ Param
 <pre><code>## [1] 257.237556   1.012237  88.234673   2.207958
 </code></pre>
 
-<p>The <code>Calibration_Michel()</code> function is the only one implemented in the <strong>airGR</strong> package to calibrate the model, but the user can implement its own calibration function.</p>
+<p>The <code>Calibration_Michel()</code> function is the only one implemented in the <strong>airGR</strong> package to calibrate the model, but the user can implement its own calibration function. Two vignettes explain how it can be done (<a href="V02.1_param_optim.html">2.1 Plugging in new calibration</a> and <a href="V02.2_param_mcmc.html">2.2 MCMC parameter estimation</a>).</p>
 
-<p>This function returns a vector with the parameters of the chosen model, which means that the number of values can differ depending on the model that is used. It is possible to use the <code>Calibration_Michel()</code> function with user-implemented hydrological models. </p>
+<p>The <code>Calibration_Michel()</code> function returns a vector with the parameters of the chosen model, which means that the number of values can differ depending on the model that is used. It is possible to use the <code>Calibration_Michel()</code> function with user-implemented hydrological models. </p>
 
-<h1>Validation</h1>
+<h1>Control</h1>
 
-<p>This step assess the predictive capacity of the model. Validation is defined as the estimation of the accuracy of the model on datasets that are not used in its construction, and in particular its calibration.
-The classical way to perform a validation is to keep data from a period separated from the calibration period. If possible, this control period should correspond to climatic situations rather that differ from those of the calibration period in order to better point out the qualities and weakness of the model. This exercise is necessary for assessing the robustness of the model, that is to say its ability to keep stable performances outside the calibration conditions.</p>
+<p>This step assesses the predictive capacity of the model. Control is defined as the estimation of the accuracy of the model on data sets that are not used in its construction, and in particular its calibration.
+The classical way to perform a control is to keep data from a period separated from the calibration period. If possible, this control period should correspond to climatic situations that differ from those of the calibration period in order to better point out the qualities and weaknesses of the model. This exercise is necessary for assessing the robustness of the model, that is to say its ability to keep stable performances outside of the calibration conditions.</p>
 
-<p>Performing a model validation with <strong>airGR</strong> is similar to running a simulation (see below). </p>
+<p>Performing a model control with <strong>airGR</strong> is similar to running a simulation (see below), followed by the computation of one or several performance criteria.</p>
 
 <h1>Simulation</h1>
 
 <h2>Simulation run</h2>
 
 <p>To run a model, the user has to use the <code>RunModel*()</code> functions (<code>InputsModel</code>, <code>RunOptions</code> and parameters).
-All the data needed have already been prepared.</p>
+All the data needed have already been prepared in the previous steps defined in this guide.</p>
 
 <pre><code class="r">OutputsModel &lt;- RunModel_GR4J(InputsModel = InputsModel, RunOptions = RunOptions, Param = Param)
 str(OutputsModel)
 </code></pre>
 
-<pre><code>## List of 16
+<pre><code>## List of 20
 ##  $ DatesR  : POSIXlt[1:3652], format: &quot;1990-01-01&quot; &quot;1990-01-02&quot; ...
 ##  $ PotEvap : num [1:3652] 0.3 0.4 0.4 0.3 0.1 0.1 0.1 0.2 0.2 0.3 ...
 ##  $ Precip  : num [1:3652] 0 9.3 3.2 7.3 0 0 0 0 0.1 0.2 ...
 ##  $ Prod    : num [1:3652] 196 199 199 201 200 ...
+##  $ Pn      : num [1:3652] 0 8.9 2.8 7 0 0 0 0 0 0 ...
+##  $ Ps      : num [1:3652] 0 3.65 1.12 2.75 0 ...
 ##  $ AE      : num [1:3652] 0.2833 0.4 0.4 0.3 0.0952 ...
 ##  $ Perc    : num [1:3652] 0.645 0.696 0.703 0.74 0.725 ...
 ##  $ PR      : num [1:3652] 0.645 5.946 2.383 4.992 0.725 ...
@@ -530,33 +499,46 @@ str(OutputsModel)
 ##  $ Q1      : num [1:3652] 0.2 0.195 0.271 0.387 0.365 ...
 ##  $ Rout    : num [1:3652] 53.9 53.6 55.3 56.1 56.9 ...
 ##  $ Exch    : num [1:3652] 0.181 0.18 0.177 0.197 0.207 ...
+##  $ AExch1  : num [1:3652] 0.181 0.18 0.177 0.197 0.207 ...
+##  $ AExch2  : num [1:3652] 0.181 0.18 0.177 0.197 0.207 ...
 ##  $ AExch   : num [1:3652] 0.362 0.36 0.353 0.393 0.414 ...
 ##  $ QR      : num [1:3652] 2.05 1.99 2.36 2.55 2.78 ...
 ##  $ QD      : num [1:3652] 0.381 0.375 0.447 0.584 0.572 ...
 ##  $ Qsim    : num [1:3652] 2.43 2.37 2.8 3.14 3.35 ...
-##  $ StateEnd: num [1:67] 188.5 48.9 NA NA NA ...
+##  $ StateEnd:List of 3
+##   ..$ Store          :List of 3
+##   .. ..$ Prod: num 189
+##   .. ..$ Rout: num 48.9
+##   .. ..$ Exp : num NA
+##   ..$ UH             :List of 2
+##   .. ..$ UH1: num [1:20] 0.514 0.54 0.148 0 0 ...
+##   .. ..$ UH2: num [1:40] 0.056306 0.057176 0.042253 0.012187 0.000578 ...
+##   ..$ CemaNeigeLayers:List of 2
+##   .. ..$ G  : num NA
+##   .. ..$ eTG: num NA
+##   ..- attr(*, &quot;class&quot;)= chr [1:3] &quot;IniStates&quot; &quot;GR&quot; &quot;daily&quot;
 ##  - attr(*, &quot;class&quot;)= chr [1:3] &quot;OutputsModel&quot; &quot;daily&quot; &quot;GR&quot;
 </code></pre>
 
 <h2>Results preview</h2>
 
-<p>Although it is possible for the user to design its own graphics from the outputs of the <code>RunModel*()</code> functions, the <strong>airGR</strong> package offers the possibility to make use of the <code>plot.OutputsModel()</code> function (or <code>plotl()</code> with a <code>OutputsModel</code> object). This function returns a dashboard of results including various graphs (depending on the model used): </p>
+<p>Although it is possible for the user to design its own graphics from the outputs of the <code>RunModel*()</code> functions, the <strong>airGR</strong> package offers the possibility to make use of the <code>plot.OutputsModel()</code> function (or <code>plot()</code> with an <code>OutputsModel</code> object). This function returns a dashboard of results including various graphs (depending on the model used): </p>
 
 <ul>
-<li>time series of total precipitation and simulated streamflows (and observed streamflows if provided)</li>
-<li>interannual median monthly simulated streamflows (and monthly observed streamflows if provided)</li>
-<li>cumulative frequency plot for simulated streamflows (and for observed streamflows if provided)</li>
-<li>correlation plot between simulated and observed streamflows (if observed streamflows provided)</li>
+<li>time series of total precipitation and simulated discharge (and observed discharge if provided)</li>
+<li>interannual average daily simulated discharge (and daily observed discharge if provided) and interannual average monthly precipitation </li>
+<li>cumulative frequency plot for simulated discharge (and for observed discharge if provided)</li>
+<li>correlation plot between simulated and observed discharge (if observed discharge provided)</li>
 </ul>
 
 <pre><code class="r">plot(OutputsModel, Qobs = BasinObs$Qmm[Ind_Run])
 </code></pre>
 
-<p>Moreover, if the CemaNeige model is used, the temperature and the simulated snowpack time series are plotted. </p>
+<p>Moreover, if the CemaNeige model is used, the air temperature and the simulated snowpack water equivalent time series are plotted. </p>
 
 <h2>Efficiency criterion</h2>
 
-<p>To evaluate the efficiency of the model, it is possible to use the same criterion as defined at the calibration step or to use an other criterion.</p>
+<p>To evaluate the efficiency of the model, it is possible to use the same criterion as defined at the calibration step or to use another criterion.</p>
 
 <pre><code class="r">OutputsCrit &lt;- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
 </code></pre>
@@ -574,6 +556,8 @@ str(OutputsModel)
 ##  SubCrit. KGE[Q] sd(sim)/sd(obs)          = 0.8163 
 ##  SubCrit. KGE[Q] mean(sim)/mean(obs)      = 1.0439
 </code></pre>
+
+<h1>References</h1>
 
 </body>
 

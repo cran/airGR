@@ -1,12 +1,19 @@
 \encoding{UTF-8}
+
+
 \name{Calibration}
 \alias{Calibration}
+
+
 \title{Calibration algorithm which optimises the error criterion selected as objective function using the provided functions}
+
 \usage{
 Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions, FUN_MOD,
   FUN_CRIT, FUN_CALIB = Calibration_Michel, FUN_TRANSFO = NULL,
   verbose = TRUE)
 }
+
+
 \arguments{
 \item{InputsModel}{[object of class \emph{InputsModel}] see \code{\link{CreateInputsModel}} for details}
 
@@ -16,22 +23,28 @@ Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions, FUN_MOD,
 
 \item{CalibOptions}{[object of class \emph{CalibOptions}] see \code{\link{CreateCalibOptions}} for details}
 
-\item{FUN_MOD}{[function] hydrological model function (e.g. RunModel_GR4J, RunModel_CemaNeigeGR4J)}
+\item{FUN_MOD}{[function] hydrological model function (e.g. \code{\link{RunModel_GR4J}}, \code{\link{RunModel_CemaNeigeGR4J}})}
 
-\item{FUN_CRIT}{[function] error criterion function (e.g. ErrorCrit_RMSE, ErrorCrit_NSE)}
+\item{FUN_CRIT}{[function] error criterion function (e.g. \code{\link{ErrorCrit_RMSE}}, \code{\link{ErrorCrit_NSE}})}
 
-\item{FUN_CALIB}{(optional) [function] calibration algorithm function (e.g. Calibration_Michel), default=Calibration_Michel}
+\item{FUN_CALIB}{(optional) [function] calibration algorithm function (e.g. \code{\link{Calibration_Michel}}), \code{default = Calibration_Michel}}
 
-\item{FUN_TRANSFO}{(optional) [function] model parameters transformation function, if the FUN_MOD used is native in the package FUN_TRANSFO is automatically defined}
+\item{FUN_TRANSFO}{(optional) [function] model parameters transformation function, if the \code{FUN_MOD} used is native in the package \code{FUN_TRANSFO} is automatically defined}
 
-\item{verbose}{(optional) [boolean] boolean indicating if the function is run in verbose mode or not, default=TRUE}
+\item{verbose}{(optional) [boolean] boolean indicating if the function is run in verbose mode or not, default = \code{TRUE}}
 }
+
+
 \value{
 [list] see \code{\link{Calibration_Michel}}
 }
+
+
 \description{
-Calibration algorithm which optimises the error criterion selected as objective function using the provided functions. \cr
+Calibration algorithm which optimises the error criterion selected as objective function using the provided functions.
 }
+
+
 \examples{
 library(airGR)
 
@@ -81,9 +94,13 @@ InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_KGE, InputsModel = InputsMo
                                 RunOptions = RunOptions, Qobs = BasinObs$Qmm[Ind_Run])
 OutputsCrit <- ErrorCrit_KGE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
 }
+
+
 \author{
-Laurent Coron (June 2014)
+Laurent Coron
 }
+
+
 \seealso{
 \code{\link{Calibration_Michel}},
          \code{\link{ErrorCrit}}, \code{\link{TransfoParam}},

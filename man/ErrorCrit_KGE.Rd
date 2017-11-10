@@ -1,10 +1,18 @@
 \encoding{UTF-8}
+
+
 \name{ErrorCrit_KGE}
 \alias{ErrorCrit_KGE}
+
+
 \title{Error criterion based on the KGE formula}
+
+
 \usage{
 ErrorCrit_KGE(InputsCrit, OutputsModel, warnings = TRUE, verbose = TRUE)
 }
+
+
 \arguments{
 \item{InputsCrit}{[object of class \emph{InputsCrit}] see \code{\link{CreateInputsCrit}} for details}
 
@@ -14,6 +22,8 @@ ErrorCrit_KGE(InputsCrit, OutputsModel, warnings = TRUE, verbose = TRUE)
 
 \item{verbose}{(optional) [boolean] boolean indicating if the function is run in verbose mode or not, default = \code{TRUE}}
 }
+
+
 \value{
 [list] list containing the function outputs organised as follows:
          \tabular{ll}{
@@ -23,28 +33,46 @@ ErrorCrit_KGE(InputsCrit, OutputsModel, warnings = TRUE, verbose = TRUE)
          \emph{$SubCritNames   }   \tab   [character] names of the components of the criterion \cr
          \emph{$CritBestValue  }   \tab   [numeric] theoretical best criterion value \cr
          \emph{$Multiplier     }   \tab   [numeric] integer indicating whether the criterion is indeed an error (+1) or an efficiency (-1) \cr
-         \emph{$Ind_notcomputed}   \tab   [numeric] indices of the time steps where InputsCrit$BoolCrit=FALSE or no data is available \cr
+         \emph{$Ind_notcomputed}   \tab   [numeric] indices of the time steps where \emph{InputsCrit$BoolCrit} = \code{FALSE} or no data is available \cr
          }
 }
+
+
 \description{
 Function which computes an error criterion based on the KGE formula proposed by Gupta et al. (2009).
 }
+
+
 \details{
 In addition to the criterion value, the function outputs include a multiplier (-1 or +1) which allows 
-the use of the function for model calibration: the product CritValue*Multiplier is the criterion to be minimised (Multiplier=-1 for KGE).
+the use of the function for model calibration: the product CritValue * Multiplier is the criterion to be minimised (Multiplier = -1 for KGE).\cr\cr
+The KGE formula is
+\deqn{KGE = 1 - \sqrt{(r - 1)^2 + (\alpha - 1)^2 + (\beta - 1)^2}}{KGE = 1 - sqrt((r - 1)² + (\alpha - 1)² + (\beta - 1)²)}
+with the following sub-criteria:
+\deqn{r = \mathrm{the\: linear\: correlation\: coefficient\: between\:} sim\: \mathrm{and\:} obs}{r = the linear correlation coefficient between Q[sim] and Q[obs]}
+\deqn{\alpha = \frac{\sigma_{sim}}{\sigma_{obs}}}{\alpha = \sigma[sim] / \sigma[obs]}
+\deqn{\beta = \frac{\mu_{sim}}{\mu_{obs}}}{\beta = \mu[sim] / \mu[obs]}
 }
+
+
 \examples{
 ## see example of the ErrorCrit function
 }
+
+
 \author{
-Laurent Coron (June 2014)
+Laurent Coron
 }
+
+
 \references{
 Gupta, H. V., Kling, H., Yilmaz, K. K. and Martinez, G. F. (2009), 
       Decomposition of the mean squared error and NSE performance criteria: Implications
       for improving hydrological modelling, Journal of Hydrology, 377(1-2), 80-91, doi:10.1016/j.jhydrol.2009.08.003. \cr
 }
+
+
 \seealso{
-\code{\link{ErrorCrit_RMSE}}, \code{\link{ErrorCrit_NSE}}, \code{\link{ErrorCrit_KGE2}}
+\code{\link{ErrorCrit}}, \code{\link{ErrorCrit_RMSE}}, \code{\link{ErrorCrit_NSE}}, \code{\link{ErrorCrit_KGE2}}
 }
 

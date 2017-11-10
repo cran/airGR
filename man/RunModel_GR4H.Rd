@@ -1,10 +1,18 @@
 \encoding{UTF-8}
+
+
 \name{RunModel_GR4H}
 \alias{RunModel_GR4H}
+
+
 \title{Run with the GR4H hydrological model}
+
+
 \usage{
 RunModel_GR4H(InputsModel, RunOptions, Param)
 }
+
+
 \arguments{
 \item{InputsModel}{[object of class \emph{InputsModel}] see \code{\link{CreateInputsModel}} for details}
 
@@ -18,6 +26,8 @@ GR4H X3      \tab routing store capacity [mm]                                   
 GR4H X4      \tab unit hydrograph time constant [h]                             \cr
 }}
 }
+
+
 \value{
 [list] list containing the function outputs organised as follows:                                         
          \tabular{ll}{                                                                                         
@@ -27,7 +37,7 @@ GR4H X4      \tab unit hydrograph time constant [h]                             
          \emph{$Prod    }          \tab [numeric] series of production store level [mm]                        \cr
          \emph{$AE      }          \tab [numeric] series of actual evapotranspiration [mm/h]                          \cr
          \emph{$Perc    }          \tab [numeric] series of percolation (PERC) [mm/h]                                 \cr
-         \emph{$PR      }          \tab [numeric] series of PR=PN-PS+PERC [mm/h]                                      \cr
+         \emph{$PR      }          \tab [numeric] series of PR=Pn-Ps+Perc [mm/h]                                      \cr
          \emph{$Q9      }          \tab [numeric] series of UH1 outflow (Q9) [mm/h]                                   \cr
          \emph{$Q1      }          \tab [numeric] series of UH2 outflow (Q1) [mm/h]                                   \cr
          \emph{$Rout    }          \tab [numeric] series of routing store level [mm]                           \cr
@@ -35,18 +45,24 @@ GR4H X4      \tab unit hydrograph time constant [h]                             
          \emph{$AExch   }          \tab [numeric] series of actual exchange between catchments (1+2) [mm/h]           \cr
          \emph{$QR      }          \tab [numeric] series of routing store outflow (QR) [mm/h]                         \cr
          \emph{$QD      }          \tab [numeric] series of direct flow from UH2 after exchange (QD) [mm/h]           \cr
-         \emph{$Qsim    }          \tab [numeric] series of Qsim [mm/h]                                               \cr
-         \emph{$StateEnd}          \tab [numeric] states at the end of the run (res. levels, UH1 levels, UH2 levels) [mm] \cr
+         \emph{$Qsim    }          \tab [numeric] series of simulated discharge [mm/h]                                               \cr
+         \emph{$StateEnd}          \tab [numeric] states at the end of the run (res. levels, UH1 levels, UH2 levels) [mm], see \code{\link{CreateIniStates}} for more details \cr
          }                                                                                                     
          (refer to the provided references or to the package source code for further details on these model outputs)
 }
+
+
 \description{
 Function which performs a single run for the GR4H hourly lumped model.
 }
+
+
 \details{
 For further details on the model, see the references section.
 For further details on the argument structures and initialisation options, see \code{\link{CreateRunOptions}}.
 }
+
+
 \examples{
 library(airGR)
 
@@ -76,9 +92,13 @@ InputsCrit  <- CreateInputsCrit(FUN_CRIT=ErrorCrit_NSE,InputsModel=InputsModel,
                                 RunOptions=RunOptions,Qobs=BasinObs$Qmm[Ind_Run])
 OutputsCrit <- ErrorCrit_NSE(InputsCrit=InputsCrit,OutputsModel=OutputsModel)
 }
+
+
 \author{
-Laurent Coron (July 2014)
+Laurent Coron, Charles Perrin, Thibaut Mathevet
 }
+
+
 \references{
 Mathevet, T. (2005), 
       Quels modèles pluie-débit globaux pour le pas de temps horaire ? Développement empirique et comparaison de modèles sur un large échantillon de bassins versants, 
@@ -86,8 +106,10 @@ Mathevet, T. (2005),
 Le Moine, N. (2008), Le bassin versant de surface vu par le souterrain : une voie d'amélioration des performances
       et du réalisme des modèles pluie-débit ?, PhD thesis (french), UPMC, Paris, France. \cr      
 }
+
+
 \seealso{
 \code{\link{RunModel_GR4J}},
-         \code{\link{CreateInputsModel}}, \code{\link{CreateRunOptions}}.
+         \code{\link{CreateInputsModel}}, \code{\link{CreateRunOptions}}, \code{\link{CreateIniStates}}.
 }
 

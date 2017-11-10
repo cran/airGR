@@ -9,7 +9,7 @@ RunModel_CemaNeige <- function(InputsModel,RunOptions,Param){
       if(inherits(InputsModel,"CemaNeige"  )==FALSE){ stop("InputsModel must be of class 'CemaNeige'   \n"); return(NULL); }  
       if(inherits(RunOptions,"RunOptions"  )==FALSE){ stop("RunOptions must be of class 'RunOptions'   \n"); return(NULL); }  
       if(inherits(RunOptions,"CemaNeige"   )==FALSE){ stop("RunOptions must be of class 'CemaNeige'    \n"); return(NULL); }  
-      if(!is.vector(Param)){ stop("Param must be a vector \n"); return(NULL); }
+      if(!is.vector(Param) | !is.numeric(Param)){ stop("Param must be a numeric vector \n"); return(NULL); }
       if(sum(!is.na(Param))!=NParam){ stop(paste("Param must be a vector of length ",NParam," and contain no NA \n",sep="")); return(NULL); }
       Param <- as.double(Param);
 
@@ -32,7 +32,7 @@ RunModel_CemaNeige <- function(InputsModel,RunOptions,Param){
 
     ##Call_DLL_CemaNeige_________________________
       for(iLayer in 1:NLayers){
-        StateStartCemaNeige <- RunOptions$IniStates[ (2*(iLayer-1)+1):(2*(iLayer-1)+2) ];
+        StateStartCemaNeige <- RunOptions$IniStates[(7+20+40) + c(iLayer, iLayer+NLayers)]
         RESULTS <- .Fortran("frun_CemaNeige",PACKAGE="airGR",
                         ##inputs
                             LInputs=as.integer(length(IndPeriod1)),                                        ### length of input and output series
@@ -52,6 +52,7 @@ RunModel_CemaNeige <- function(InputsModel,RunOptions,Param){
                          )
         RESULTS$Outputs[ round(RESULTS$Outputs ,3)==(-999.999)] <- NA;
         RESULTS$StateEnd[round(RESULTS$StateEnd,3)==(-999.999)] <- NA;
+        
 
         ##Data_storage
         CemaNeigeLayers[[iLayer]] <- lapply(seq_len(RESULTS$NOutputs), function(i) RESULTS$Outputs[IndPeriod2,i]);
@@ -60,7 +61,16 @@ RunModel_CemaNeige <- function(InputsModel,RunOptions,Param){
         rm(RESULTS); 
       } ###ENDFOR_iLayer
       names(CemaNeigeLayers) <- paste("Layer",formatC(1:NLayers,width=2,flag="0"),sep="");
-
+      
+      if (ExportStateEnd) { 
+        CemaNeigeStateEnd <- CreateIniStates(FUN_MOD = RunModel_CemaNeige, InputsModel = InputsModel,
+                                             ProdStore = NULL, RoutStore = NULL, ExpStore = NULL,
+                                             UH1 = NULL, UH2 = NULL,
+                                             GCemaNeigeLayers = CemaNeigeStateEnd[seq_len(2*NLayers)[seq_len(2*NLayers) %% 2 == 1]],
+                                             eTGCemaNeigeLayers = CemaNeigeStateEnd[seq_len(2*NLayers)[seq_len(2*NLayers) %% 2 == 0]],
+                                             verbose = FALSE)
+      }
+      
       ##Output_data_preparation
       if(ExportDatesR==FALSE & ExportStateEnd==FALSE){
         OutputsModel <- list(CemaNeigeLayers);

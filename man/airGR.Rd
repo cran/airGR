@@ -4,7 +4,7 @@
 \encoding{UTF-8}
 \title{Suite of GR Hydrological Models for Precipitation-Runoff Modelling}
 \description{
-This package brings into R the hydrological modelling tools used at Irstea-Antony (HBAN Research Unit, France), including rainfall-runoff models (GR4H, GR4J, GR5J, GR6J, GR2M, GR1A) and a snowmelt module (CemaNeige). Each model core is coded in FORTRAN to ensure low computational time. The other package functions (i.e. mainly the calibration algorithm and the computation of the efficiency criteria) are coded in R. \cr
+This package brings into R the hydrological modelling tools used at IRSTEA-Antony (HBAN Research Unit, France), including rainfall-runoff models (\strong{GR4H}, \strong{GR4J}, \strong{GR5J}, \strong{GR6J}, \strong{GR2M}, \strong{GR1A}) and a snow accumulation and melt model (\strong{CemaNeige}). Each model core is coded in FORTRAN to ensure low computational time. The other package functions (i.e. mainly the calibration algorithm and the computation of the efficiency criteria) are coded in R. \cr
 
 
 ##### Functions and objects #####
@@ -21,15 +21,15 @@ In order to limit the risk of mis-use and increase the flexibility of these main
 
 ##### Models #####
 
-Six hydrological models and one snow melt and accumulation module are implemented in airGR. The snow module can also be used alone or with the daily hydrological models, and each hydrological model can either be used alone or together with the snow module. \cr
+Six hydrological models and one snow melt and accumulation model are implemented in airGR. The snow model can also be used alone or with the daily hydrological models, and each hydrological model can either be used alone or together with the snow model. \cr
 These models can be called within airGR using the following functions: \cr 
 - \code{\link{RunModel_GR4H}}: four-parameter hourly lumped hydrological model (Mathevet, 2005) \cr
-- \code{\link{RunModel_GR4J}}: four-parameter daily lumped hydrological model (Perrin et al., 2003) \cr
+- \code{\link{RunModel_GR4J}}: four-parameter daily lumped hydrological model (Perrin \emph{et al.}, 2003) \cr
 - \code{\link{RunModel_GR5J}}: five-parameter daily lumped hydrological model (Le Moine, 2008) \cr
-- \code{\link{RunModel_GR6J}}: six-parameter daily lumped hydrological model (Pushpalatha et al., 2011) \cr
-- \code{\link{RunModel_GR2M}}: two-parameter monthly lumped hydrological model (Mouelhi, 2003 ; Mouelhi et al., 2006a) \cr
-- \code{\link{RunModel_GR1A}}: one-parameter yearly lumped hydrological model (Mouelhi, 2003 ; Mouelhi et al., 2006b) \cr
-- \code{\link{RunModel_CemaNeige}}: two-parameter degree-day snow melt and accumulation daily module (Valéry et al., 2014) \cr
+- \code{\link{RunModel_GR6J}}: six-parameter daily lumped hydrological model (Pushpalatha \emph{et al.}, 2011) \cr
+- \code{\link{RunModel_GR2M}}: two-parameter monthly lumped hydrological model (Mouelhi, 2003 ; Mouelhi \emph{et al.}, 2006a) \cr
+- \code{\link{RunModel_GR1A}}: one-parameter yearly lumped hydrological model (Mouelhi, 2003 ; Mouelhi \emph{et al.}, 2006b) \cr
+- \code{\link{RunModel_CemaNeige}}: two-parameter degree-day snow melt and accumulation daily model (Valéry \emph{et al.}, 2014) \cr
 - \code{\link{RunModel_CemaNeigeGR4J}}: combined use of GR4J and CemaNeige \cr
 - \code{\link{RunModel_CemaNeigeGR5J}}: combined use of GR5J and CemaNeige \cr
 - \code{\link{RunModel_CemaNeigeGR6J}}: combined use of GR6J and CemaNeige \cr
@@ -38,23 +38,24 @@ These models can be called within airGR using the following functions: \cr
 ##### How to get started #####
 
 To learn how to use the functions from the airGR package, it is recommended to follow the five steps described below: \cr
-1. refer to the help for \code{\link{RunModel_GR4H}} then run the provided example to assess how to make a simulation ; \cr
-2. refer to the help for \code{\link{CreateInputsModel}} to understand how the inputs of a model are prepared/organised ; \cr
-3. refer to the help for \code{\link{CreateRunOptions}} to understand how the run options of a model are parametrised/organised ; \cr
-4. refer to the help for \code{\link{ErrorCrit_NSE}} and \code{\link{CreateInputsCrit}} to understand how the computation of an error criterion is prepared/made ; \cr
-5. refer to the help for \code{\link{Calibration_Michel}}, run the provided example and then refer to the help for \code{\link{CreateCalibOptions}} to understand how a model calibration is prepared/made ; \cr
+1. refer to the help for \code{\link{RunModel_GR4J}} then run the provided example to assess how to make a simulation; \cr
+2. refer to the help for \code{\link{CreateInputsModel}} to understand how the inputs of a model are prepared/organised; \cr
+3. refer to the help for \code{\link{CreateRunOptions}} to understand how the run options of a model are parametrised/organised; \cr
+4. refer to the help for \code{\link{ErrorCrit_NSE}} and \code{\link{CreateInputsCrit}} to understand how the computation of an error criterion is prepared/made; \cr
+5. refer to the help for \code{\link{Calibration_Michel}}, run the provided example and then refer to the help for \code{\link{CreateCalibOptions}} to understand how a model calibration is prepared/made. \cr
 
+For more information and to get started with the package, you can refer to the vignette (\code{vignette("airGR")}) and go on the \href{https://webgr.irstea.fr/airGR-website}{airGR website}.
 
 ##### References #####
 
-- Le Moine, N. (2008), Le bassin versant de surface vu par le souterrain : une voie d'amélioration des performances et du réalisme des modèles pluie-débit ?, PhD thesis (in French), UPMC - Cemagref Antony, Paris, France, 324 pp. \cr
-- Mathevet, T. (2005), Quels modèles pluie-débit globaux pour le pas de temps horaire ? Développement empirique et comparaison de modèles sur un large échantillon de bassins versants, PhD thesis (in French), ENGREF - Cemagref Antony, Paris, France, 463 pp. \cr
-- Mouelhi S. (2003), Vers une chaîne cohérente de modèles pluie-débit conceptuels globaux aux pas de temps pluriannuel, annuel, mensuel et journalier, PhD thesis (in French), ENGREF - Cemagref Antony, Paris, France, 323 pp. \cr
-- Mouelhi, S., C. Michel, C. Perrin and V. Andréassian (2006a), Stepwise development of a two-parameter monthly water balance model, Journal of Hydrology, 318(1-4), 200-214, doi:10.1016/j.jhydrol.2005.06.014. \cr
-- Mouelhi, S., C. Michel, C. Perrin. & V. Andreassian (2006b), Linking stream flow to rainfall at the annual time step: the Manabe bucket model revisited, Journal of Hydrology, 328, 283-296, doi:10.1016/j.jhydrol.2005.12.022. \cr
-- Perrin, C., C. Michel and V. Andréassian (2003), Improvement of a parsimonious model for streamflow simulation, Journal of Hydrology, 279(1-4), 275-289, doi:10.1016/S0022-1694(03)00225-7. \cr
-- Pushpalatha, R., C. Perrin, N. Le Moine, T. Mathevet and V. Andréassian (2011), A downward structural sensitivity analysis of hydrological models to improve low-flow simulation, Journal of Hydrology, 411(1-2), 66-76, doi:10.1016/j.jhydrol.2011.09.034. \cr
-- Valéry, A., V. Andréassian and C. Perrin (2014), "As simple as possible but not simpler": What is useful in a temperature-based snow-accounting routine? Part 2 - Sensitivity analysis of the Cemaneige snow accounting routine on 380 catchments, Journal of Hydrology, 517(0): 1176-1187, doi: 1176-1187, doi:10.1016/j.jhydrol.2014.04.058. \cr
+- Le Moine, N. (2008). Le bassin versant de surface vu par le souterrain : une voie d'amélioration des performances et du réalisme des modèles pluie-débit ?, PhD thesis (in French), UPMC - Cemagref Antony, Paris, France, 324 pp. \cr
+- Mathevet, T. (2005). Quels modèles pluie-débit globaux pour le pas de temps horaire ? Développement empirique et comparaison de modèles sur un large échantillon de bassins versants, PhD thesis (in French), ENGREF - Cemagref Antony, Paris, France, 463 pp. \cr
+- Mouelhi S. (2003). Vers une chaîne cohérente de modèles pluie-débit conceptuels globaux aux pas de temps pluriannuel, annuel, mensuel et journalier, PhD thesis (in French), ENGREF - Cemagref Antony, Paris, France, 323 pp. \cr
+- Mouelhi, S., C. Michel, C. Perrin and V. Andréassian (2006a). Stepwise development of a two-parameter monthly water balance model, Journal of Hydrology, 318(1-4), 200-214, doi:10.1016/j.jhydrol.2005.06.014. \cr
+- Mouelhi, S., C. Michel, C. Perrin. & V. Andreassian (2006b). Linking stream flow to rainfall at the annual time step: the Manabe bucket model revisited, Journal of Hydrology, 328, 283-296, doi:10.1016/j.jhydrol.2005.12.022. \cr
+- Perrin, C., C. Michel and V. Andréassian (2003). Improvement of a parsimonious model for streamflow simulation, Journal of Hydrology, 279(1-4), 275-289, doi:10.1016/S0022-1694(03)00225-7. \cr
+- Pushpalatha, R., C. Perrin, N. Le Moine, T. Mathevet and V. Andréassian (2011). A downward structural sensitivity analysis of hydrological models to improve low-flow simulation, Journal of Hydrology, 411(1-2), 66-76, doi:10.1016/j.jhydrol.2011.09.034. \cr
+- Valéry, A., V. Andréassian and C. Perrin (2014). "As simple as possible but not simpler": What is useful in a temperature-based snow-accounting routine? Part 2 - Sensitivity analysis of the Cemaneige snow accounting routine on 380 catchments, Journal of Hydrology, 517(0): 1176-1187, doi: 1176-1187, doi:10.1016/j.jhydrol.2014.04.058. \cr
 
 }
 

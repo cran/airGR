@@ -1,10 +1,18 @@
 \encoding{UTF-8}
+
+
 \name{ErrorCrit}
 \alias{ErrorCrit}
+
+
 \title{Error criterion using the provided function}
+
+
 \usage{
 ErrorCrit(InputsCrit, OutputsModel, FUN_CRIT, warnings = TRUE, verbose = TRUE)
 }
+
+
 \arguments{
 \item{InputsCrit}{[object of class \emph{InputsCrit}] see \code{\link{CreateInputsCrit}} for details}
 
@@ -19,9 +27,13 @@ ErrorCrit(InputsCrit, OutputsModel, FUN_CRIT, warnings = TRUE, verbose = TRUE)
 \value{
 [list] list containing the function outputs, see \code{\link{ErrorCrit_RMSE}} or \code{\link{ErrorCrit_NSE}} for details
 }
+
+
 \description{
 Function which computes an error criterion with the provided function.
 }
+
+
 \examples{
 library(airGR)
 
@@ -79,9 +91,13 @@ InputsCrit <- CreateInputsCrit(FUN_CRIT = ErrorCrit_KGE, InputsModel = InputsMod
                                BoolCrit = BoolCrit, transfo = transfo)
 OutputsCrit <- ErrorCrit_KGE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
 }
+
+
 \author{
-Laurent Coron (June 2014)
+Laurent Coron
 }
+
+
 \seealso{
 \code{\link{ErrorCrit_RMSE}}, \code{\link{ErrorCrit_NSE}}, \code{\link{ErrorCrit_KGE}}
 }

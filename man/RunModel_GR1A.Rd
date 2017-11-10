@@ -1,10 +1,18 @@
 \encoding{UTF-8}
+
+
 \name{RunModel_GR1A}
 \alias{RunModel_GR1A}
+
+
 \title{Run with the GR1A hydrological model}
+
+
 \usage{
 RunModel_GR1A(InputsModel, RunOptions, Param)
 }
+
+
 \arguments{
 \item{InputsModel}{[object of class \emph{InputsModel}] see \code{\link{CreateInputsModel}} for details}
 
@@ -15,24 +23,32 @@ RunModel_GR1A(InputsModel, RunOptions, Param)
 GR1A X1      \tab model parameter [-] \cr
 }}
 }
+
+
 \value{
 [list] list containing the function outputs organised as follows:                                         
          \tabular{ll}{                                                                                         
          \emph{$DatesR  }          \tab [POSIXlt] series of dates                                                     \cr
          \emph{$PotEvap }          \tab [numeric] series of input potential evapotranspiration [mm/y]                 \cr
          \emph{$Precip  }          \tab [numeric] series of input total precipitation [mm/y]                          \cr
-         \emph{$Qsim    }          \tab [numeric] series of Qsim [mm/y]                                               \cr
+         \emph{$Qsim    }          \tab [numeric] series of simulated discharge [mm/y]                                \cr
          \emph{$StateEnd}          \tab [numeric] states at the end of the run (NULL) [-] \cr         
          }                                                                                                     
          (refer to the provided references or to the package source code for further details on these model outputs)
 }
+
+
 \description{
 Function which performs a single run for the GR1A annual lumped model over the test period.
 }
+
+
 \details{
 For further details on the model, see the references section.
 For further details on the argument structures and initialisation options, see \code{\link{CreateRunOptions}}.
 }
+
+
 \examples{
 library(airGR)
 
@@ -75,12 +91,21 @@ InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsMo
                                 RunOptions = RunOptions, Qobs = BasinObs$Qmm[Ind_Run])
 OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
 }
+
+
 \author{
-Laurent Coron, Claude Michel (March 2015)
+Laurent Coron, Claude Michel
 }
+
+
 \references{
 Mouelhi S. (2003), 
       Vers une chaîne cohérente de modèles pluie-débit conceptuels globaux aux pas de temps pluriannuel, annuel, mensuel et journalier,
       PhD thesis (in French), ENGREF, Cemagref Antony, France. \cr
+}
+
+
+\seealso{
+\code{\link{CreateInputsModel}}, \code{\link{CreateRunOptions}}.
 }
 

@@ -238,7 +238,7 @@ C Routing store
       AEXCH1=EXCH
       IF((St(2)+StUH1(1)+EXCH).LT.0.) AEXCH1=-St(2)-StUH1(1)
       St(2)=St(2)+StUH1(1)+EXCH
-      IF(St(2).LT.0.)St(1)=0.
+      IF(St(2).LT.0.)St(2)=0.
 
 	  ! speed-up
 	  Rr = St(2)/Param(3)

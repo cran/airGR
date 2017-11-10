@@ -1,0 +1,168 @@
+---
+title: "Parameter estimation within a Bayesian MCMC framework"
+author: "François Bourgin"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{MCMC Parameter estimation}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+
+```{r, include=FALSE, fig.keep='none', results='hide'}
+library(airGR)
+library(coda)
+library(FME)
+library(ggmcmc)
+library(dplyr)
+# source("airGR.R")
+```
+
+
+
+# Introduction
+
+## Scope
+
+In this vignette, we give an example of parameter estimation within a Bayesian MCMC approach.
+
+We use the **GR4J** model and we assume that the R global environment contains data and functions from the **airGR** [Get Started](V01_get_started.html) vignette.
+
+```{r, warning=FALSE, fig.keep='none', results='hide', fig.height=10, fig.width=10, eval=TRUE, echo=FALSE, message=FALSE}
+example("Calibration_Michel", echo = FALSE, ask = FALSE)
+```
+```{r, echo=TRUE, eval=FALSE}
+example("Calibration_Michel")
+```
+
+Please refer to the [2.1 Plugging in new calibration](V02.1_param_optim.html) vignette for explanations on how to plug in a parameter estimation algorithm to **airGR**.
+
+
+Please note that this vignette is only for illustration purposes and does not provide any guidance about which parameter inference strategy is recommended for the family of the GR models.
+
+## Standard Least Squares (SLS) Bayesian inference
+
+We show how to use the DRAM algorithm for SLS Bayesian inference, with the `modMCMC()` function of the [FME](https://cran.r-project.org/package=FME) package.
+First, we need to define a function that returns twice the opposite of the log-likelihood for a given parameter set.
+
+Nota: in the `RunAirGR4J()` function, the computation of the log-likelihood is simplified in order to ensure a good computing performance. It corresponds to a translation  of the two following lines. 
+```{r, echo=TRUE, eval=FALSE}
+  Likelihood <- sum((ObsY - ModY)^2, na.rm = TRUE)^(-sum(!is.na(ObsY)) / 2)
+  LL <- -2 * log(Likelihood)
+
+```
+
+In our simplified setting of Gaussian likelihood with measurement error integrated out, the log of the sum of squared error is related to the log-likelihood.
+
+Note that we do not use here any discharge transformation, although applying Box-Cox transformation is quite popular in hydrological modelling.
+
+```{r, results='hide'}
+RunAirGR4J <- function(Param_Optim) {
+  ## Transformation to real space
+  Param_Optim_Vre <- airGR::TransfoParam_GR4J(ParamIn = Param_Optim,
+                                              Direction = "TR")
+  ## Simulation given a parameter set
+  OutputsModel <- airGR::RunModel_GR4J(InputsModel = InputsModel,
+                                       RunOptions = RunOptions,
+                                       Param = Param_Optim_Vre)
+  ## Computation of the log-likelihood: N * log(SS)
+  ObsY <- InputsCrit$Qobs
+  ModY <- OutputsModel$Qsim
+  LL <- sum(!is.na(ObsY)) * log(sum((ObsY - ModY)^2, na.rm = TRUE))
+}
+```
+
+# MCMC algorithm for Bayesian inference
+
+## Estimation of the best-fit parameters as a starting point
+We start by using the PORT optimization routine to estimate the best-fit parameters.
+```{r, results='hide'}
+optPORT <- stats::nlminb(start = c(4.1, 3.9, -0.9, -8.7), 
+                         objective = RunAirGR4J,
+                         lower = rep(-9.9, times = 4), upper = rep(9.9, times = 4),
+                         control = list(trace = 1))
+IniParam <- optPORT$par
+```
+
+## Running 3 chains for convergence assessment
+
+We run 3 chains with different initial values to assess the convergence of the Markov chains.
+The number of iterations is fixed to 2000 with a burning length of 0.
+
+Nota: in this example, there are relatively few iterations (2000), in order to limit the running time of this vignette. In addition, the burning length has been set to zero in order to show the convergence process but, in a true exercise, it is better to define more iterations (5000) and to burn the first iterations.
+
+With the DRAM algorithm, the covariance of the proposal is updated every 100 runs and delayed rejection is applied.
+
+```{r, results='hide'}
+ListIniParam <- data.frame(Chain1 = IniParam, Chain2 = IniParam, Chain3 = IniParam,
+                           row.names = paste0("X", 1:4))
+ListIniParam <- sweep(ListIniParam, MARGIN = 2, STATS = c(1, 0.9, 1.1), FUN = "*")
+ListIniParam[ListIniParam < -9.9] <- -9.9
+ListIniParam[ListIniParam > +9.9] <- +9.9
+
+mcmcDRAM <- apply(ListIniParam, 2, function(iListIniParam) {
+  FME::modMCMC(f            = RunAirGR4J,
+               p            = iListIniParam,
+               lower        = rep(-9.9, times = 4), ## lower bounds for GR4J
+               upper        = rep(+9.9, times = 4), ## upper bounds for GR4J
+               niter        = 2000,
+               jump         = 0.01,
+               outputlength = 2000,
+               burninlength = 0,
+               updatecov    = 100, ## Adaptative Metropolis
+               ntrydr       = 2)   ## Delayed Rejection
+})
+```
+
+## MCMC diagnostics and visualisation tools
+
+There are several diagnostics that can be used to check the convergence of the chains.
+The R package [coda](https://cran.r-project.org/package=coda) provides several diagnostic tests.
+
+Among others, the Gelman and Rubin's convergence can be used. A value close to 1 suggests acceptable convergence.
+The result will be better with more iterations than 2000. As we kept the iterations during the convergence process, we have to set the `autoburnin` argument to `TRUE` in order to consider only the second half of the series.
+
+Note that we rescale model parameter sets of the GR4J model from the transformed space to the real space.
+
+```{r, results='hide'}
+MultDRAM <- coda::as.mcmc(lapply(mcmcDRAM, function(x) {
+  coda::as.mcmc(airGR::TransfoParam_GR4J(as.matrix(x$pars), Direction = "TR"))
+  }))
+GelRub <- coda::gelman.diag(MultDRAM, autoburnin = TRUE)$mpsrf
+GelRub
+```
+
+In addition, graphical tools can be used, with for example the [ggmcmc](https://cran.r-project.org/package=ggmcmc) package.
+
+
+
+First, the evolution of the Markov chains can be seen with a traceplot:
+
+```{r, fig.width=6, fig.height=9, warning=FALSE}
+ParamDRAM <- ggmcmc::ggs(MultDRAM) ## to convert objet for using by all ggs_* graphical functions
+ggmcmc::ggs_traceplot(ParamDRAM)
+
+```
+
+The posterior density for each parameter can then be visualised:
+```{r, fig.width=6, fig.height=9, warning=FALSE}
+ParamDRAM_burn <- dplyr::filter(ParamDRAM, Iteration > 1000) # to keep only the second half of the series
+ggmcmc::ggs_density(ParamDRAM_burn)
+```
+
+Finally, a paired plot can be useful to look at the correlation between parameters.
+Highly correlated parameters can be seen as an indication for a structural deficit of the model used.
+```{r, fig.width=6, fig.height=6}
+ggmcmc::ggs_pairs(ParamDRAM_burn, lower = list(continuous = "density"))
+```
+
+## Exploring further possibilities
+
+We only presented one MCMC algorithm and one parameter inference setting.
+Nonetheless, other approaches can be explored within the same framework.
+
+One can for example use different data transformations to deal with the limitations of the Gaussian error model.
+
+<!-- Another extension is to infer the parameters of more advanced error model in addition of the **GR4J** model parameters.  -->
+

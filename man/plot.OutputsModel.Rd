@@ -1,12 +1,21 @@
 \encoding{UTF-8}
+
+
 \name{plot.OutputsModel}
 \alias{plot.OutputsModel}
 \alias{plot_OutputsModel}
+
+
 \title{Default preview of model outputs}
+
+
 \usage{
 \method{plot}{OutputsModel}(x, Qobs = NULL, IndPeriod_Plot = NULL,
-  BasinArea = NULL, which = "all", log_scale = FALSE, verbose = TRUE, ...)
+  BasinArea = NULL, which = "all", log_scale = FALSE,
+  cex.axis = 1, cex.lab = 0.9, cex.leg = 0.9, lwd = 1, verbose = TRUE, ...)
 }
+
+
 \arguments{
 \item{x}{[object of class \emph{OutputsModel}] list of model outputs (which must at least include DatesR, Precip and Qsim) [POSIXlt, mm, mm]}
 
@@ -18,18 +27,32 @@
 
 \item{which}{(optional) [character] choice of plots \cr (e.g. c(\code{"Precip"}, \code{"Temp"}, \code{"SnowPack"}, \code{"Flows"}, \code{"Regime"}, \code{"CumFreq"}, \code{"CorQQ"})), default = \code{"all"}}
 
-\item{log_scale}{(optional) [boolean] boolean indicating if the flow axis is to be logarithmic, default = \code{FALSE}}
+\item{log_scale}{(optional) [boolean] indicating if the flow axis is to be logarithmic, default = \code{FALSE}}
 
-\item{verbose}{(optional) [boolean] boolean indicating if the function is run in verbose mode or not, default = \code{TRUE}}
+\item{cex.axis}{(optional) [numeric] the magnification to be used for axis annotation relative to the current setting of \code{cex}}
+
+\item{cex.lab}{(optional) [numeric] the magnification to be used for x and y labels relative to the current setting of \code{cex}}
+
+\item{cex.leg}{(optional) [numeric] the magnification to be used for the legend labels relative to the current setting of \code{cex}}
+
+\item{lwd}{(optional) [numeric] the line width (a positive number)}
+
+\item{verbose}{(optional) [boolean] indicating if the function is run in verbose mode or not, default = \code{TRUE}}
 
 \item{...}{other parameters to be passed through to plotting functions}
 }
+
+
 \value{
-screen plot window
+Screen plot window.
 }
+
+
 \description{
-Function which creates a screen plot giving an overview of the model outputs
+Function which creates a screen plot giving an overview of the model outputs.
 }
+
+
 \details{
 Dashboard of results including various graphs (depending on the model):\cr
   (1) time series of total precipitation\cr
@@ -40,9 +63,13 @@ Dashboard of results including various graphs (depending on the model):\cr
   (6) correlation plot between simulated and observed flows (if observed flows provided)\cr
   (7) cumulative frequency plot for simulated flows (and observed flows if provided)
 }
+
+
 \author{
-Laurent Coron (June 2014),
-Olivier Delaigue,
-Guillaume Thirel
+Laurent Coron, Olivier Delaigue, Guillaume Thirel
 }
 
+
+\examples{
+### See examples of RunModel_GR4J or RunModel_CemaNeigeGR4J functions
+}

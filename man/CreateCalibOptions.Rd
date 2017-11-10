@@ -1,19 +1,27 @@
 \encoding{UTF-8}
+
+
 \name{CreateCalibOptions}
 \alias{CreateCalibOptions}
+
+
 \title{Creation of the CalibOptions object required but the Calibration functions}
+
+
 \usage{
 CreateCalibOptions(FUN_MOD, FUN_CALIB = Calibration_Michel,
   FUN_TRANSFO = NULL, FixedParam = NULL,
   SearchRanges = NULL, StartParamList = NULL,
   StartParamDistrib = NULL)
 }
+
+
 \arguments{
-\item{FUN_MOD}{[function] hydrological model function (e.g. RunModel_GR4J, RunModel_CemaNeigeGR4J)}
+\item{FUN_MOD}{[function] hydrological model function (e.g. \code{\link{RunModel_GR4J}}, \code{\link{RunModel_CemaNeigeGR4J}})}
 
-\item{FUN_CALIB}{(optional) [function] calibration algorithm function (e.g. Calibration_Michel), default=Calibration_Michel}
+\item{FUN_CALIB}{(optional) [function] calibration algorithm function (e.g. Calibration_Michel), default = \code{Calibration_Michel}}
 
-\item{FUN_TRANSFO}{(optional) [function] model parameters transformation function, if the FUN_MOD used is native in the package, FUN_TRANSFO is automatically defined}
+\item{FUN_TRANSFO}{(optional) [function] model parameters transformation function, if the \code{FUN_MOD} used is native in the package, \code{FUN_TRANSFO} is automatically defined}
 
 \item{FixedParam}{(optional) [numeric] vector giving the values set for the non-optimised parameter values (NParam columns, 1 line)
 \cr Example:
@@ -57,13 +65,19 @@ CreateCalibOptions(FUN_MOD, FUN_CALIB = Calibration_Michel,
          \emph{$StartParamDistrib}  \tab   [numeric] matrix of parameter values used for grid-screening calibration procedure \cr
          }
 }
+
+
 \description{
-Creation of the CalibOptions object required by the Calibration functions.
+Creation of the \emph{CalibOptions} object required by the \code{Calibration*} functions.
 }
+
+
 \details{
-Users wanting to use FUN_MOD, FUN_CALIB or FUN_TRANSFO functions that are not included in 
-the package must create their own CalibOptions object accordingly.
+Users wanting to use \code{FUN_MOD}, \code{FUN_CALIB} or \code{FUN_TRANSFO} functions that are not included in 
+the package must create their own \code{CalibOptions} object accordingly.
 }
+
+
 \examples{
 library(airGR)
 
@@ -114,9 +128,13 @@ InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_KGE, InputsModel = InputsMo
 OutputsCrit <- ErrorCrit_KGE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
 
 }
+
+
 \author{
-Laurent Coron (June 2014)
+Laurent Coron
 }
+
+
 \seealso{
 \code{\link{Calibration}}, \code{\link{RunModel}}
 }

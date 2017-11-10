@@ -1,11 +1,19 @@
 \encoding{UTF-8}
+
+
 \name{Calibration_Michel}
 \alias{Calibration_Michel}
+
+
 \title{Calibration algorithm optimises the error criterion selected as objective function using the Irstea-HBAN procedure described by C. Michel}
+
+
 \usage{
 Calibration_Michel(InputsModel, RunOptions, InputsCrit, CalibOptions,
   FUN_MOD, FUN_CRIT, FUN_TRANSFO = NULL, verbose = TRUE)
 }
+
+
 \arguments{
 \item{InputsModel}{[object of class \emph{InputsModel}] see \code{\link{CreateInputsModel}} for details}
 
@@ -15,14 +23,16 @@ Calibration_Michel(InputsModel, RunOptions, InputsCrit, CalibOptions,
 
 \item{CalibOptions}{[object of class \emph{CalibOptions}] see \code{\link{CreateCalibOptions}} for details}
 
-\item{FUN_MOD}{[function] hydrological model function (e.g. RunModel_GR4J, RunModel_CemaNeigeGR4J)}
+\item{FUN_MOD}{[function] hydrological model function (e.g. \code{\link{RunModel_GR4J}}, \code{\link{RunModel_CemaNeigeGR4J}})}
 
-\item{FUN_CRIT}{[function] error criterion function (e.g. ErrorCrit_RMSE, ErrorCrit_NSE)}
+\item{FUN_CRIT}{[function] error criterion function (e.g. \code{\link{ErrorCrit_RMSE}}, \code{\link{ErrorCrit_NSE}})}
 
-\item{FUN_TRANSFO}{(optional) [function] model parameters transformation function, if the FUN_MOD used is native in the package FUN_TRANSFO is automatically defined}
+\item{FUN_TRANSFO}{(optional) [function] model parameters transformation function, if the \code{FUN_MOD} used is native in the package \code{FUN_TRANSFO} is automatically defined}
 
-\item{verbose}{(optional) [boolean] boolean indicating if the function is run in verbose mode or not, default=TRUE}
+\item{verbose}{(optional) [boolean] boolean indicating if the function is run in verbose mode or not, default = \code{TRUE}}
 }
+
+
 \value{
 [list] list containing the function outputs organised as follows:
          \tabular{ll}{
@@ -37,13 +47,17 @@ Calibration_Michel(InputsModel, RunOptions, InputsCrit, CalibOptions,
          \emph{$CritBestValue}  \tab   [numeric] theoretical best criterion value \cr
          }
 }
+
+
 \description{
 Calibration algorithm optimises the error criterion selected as objective function. \cr
 \cr
-The algorithm is based on a local search procedure. 
-First, a screening is performed using either a rough predefined grid or a list of parameter sets
-and then a simple steepest descent local search algorithm is performed.
+The algorithm combines a global and a local approach. 
+First, a screening is performed using either a rough predefined grid or a list of parameter sets.
+Then a steepest descent local search algorithm is performed, starting from the result of the screening procedure.
 }
+
+
 \details{
 A screening is first performed either based on a rough predefined grid (considering various initial 
 values for each parameter) or from a list of initial parameter sets. \cr
@@ -58,8 +72,10 @@ by changing one by one the different parameters (+/- search step). \cr
 All these candidates are tested and the best one kept to be the starting point for the next    
 iteration. At the end of each iteration, the the search step is either increased or decreased to adapt    
 the progression speed. A composite step can occasionally be done. \cr
-The calibration algorithm stops when the search step becomes smaller than a predefined threshold. \cr
+The calibration algorithm stops when the search step becomes smaller than a predefined threshold.
 }
+
+
 \examples{
 library(airGR)
 
@@ -108,13 +124,19 @@ InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_KGE, InputsModel = InputsMo
                                 RunOptions = RunOptions, Qobs = BasinObs$Qmm[Ind_Run])
 OutputsCrit <- ErrorCrit_KGE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
 }
+
+
 \author{
 Laurent Coron, Claude Michel, Olivier Delaigue, Guillaume Thirel
 }
+
+
 \references{
 Michel, C. (1991),
        Hydrologie appliquée aux petits bassins ruraux, Hydrology handbook (in French), Cemagref, Antony, France.
 }
+
+
 \seealso{
 \code{\link{Calibration}},
          \code{\link{RunModel_GR4J}}, \code{\link{TransfoParam_GR4J}}, \code{\link{ErrorCrit_RMSE}},
