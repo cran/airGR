@@ -36,9 +36,9 @@ CemaNeige X2 \tab degree-day melt coefficient [mm/°C/d]                 \cr
          \emph{$CemaNeigeLayers[[iLayer]]$SnowPack     }   \tab [numeric] series of snow pack [mm]                           \cr
          \emph{$CemaNeigeLayers[[iLayer]]$ThermalState }   \tab [numeric] series of snow pack thermal state [°C]           \cr
          \emph{$CemaNeigeLayers[[iLayer]]$Gratio       }   \tab [numeric] series of Gratio [0-1]                             \cr
-         \emph{$CemaNeigeLayers[[iLayer]]$PotMelt      }   \tab [numeric] series of potential snow melt [mm]                 \cr
-         \emph{$CemaNeigeLayers[[iLayer]]$Melt         }   \tab [numeric] series of actual snow melt [mm]                    \cr
-         \emph{$CemaNeigeLayers[[iLayer]]$PliqAndMelt  }   \tab [numeric] series of liquid precip. + actual snow melt [mm]   \cr
+         \emph{$CemaNeigeLayers[[iLayer]]$PotMelt      }   \tab [numeric] series of potential snow melt [mm/d]                 \cr
+         \emph{$CemaNeigeLayers[[iLayer]]$Melt         }   \tab [numeric] series of actual snow melt [mm/d]                    \cr
+         \emph{$CemaNeigeLayers[[iLayer]]$PliqAndMelt  }   \tab [numeric] series of liquid precip. + actual snow melt [mm/d]   \cr
          \emph{$CemaNeigeLayers[[iLayer]]$Temp         }   \tab [numeric] series of air temperature [°C] \cr
          \emph{$StateEnd}                                  \tab [numeric] states at the end of the run: CemaNeige states [mm & °C], \cr\tab see \code{\link{CreateIniStates}} for more details \cr
          }                                                                                                     
@@ -70,8 +70,8 @@ InputsModel <- CreateInputsModel(FUN_MOD = RunModel_CemaNeige, DatesR = BasinObs
                                  NLayers = 5)
 
 ## run period selection
-Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y \%H:\%M")=="01/01/1990 00:00"),
-               which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y \%H:\%M")=="31/12/1999 00:00"))
+Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y")=="01/01/1990"),
+               which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y")=="31/12/1999"))
 
 ## preparation of the RunOptions object
 RunOptions <- CreateRunOptions(FUN_MOD = RunModel_CemaNeige, InputsModel = InputsModel,

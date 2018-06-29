@@ -264,7 +264,7 @@ C Variables storage
       MISC(10)=StUH2(1)      ! Q1     ! outflow from UH2 (Q1) [mm/day]
       MISC(11)=St(2)         ! Rout   ! routing store level (St(2)) [mm]
       MISC(12)=EXCH          ! Exch   ! potential semi-exchange between catchments (EXCH) [mm/day]
-      MISC(13)=AEXCH1 		 ! AExch1 ! actual exchange between catchments from branch 1 (AEXCH1) [mm/day]
+      MISC(13)=AEXCH1 	  	 ! AExch1 ! actual exchange between catchments from branch 1 (AEXCH1) [mm/day]
       MISC(14)=AEXCH2        ! AExch2 ! actual exchange between catchments from branch 2 (AEXCH2) [mm/day]
       MISC(15)=AEXCH1+AEXCH2 ! AExch  ! actual total exchange between catchments (AEXCH1+AEXCH2) [mm/day]
       MISC(16)=QR            ! QR     ! outflow from routing store (QR) [mm/day]

@@ -20,10 +20,10 @@ RunModel_GR4J(InputsModel, RunOptions, Param)
 
 \item{Param}{[numeric] vector of 4 parameters
 \tabular{ll}{                                                                      
-GR4J X1      \tab production store capacity [mm]                                \cr
-GR4J X2      \tab intercatchment exchange coefficient [mm/d]                    \cr
-GR4J X3      \tab routing store capacity [mm]                                   \cr
-GR4J X4      \tab unit hydrograph time constant [d]                             \cr
+  GR4J X1 \tab production store capacity [mm]             \cr
+  GR4J X2 \tab intercatchment exchange coefficient [mm/d] \cr
+  GR4J X3 \tab routing store capacity [mm]                \cr
+  GR4J X4 \tab unit hydrograph time constant [d]          \cr
 }}
 }
 
@@ -31,26 +31,26 @@ GR4J X4      \tab unit hydrograph time constant [d]                             
 \value{
 [list] list containing the function outputs organised as follows:                                         
          \tabular{ll}{                                                                                         
-         \emph{$DatesR  }          \tab [POSIXlt] series of dates                                                     \cr
-         \emph{$PotEvap }          \tab [numeric] series of input potential evapotranspiration [mm/d]                 \cr
-         \emph{$Precip  }          \tab [numeric] series of input total precipitation [mm/d]                          \cr
-         \emph{$Prod    }          \tab [numeric] series of production store level [mm]                 	          \cr
-         \emph{$Pn      }          \tab [numeric] series of net rainfall [mm/d]                         			  \cr
-         \emph{$Ps      }          \tab [numeric] series of the part of Pn filling the production store [mm/d]        \cr
-         \emph{$AE      }          \tab [numeric] series of actual evapotranspiration [mm/d]                          \cr
-         \emph{$Perc    }          \tab [numeric] series of percolation (PERC) [mm/d]                                 \cr
-         \emph{$PR      }          \tab [numeric] series of PR=Pn-Ps+Perc [mm/d]                                      \cr
-         \emph{$Q9      }          \tab [numeric] series of UH1 outflow (Q9) [mm/d]                                   \cr
-         \emph{$Q1      }          \tab [numeric] series of UH2 outflow (Q1) [mm/d]                                   \cr
-         \emph{$Rout    }          \tab [numeric] series of routing store level [mm]                     		      \cr
-         \emph{$Exch    }          \tab [numeric] series of potential semi-exchange between catchments [mm/d]         \cr
-         \emph{$AExch1  }          \tab [numeric] series of actual exchange between catchments for branch 1 [mm/d]    \cr
-         \emph{$AExch2  }          \tab [numeric] series of actual exchange between catchments for branch 2 [mm/d]    \cr
-         \emph{$AExch   }          \tab [numeric] series of actual exchange between catchments (1+2) [mm/d]           \cr
-         \emph{$QR      }          \tab [numeric] series of routing store outflow (QR) [mm/d]                         \cr
-         \emph{$QD      }          \tab [numeric] series of direct flow from UH2 after exchange (QD) [mm/d]           \cr
-         \emph{$Qsim    }          \tab [numeric] series of simulated discharge [mm/d]                                               \cr
-         \emph{$StateEnd}          \tab [numeric] states at the end of the run (res. levels, UH1 levels, UH2 levels) [mm], \cr\tab see \code{\link{CreateIniStates}} for more details \cr
+           \emph{$DatesR  } \tab [POSIXlt] series of dates                                                          \cr
+           \emph{$PotEvap } \tab [numeric] series of input potential evapotranspiration [mm/d]                      \cr
+           \emph{$Precip  } \tab [numeric] series of input total precipitation [mm/d]                               \cr
+           \emph{$Prod    } \tab [numeric] series of production store level [mm]                 	                  \cr
+           \emph{$Pn      } \tab [numeric] series of net rainfall [mm/d]                         			              \cr
+           \emph{$Ps      } \tab [numeric] series of the part of Pn filling the production store [mm/d]             \cr
+           \emph{$AE      } \tab [numeric] series of actual evapotranspiration [mm/d]                               \cr
+           \emph{$Perc    } \tab [numeric] series of percolation (PERC) [mm/d]                                      \cr
+           \emph{$PR      } \tab [numeric] series of PR=Pn-Ps+Perc [mm/d]                                           \cr
+           \emph{$Q9      } \tab [numeric] series of UH1 outflow (Q9) [mm/d]                                        \cr
+           \emph{$Q1      } \tab [numeric] series of UH2 outflow (Q1) [mm/d]                                        \cr
+           \emph{$Rout    } \tab [numeric] series of routing store level [mm]                     		              \cr
+           \emph{$Exch    } \tab [numeric] series of potential semi-exchange between catchments [mm/d]              \cr
+           \emph{$AExch1  } \tab [numeric] series of actual exchange between catchments for branch 1 [mm/d]         \cr
+           \emph{$AExch2  } \tab [numeric] series of actual exchange between catchments for branch 2 [mm/d]         \cr
+           \emph{$AExch   } \tab [numeric] series of actual exchange between catchments (1+2) [mm/d]                \cr
+           \emph{$QR      } \tab [numeric] series of routing store outflow (QR) [mm/d]                              \cr
+           \emph{$QD      } \tab [numeric] series of direct flow from UH2 after exchange (QD) [mm/d]                \cr
+           \emph{$Qsim    } \tab [numeric] series of simulated discharge [mm/d]                                     \cr
+           \emph{$StateEnd} \tab [numeric] states at the end of the run (res. levels, UH1 levels, UH2 levels) [mm], \cr\tab see \code{\link{CreateIniStates}} for more details \cr
          }                                                                                                     
          (refer to the provided references or to the package source code for further details on these model outputs)
 }
@@ -78,8 +78,8 @@ InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$Date
                                  Precip = BasinObs$P, PotEvap = BasinObs$E)
 
 ## run period selection
-Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y \%H:\%M")=="01/01/1990 00:00"), 
-               which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y \%H:\%M")=="31/12/1999 00:00"))
+Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y")=="01/01/1990"), 
+               which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y")=="31/12/1999"))
 
 ## preparation of the RunOptions object
 RunOptions <- CreateRunOptions(FUN_MOD = RunModel_GR4J,

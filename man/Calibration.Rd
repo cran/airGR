@@ -5,7 +5,7 @@
 \alias{Calibration}
 
 
-\title{Calibration algorithm which optimises the error criterion selected as objective function using the provided functions}
+\title{Calibration algorithm that optimises the error criterion selected as objective function using the provided functions}
 
 \usage{
 Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions, FUN_MOD,
@@ -41,7 +41,7 @@ Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions, FUN_MOD,
 
 
 \description{
-Calibration algorithm which optimises the error criterion selected as objective function using the provided functions.
+Calibration algorithm that optimises the error criterion selected as objective function using the provided functions.
 }
 
 
@@ -56,8 +56,8 @@ InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$Date
                                  Precip = BasinObs$P, PotEvap = BasinObs$E)
 
 ## calibration period selection
-Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y \%H:\%M")=="01/01/1990 00:00"), 
-               which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y \%H:\%M")=="31/12/1999 00:00"))
+Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y")=="01/01/1990"), 
+               which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y")=="31/12/1999"))
 
 ## preparation of RunOptions object
 RunOptions <- CreateRunOptions(FUN_MOD = RunModel_GR4J,

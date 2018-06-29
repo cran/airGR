@@ -59,8 +59,8 @@ InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$Date
 ## ---- calibration step
 
 ## short calibration period selection (< 6 months)
-Ind_Cal <- seq(which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y \%H:\%M")=="01/01/1990 00:00"), 
-               which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y \%H:\%M")=="28/02/1990 00:00"))
+Ind_Cal <- seq(which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y")=="01/01/1990"), 
+               which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y")=="28/02/1990"))
 
 ## preparation of the RunOptions object for the calibration period
 RunOptions_Cal <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
@@ -85,8 +85,8 @@ Param_Best <- unlist(Param_Sets_GR4J[which.max(OutputsCrit_Loop), ])
 ## ---- validation step
 
 ## validation period selection
-Ind_Val <- seq(which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y \%H:\%M")=="01/03/1990 00:00"), 
-               which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y \%H:\%M")=="31/12/1999 00:00"))
+Ind_Val <- seq(which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y")=="01/03/1990"), 
+               which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y")=="31/12/1999"))
 
 ## preparation of the RunOptions object for the validation period
 RunOptions_Val <- CreateRunOptions(FUN_MOD = RunModel_GR4J,

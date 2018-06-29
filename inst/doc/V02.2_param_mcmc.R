@@ -5,6 +5,7 @@ library(FME)
 library(ggmcmc)
 library(dplyr)
 # source("airGR.R")
+set.seed(123)
 
 ## ---- warning=FALSE, fig.keep='none', results='hide', fig.height=10, fig.width=10, eval=TRUE, echo=FALSE, message=FALSE----
 example("Calibration_Michel", echo = FALSE, ask = FALSE)

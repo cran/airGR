@@ -1,7 +1,7 @@
 RunModel_GR2M <- function(InputsModel,RunOptions,Param){
 
     NParam <- 2;
-    FortranOutputs <- c("PotEvap","Precip","AE","Perc","P3","Exch","Prod","Rout","Qsim");
+    FortranOutputs <- c("PotEvap", "Precip", "AE", "Pn", "Perc", "PR", "Exch", "Prod", "Rout", "Qsim")
 
     ##Arguments_check
       if(inherits(InputsModel,"InputsModel")==FALSE){ stop("InputsModel must be of class 'InputsModel' \n"); return(NULL); }  

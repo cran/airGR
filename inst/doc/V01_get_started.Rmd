@@ -108,8 +108,8 @@ The user must at least define the following arguments:
 To select a period for which the user wants to run the model, select the corresponding indexes for different time periods (not the POSIXt dates), as follows:
 
 ```{r}
-Ind_Run <- seq(which(format(BasinObs$DatesR, format = "%d/%m/%Y %H:%M")=="01/01/1990 00:00"), 
-               which(format(BasinObs$DatesR, format = "%d/%m/%Y %H:%M")=="31/12/1999 00:00"))
+Ind_Run <- seq(which(format(BasinObs$DatesR, format = "%d/%m/%Y")=="01/01/1990"), 
+               which(format(BasinObs$DatesR, format = "%d/%m/%Y")=="31/12/1999"))
 str(Ind_Run)
 ```
 
@@ -130,7 +130,7 @@ str(RunOptions)
 ```
 The `CreateRunOptions()` function returns warnings if the default initialization options are used:
 
-  * `IniStates` and `IniResLevels` are automatically set to initialize all the model states at 0, except for the production and routing stores, which are initialized at respectively 30% and 50 % of their capacity
+  * `IniStates` and `IniResLevels` are automatically set to initialize all the model states at 0, except for the production and routing stores, which are initialized at respectively 30 % and 50 % of their capacity
   * `IndPeriod_WarmUp` default setting ensures a one-year warm up using the time steps preceding the `IndPeriod_Run`, if available  
 
 

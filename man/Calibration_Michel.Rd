@@ -5,7 +5,7 @@
 \alias{Calibration_Michel}
 
 
-\title{Calibration algorithm optimises the error criterion selected as objective function using the Irstea-HBAN procedure described by C. Michel}
+\title{Calibration algorithm that optimises the error criterion selected as objective function using the Irstea-HBAN procedure described by C. Michel}
 
 
 \usage{
@@ -50,7 +50,7 @@ Calibration_Michel(InputsModel, RunOptions, InputsCrit, CalibOptions,
 
 
 \description{
-Calibration algorithm optimises the error criterion selected as objective function. \cr
+Calibration algorithm that optimises the error criterion selected as objective function. \cr
 \cr
 The algorithm combines a global and a local approach. 
 First, a screening is performed using either a rough predefined grid or a list of parameter sets.
@@ -87,8 +87,8 @@ InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$Date
                                  Precip = BasinObs$P, PotEvap = BasinObs$E)
 
 ## calibration period selection
-Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y \%H:\%M")=="01/01/1990 00:00"), 
-               which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y \%H:\%M")=="31/12/1999 00:00"))
+Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y")=="01/01/1990"), 
+               which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y")=="31/12/1999"))
 
 ## preparation of RunOptions object
 RunOptions <- CreateRunOptions(FUN_MOD = RunModel_GR4J, InputsModel = InputsModel, 

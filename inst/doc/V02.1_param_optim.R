@@ -4,7 +4,7 @@ library(DEoptim)
 library(hydroPSO)
 library(Rmalschains)
 # source("airGR.R")
-
+set.seed(321)
 
 ## ---- warning=FALSE, fig.keep='none', results='hide', fig.height=10, fig.width=10, eval=TRUE, echo=FALSE, message=FALSE----
 example("Calibration_Michel", echo = FALSE, ask = FALSE)
@@ -73,7 +73,7 @@ optMALS <- Rmalschains::malschains(fn = OptimGR4J,
                                    maxEvals = 2000)
 
 ## ---- warning=FALSE, echo=FALSE------------------------------------------
-data.frame(Algo = c("Michel", "PORT", "DE", "PSO", "MA-LS"), 
+data.frame(Algo = c("airGR", "PORT", "DE", "PSO", "MA-LS"), 
            round(rbind(
                                                 OutputsCalib$ParamFinalR                          ,
              airGR::TransfoParam_GR4J(ParamIn = optPORT$par                    , Direction = "TR"),

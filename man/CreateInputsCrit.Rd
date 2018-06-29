@@ -10,7 +10,7 @@
 
 \usage{
 CreateInputsCrit(FUN_CRIT, InputsModel, RunOptions, Qobs, BoolCrit = NULL,
-  transfo = "", Ind_zeroes = NULL, epsilon = NULL)
+  transfo = "", Ind_zeroes = NULL, epsilon = NULL, verbose = TRUE)
 }
 
 
@@ -30,6 +30,8 @@ CreateInputsCrit(FUN_CRIT, InputsModel, RunOptions, Qobs, BoolCrit = NULL,
 \item{Ind_zeroes}{(optional) [numeric] indices of the time steps where zeroes are observed}
 
 \item{epsilon}{(optional) [numeric] epsilon to add to all Qobs and Qsim if \emph{$Ind_zeroes} is not empty}
+
+\item{verbose}{(optional) [boolean] boolean indicating if the function is run in verbose mode or not, default = \code{TRUE}}
 }
 
 
@@ -52,7 +54,8 @@ Creation of the \emph{InputsCrit} object required to the \code{ErrorCrit*} funct
 
 \details{
 Users wanting to use \code{FUN_CRIT} functions that are not included in 
-the package must create their own InputsCrit object accordingly.
+the package must create their own InputsCrit object accordingly. \cr
+We do not advise computing KGE or KGE' with log-transformation as it might be wrongly influenced by discharge values close to 0 or 1 and it is dependent on the discharge unit. See Santos et al. (in review) for more details and alternative solutions (see the reference below).
 }
 
 
@@ -67,8 +70,8 @@ InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$Date
                                  Precip = BasinObs$P, PotEvap = BasinObs$E)
 
 ## run period selection
-Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y \%H:\%M")=="01/01/1990 00:00"), 
-               which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y \%H:\%M")=="31/12/1999 00:00"))
+Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y")=="01/01/1990"), 
+               which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y")=="31/12/1999"))
 
 ## preparation of the RunOptions object
 RunOptions <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
@@ -116,7 +119,13 @@ OutputsCrit <- ErrorCrit_KGE(InputsCrit = InputsCrit, OutputsModel = OutputsMode
 
 
 \author{
-Laurent Coron
+Laurent Coron, Olivier Delaigue, Guillaume Thirel
+}
+
+\references{
+Santos, L., Thirel, G. and Perrin, C. (in review), 
+      Technical note : Pitfalls in using log-transformed flows within the KGE criterion, 
+      Hydrology and Earth System Sciences Discussions, doi:10.5194/hess-2018-298.
 }
 
 

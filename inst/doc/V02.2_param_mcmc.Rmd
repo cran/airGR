@@ -17,6 +17,7 @@ library(FME)
 library(ggmcmc)
 library(dplyr)
 # source("airGR.R")
+set.seed(123)
 ```
 
 

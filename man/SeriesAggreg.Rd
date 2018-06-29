@@ -21,7 +21,7 @@ SeriesAggreg(TabSeries, TimeFormat, NewTimeFormat, ConvertFun,
 
 \item{NewTimeFormat}{[character] desired format (i.e. \code{"hourly"}, \code{"daily"}, \code{"monthly"} or \code{"yearly"})}
 
-\item{ConvertFun}{[character] names of aggregation functions (e.g. for P[mm], T[deg], Q[mm] : \code{ConvertFun = c("sum", "mean", "sum"}))}
+\item{ConvertFun}{[character] names of aggregation functions (e.g. for P[mm], T[degC], Q[mm] : \code{ConvertFun = c("sum", "mean", "sum"}))}
 
 \item{YearFirstMonth}{(optional) [numeric] integer used when \code{NewTimeFormat = "yearly"} to set when the starting month of the year (e.g. 01 for calendar year or 09 for hydrological year starting in September)}
 

@@ -11,8 +11,8 @@ InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$Date
 str(InputsModel)
 
 ## ------------------------------------------------------------------------
-Ind_Run <- seq(which(format(BasinObs$DatesR, format = "%d/%m/%Y %H:%M")=="01/01/1990 00:00"), 
-               which(format(BasinObs$DatesR, format = "%d/%m/%Y %H:%M")=="31/12/1999 00:00"))
+Ind_Run <- seq(which(format(BasinObs$DatesR, format = "%d/%m/%Y")=="01/01/1990"), 
+               which(format(BasinObs$DatesR, format = "%d/%m/%Y")=="31/12/1999"))
 str(Ind_Run)
 
 ## ------------------------------------------------------------------------

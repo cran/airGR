@@ -76,7 +76,8 @@ CreateInputsModel <- function(FUN_MOD,
         DatesR <- as.POSIXlt(DatesR)
       }
       if (difftime(tail(DatesR, 1), tail(DatesR, 2), units = "secs")[[1]] %in% TimeStep == FALSE) {
-        stop(paste( "the time step of the model inputs must be ", TimeStep, " seconds \n", sep = ""))
+        TimeStepName <- grep("hourly|daily|monthly|yearly", ObjectClass, value = TRUE)
+        stop(paste0("The time step of the model inputs must be ", TimeStepName, "\n"))
         return(NULL)
       }
       if (any(duplicated(DatesR))) {

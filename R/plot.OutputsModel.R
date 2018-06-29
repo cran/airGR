@@ -131,7 +131,11 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
     #   if (Sum1 == 0 & Sum2 == 3) { width = 10; height = 03; }
     #   dev.new(width = width, height = height)
     # }
-    layout(matlayout);
+    
+    opar <- par(no.readonly = TRUE)
+    on.exit(par(opar))
+    
+    layout(matlayout)
 
     Xaxis <- 1:length(IndPeriod_Plot);
     if (BOOL_Dates) {

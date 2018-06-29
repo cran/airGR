@@ -18,7 +18,7 @@ DataAltiExtrapolation_Valery(DatesR, Precip, PrecipScale = TRUE,
 \arguments{
 \item{DatesR}{[POSIXt] vector of dates}
 
-\item{Precip}{[numeric] time series of daily total precipitation (catchment average) [mm]}
+\item{Precip}{[numeric] time series of daily total precipitation (catchment average) [mm/d]}
 
 \item{PrecipScale}{(optional) [boolean] indicating if the mean of the precipitation interpolated on the elevation layers must be kept or not, required to create CemaNeige module inputs, default = \code{TRUE} (the mean of the precipitation is kept to the original value)}
 
@@ -39,7 +39,7 @@ DataAltiExtrapolation_Valery(DatesR, Precip, PrecipScale = TRUE,
 \value{
 list containing the extrapolated series of precip. and air temp. on each elevation layer
          \tabular{ll}{                                                                                                      
-           \emph{$LayerPrecip         }  \tab  [list] list of time series of daily precipitation (layer average) [mm]           \cr
+           \emph{$LayerPrecip         }  \tab  [list] list of time series of daily precipitation (layer average) [mm/d]        \cr
            \emph{$LayerTempMean       }  \tab  [list] list of time series of daily mean air temperature (layer average) [°C]  \cr
            \emph{$LayerTempMin        }  \tab  [list] list of time series of daily min air temperature (layer average) [°C]   \cr
            \emph{$LayerTempMax        }  \tab  [list] list of time series of daily max air temperature (layer average) [°C]   \cr

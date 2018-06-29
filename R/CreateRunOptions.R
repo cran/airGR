@@ -206,7 +206,7 @@ CreateRunOptions <- function(FUN_MOD, InputsModel, IndPeriod_WarmUp = NULL, IndP
         Outputs_all <- c(Outputs_all,"PotEvap", "Precip", "Prod", "Pn", "Ps", "AE", "Perc", "PR", "Q9", "Q1", "Rout", "Exch",
                          "AExch1", "AExch2", "AExch", "QR", "QRExp", "Exp", "QD", "Qsim"); }
       if(identical(FUN_MOD,RunModel_GR2M)){
-        Outputs_all <- c(Outputs_all,"PotEvap","Precip","AE","Perc","P3","Exch","Prod","Rout","Qsim"); }
+        Outputs_all <- c(Outputs_all,"PotEvap", "Precip", "AE", "Pn", "Perc", "PR", "Exch", "Prod", "Rout", "Qsim"); }
       if(identical(FUN_MOD,RunModel_GR1A)){
         Outputs_all <- c(Outputs_all,"PotEvap","Precip","Qsim"); }
       if("CemaNeige" %in% ObjectClass){

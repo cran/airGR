@@ -20,8 +20,8 @@ RunModel_GR2M(InputsModel, RunOptions, Param)
 
 \item{Param}{[numeric] vector of 2 parameters
 \tabular{ll}{                                                                      
-GR2M X1      \tab production store capacity [mm]                 \cr
-GR2M X2      \tab groundwater exchange coefficient [-]    \cr
+GR2M X1 \tab production store capacity [mm]        \cr
+GR2M X2 \tab groundwater exchange coefficient [-]  \cr
 }}
 }
 
@@ -29,11 +29,18 @@ GR2M X2      \tab groundwater exchange coefficient [-]    \cr
 \value{
 [list] list containing the function outputs organised as follows:                                         
          \tabular{ll}{                                                                                         
-         \emph{$DatesR  }          \tab [POSIXlt] series of dates                                                          \cr
-         \emph{$PotEvap }          \tab [numeric] series of input potential evapotranspiration [mm/month]                  \cr
-         \emph{$Precip  }          \tab [numeric] series of input total precipitation [mm/month]                           \cr
-         \emph{$Qsim    }          \tab [numeric] series of simulated discharge [mm/month]                                                \cr
-         \emph{$StateEnd}          \tab [numeric] states at the end of the run (production store level and routing store level) [mm], \cr\tab see \code{\link{CreateIniStates}} for more details \cr
+            \emph{$DatesR  } \tab [POSIXlt] series of dates                                                          \cr
+            \emph{$PotEvap } \tab [numeric] series of input potential evapotranspiration [mm/month]                  \cr
+            \emph{$Precip  } \tab [numeric] series of input total precipitation [mm/month]                           \cr
+            \emph{$AE      } \tab [numeric] series of actual evapotranspiration [mm/month]                           \cr
+            \emph{$Pn      } \tab [numeric] series of net rainfall (P1) [mm/month]                                   \cr
+            \emph{$Perc    } \tab [numeric] series of percolation (P2) [mm/month]                                    \cr
+            \emph{$PR      } \tab [numeric] series of PR=Pn+Perc (P3) [mm/month]                                     \cr
+            \emph{$Exch    } \tab [numeric] series of potential exchange between catchments [mm/month]               \cr
+            \emph{$Prod    } \tab [numeric] series of production store level [mm]                                    \cr
+            \emph{$Rout    } \tab [numeric] series of routing store level [mm]                                       \cr
+            \emph{$Qsim    } \tab [numeric] series of simulated discharge [mm/month]                                 \cr
+            \emph{$StateEnd} \tab [numeric] states at the end of the run (production store level and routing store level) [mm], \cr\tab see \code{\link{CreateIniStates}} for more details \cr
          }                                                                                                     
          (refer to the provided references or to the package source code for further details on these model outputs)
 }

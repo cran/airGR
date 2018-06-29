@@ -167,14 +167,15 @@ C Updating store level
 
 C Variables storage
       MISC( 1)=E             ! PE     ! [numeric] observed potential evapotranspiration [mm/month]
-      MISC( 2)=P1            ! Precip ! [numeric] observed total precipitation  [mm/month]
+      MISC( 2)=P             ! Precip ! [numeric] observed total precipitation  [mm/month]
       MISC( 3)=AE            ! AE     ! [numeric] actual evapotranspiration [mm/month]
-      MISC( 4)=P2            ! P2     ! [numeric] percolation (P2) [mm/month]
-      MISC( 5)=P3            ! P3     ! [numeric] P3=P1+P2 [mm/month]
-      MISC( 6)=EXCH          ! EXCH   ! [numeric] groundwater exchange (EXCH) [mm/month]
-      MISC( 7)=St(1)         ! Prod   ! [numeric] production store level (St(1)) [mm]
-      MISC( 8)=St(2)         ! Rout   ! [numeric] routing store level (St(2)) [mm]
-      MISC( 9)=Q             ! Qsim   ! [numeric] simulated outflow at catchment outlet [mm/month]
+      MISC( 4)=P1            ! Pn     ! [numeric] net rainfall (P1) [mm/month]
+      MISC( 5)=P2            ! Perc   ! [numeric] percolation (P2) [mm/month]
+      MISC( 6)=P3            ! PR     ! [numeric] P3=P1+P2 [mm/month]
+      MISC( 7)=EXCH          ! EXCH   ! [numeric] groundwater exchange (EXCH) [mm/month]
+      MISC( 8)=St(1)         ! Prod   ! [numeric] production store level (St(1)) [mm]
+      MISC( 9)=St(2)         ! Rout   ! [numeric] routing store level (St(2)) [mm]
+      MISC(10)=Q             ! Qsim   ! [numeric] simulated outflow at catchment outlet [mm/month]
 
 
       ENDSUBROUTINE

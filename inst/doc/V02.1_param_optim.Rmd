@@ -16,7 +16,7 @@ library(DEoptim)
 library(hydroPSO)
 library(Rmalschains)
 # source("airGR.R")
-
+set.seed(321)
 ```
 
 
@@ -29,7 +29,7 @@ The Michel's calibration strategy (`Calibration_Michel()` function) is the calib
 We show here how to use different R packages to perform parameter estimation.
 
 In this vignette, we use the **GR4J** model to illustrate the different optimization strategies.
-In particular, we assume that the R global environment contains input climate data, observed discharge and functions from the **airGR** [Get Started](V01_get_started.html) vignette, as shown below.
+In particular, we assume that the R global environment contains input climate data, observed discharge and functions from the [Get Started](V01_get_started.html) vignette, as shown below.
 Please note that the calibration period is defined in the `CreateRunOptions()` function .
 
 ```{r, warning=FALSE, fig.keep='none', results='hide', fig.height=10, fig.width=10, eval=TRUE, echo=FALSE, message=FALSE}
@@ -154,7 +154,7 @@ optMALS <- Rmalschains::malschains(fn = OptimGR4J,
 As it can be seen in the table below, the four additional optimization strategies tested lead to very close optima.
 
 ```{r, warning=FALSE, echo=FALSE}
-data.frame(Algo = c("Michel", "PORT", "DE", "PSO", "MA-LS"), 
+data.frame(Algo = c("airGR", "PORT", "DE", "PSO", "MA-LS"), 
            round(rbind(
                                                 OutputsCalib$ParamFinalR                          ,
              airGR::TransfoParam_GR4J(ParamIn = optPORT$par                    , Direction = "TR"),

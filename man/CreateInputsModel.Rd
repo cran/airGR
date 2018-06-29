@@ -20,11 +20,11 @@ CreateInputsModel(FUN_MOD, DatesR, Precip, PrecipScale = TRUE, PotEvap = NULL,
 
 \item{DatesR}{[POSIXt] vector of dates required to create the GR model and CemaNeige module inputs}
 
-\item{Precip}{[numeric] time series of total precipitation (catchment average) [mm], required to create the GR model and CemaNeige module inputs}
+\item{Precip}{[numeric] time series of total precipitation (catchment average) [mm/time step], required to create the GR model and CemaNeige module inputs}
 
 \item{PrecipScale}{(optional) [boolean] indicating if the mean of the precipitation interpolated on the elevation layers must be kept or not, required to create CemaNeige module inputs, default = \code{TRUE} (the mean of the precipitation is kept to the original value)}
 
-\item{PotEvap}{[numeric] time series of potential evapotranspiration (catchment average) [mm], required to create the GR model inputs}
+\item{PotEvap}{[numeric] time series of potential evapotranspiration (catchment average) [mm/time step], required to create the GR model inputs}
 
 \item{TempMean}{(optional) [numeric] time series of mean air temperature [°C], required to create the CemaNeige module inputs}
 
@@ -46,9 +46,9 @@ CreateInputsModel(FUN_MOD, DatesR, Precip, PrecipScale = TRUE, PotEvap = NULL,
 [list] object of class \emph{InputsModel} containing the data required to evaluate the model outputs; it can include the following:
          \tabular{ll}{
          \emph{$DatesR              }  \tab   [POSIXlt] vector of dates \cr
-         \emph{$Precip              }  \tab   [numeric] time series of total precipitation (catchment average) [mm] \cr
-         \emph{$PotEvap             }  \tab   [numeric] time series of potential evapotranspiration (catchment average) [mm], \cr\tab defined if FUN_MOD includes GR4H, GR4J, GR5J, GR6J, GR2M or GR1A \cr \cr
-         \emph{$LayerPrecip         }  \tab   [list] list of time series of precipitation (layer average) [mm], \cr\tab defined if  \code{FUN_MOD} includes CemaNeige \cr \cr
+         \emph{$Precip              }  \tab   [numeric] time series of total precipitation (catchment average) [mm/time step] \cr
+         \emph{$PotEvap             }  \tab   [numeric] time series of potential evapotranspiration (catchment average) [mm/time step], \cr\tab defined if FUN_MOD includes GR4H, GR4J, GR5J, GR6J, GR2M or GR1A \cr \cr
+         \emph{$LayerPrecip         }  \tab   [list] list of time series of precipitation (layer average) [mm/time step], \cr\tab defined if  \code{FUN_MOD} includes CemaNeige \cr \cr
          \emph{$LayerTempMean       }  \tab   [list] list of time series of mean air temperature (layer average) [°C], \cr\tab defined if  \code{FUN_MOD} includes CemaNeige \cr \cr
          \emph{$LayerFracSolidPrecip}  \tab   [list] list of time series of solid precipitation fraction (layer average) [-], \cr\tab defined if  \code{FUN_MOD} includes CemaNeige \cr \cr
          }
@@ -62,7 +62,8 @@ Creation of the \emph{InputsModel} object required to the \code{RunModel*} funct
 
 \details{
 Users wanting to use \code{FUN_MOD} functions that are not included in 
-the package must create their own InputsModel object accordingly.
+the package must create their own InputsModel object accordingly. \cr
+Please note that if CemaNeige is used, and \code{ZInputs} is different than \code{HypsoData}, then precipitation and temperature are interpolated with the \code{DataAltiExtrapolation_Valery} function.
 }
 
 
@@ -77,8 +78,8 @@ InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$Date
                                  Precip = BasinObs$P, PotEvap = BasinObs$E)
 
 ## run period selection
-Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y \%H:\%M")=="01/01/1990 00:00"), 
-               which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y \%H:\%M")=="31/12/1999 00:00"))
+Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y")=="01/01/1990"), 
+               which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y")=="31/12/1999"))
 
 ## preparation of the RunOptions object
 RunOptions <- CreateRunOptions(FUN_MOD = RunModel_GR4J,

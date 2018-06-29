@@ -26,7 +26,7 @@ The best set identified in this screening is then used as a starting point for t
 
 
 
-In some specific situations, for example if the calibration period is too short and by consequence non representative of the catchment behavior, a local calibration algorithm can give poor results.
+In some specific situations, for example if the calibration period is too short and by consequence non representative of the catchment behaviour, a local calibration algorithm can give poor results.
 
 In this vignette, we show a method using a known parameter set that can be used as an alternative for the grid-screening calibration procedure, and we well compare to two methods using the `Calibration_Michel()` function. The generalist parameters sets introduced here are taken from @andreassian_seeking_2014.
 
@@ -63,7 +63,7 @@ summary(Param_Sets_GR4J)
 
 ## Object model preparation
 
-We assume that the R global environment contains data and functions from the **airGR** vignette.
+We assume that the R global environment contains data and functions from the [Get Started](V01_get_started.html) vignette.
 
 The calibration period has been defined from **1990-01-01** to **1990-02-28**, and the validation period from **1990-03-01** to **1999-12-31**.
 
@@ -108,7 +108,7 @@ InputsCrit_Val  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = Inpu
 
 # Calibration of the GR4J model with the generalist parameter sets
 
-It is recommended to use the generalist parameter sets when the calibration period is less than 6 month.
+It is recommended to use the generalist parameter sets when the calibration period is less than 6 months.
 
 As shown in @andreassian_seeking_2014 [figure 4], a recommended way to use the `Param_Sets_GR4J` `data.frame` is to run the GR4J model with each parameter set and to select the best one according to an objective function (here we use the Nash-Sutcliffe Efficiency criterion).
 

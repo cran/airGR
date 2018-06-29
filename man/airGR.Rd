@@ -4,7 +4,7 @@
 \encoding{UTF-8}
 \title{Suite of GR Hydrological Models for Precipitation-Runoff Modelling}
 \description{
-This package brings into R the hydrological modelling tools used at IRSTEA-Antony (HBAN Research Unit, France), including rainfall-runoff models (\strong{GR4H}, \strong{GR4J}, \strong{GR5J}, \strong{GR6J}, \strong{GR2M}, \strong{GR1A}) and a snow accumulation and melt model (\strong{CemaNeige}). Each model core is coded in FORTRAN to ensure low computational time. The other package functions (i.e. mainly the calibration algorithm and the computation of the efficiency criteria) are coded in R. \cr
+This package brings into R the hydrological modelling tools used at IRSTEA-Antony (HYCAR Research Unit, France), including rainfall-runoff models (\strong{GR4H}, \strong{GR4J}, \strong{GR5J}, \strong{GR6J}, \strong{GR2M}, \strong{GR1A}) and a snow accumulation and melt model (\strong{CemaNeige}). Each model core is coded in FORTRAN to ensure low computational time. The other package functions (i.e. mainly the calibration algorithm and the computation of the efficiency criteria) are coded in R. \cr
 
 
 ##### Functions and objects #####

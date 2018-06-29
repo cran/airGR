@@ -1,17 +1,19 @@
-CreateInputsCrit <-
-  function(FUN_CRIT,
-           InputsModel,
-           RunOptions,
-           Qobs,
-           BoolCrit = NULL,
-           transfo = "",
-           Ind_zeroes = NULL,
-           epsilon = NULL) {
-    ObjectClass <- NULL
-    
-    
-    ##check_FUN_CRIT
-    BOOL <- FALSE
+CreateInputsCrit <- function(FUN_CRIT,
+                             InputsModel,
+                             RunOptions,
+                             Qobs,
+                             BoolCrit = NULL,
+                             transfo = "",
+                             Ind_zeroes = NULL,
+                             epsilon = NULL,
+                             verbose = TRUE) {
+  
+  
+  ObjectClass <- NULL
+  
+  
+  ##check_FUN_CRIT
+  BOOL <- FALSE
     
     if (identical(FUN_CRIT, ErrorCrit_NSE) | identical(FUN_CRIT, ErrorCrit_KGE) |
         identical(FUN_CRIT, ErrorCrit_KGE2) | identical(FUN_CRIT, ErrorCrit_RMSE)) {
@@ -77,7 +79,7 @@ CreateInputsCrit <-
       stop("transfo must be a chosen among the following: '', 'sqrt', 'log' or 'inv' or 'sort' \n")
       return(NULL)
     }
-    if (transfo %in% c("", "sqrt", "log", "inv", "sort") == FALSE) {
+    if (! transfo %in% c("", "sqrt", "log", "inv", "sort")) {
       stop("transfo must be a chosen among the following: '', 'sqrt', 'log' or 'inv' or 'sort' \n")
       return(NULL)
     }
@@ -102,12 +104,22 @@ CreateInputsCrit <-
       epsilon = as.double(epsilon)
     }
     
+    if (transfo == "log" & verbose) {
+      warn_log_kge <- "we do not advise using the %s with a log transformation on Qobs (see the details part in the 'CreateInputsCrit' help)"
+      if (identical(FUN_CRIT, ErrorCrit_KGE)) {
+          warning(sprintf(warn_log_kge, "KGE"))
+        }
+      if (identical(FUN_CRIT, ErrorCrit_KGE2)) {
+          warning(sprintf(warn_log_kge, "KGE'"))
+      }
+    }
+    
     ##Create_InputsCrit
-    InputsCrit <- list(BoolCrit = BoolCrit,
-                       Qobs     = Qobs,
-                       transfo  = transfo,
+    InputsCrit <- list(BoolCrit   = BoolCrit,
+                       Qobs       = Qobs,
+                       transfo    = transfo,
                        Ind_zeroes = Ind_zeroes,
-                       epsilon = epsilon)
+                       epsilon    = epsilon)
     
     class(InputsCrit) <- c("InputsCrit", ObjectClass)
     

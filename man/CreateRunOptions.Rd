@@ -49,7 +49,7 @@ CreateRunOptions(FUN_MOD, InputsModel, IndPeriod_WarmUp = NULL, IndPeriod_Run,
          \emph{IndPeriod_WarmUp }  \tab  [numeric] index of period to be used for the model warm-up [-] \cr
          \emph{IndPeriod_Run    }  \tab  [numeric] index of period to be used for the model run [-] \cr
          \emph{IniStates        }  \tab  [numeric] vector of initial model states [mm and °C] \cr
-         \emph{IniResLevels     }  \tab  [numeric] vector of initial filling rates for production and routing stores [-] and level fothe the exponential store for GR6J [mm]\cr
+         \emph{IniResLevels     }  \tab  [numeric] vector of initial filling rates for production and routing stores [-] and level for the exponential store for GR6J [mm]\cr
          \emph{Outputs_Cal      }  \tab  [character] character vector giving only the outputs needed for the calibration \cr
          \emph{Outputs_Sim      }  \tab  [character] character vector giving the requested outputs \cr
          \emph{MeanAnSolidPrecip}  \tab  [numeric] vector giving the annual mean of average solid precipitation for each layer [mm/y] \cr
@@ -97,7 +97,7 @@ However, it is also possible to perform a long-term initialisation if other indi
 \item remark 2:	if \code{IniStates} is used, two possibilities are offered:\cr
 - \code{IniStates} can be set to the \emph{$StateEnd} output of a previous \code{RunModel} call, as \emph{$StateEnd} already respects the correct format; \cr
 - \code{IniStates} can be created with the \code{\link{CreateIniStates}} function.
-\item remark 3:	in addition to \code{IniStates}, \code{IniResLevels} allows to set the filling rate of the production and routing stores for the GR models. For instance for GR4J and GR5J: \code{IniResLevels = c(0.3, 0.5)} should be used to obtain initial fillings of 30 \% and 50 \% for the production and routing stores, respectively. For GR6J, \code{IniResLevels = c(0.3, 0.5, 0)} shold be use to obtain initial fillings of 30 \% and 50 \% for the production, routing stores and 0 mm for the exponential store, respectively. \code{IniResLevels} is optional and can only be used if \code{IniStates} is also defined (the state values corresponding to these two other stores in \code{IniStates} are not used in such case).
+\item remark 3:	in addition to \code{IniStates}, \code{IniResLevels} allows to set the filling rate of the production and routing stores for the GR models. For instance for GR4J and GR5J: \code{IniResLevels = c(0.3, 0.5)} should be used to obtain initial fillings of 30 \% and 50 \% for the production and routing stores, respectively. For GR6J, \code{IniResLevels = c(0.3, 0.5, 0)} should be use to obtain initial fillings of 30 \% and 50 \% for the production, routing stores and 0 mm for the exponential store, respectively. \code{IniResLevels} is optional and can only be used if \code{IniStates} is also defined (the state values corresponding to these two other stores in \code{IniStates} are not used in such case).
 }
 }
 }
@@ -114,8 +114,8 @@ InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$Date
                                  Precip = BasinObs$P, PotEvap = BasinObs$E)
 
 ## run period selection
-Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y \%H:\%M")=="01/01/1990 00:00"), 
-               which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y \%H:\%M")=="31/12/1999 00:00"))
+Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y")=="01/01/1990"), 
+               which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y")=="31/12/1999"))
 
 ## preparation of the RunOptions object
 RunOptions <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
