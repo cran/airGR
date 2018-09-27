@@ -172,7 +172,7 @@ InputsCrit_Val  &lt;-<span class="st"> </span><span class="kw">CreateInputsCrit<
 <p>The parameter set corresponding to the best criterion is the following:</p>
 <pre><code>##     X1     X2     X3     X4 
 ## 165.05   6.46 422.50   2.45</code></pre>
-<p>The Nash-Sutcliffe Efficiency criterion computed on the calibration period is better (0.495) than with the generalist parameter sets, but the one computed on the validation period is lower (0.569). This shows that the generalist parameter sets give more robust model in this case.</p>
+<p>The Nash-Sutcliffe Efficiency criterion computed on the calibration period is better (0.495) than with the generalist parameter sets, but the one computed on the validation period is lower (0.57). This shows that the generalist parameter sets give more robust model in this case.</p>
 </div>
 <div id="gr4j-parameter-sets-used-in-the-grid-screening-step" class="section level2">
 <h2>GR4J parameter sets used in the grid-screening step</h2>
@@ -182,7 +182,7 @@ InputsCrit_Val  &lt;-<span class="st"> </span><span class="kw">CreateInputsCrit<
 <p>Here is the parameter set corresponding to the best criteria found.</p>
 <pre><code>##     X1     X2     X3     X4 
 ## 161.62   6.53 429.00   2.45</code></pre>
-<p>The results are the same here. The Nash-Sutcliffe Efficiency criterion computed on the calibration period is better (0.495), but the one computed on the validation period is just a little bit lower (0.567) than the classical calibration.</p>
+<p>The results are the same here. The Nash-Sutcliffe Efficiency criterion computed on the calibration period is better (0.495), but the one computed on the validation period is just a little bit lower (0.568) than the classical calibration.</p>
 <p>Generally, the advantage of using GR4J parameter sets rather than the GR4J generalist parameter quantiles is that they make more sense than a simple exploration of combinations of quantiles of parameter distributions (each parameter set represents a consistent ensemble). In addition, for the first step, the number of iterations is smaller (27 runs instead of 81), which can save time if one wants to run a very large number of calibrations.</p>
 </div>
 </div>

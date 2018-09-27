@@ -9,7 +9,7 @@
 
 
 \usage{
-PEdaily_Oudin(JD, Temp, LatRad)
+PEdaily_Oudin(JD, Temp, LatRad, Lat, LatUnit)
 }
 
 
@@ -18,7 +18,11 @@ PEdaily_Oudin(JD, Temp, LatRad)
 
 \item{Temp}{[numeric] time series of daily mean air temperature [°C]}
 
-\item{LatRad}{[numeric] latitude of measurement for the temperature series [rad]}
+\item{LatRad}{(deprecated)[numeric] latitude of measurement for the temperature series [rad]. Please use \code{Lat} instead}
+
+\item{Lat}{[numeric] latitude of measurement for the temperature series [radian or degrees]}
+
+\item{LatUnit}{[character] latitude unit (default = \code{"rad"} or \code{"deg"})), default = \code{"all"}}
 }
 
 
@@ -33,14 +37,15 @@ Function which computes daily PE using the formula from Oudin et al. (2005).
 
 
 \examples{
-   library(airGR)
-   data(L0123001)
-   PotEvap <- PEdaily_Oudin(JD = as.POSIXlt(BasinObs$DatesR)$yday, Temp = BasinObs$T, LatRad = 0.8)
+library(airGR)
+data(L0123001)
+PotEvap <- PEdaily_Oudin(JD = as.POSIXlt(BasinObs$DatesR)$yday, Temp = BasinObs$T,
+                         Lat = 0.8, LatUnit = "rad")
 }
 
 
 \author{
-Laurent Coron, Ludovic Oudin
+Laurent Coron, Ludovic Oudin, Olivier Delaigue
 }
 
 

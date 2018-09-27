@@ -1,0 +1,529 @@
+
+Release History of the airGR Package
+
+
+
+
+##################### 1.0.13.19 Release Notes (2018-09-27) #####################
+
+
+#### Deprecated and defunct
+
+- The LatRad argument is now deprecated in PEdailyOudin() and replaced by the Lat argument.
+
+- The unused Indzeroes argument of the CreateInputsCrit() function is now deprecated.
+
+
+#### New features
+
+- PEdailyOudin() now presents a LatUnit argument which allows to choose the unit of the latitude (radians and degrees).
+
+
+#### Major user-visible changes
+
+- CalibrationMichel() is now faster during the grid-screening step when a parameter is set using FixedParam in CreateCalibOptions().
+
+- CreateCalibOptions() now returns FixedParam argument and a warning message when all the parameters are free (NA) in the FixedParam argument.
+
+- CreateInputsCrit() now returns an error when epsilon is not positive.
+
+- CreateInputsCrit() now returns a warning message in the following case: there are zeroes values in Qobs, epsilon = NULL and transfo = log or inv.
+
+- ErrorCrit*() functions now return a warning message in the following case: there are zeroes values in Qobs or Qsim, epsilon = NULL and transfo = log or inv.
+
+
+#### Minor user-visible changes
+
+- Several functions of the package were cleant or slightly modified, with no effect on their outputs.
+
+- Dubious Qls and Qmm values set to NA values between 1997-01-05 and 1997-01-21 in the L0123001 dataset.
+
+- ORCID numbers are now joined to the names of the authors of the package.
+
+
+#### CRAN-compatibility updates
+
+- Function name changed in a vignettes to avoid error during the check on Debian distribution
+
+- As recomanded by CRAN managers, the NEWS file is now at the text format and is no more just a link to the airGR Website
+
+
+
+
+##################### 1.0.10.11 Release Notes (2018-06-29) #####################
+
+
+#### Bug fixes
+
+- Fixed bug in RunModelGR2M(). The function now returns the total precipitation (P) instead of the net rainfall (P1).
+
+
+#### Major user-visible changes
+
+- RunModelGR2M() now returns more explicit precipitation outputs names.
+
+- CreateInputsCrit() now returns a warning message when the KGE (or KGE') is used with a log transformation on flows.
+
+- The article reference is corrected.
+
+
+#### Minor user-visible changes
+
+- The documentation and help of several functions were improved.
+
+
+
+
+##################### 1.0.9.64 Release Notes (2017-11-10) #####################
+
+
+#### New features
+
+- An article describing the airGR package has been published. Its reference has been added and will be displayed with citation("airGR"). 
+
+- Added CreateIniStates() function in order to help user to format the IniStates argument for CreateRunOptions().
+
+- Added the ParamSetsGR4J dataset. It contains generalist parameter sets for the GR4J model.
+
+- Three vignettes have been added. They are relative to different calibration methods (including the generalist parameters sets of the GR4J model).
+
+
+#### Bug fixes
+
+- Fixed bug in RunModelGR4H(): in frunGR4H Fortran subroutine, St(2) is now set to 0 (instead of St(1)) when St(2) < 0. 
+
+- Fixed bug in plot.OutputsModel() for the regime plot when the period is less than 1 year.
+
+- Fixed bug in plot.OutputsModel() when there is no common data to plot the cumulative frequency or the correlation QQ.
+
+- Fixed bug in plot.OutputsModel() for the y-axis labelling of flows time series when logscale = TRUE and BasinArea is used.
+
+
+#### Deprecated and defunct
+
+- The RunSnowModule argument is now deprecated in CreateRunOptions().
+
+
+#### Major user-visible changes
+
+- RunModelGR4J(), RunModelGR5J() and RunModelGR6J() (and CemaNeigeGR&#42;J()) now return Ps, Pn and actual exchanges. See the model Fortran codes for more details about the calculation of these variables.
+
+- CreateInputsModel() now returns an error when DatesR contains duplicated values.
+
+- RunModelGR5J now returns StateEnd in the same order as the other models.
+
+
+#### Minor user-visible changes
+
+- plot.OutputsModel() now returns a warning message when the length of Qobs is different from the length of Qsim. 
+
+- The X1 parameter from GR4H, GR4J, GR2M, GR5J and GR6J, the X3 parameter from GR4H, GR4J, GR5J and GR6J and the X6 parameter from GR6J are now set to 1e-2 when they are fixed to lower values. RunModel&#42;() functions now return a warning message in this case. RunModel&#42;() functions now return a warning when X4 < 0.5 and its value is set to 0.5.
+
+- The commands ?L0123001, ?L0123002 and ?L0123003 now return the documentation page related to BasinObs.
+
+- Many functions of the package were cleant or slightly modified, with no effect on their outputs. 
+
+- The documentation and help of several functions were improved.
+
+
+#### CRAN-compatibility updates
+
+- "airGR.c" file registers native routines.
+
+
+
+
+##################### 1.0.5.12 Release Notes (2017-01-23) #####################
+
+
+#### New features
+
+- DataAltiExtrapolationValery() and CreateInputsModel() now present a PrecipScale argument which allows rescaling precipitation when it is interpolated on the elevation layers when CemaNeige is used.
+
+
+#### Bug fixes
+
+- Fixed bug in DataAltiExtrapolationValery(). The elevation gradients for air temperature returned by CreateInputsModel() are improved.
+
+
+#### User-visible changes
+
+- DataAltiExtrapolationValery() has been improved. DataAltiExtrapolationValery() now runs faster (and by consequence CreateInputsModel() too, when CemaNeige is used).
+
+
+
+
+##################### 1.0.4 Release Notes (2017-01-18) #####################
+
+#### New features
+
+- RunModelCemaNeige(), RunModelCemaNeigeGR4J(), RunModelCemaNeigeGR5J() and RunModelCemaNeigeGR6J() now return air temperature for each elevation layer. 
+
+
+#### Deprecated and defunct
+
+- S3 plot method defined for OutputsModel objects. It means that the plotOutputsModel() function is deprecated and his use has been replaced by the use of plot.OutputsModel() or plot().
+
+- In plot.OutputsModel() the PlotChoice argument is deprecated and has been renamed which.
+
+
+#### User-visible changes
+
+- plot.OutputsModel() displays air temperature time series for each layer when CemaNeige is used (argument which = "Temp" or "all").
+
+
+
+
+##################### 1.0.3 Release Notes (2016-12-09) #####################
+
+#### New features
+
+- ErrorCrit&#42;() functions gain a warnings argument to replace the verbose action and the verbose argument now prints the criterion value(s).
+
+
+#### Bug fixes
+
+- Fixed bug in CreateCalibOptions() when StartParamList or StartParamDistrib arguments are used.
+
+
+#### User-visible changes
+
+- CreateInputsModel() now returns an error if NLayers <= 0 when CemaNeige is used.
+
+- plotOutputsModel() now displays raw values on the y-axis when the discharge time series is represented with log scale (formerly, log values of discharges were displayed on the y-axis).
+
+
+
+
+
+##################### 1.0.2 Release Notes (2016-11-03) #####################
+
+
+#### New features
+
+- SeriesAggreg() gains a TimeLag argument that corresponds to a numeric value indicating a time lag (in seconds) for the time series aggregation (useful to aggregate hourly time series to the daily time step for instance).
+ In addition, the function now accepts input dates in both POSIXt formats (POSIXct and POSIXlt). The output is in POSIXct format.
+ 
+- plotOutputsModel() gains a logscale argument in order to plot the flow with a log scale.
+
+- A tutorial is available online on the following link: from http://webgr.irstea.fr/airGR.
+ It can also be displayed with the vignette("airGR") command.
+ 
+
+#### Bug fixes
+
+- The value sort for the transfo argument of CreateInputsCrit() was not taken into account. It is now fixed. 
+
+
+#### Deprecated and defunct
+
+- CreateCalibOptions() loses the OptimParam argument that was redundant with the FixedParam argument. The CalibrationMichel() was modified to take into account this change by using directly FixedParam, but this is transparent to the user. 
+
+- CreateCalibOptions() loses the StartParam argument that was not used. 
+
+ 
+#### Major user-visible changes
+
+- The RunModelGR6J() and RunModelCemaNeigeGR6J() models were modified back to versions previous to 1.0.1 to prevent from unwanted efficiency criteria deterioration related to the calibration with CalibrationMichel(). 
+ The actual model codes were not modified but the TransfoParamGR6J() and CreateCalibOptions() functions were modified regarding the X5 parameter. 
+ It is strongly advised to use airGR 1.0.2 for the RunModelGR6J() and RunModelCemaNeigeGR6J() functions if you are using CalibrationMichel(), as they are much more efficient. 
+ In case you were using your own calibration algorithm, you will not notice any difference. 
+
+
+#### Minor user-visible changes
+
+- CreateInputsModel() and DataAltiExtrapolationValery() functions now allow both POSIXt formats (POSIXct and POSIXlt).
+
+
+
+
+
+##################### 1.0.1 Release Notes (2016-04-21) #####################
+
+#### Deprecated and defunct
+
+- The CalibrationHBAN() and DataAltiExtrapolationHBAN() functions have respectively been renamed as CalibrationMichel() and DataAltiExtrapolationValery() after the names of their creators.
+
+- The Calibrationoptim() function has been removed from the package.
+
+- The silent mode is now defined by the verbose = TRUE argument (formerly quiet = FALSE) in the following functions:
+Calibration(), CalibrationMichel(), CreateInputsModel(), CreateRunOptions(), DataAltiExtrapolationValery(), ErrorCrit(), ErrorCritKGE(), ErrorCritKGE2(), ErrorCritNSE(), ErrorCritRMSE(), plotOutputsModel(), SeriesAggreg().
+
+
+#### Major user-visible changes
+- The GR5J model has been modified: previously, two unit hydrographs were used, now only one is remaining.
+ As a consequence, simulations from the GR5J (RunModelGR5J() function) and CemaNeige (RunModelCemaNeigeGR5J() function) models will be different.
+
+- An important proportion of the transformations of the parameters have been modified (TransfoParam&#42;() functions). Since this modifies the local search, calibration results will be different .
+
+- The quantiles of the parameters have been recalculated with the new transformations (CreateCalibOptions() function). Since these quantiles constitute the starting point of the calibration algorithm, calibration results will be different.
+
+
+#### Minor user-visible changes
+
+- The Fortran model core codes have been modified:
+	- optimisation of the codes for fastening of computation;
+	- simplification of the internal variables for easier reading and understanding.
+	
+- The list of the contributors and authors is now full.
+
+- The references of the package has been updated; they are returned by the following R-command citation("airGR").
+
+
+
+
+##################### 0.8.1.2 Release Notes (2015-08-21) #####################
+
+#### Bug fixes
+
+- Fixed bug in CreateInputsModel() that was related to the handling of missing values.
+
+- Fixed bug in CreateRunOptions() that prevented the correct use of the IniResLevels argument (to manually set the filling rate of the production and routing stores).
+
+
+#### Minor user-visible changes
+
+- Removal of an unnecessary warning when IndPeriodWarmUp = 0.
+
+
+#### CRAN-compatibility updates
+
+- Modification of namespace file to ensure proper use under linux whithout compilation issues.
+
+
+
+
+
+##################### 0.8.0.2 Release Notes (2015-04-15) #####################
+
+
+#### New features
+
+- Three new hydrological models: RunModelGR4H() function for  GR4H (hourly), RunModelGR2M() function for GR2M (monthly) and RunModelGR1A() function for GR1A (yearly).
+
+- New function SeriesAggreg() to easily aggreg timesteps.
+
+
+#### Bug fixes
+
+- Fixed bug in ErrorCritRMSE() which led to incorrect calibration (the criterion was maximised instead of minimised).
+
+
+#### Major user-visible changes
+
+- Update of the functions CreateRunOptions(), CreateCalibOptions() and plotOutputsModel() to handle the new models.
+
+- Modification of CemaNeige Fortran code to add an update of Gratio after the SnowPack update (no impact on snow simulation).
+
+
+#### Minor user-visible changes
+
+- Improvement of the plotOutputsModel() function to allow a selection among available plots.
+
+- Minor update in ErrorCritKGE() and ErrorCritKGE2() to handle case when only one values in not NA.
+
+- Update of the scripts in airGR-advanced-example to match the structures of the BasinData objects.
+
+- Correction of formatting issue in airGR-advanced-example regarding the "ListHypsoData.txt" file.
+
+
+
+
+
+##################### 0.7.4 Release Notes (2014-11-01) #####################
+
+#### User-visible changes
+
+- Stable version stemming from version 0.7.3.
+
+
+
+
+##################### 0.7.3 Release Notes (2014-XX-XX) #####################
+
+#### Minor user-visible changes
+
+- Improvements allowing the arrival of new models.
+
+- Improvements of the argument verifications in CreateInputsModel(), CreateRunOptions(), CreateInputsCrit(), CreateCalibOptions().
+
+- Improvements of all the ErrorCrit() functions to better account for the cases with constant flow values or local zeros.
+
+
+
+
+##################### 0.7.2 Release Notes (2014-07-14) #####################
+
+#### New features
+
+- New argument in many functions (quiet = TRUE or FALSE) to choose if the warnings should be suppressed or not.
+
+
+#### Bug fixes
+
+- Fixed bug in CreateCalibOptions() to handle models with only one parameter.
+
+
+#### Major user-visible changes
+
+- CemaNeige users must now specify one MeanAnSolidPrecip for each elevation layer. The CreateRunOptions() function is impacted.
+
+- CemaNeige users can now specify the mean elevation of the input series (before it was always considered equal to the catchment median elevation). 
+ The impacted functions are CreateInputsModel() and DataAltiExtrapolationHBAN().
+
+
+#### Minor user-visible changes
+
+- Improvement of the plotOutputsModel function (to handle 0 in Qobs and Qsim).
+
+- Improved documentation.
+
+
+
+
+##################### 0.7.1 Release Notes (2014-07-14) #####################
+
+#### Bug fixes
+
+- Fixed bug in CalibrationHBAN(). The function was not working properly with models having only one parameter.
+
+
+#### Deprecated and defunct
+
+- The CalibrationAlgo&#42;() functions were renamed intoCalibration&#42;().
+
+
+#### Major user-visible changes
+
+- New architecture with better format verification procedure (using classes) and simpler setting of default configuration.
+
+- New architecture where the model, calibration and error functions are in the arguments of the functions
+ (the exotic use of "generic function" created by the users has been removed).
+
+- Improved documentation and examples.
+
+
+
+
+
+
+##################### 0.7.0 Release Notes (2014-06-06) #####################
+
+#### Experimental features
+
+- unfinished version used for development purpose.
+
+
+
+
+##################### 0.6.2 Release Notes (2014-02-12) #####################
+
+#### Bug fixes
+
+- RC11 bug correction: the automatic selection of the warm-up period was not working properly when no data was available from warm-up (i.e. when the user had set the run to start at the very first index).
+
+- RC10 bug correction: the CalibrationAlgoHBAN() function was not working in the very rare case when the diagonal search was activated and lead to a set outside the authorised range.
+
+- RC9 bug correction: the CalibrationAlgoHBAN() function was not working properly with models having only one parameter.
+
+- RC8 bug correction of the ModelDefaultIniOptions() function (this bug was introduced in the RC7 and caused an error when IndPeriodWarmUp = NULL.
+
+- RC7 bug correction of the ModelDefaultIniOptions() function (the automatic selection of one year for warm-up was not handling properly missing data).
+
+- RC6 correction of the help files (the description of CemaNeige parameters were inverted).
+
+- RC5 differs from previous releases in the way the data are read and stored (in a list instead of individual vectors).
+ The package is similar, only the examples of Main and the files in MyScriptBlocks have changed.
+ All basin data are now stored inside a list named BasinData. This will greatly ease the future use of Rdata files (instead of txt files) as storage format for the time series of observation. 
+
+
+
+ 
+##################### 0.6.1 Release Notes (2014-02-12) #####################
+
+
+#### New features
+
+- Additional functions for results plotting (the {zoo} package is required for some of them).
+
+- Add multi-objective calibration using nsga2() (the {mco} package is required).
+
+#### Major user-visible changes
+
+- The definition of the generic function is now made in a much simpler way (e.g. see DefineFunctionsModel() or DefineFunctionsErrorCrit()).
+
+
+#### Minor user-visible changes
+
+- Code improvements to reduce the computation time.
+
+- Clearer instructions for the adding and modification of a model.
+
+- Improvements of the documentation.
+
+
+
+ 
+##################### 0.6.0 Release Notes (2014-02-12) #####################
+
+#### New features
+
+- The field Multiplier has been added in the ErrorCrit() outputs, to indicate whether the criterion is an error (to minimise) or and efficiency (to maximise).
+ This allows to provide real efficiency values in the outputs e.g. NSE[Q] instead of (-1) &times; NSE[Q].
+
+
+#### Deprecated and defunct
+
+- EfficiencyCrit() have been replaced by ErrorCrit() to avoid misunderstanding (by default, the algorithms minimise the error criterion).
+
+
+
+
+##################### 0.5.2 Release Notes (2014-02-05) #####################
+
+
+#### Deprecated and defunct
+
+- The SelectPer arguments are replaced by IndPeriod to ease understanding.
+
+- The PE arguments are replaced by PotEvap() to ease understanding.
+
+- The Fsol arguments are replaced by FracSolidPrecip to ease understanding.
+
+
+#### Major user-visible changes
+
+- R 2.15 in not supported by default.
+
+- The check that SelectPerRun() is continuous is now made in the CheckArg() functions.
+
+- Check of the model functioning time step.
+
+- Name of the calibration criterion provided in OutputsAlgo().
+
+
+#### Minor user-visible changes
+
+- Missing values in Fortran are now -999.999 instead of -9.999.
+
+
+
+
+
+##################### 0.5.1 Release Notes (2014-01-27) #####################
+
+
+#### New features
+
+- New EfficiencyCritNSEsqrtQ() function to compute NSE criterion on sqrt flows.
+
+
+#### Bug fixes
+
+- Incorrect arguments in the call to RunModelAndCrit from CalibrationAlgooptimstats and CalibrationAlgonlminbstats.
+
+- CalibrationAlgonlminbstats argument was wrongly defined in DefineFunctionsCalibrationAlgo() (optim instead of nlminb).
+
+- Format checking for RunOptions was incorrectly made in CheckArg() function.
+
+

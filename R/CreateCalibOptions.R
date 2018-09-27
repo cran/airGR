@@ -178,6 +178,13 @@ CreateCalibOptions <-
         stop("Incompatibility between FixedParam length and FUN_MOD \n")
         return(NULL)
       }
+      if (all(!is.na(FixedParam))) {
+        stop("At least one parameter must be not set (NA) \n")
+        return(NULL)
+      }
+      if (all(is.na(FixedParam))) {
+        warning("You have not set any parameter in \"FixedParam\" \n")
+      }
     }
     
     ##check_SearchRanges

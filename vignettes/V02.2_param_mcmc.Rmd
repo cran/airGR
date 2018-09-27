@@ -127,7 +127,7 @@ The result will be better with more iterations than 2000. As we kept the iterati
 Note that we rescale model parameter sets of the GR4J model from the transformed space to the real space.
 
 ```{r, results='hide'}
-MultDRAM <- coda::as.mcmc(lapply(mcmcDRAM, function(x) {
+MultDRAM <- coda::as.mcmc.list(lapply(mcmcDRAM, function(x) {
   coda::as.mcmc(airGR::TransfoParam_GR4J(as.matrix(x$pars), Direction = "TR"))
   }))
 GelRub <- coda::gelman.diag(MultDRAM, autoburnin = TRUE)$mpsrf

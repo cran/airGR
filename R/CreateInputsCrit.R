@@ -84,24 +84,17 @@ CreateInputsCrit <- function(FUN_CRIT,
       return(NULL)
     }
     
-    if (!is.null(Ind_zeroes)) {
-      if (!is.vector(Ind_zeroes)) {
-        stop("Ind_zeroes must be a vector of integers \n")
-        return(NULL)
-      }
-      if (!is.integer(Ind_zeroes)) {
-        stop("Ind_zeroes must be a vector of integers \n")
-        return(NULL)
-      }
+    if (!missing(Ind_zeroes)) {
+      warning("Deprecated \"Ind_zeroes\" argument")
     }
+
     if (!is.null(epsilon)) {
-      if (!is.vector(epsilon) |
-          length(epsilon) != 1 | !is.numeric(epsilon)) {
-        stop("epsilon must be single numeric value \n")
+      if (!is.vector(epsilon) | length(epsilon) != 1 | !is.numeric(epsilon) | any(epsilon <= 0)) {
+        stop("epsilon must a be single positive value \n")
         return(NULL)
-        
       }
-      epsilon = as.double(epsilon)
+    } else if (transfo %in% c("log", "inv") & any(Qobs %in% 0) & verbose) {
+      warning("zeroes detected in Qobs: the corresponding time-steps will be exclude by the 'ErrorCrit*' functions if the epsilon agrument = NULL")
     }
     
     if (transfo == "log" & verbose) {
@@ -118,7 +111,6 @@ CreateInputsCrit <- function(FUN_CRIT,
     InputsCrit <- list(BoolCrit   = BoolCrit,
                        Qobs       = Qobs,
                        transfo    = transfo,
-                       Ind_zeroes = Ind_zeroes,
                        epsilon    = epsilon)
     
     class(InputsCrit) <- c("InputsCrit", ObjectClass)

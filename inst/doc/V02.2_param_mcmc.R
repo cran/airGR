@@ -61,7 +61,7 @@ mcmcDRAM <- apply(ListIniParam, 2, function(iListIniParam) {
 })
 
 ## ---- results='hide'-----------------------------------------------------
-MultDRAM <- coda::as.mcmc(lapply(mcmcDRAM, function(x) {
+MultDRAM <- coda::as.mcmc.list(lapply(mcmcDRAM, function(x) {
   coda::as.mcmc(airGR::TransfoParam_GR4J(as.matrix(x$pars), Direction = "TR"))
   }))
 GelRub <- coda::gelman.diag(MultDRAM, autoburnin = TRUE)$mpsrf

@@ -27,7 +27,7 @@ CreateInputsCrit(FUN_CRIT, InputsModel, RunOptions, Qobs, BoolCrit = NULL,
 
 \item{transfo}{(optional) [character] name of the transformation (e.g. \code{""}, \code{"sqrt"}, \code{"log"}, \code{"inv"}, \code{"sort"})}
 
-\item{Ind_zeroes}{(optional) [numeric] indices of the time steps where zeroes are observed}
+\item{Ind_zeroes}{(deprecated) [numeric] indices of the time steps where zeroes are observed}
 
 \item{epsilon}{(optional) [numeric] epsilon to add to all Qobs and Qsim if \emph{$Ind_zeroes} is not empty}
 
@@ -123,9 +123,9 @@ Laurent Coron, Olivier Delaigue, Guillaume Thirel
 }
 
 \references{
-Santos, L., Thirel, G. and Perrin, C. (in review), 
-      Technical note : Pitfalls in using log-transformed flows within the KGE criterion, 
-      Hydrology and Earth System Sciences Discussions, doi:10.5194/hess-2018-298.
+Santos, L., Thirel, G. and Perrin, C. (2018), 
+      Technical note: Pitfalls in using log-transformed flows within the KGE criterion, 
+      Hydrology and Earth System Sciences Discussions, 22, 4583-4591, doi:10.5194/hess-2018-298.
 }
 
 

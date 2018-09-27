@@ -78,8 +78,8 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
             } else { PsolLayerMean <- PsolLayerMean + OutputsModel$CemaNeigeLayers[[iLayer]]$Psol/NLayers; } } }
   BOOL_QobsZero <- FALSE; if (BOOL_Qobs) { SelectQobsNotZero <- (round(Qobs[IndPeriod_Plot]             , 4) != 0); BOOL_QobsZero <- sum(!SelectQobsNotZero, na.rm = TRUE)>0; }
   BOOL_QsimZero <- FALSE; if (BOOL_Qsim) { SelectQsimNotZero <- (round(OutputsModel$Qsim[IndPeriod_Plot], 4) != 0); BOOL_QsimZero <- sum(!SelectQsimNotZero, na.rm = TRUE)>0; }
-  if (BOOL_QobsZero & verbose) { warning("\t zeroes detected in Qobs -> some plots in the log space will not be created using all time-steps \n"); }
-  if (BOOL_QsimZero & verbose) { warning("\t zeroes detected in Qsim -> some plots in the log space will not be created using all time-steps \n"); }
+  if (BOOL_QobsZero & verbose) { warning("\t zeroes detected in Qobs: some plots in the log space will not be created using all time-steps \n"); }
+  if (BOOL_QsimZero & verbose) { warning("\t zeroes detected in Qsim: some plots in the log space will not be created using all time-steps \n"); }
   BOOL_FilterZero <- TRUE;
 
   ## Plots_choices
