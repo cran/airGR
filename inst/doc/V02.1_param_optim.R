@@ -5,6 +5,7 @@ library(hydroPSO)
 library(Rmalschains)
 # source("airGR.R")
 set.seed(321)
+data("Vignette_Param")
 
 ## ---- warning=FALSE, fig.keep='none', results='hide', fig.height=10, fig.width=10, eval=TRUE, echo=FALSE, message=FALSE----
 example("Calibration_Michel", echo = FALSE, ask = FALSE)
@@ -32,22 +33,21 @@ OptimGR4J <- function(Param_Optim) {
 lowerGR4J <- rep(-9.99, times = 4)
 upperGR4J <- rep(+9.99, times = 4)
 
-## ---- warning=FALSE, results='hide'--------------------------------------
-startGR4J <- c(4.1, 3.9, -0.9, -8.7)
-optPORT <- stats::nlminb(start = startGR4J, 
-                         objective = OptimGR4J,
-                         lower = lowerGR4J, upper = upperGR4J,
-                         control = list(trace = 1))
+## ---- warning=FALSE, results='hide', eval=FALSE--------------------------
+#  optPORT <- stats::nlminb(start = c(4.1, 3.9, -0.9, -8.7),
+#                           objective = OptimGR4J,
+#                           lower = lowerGR4J, upper = upperGR4J,
+#                           control = list(trace = 1))
 
-## ---- warning=FALSE, results='hide'--------------------------------------
-startGR4J <- expand.grid(data.frame(CalibOptions$StartParamDistrib))
-optPORT_ <- function(x) {
-  opt <- stats::nlminb(start = x, 
-                       objective = OptimGR4J,
-                       lower = lowerGR4J, upper = upperGR4J,
-                       control = list(trace = 1))
-}
-list_opt <- apply(startGR4J, 1, optPORT_)
+## ---- warning=FALSE, results='hide', eval=FALSE--------------------------
+#  startGR4J <- expand.grid(data.frame(CalibOptions$StartParamDistrib))
+#  optPORT_ <- function(x) {
+#    opt <- stats::nlminb(start = x,
+#                         objective = OptimGR4J,
+#                         lower = lowerGR4J, upper = upperGR4J,
+#                         control = list(trace = 1))
+#  }
+#  list_opt <- apply(startGR4J, 1, optPORT_)
 
 ## ---- warning=FALSE, results='hide'--------------------------------------
 list_par <- t(sapply(list_opt, function(x) x$par))
@@ -57,20 +57,20 @@ df_port  <- data.frame(list_par, RMSE = list_obj)
 ## ---- warning=FALSE------------------------------------------------------
 summary(df_port)
 
-## ---- warning=FALSE, results='hide'--------------------------------------
-optDE <- DEoptim::DEoptim(fn = OptimGR4J,
-                          lower = lowerGR4J, upper = upperGR4J,
-                          control = DEoptim::DEoptim.control(NP = 40, trace = 10))
+## ---- warning=FALSE, results='hide', eval=FALSE--------------------------
+#  optDE <- DEoptim::DEoptim(fn = OptimGR4J,
+#                            lower = lowerGR4J, upper = upperGR4J,
+#                            control = DEoptim::DEoptim.control(NP = 40, trace = 10))
 
-## ---- warning=FALSE, results='hide', message=FALSE-----------------------
-optPSO <- hydroPSO::hydroPSO(fn = OptimGR4J,
-                             lower = lowerGR4J, upper = upperGR4J,
-                             control = list(write2disk = FALSE, verbose = FALSE))
+## ---- warning=FALSE, results='hide', message=FALSE, eval=FALSE-----------
+#  optPSO <- hydroPSO::hydroPSO(fn = OptimGR4J,
+#                               lower = lowerGR4J, upper = upperGR4J,
+#                               control = list(write2disk = FALSE, verbose = FALSE))
 
-## ---- warning=FALSE, results='hide'--------------------------------------
-optMALS <- Rmalschains::malschains(fn = OptimGR4J,
-                                   lower = lowerGR4J, upper = upperGR4J, 
-                                   maxEvals = 2000)
+## ---- warning=FALSE, results='hide', eval=FALSE--------------------------
+#  optMALS <- Rmalschains::malschains(fn = OptimGR4J,
+#                                     lower = lowerGR4J, upper = upperGR4J,
+#                                     maxEvals = 2000)
 
 ## ---- warning=FALSE, echo=FALSE------------------------------------------
 data.frame(Algo = c("airGR", "PORT", "DE", "PSO", "MA-LS"), 

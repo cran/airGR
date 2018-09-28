@@ -2,8 +2,8 @@ Package: airGR
 Type: Package
 Title: Suite of GR Hydrological Models for Precipitation-Runoff
         Modelling
-Version: 1.0.13.19
-Date: 2018-09-27
+Version: 1.0.14.1
+Date: 2018-09-28
 Authors@R: c(
   person("Laurent", "Coron", role = c("aut", "trl"), comment = c(ORCID = "0000-0002-1503-6204")),
   person("Charles", "Perrin", role = c("aut", "ths"), comment = c(ORCID = "0000-0001-8552-1881")),
@@ -23,13 +23,13 @@ Authors@R: c(
 Depends: R (>= 3.0.1)
 Suggests: knitr, rmarkdown, coda, DEoptim, dplyr, FME, ggmcmc,
         hydroPSO, Rmalschains
-Description: Hydrological modelling tools developed at Irstea-Antony (HYCAR Research Unit, France). The package includes several conceptual rainfall-runoff models (GR4H, GR4J, GR5J, GR6J, GR2M, GR1A), a snow accumulation and melt model (CemaNeige) and the associated functions for their calibration and evaluation. Use help(airGR) for package description.
+Description: Hydrological modelling tools developed at Irstea-Antony (HYCAR Research Unit, France). The package includes several conceptual rainfall-runoff models (GR4H, GR4J, GR5J, GR6J, GR2M, GR1A), a snow accumulation and melt model (CemaNeige) and the associated functions for their calibration and evaluation. Use help(airGR) for package description and references.
 License: GPL-2
 URL: https://webgr.irstea.fr/en/airGR/
 NeedsCompilation: yes
 Encoding: UTF-8
 VignetteBuilder: knitr
-Packaged: 2018-09-27 16:01:27 UTC; olivier.delaigue
+Packaged: 2018-09-28 07:20:22 UTC; olivier.delaigue
 Author: Laurent Coron [aut, trl] (<https://orcid.org/0000-0002-1503-6204>),
   Charles Perrin [aut, ths] (<https://orcid.org/0000-0001-8552-1881>),
   Olivier Delaigue [aut, cre] (<https://orcid.org/0000-0002-7668-8468>),
@@ -46,3 +46,5 @@ Author: Laurent Coron [aut, trl] (<https://orcid.org/0000-0002-1503-6204>),
   Raji Pushpalatha [ctb],
   Audrey Valéry [ctb]
 Maintainer: Olivier Delaigue <airGR@irstea.fr>
+Repository: CRAN
+Date/Publication: 2018-09-28 08:50:07 UTC

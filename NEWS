@@ -4,7 +4,7 @@ Release History of the airGR Package
 
 
 
-##################### 1.0.13.19 Release Notes (2018-09-27) #####################
+##################### 1.0.14.1 Release Notes (2018-09-28) #####################
 
 
 #### Deprecated and defunct
@@ -46,6 +46,8 @@ Release History of the airGR Package
 - Function name changed in a vignettes to avoid error during the check on Debian distribution
 
 - As recomanded by CRAN managers, the NEWS file is now at the text format and is no more just a link to the airGR Website
+
+- Added the VignetteParam. datasets in order to reduce runtime during the re-building of vignettes. It contains different objects needed for paramoptim and parammcmc vignettes.
 
 
 

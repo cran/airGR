@@ -17,6 +17,7 @@ library(hydroPSO)
 library(Rmalschains)
 # source("airGR.R")
 set.seed(321)
+data("Vignette_Param")
 ```
 
 
@@ -80,9 +81,8 @@ upperGR4J <- rep(+9.99, times = 4)
 # Local optimization
 
 We start with a local optimization strategy by using the PORT routines (using the `nlminb()` of the `stats` package) and by setting a starting point in the transformed parameter space:
-```{r, warning=FALSE, results='hide'}
-startGR4J <- c(4.1, 3.9, -0.9, -8.7)
-optPORT <- stats::nlminb(start = startGR4J, 
+```{r, warning=FALSE, results='hide', eval=FALSE}
+optPORT <- stats::nlminb(start = c(4.1, 3.9, -0.9, -8.7), 
                          objective = OptimGR4J,
                          lower = lowerGR4J, upper = upperGR4J,
                          control = list(trace = 1))
@@ -92,7 +92,7 @@ The RMSE value reaches a local minimum value after 35 iterations.
 We can also try a multi-start approach to test the consistency of the local optimization.
 Here we use the same grid used for the filtering step of the Michel's calibration strategy (`Calibration_Michel()` function).
 For each starting point, a local optimization is performed.
-```{r, warning=FALSE, results='hide'}
+```{r, warning=FALSE, results='hide', eval=FALSE}
 startGR4J <- expand.grid(data.frame(CalibOptions$StartParamDistrib))
 optPORT_ <- function(x) {
   opt <- stats::nlminb(start = x, 
@@ -128,7 +128,7 @@ Here we use the following R implementation of some popular strategies:
 * [Rmalschains: memetic algorithms](https://cran.r-project.org/package=Rmalschains)
 
 ## Differential Evolution
-```{r, warning=FALSE, results='hide'}
+```{r, warning=FALSE, results='hide', eval=FALSE}
 optDE <- DEoptim::DEoptim(fn = OptimGR4J,
                           lower = lowerGR4J, upper = upperGR4J,
                           control = DEoptim::DEoptim.control(NP = 40, trace = 10))
@@ -136,14 +136,14 @@ optDE <- DEoptim::DEoptim(fn = OptimGR4J,
 
 
 ## Particle Swarm
-```{r, warning=FALSE, results='hide', message=FALSE}
+```{r, warning=FALSE, results='hide', message=FALSE, eval=FALSE}
 optPSO <- hydroPSO::hydroPSO(fn = OptimGR4J,
                              lower = lowerGR4J, upper = upperGR4J,
                              control = list(write2disk = FALSE, verbose = FALSE))
 ```
 
 ## MA-LS-Chains
-```{r, warning=FALSE, results='hide'}
+```{r, warning=FALSE, results='hide', eval=FALSE}
 optMALS <- Rmalschains::malschains(fn = OptimGR4J,
                                    lower = lowerGR4J, upper = upperGR4J, 
                                    maxEvals = 2000)
