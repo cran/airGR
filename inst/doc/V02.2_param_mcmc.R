@@ -6,7 +6,7 @@ library(ggmcmc)
 library(dplyr)
 # source("airGR.R")
 set.seed(123)
-data("Vignette_Param")
+load(system.file("vignettes_data/Vignette_Param.rda", package = "airGR"))
 
 ## ---- warning=FALSE, fig.keep='none', results='hide', fig.height=10, fig.width=10, eval=TRUE, echo=FALSE, message=FALSE----
 example("Calibration_Michel", echo = FALSE, ask = FALSE)

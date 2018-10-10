@@ -3,6 +3,25 @@ Release History of the airGR Package
 
 
 
+##################### 1.0.15.2 Release Notes (2018-10-10) #####################
+
+
+#### Bug fixes
+
+- Fixed bug in CreateRunOptions(). The function now accounts correctly for leap years when no warm-up period is defined.
+
+
+#### Minor user-visible changes
+
+- CreateRunOptions() was cleant, with no effect on its outputs.
+
+
+#### CRAN-compatibility updates
+
+- The VignetteParam. datasets moved to the inst directory. It contains different objects needed for paramoptim and parammcmc vignettes.
+
+
+
 
 ##################### 1.0.14.1 Release Notes (2018-09-28) #####################
 
@@ -23,7 +42,7 @@ Release History of the airGR Package
 
 - CalibrationMichel() is now faster during the grid-screening step when a parameter is set using FixedParam in CreateCalibOptions().
 
-- CreateCalibOptions() now returns FixedParam argument and a warning message when all the parameters are free (NA) in the FixedParam argument.
+- CreateCalibOptions() now returns an error when all the parameters are set in the FixedParam argument and a warning message when all the parameters are free (NA) in the FixedParam argument.
 
 - CreateInputsCrit() now returns an error when epsilon is not positive.
 
@@ -334,27 +353,6 @@ Calibration(), CalibrationMichel(), CreateInputsModel(), CreateRunOptions(), Dat
 
 ##################### 0.7.4 Release Notes (2014-11-01) #####################
 
-#### User-visible changes
-
-- Stable version stemming from version 0.7.3.
-
-
-
-
-##################### 0.7.3 Release Notes (2014-XX-XX) #####################
-
-#### Minor user-visible changes
-
-- Improvements allowing the arrival of new models.
-
-- Improvements of the argument verifications in CreateInputsModel(), CreateRunOptions(), CreateInputsCrit(), CreateCalibOptions().
-
-- Improvements of all the ErrorCrit() functions to better account for the cases with constant flow values or local zeros.
-
-
-
-
-##################### 0.7.2 Release Notes (2014-07-14) #####################
 
 #### New features
 
@@ -364,28 +362,6 @@ Calibration(), CalibrationMichel(), CreateInputsModel(), CreateRunOptions(), Dat
 #### Bug fixes
 
 - Fixed bug in CreateCalibOptions() to handle models with only one parameter.
-
-
-#### Major user-visible changes
-
-- CemaNeige users must now specify one MeanAnSolidPrecip for each elevation layer. The CreateRunOptions() function is impacted.
-
-- CemaNeige users can now specify the mean elevation of the input series (before it was always considered equal to the catchment median elevation). 
- The impacted functions are CreateInputsModel() and DataAltiExtrapolationHBAN().
-
-
-#### Minor user-visible changes
-
-- Improvement of the plotOutputsModel function (to handle 0 in Qobs and Qsim).
-
-- Improved documentation.
-
-
-
-
-##################### 0.7.1 Release Notes (2014-07-14) #####################
-
-#### Bug fixes
 
 - Fixed bug in CalibrationHBAN(). The function was not working properly with models having only one parameter.
 
@@ -397,28 +373,47 @@ Calibration(), CalibrationMichel(), CreateInputsModel(), CreateRunOptions(), Dat
 
 #### Major user-visible changes
 
+- CemaNeige users must now specify one MeanAnSolidPrecip for each elevation layer. The CreateRunOptions() function is impacted.
+
+- CemaNeige users can now specify the mean elevation of the input series (before it was always considered equal to the catchment median elevation). 
+ The impacted functions are CreateInputsModel() and DataAltiExtrapolationHBAN().
+ 
 - New architecture with better format verification procedure (using classes) and simpler setting of default configuration.
 
 - New architecture where the model, calibration and error functions are in the arguments of the functions
  (the exotic use of "generic function" created by the users has been removed).
 
-- Improved documentation and examples.
+- Improved documentation and examples. 
 
 
+#### Minor user-visible changes
 
+- Improvements allowing the arrival of new models.
 
+- Improvements of the argument verifications in CreateInputsModel(), CreateRunOptions(), CreateInputsCrit(), CreateCalibOptions().
 
+- Improvements of all the ErrorCrit() functions to better account for the cases with constant flow values or local zeros.
 
-##################### 0.7.0 Release Notes (2014-06-06) #####################
+- Improvement of the plotOutputsModel function (to handle 0 in Qobs and Qsim).
 
-#### Experimental features
+- Improved documentation.
 
-- unfinished version used for development purpose.
 
 
 
 
 ##################### 0.6.2 Release Notes (2014-02-12) #####################
+
+
+#### New features
+
+- Additional functions for results plotting (the {zoo} package is required for some of them).
+
+- Add multi-objective calibration using nsga2() (the {mco} package is required).
+
+- The field Multiplier has been added in the ErrorCrit() outputs, to indicate whether the criterion is an error (to minimise) or and efficiency (to maximise).
+ This allows to provide real efficiency values in the outputs e.g. NSE[Q] instead of (-1) &times; NSE[Q].
+
 
 #### Bug fixes
 
@@ -439,16 +434,10 @@ Calibration(), CalibrationMichel(), CreateInputsModel(), CreateRunOptions(), Dat
  All basin data are now stored inside a list named BasinData. This will greatly ease the future use of Rdata files (instead of txt files) as storage format for the time series of observation. 
 
 
+#### Deprecated and defunct
 
- 
-##################### 0.6.1 Release Notes (2014-02-12) #####################
+- EfficiencyCrit() have been replaced by ErrorCrit() to avoid misunderstanding (by default, the algorithms minimise the error criterion).
 
-
-#### New features
-
-- Additional functions for results plotting (the {zoo} package is required for some of them).
-
-- Add multi-objective calibration using nsga2() (the {mco} package is required).
 
 #### Major user-visible changes
 
@@ -463,20 +452,6 @@ Calibration(), CalibrationMichel(), CreateInputsModel(), CreateRunOptions(), Dat
 
 - Improvements of the documentation.
 
-
-
- 
-##################### 0.6.0 Release Notes (2014-02-12) #####################
-
-#### New features
-
-- The field Multiplier has been added in the ErrorCrit() outputs, to indicate whether the criterion is an error (to minimise) or and efficiency (to maximise).
- This allows to provide real efficiency values in the outputs e.g. NSE[Q] instead of (-1) &times; NSE[Q].
-
-
-#### Deprecated and defunct
-
-- EfficiencyCrit() have been replaced by ErrorCrit() to avoid misunderstanding (by default, the algorithms minimise the error criterion).
 
 
 

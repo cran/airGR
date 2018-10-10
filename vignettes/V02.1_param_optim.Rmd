@@ -17,7 +17,7 @@ library(hydroPSO)
 library(Rmalschains)
 # source("airGR.R")
 set.seed(321)
-data("Vignette_Param")
+load(system.file("vignettes_data/Vignette_Param.rda", package = "airGR"))
 ```
 
 

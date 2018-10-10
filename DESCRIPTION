@@ -2,8 +2,8 @@ Package: airGR
 Type: Package
 Title: Suite of GR Hydrological Models for Precipitation-Runoff
         Modelling
-Version: 1.0.14.1
-Date: 2018-09-28
+Version: 1.0.15.2
+Date: 2018-10-10
 Authors@R: c(
   person("Laurent", "Coron", role = c("aut", "trl"), comment = c(ORCID = "0000-0002-1503-6204")),
   person("Charles", "Perrin", role = c("aut", "ths"), comment = c(ORCID = "0000-0001-8552-1881")),
@@ -29,7 +29,7 @@ URL: https://webgr.irstea.fr/en/airGR/
 NeedsCompilation: yes
 Encoding: UTF-8
 VignetteBuilder: knitr
-Packaged: 2018-09-28 07:20:22 UTC; olivier.delaigue
+Packaged: 2018-10-10 09:54:00 UTC; olivier.delaigue
 Author: Laurent Coron [aut, trl] (<https://orcid.org/0000-0002-1503-6204>),
   Charles Perrin [aut, ths] (<https://orcid.org/0000-0001-8552-1881>),
   Olivier Delaigue [aut, cre] (<https://orcid.org/0000-0002-7668-8468>),
@@ -47,4 +47,4 @@ Author: Laurent Coron [aut, trl] (<https://orcid.org/0000-0002-1503-6204>),
   Audrey Valéry [ctb]
 Maintainer: Olivier Delaigue <airGR@irstea.fr>
 Repository: CRAN
-Date/Publication: 2018-09-28 08:50:07 UTC
+Date/Publication: 2018-10-10 10:20:03 UTC
