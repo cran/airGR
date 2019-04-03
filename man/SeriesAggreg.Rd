@@ -37,9 +37,9 @@ SeriesAggreg(TabSeries, TimeFormat, NewTimeFormat, ConvertFun,
 \description{
 Conversion of time series to another time step (aggregation only). \cr
 Warning : on the aggregated outputs, the dates correspond to the beginning of the time step \cr
-(e.g. for daily time-series 01/03/2005 00:00 = value for period 01/03/2005 00:00 - 01/03/2005 23:59) \cr
-(e.g. for monthly time-series 01/03/2005 00:00 = value for period 01/03/2005 00:00 - 31/03/2005 23:59) \cr
-(e.g. for yearly time-series 01/03/2005 00:00 = value for period 01/03/2005 00:00 - 28/02/2006 23:59)
+(e.g. for daily time-series 2005-03-01 00:00 = value for period 2005-03-01 00:00 - 2005-03-01 23:59) \cr
+(e.g. for monthly time-series 2005-03-01 00:00 = value for period 2005-03-01 00:00 - 2005-03-31 23:59) \cr
+(e.g. for yearly time-series 2005-03-01 00:00 = value for period 2005-03-01 00:00 - 2006-02-28 23:59)
 }
 
 
@@ -50,18 +50,17 @@ library(airGR)
 data(L0123002)
 
 ## preparation of the initial time series data frame at the daily time step
-TabSeries  <- data.frame(BasinObs$DatesR, BasinObs$P, BasinObs$E, BasinObs$T, BasinObs$Qmm)
-TimeFormat <- "daily"
+TabSeries <- BasinObs[, c("DatesR", "P", "E", "T", "Qmm")]
 
 ## conversion at the monthly time step
-NewTimeFormat <- "monthly"
-ConvertFun    <- c("sum", "sum", "mean", "sum")
-NewTabSeries  <- SeriesAggreg(TabSeries = TabSeries, TimeFormat, NewTimeFormat, ConvertFun)
+NewTabSeries <- SeriesAggreg(TabSeries = TabSeries,
+                             TimeFormat = "daily", NewTimeFormat = "monthly",
+                             ConvertFun = c("sum", "sum", "mean", "sum"))
 
 ## conversion at the yearly time step
-NewTimeFormat <- "yearly"
-ConvertFun <- c("sum", "sum", "mean", "sum")
-NewTabSeries <- SeriesAggreg(TabSeries = TabSeries, TimeFormat, NewTimeFormat, ConvertFun)
+NewTabSeries <- SeriesAggreg(TabSeries = TabSeries,
+                             TimeFormat = "daily", NewTimeFormat = "yearly",
+                             ConvertFun = c("sum", "sum", "mean", "sum"))
 
 }
 

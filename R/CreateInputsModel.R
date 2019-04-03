@@ -9,6 +9,8 @@ CreateInputsModel <- function(FUN_MOD,
     
     ObjectClass <- NULL
     
+    FUN_MOD <- match.fun(FUN_MOD)
+    
     ##check_FUN_MOD
     BOOL <- FALSE
     if (identical(FUN_MOD, RunModel_GR4H)) {
@@ -58,126 +60,101 @@ CreateInputsModel <- function(FUN_MOD,
       BOOL <- TRUE
     }
     if (!BOOL) {
-      stop("Incorrect FUN_MOD for use in CreateInputsModel \n")
-      return(NULL)
+      stop("incorrect 'FUN_MOD' for use in 'CreateInputsModel'")
     }
     
     ##check_arguments
     if ("GR" %in% ObjectClass | "CemaNeige" %in% ObjectClass) {
       if (is.null(DatesR)) {
-        stop("DatesR is missing \n")
-        return(NULL)
+        stop("'DatesR' is missing")
       }
-      if ("POSIXlt" %in% class(DatesR) == FALSE & "POSIXct" %in% class(DatesR) == FALSE) {
-        stop("DatesR must be defined as POSIXlt or POSIXct \n")
-        return(NULL)
+      if (!"POSIXlt" %in% class(DatesR) & !"POSIXct" %in% class(DatesR)) {
+        stop("'DatesR' must be defined as 'POSIXlt' or 'POSIXct'")
       }
-      if ("POSIXlt" %in% class(DatesR) == FALSE) {
+      if (!"POSIXlt" %in% class(DatesR)) {
         DatesR <- as.POSIXlt(DatesR)
       }
-      if (difftime(tail(DatesR, 1), tail(DatesR, 2), units = "secs")[[1]] %in% TimeStep == FALSE) {
+      if (!difftime(tail(DatesR, 1), tail(DatesR, 2), units = "secs")[[1]] %in% TimeStep) {
         TimeStepName <- grep("hourly|daily|monthly|yearly", ObjectClass, value = TRUE)
-        stop(paste0("The time step of the model inputs must be ", TimeStepName, "\n"))
-        return(NULL)
+        stop(paste0("the time step of the model inputs must be ", TimeStepName, "\n"))
       }
       if (any(duplicated(DatesR))) {
-        stop("DatesR must not include duplicated values \n")
-        return(NULL)
+        stop("'DatesR' must not include duplicated values")
       }
       LLL <- length(DatesR)
     }
     if ("GR" %in% ObjectClass) {
       if (is.null(Precip)) {
-        stop("Precip is missing \n")
-        return(NULL)
+        stop("Precip is missing")
       }
       if (is.null(PotEvap)) {
-        stop("PotEvap is missing \n")
-        return(NULL)
+        stop("'PotEvap' is missing")
       }
       if (!is.vector(Precip) | !is.vector(PotEvap)) {
-        stop("Precip and PotEvap must be vectors of numeric values \n")
-        return(NULL)
+        stop("'Precip' and 'PotEvap' must be vectors of numeric values")
       }
       if (!is.numeric(Precip) | !is.numeric(PotEvap)) {
-        stop("Precip and PotEvap must be vectors of numeric values \n")
-        return(NULL)
+        stop("'Precip' and 'PotEvap' must be vectors of numeric values")
       }
       if (length(Precip) != LLL | length(PotEvap) != LLL) {
-        stop("Precip, PotEvap and DatesR must have the same length \n")
-        return(NULL)
+        stop("'Precip', 'PotEvap' and 'DatesR' must have the same length")
       }
     }
     if ("CemaNeige" %in% ObjectClass) {
       if (is.null(Precip)) {
-        stop("Precip is missing \n")
-        return(NULL)
+        stop("'Precip' is missing")
       }
       if (is.null(TempMean)) {
-        stop("TempMean is missing \n")
-        return(NULL)
+        stop("'TempMean' is missing")
       }
       if (!is.vector(Precip) | !is.vector(TempMean)) {
-        stop("Precip and TempMean must be vectors of numeric values \n")
-        return(NULL)
+        stop("'Precip' and 'TempMean' must be vectors of numeric values")
       }
       if (!is.numeric(Precip) | !is.numeric(TempMean)) {
-        stop("Precip and TempMean must be vectors of numeric values \n")
-        return(NULL)
+        stop("'Precip' and 'TempMean' must be vectors of numeric values")
       }
       if (length(Precip) != LLL | length(TempMean) != LLL) {
-        stop("Precip, TempMean and DatesR must have the same length \n")
-        return(NULL)
+        stop("'Precip', 'TempMean' and 'DatesR' must have the same length")
       }
       if (is.null(TempMin) != is.null(TempMax)) {
-        stop("TempMin and TempMax must be both defined if not null \n")
-        return(NULL)
+        stop("'TempMin' and 'TempMax' must be both defined if not null")
       }
       if (!is.null(TempMin) & !is.null(TempMax)) {
         if (!is.vector(TempMin) | !is.vector(TempMax)) {
-          stop("TempMin and TempMax must be vectors of numeric values \n")
-          return(NULL)
+          stop("'TempMin' and 'TempMax' must be vectors of numeric values")
         }
         if (!is.numeric(TempMin) | !is.numeric(TempMax)) {
-          stop("TempMin and TempMax must be vectors of numeric values \n")
-          return(NULL)
+          stop("'TempMin' and 'TempMax' must be vectors of numeric values")
         }
         if (length(TempMin) != LLL | length(TempMax) != LLL) {
-          stop("TempMin, TempMax and DatesR must have the same length \n")
-          return(NULL)
+          stop("'TempMin', 'TempMax' and 'DatesR' must have the same length")
         }
       }
       if (!is.null(HypsoData)) {
         if (!is.vector(HypsoData)) {
-          stop("HypsoData must be a vector of numeric values  if not null \n")
-          return(NULL)
+          stop("'HypsoData' must be a vector of numeric values  if not null")
         }
         if (!is.numeric(HypsoData)) {
-          stop("HypsoData must be a vector of numeric values  if not null \n")
-          return(NULL)
+          stop("'HypsoData' must be a vector of numeric values  if not null")
         }
         if (length(HypsoData) != 101) {
-          stop("HypsoData must be of length 101 if not null \n")
-          return(NULL)
+          stop("'HypsoData' must be of length 101 if not null")
         }
         if (sum(is.na(HypsoData)) != 0 & sum(is.na(HypsoData)) != 101) {
-          stop("HypsoData must not contain any NA if not null \n")
-          return(NULL)
+          stop("'HypsoData' must not contain any NA if not null")
         }
       }
       if (!is.null(ZInputs)) {
         if (length(ZInputs) != 1) {
-          stop("\t ZInputs must be a single numeric value if not null \n")
-          return(NULL)
+          stop("'ZInputs' must be a single numeric value if not null")
         }
         if (is.na(ZInputs) | !is.numeric(ZInputs)) {
-          stop("\t ZInputs must be a single numeric value if not null \n")
-          return(NULL)
+          stop("'ZInputs' must be a single numeric value if not null")
         }
       }
       if (is.null(HypsoData)) {
         if (verbose) {
-          warning("\t HypsoData is missing => a single layer is used and no extrapolation is made \n")
+          warning("'HypsoData' is missing: a single layer is used and no extrapolation is made")
         }
         HypsoData <- as.numeric(rep(NA, 101))
         ZInputs   <- as.numeric(NA)
@@ -186,16 +163,15 @@ CreateInputsModel <- function(FUN_MOD,
       }
       if (is.null(ZInputs)) {
         if (verbose & !identical(HypsoData, as.numeric(rep(NA, 101)))) {
-          warning("\t ZInputs is missing => HypsoData[51] is used \n")
+          warning("'ZInputs' is missing: HypsoData[51] is used")
         }
         ZInputs <- HypsoData[51L]
       }
       if (NLayers <= 0) {
-        stop("NLayers must be a positive integer value \n")
-        return(NULL)
+        stop("'NLayers' must be a positive integer value")
       }
       if (NLayers != as.integer(NLayers)) {
-        warning("Coerce NLayers to be of integer type (",  NLayers, " => ", as.integer(NLayers), ")")
+        warning("Coerce 'NLayers' to be of integer type (",  NLayers, ": ", as.integer(NLayers), ")")
         NLayers <- as.integer(NLayers)
       }
     }
@@ -209,14 +185,14 @@ CreateInputsModel <- function(FUN_MOD,
       if (sum(BOOL_NA_TMP) != 0) {
         BOOL_NA <- BOOL_NA |  BOOL_NA_TMP
         if (verbose) {
-          warning("\t Values < 0 or NA values detected in Precip series  \n")
+          warning("Values < 0 or NA values detected in 'Precip' series")
         }
       }
       BOOL_NA_TMP <- (PotEvap < 0) | is.na(PotEvap)
       if (sum(BOOL_NA_TMP) != 0) {
         BOOL_NA <- BOOL_NA | BOOL_NA_TMP
         if (verbose) {
-          warning("\t Values < 0 or NA values detected in PotEvap series \n")
+          warning("Values < 0 or NA values detected in 'PotEvap' series")
         }
       }
     }
@@ -225,14 +201,14 @@ CreateInputsModel <- function(FUN_MOD,
       if (sum(BOOL_NA_TMP) != 0) {
         BOOL_NA <- BOOL_NA | BOOL_NA_TMP
         if (verbose) {
-          warning("\t Values < 0 or NA values detected in Precip series       \n")
+          warning("Values < 0 or NA values detected in 'Precip' series")
         }
       }
       BOOL_NA_TMP <-  (TempMean < (-150)) | is.na(TempMean)
       if (sum(BOOL_NA_TMP) != 0) {
         BOOL_NA <- BOOL_NA | BOOL_NA_TMP
         if (verbose) {
-          warning("\t Values < -150) or NA values detected in TempMean series \n")
+          warning("Values < -150 or NA values detected in 'TempMean' series")
         }
       }
       if (!is.null(TempMin) & !is.null(TempMax)) {
@@ -240,27 +216,26 @@ CreateInputsModel <- function(FUN_MOD,
         if (sum(BOOL_NA_TMP) != 0) {
           BOOL_NA <- BOOL_NA | BOOL_NA_TMP
           if (verbose) {
-            warning("\t Values < -150) or NA values detected in TempMin series \n")
+            warning("Values < -150 or NA values detected in 'TempMin' series")
           }
         }
         BOOL_NA_TMP <-  (TempMax < (-150)) | is.na(TempMax)
         if (sum(BOOL_NA_TMP) != 0) {
           BOOL_NA <- BOOL_NA | BOOL_NA_TMP
           if (verbose) {
-            warning("\t Values < -150) or NA values detected in TempMax series \n")
+            warning("Values < -150 or NA values detected in 'TempMax' series")
           }
         }
       }
     }
     if (sum(BOOL_NA) != 0) {
       WTxt <- NULL
-      WTxt <- paste(WTxt, "\t Missing values are not allowed in InputsModel \n", sep = "")
+      WTxt <- paste(WTxt, "\t Missing values are not allowed in 'InputsModel'", sep = "")
       
       Select <- (max(which(BOOL_NA)) + 1):length(BOOL_NA)
       
       if (Select[1L] > Select[2L]) {
-        stop("Time series could not be trunced since missing values were detected at the list time-step")
-        return(NULL)
+        stop("time series could not be trunced since missing values were detected at the list time-step")
       }
       if ("GR" %in% ObjectClass) {
         Precip  <- Precip[Select]
@@ -277,8 +252,8 @@ CreateInputsModel <- function(FUN_MOD,
       
       DatesR <- DatesR[Select]
       
-      WTxt <- paste(WTxt, "\t -> Data were trunced to keep the most recent available time-steps \n", sep = "")
-      WTxt <- paste(WTxt, "\t -> ", length(Select), " time-steps were kept \n", sep = "")
+      WTxt <- paste0(WTxt, "\t -> data were trunced to keep the most recent available time-steps")
+      WTxt <- paste0(WTxt, "\t -> ", length(Select), " time-steps were kept")
       
       if (!is.null(WTxt) & verbose) {
         warning(WTxt)
@@ -295,9 +270,9 @@ CreateInputsModel <- function(FUN_MOD,
                                              verbose = verbose)
       if (verbose) {
         if (NLayers == 1) {
-          message("\t Input series were successfully created on 1 elevation layer for use by CemaNeige")
+          message("input series were successfully created on 1 elevation layer for use by CemaNeige")
         } else {
-          message( "\t Input series were successfully created on ", NLayers, " elevation layers for use by CemaNeige")
+          message( "input series were successfully created on ", NLayers, " elevation layers for use by CemaNeige")
         }
       }
     }
@@ -321,4 +296,4 @@ CreateInputsModel <- function(FUN_MOD,
     
     
     
-  }
+}

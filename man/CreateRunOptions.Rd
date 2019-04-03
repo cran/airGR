@@ -9,10 +9,13 @@
 
 
 \usage{
-CreateRunOptions(FUN_MOD, InputsModel, IndPeriod_WarmUp = NULL, IndPeriod_Run,
-  IniStates = NULL, IniResLevels = NULL, Outputs_Cal = NULL,
-  Outputs_Sim = "all", RunSnowModule, MeanAnSolidPrecip = NULL,
-  verbose = TRUE)
+CreateRunOptions(FUN_MOD, InputsModel,
+  IndPeriod_WarmUp = NULL, IndPeriod_Run,
+  IniStates = NULL, IniResLevels = NULL,
+  Outputs_Cal = NULL, Outputs_Sim = "all",
+  RunSnowModule, MeanAnSolidPrecip = NULL,
+  IsHyst = FALSE,
+  warnings = TRUE, verbose = TRUE)
 }
 
 
@@ -39,21 +42,25 @@ CreateRunOptions(FUN_MOD, InputsModel, IndPeriod_WarmUp = NULL, IndPeriod_Run,
 	
 \item{MeanAnSolidPrecip}{(optional) [numeric] vector giving the annual mean of average solid precipitation for each layer (computed from InputsModel if not defined) [mm/y]}
 
+\item{IsHyst}{[boolean] boolean indicating if the hysteresis version of CemaNeige is used. See details}
+
+\item{warnings}{(optional) [boolean]  boolean indicating if the warning messages are shown, default = \code{TRUE}}
+
 \item{verbose}{(optional) [boolean] boolean indicating if the function is run in verbose mode or not, default = \code{TRUE}}
 }
 
 
 \value{
 [list] object of class \emph{RunOptions} containing the data required to evaluate the model outputs; it can include the following:
-         \tabular{ll}{
-         \emph{IndPeriod_WarmUp }  \tab  [numeric] index of period to be used for the model warm-up [-] \cr
-         \emph{IndPeriod_Run    }  \tab  [numeric] index of period to be used for the model run [-] \cr
-         \emph{IniStates        }  \tab  [numeric] vector of initial model states [mm and °C] \cr
-         \emph{IniResLevels     }  \tab  [numeric] vector of initial filling rates for production and routing stores [-] and level for the exponential store for GR6J [mm]\cr
-         \emph{Outputs_Cal      }  \tab  [character] character vector giving only the outputs needed for the calibration \cr
-         \emph{Outputs_Sim      }  \tab  [character] character vector giving the requested outputs \cr
-         \emph{MeanAnSolidPrecip}  \tab  [numeric] vector giving the annual mean of average solid precipitation for each layer [mm/y] \cr
-         }
+  \tabular{ll}{
+    \emph{IndPeriod_WarmUp } \tab [numeric] index of period to be used for the model warm-up [-] \cr
+    \emph{IndPeriod_Run    } \tab [numeric] index of period to be used for the model run [-] \cr
+    \emph{IniStates        } \tab [numeric] vector of initial model states [mm and °C] \cr
+    \emph{IniResLevels     } \tab [numeric] vector of initial filling rates for production and routing stores [-] and level for the exponential store for GR6J [mm]\cr
+    \emph{Outputs_Cal      } \tab [character] character vector giving only the outputs needed for the calibration \cr
+    \emph{Outputs_Sim      } \tab [character] character vector giving the requested outputs \cr
+    \emph{MeanAnSolidPrecip} \tab [numeric] vector giving the annual mean of average solid precipitation for each layer [mm/y] \cr
+  }
 }
 
 
@@ -66,7 +73,7 @@ Creation of the RunOptions object required to the \code{RunModel*} functions.
 Users wanting to use \code{FUN_MOD} functions that are not included in 
 the package must create their own \code{RunOptions} object accordingly.
 
-##### Initialisation options #####
+## ---- Initialisation options
 
 The model initialisation options can either be set to a default configuration or be defined by the user.
 
@@ -100,6 +107,11 @@ However, it is also possible to perform a long-term initialisation if other indi
 \item remark 3:	in addition to \code{IniStates}, \code{IniResLevels} allows to set the filling rate of the production and routing stores for the GR models. For instance for GR4J and GR5J: \code{IniResLevels = c(0.3, 0.5)} should be used to obtain initial fillings of 30 \% and 50 \% for the production and routing stores, respectively. For GR6J, \code{IniResLevels = c(0.3, 0.5, 0)} should be use to obtain initial fillings of 30 \% and 50 \% for the production, routing stores and 0 mm for the exponential store, respectively. \code{IniResLevels} is optional and can only be used if \code{IniStates} is also defined (the state values corresponding to these two other stores in \code{IniStates} are not used in such case).
 }
 }
+
+## ---- CemaNeige version
+
+If \code{IsHyst = FALSE}, the original CemaNeige version from Valéry et al. (2014) is used.  \cr
+If \code{IsHyst = TRUE}, the CemaNeige version from Riboust et al. (2019) is used. Compared to the original version, this version of CemaNeige needs two more parameters and it includes a representation of the hysteretic relationship between the Snow Cover Area (SCA) and the Snow Water Equivalent (SWE) in the catchment. The hysteresis included in airGR is the Modified Linear hysteresis (LH*); it is represented on panel b) of Fig. 3 in Riboust et al. (2019). Riboust et al. (2019) advise to use the LH* version of CemaNeige with parameters calibrated using an objective function combining 75 \% of KGE calculated on discharge simulated from a rainfall-runoff model compared to observed discharge and 5 \% of KGE calculated on SCA on 5 CemaNeige elevation bands compared to satellite (e.g. MODIS) SCA (see Eq. (18), Table 3 and Fig. 6). Riboust et al. (2019)'s tests were realized with GR4J as the chosen rainfall-runoff model. \cr
 }
 
 
@@ -114,16 +126,17 @@ InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$Date
                                  Precip = BasinObs$P, PotEvap = BasinObs$E)
 
 ## run period selection
-Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y")=="01/01/1990"), 
-               which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y")=="31/12/1999"))
+Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"), 
+               which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1999-12-31"))
 
 ## preparation of the RunOptions object
 RunOptions <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
                                InputsModel = InputsModel, IndPeriod_Run = Ind_Run)
 
 ## simulation
-Param <- c(734.568, -0.840, 109.809, 1.971)
-OutputsModel <- RunModel(InputsModel = InputsModel, RunOptions = RunOptions, Param = Param, 
+Param <- c(X1 = 734.568, X2 = -0.840, X3 = 109.809, X4 = 1.971)
+OutputsModel <- RunModel(InputsModel = InputsModel,
+                         RunOptions = RunOptions, Param = Param, 
                          FUN_MOD = RunModel_GR4J)
 
 ## results preview
@@ -131,7 +144,8 @@ plot(OutputsModel, Qobs = BasinObs$Qmm[Ind_Run])
 
 ## efficiency criterion: Nash-Sutcliffe Efficiency
 InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
-                                RunOptions = RunOptions, Qobs = BasinObs$Qmm[Ind_Run])
+                                RunOptions = RunOptions,
+                                Obs = BasinObs$Qmm[Ind_Run])
 OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
 }
 
@@ -142,6 +156,6 @@ Laurent Coron, Olivier Delaigue, Guillaume Thirel
 
 
 \seealso{
-\code{\link{RunModel}}, \code{\link{CreateInputsModel}}, \code{\link{CreateInputsCrit}}, \code{\link{CreateCalibOptions}}, \code{\link{CreateIniStates}}
+\code{\link{RunModel}}, \code{\link{CreateInputsModel}}, \code{\link{CreateInputsCrit}},
+\code{\link{CreateCalibOptions}}, \code{\link{CreateIniStates}}
 }
-

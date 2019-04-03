@@ -1,16 +1,16 @@
 RunModel_GR1A <- function(InputsModel,RunOptions,Param){
 
     NParam <- 1;
-    FortranOutputs <- c("PotEvap","Precip","Qsim");
+    FortranOutputs <- .FortranOutputs(GR = "GR1A")$GR
 
     ##Arguments_check
-      if(inherits(InputsModel,"InputsModel")==FALSE){ stop("InputsModel must be of class 'InputsModel' \n"); return(NULL); }  
-      if(inherits(InputsModel,"yearly"     )==FALSE){ stop("InputsModel must be of class 'yearly'      \n"); return(NULL); }  
-      if(inherits(InputsModel,"GR"         )==FALSE){ stop("InputsModel must be of class 'GR'          \n"); return(NULL); }  
-      if(inherits(RunOptions,"RunOptions"  )==FALSE){ stop("RunOptions must be of class 'RunOptions'   \n"); return(NULL); }  
-      if(inherits(RunOptions,"GR"          )==FALSE){ stop("RunOptions must be of class 'GR'           \n"); return(NULL); }  
-      if(!is.vector(Param) | !is.numeric(Param)){ stop("Param must be a numeric vector \n"); return(NULL); }
-      if(sum(!is.na(Param))!=NParam){ stop(paste("Param must be a vector of length ",NParam," and contain no NA \n",sep="")); return(NULL); }
+      if(inherits(InputsModel,"InputsModel")==FALSE){ stop("'InputsModel' must be of class 'InputsModel'") }  
+      if(inherits(InputsModel,"yearly"     )==FALSE){ stop("'InputsModel' must be of class 'yearly'     ") }  
+      if(inherits(InputsModel,"GR"         )==FALSE){ stop("'InputsModel' must be of class 'GR'         ") }  
+      if(inherits(RunOptions,"RunOptions"  )==FALSE){ stop("'RunOptions' must be of class 'RunOptions'  ") }  
+      if(inherits(RunOptions,"GR"          )==FALSE){ stop("'RunOptions' must be of class 'GR'          ") }  
+      if(!is.vector(Param) | !is.numeric(Param)){ stop("'Param' must be a numeric vector") }
+      if(sum(!is.na(Param))!=NParam){ stop(paste("'Param' must be a vector of length ",NParam," and contain no NA",sep="")) }
       Param <- as.double(Param);
 
     ##Input_data_preparation

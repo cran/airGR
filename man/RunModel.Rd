@@ -43,16 +43,17 @@ InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$Date
                                  Precip = BasinObs$P, PotEvap = BasinObs$E)
 
 ## run period selection
-Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y")=="01/01/1990"), 
-               which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y")=="31/12/1999"))
-
+Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"), 
+               which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1999-12-31"))
+               
 ## preparation of the RunOptions object
 RunOptions <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
                                InputsModel = InputsModel, IndPeriod_Run = Ind_Run)
 
 ## simulation
-Param <- c(734.568, -0.840, 109.809, 1.971)
-OutputsModel <- RunModel(InputsModel = InputsModel, RunOptions = RunOptions, Param = Param, 
+Param <- c(X1 = 734.568, X2 = -0.840, X3 = 109.809, X4 = 1.971)
+OutputsModel <- RunModel(InputsModel = InputsModel,
+                         RunOptions = RunOptions, Param = Param, 
                          FUN_MOD = RunModel_GR4J)
 
 ## results preview
@@ -60,17 +61,18 @@ plot(OutputsModel, Qobs = BasinObs$Qmm[Ind_Run])
 
 ## efficiency criterion: Nash-Sutcliffe Efficiency
 InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
-                                RunOptions = RunOptions, Qobs = BasinObs$Qmm[Ind_Run])
+                                RunOptions = RunOptions, Obs = BasinObs$Qmm[Ind_Run])
 OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
 }
 
 
 \author{
-Laurent Coron
+Laurent Coron, Olivier Delaigue
 }
 
 
 \seealso{
-\code{\link{RunModel_GR4J}}, \code{\link{RunModel_CemaNeigeGR4J}}, \code{\link{CreateInputsModel}}, \code{\link{CreateRunOptions}}, \code{\link{CreateIniStates}}.
+\code{\link{RunModel_GR4J}}, \code{\link{RunModel_CemaNeigeGR4J}}, \code{\link{CreateInputsModel}},
+\code{\link{CreateRunOptions}}, \code{\link{CreateIniStates}}.
 }
 

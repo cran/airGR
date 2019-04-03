@@ -5,7 +5,7 @@
 \alias{Calibration_Michel}
 
 
-\title{Calibration algorithm that optimises the error criterion selected as objective function using the Irstea-HBAN procedure described by C. Michel}
+\title{Calibration algorithm that optimises the error criterion selected as objective function using the Irstea procedure described by C. Michel}
 
 
 \usage{
@@ -25,7 +25,7 @@ Calibration_Michel(InputsModel, RunOptions, InputsCrit, CalibOptions,
 
 \item{FUN_MOD}{[function] hydrological model function (e.g. \code{\link{RunModel_GR4J}}, \code{\link{RunModel_CemaNeigeGR4J}})}
 
-\item{FUN_CRIT}{[function] error criterion function (e.g. \code{\link{ErrorCrit_RMSE}}, \code{\link{ErrorCrit_NSE}})}
+\item{FUN_CRIT}{(deprecated) [function] error criterion function (e.g. \code{\link{ErrorCrit_RMSE}}, \code{\link{ErrorCrit_NSE}})}
 
 \item{FUN_TRANSFO}{(optional) [function] model parameters transformation function, if the \code{FUN_MOD} used is native in the package \code{FUN_TRANSFO} is automatically defined}
 
@@ -35,17 +35,17 @@ Calibration_Michel(InputsModel, RunOptions, InputsCrit, CalibOptions,
 
 \value{
 [list] list containing the function outputs organised as follows:
-         \tabular{ll}{
-         \emph{$ParamFinalR  }  \tab   [numeric] parameter set obtained at the end of the calibration \cr
-         \emph{$CritFinal    }  \tab   [numeric] error criterion selected as objective function obtained at the end of the calibration \cr
-         \emph{$NIter        }  \tab   [numeric] number of iterations during the calibration \cr
-         \emph{$NRuns        }  \tab   [numeric] number of model runs done during the calibration \cr
-         \emph{$HistParamR   }  \tab   [numeric] table showing the progression steps in the search for optimal set: parameter values \cr
-         \emph{$HistCrit     }  \tab   [numeric] table showing the progression steps in the search for optimal set: criterion values \cr
-         \emph{$MatBoolCrit  }  \tab   [boolean] table giving the requested and actual time steps over which the model is calibrated \cr
-         \emph{$CritName     }  \tab   [character] name of the calibration criterion used as objective function \cr
-         \emph{$CritBestValue}  \tab   [numeric] theoretical best criterion value \cr
-         }
+  \tabular{ll}{
+    \emph{$ParamFinalR  } \tab [numeric] parameter set obtained at the end of the calibration                                  \cr
+    \emph{$CritFinal    } \tab [numeric] error criterion selected as objective function obtained at the end of the calibration \cr
+    \emph{$NIter        } \tab [numeric] number of iterations during the calibration                                           \cr
+    \emph{$NRuns        } \tab [numeric] number of model runs done during the calibration                                      \cr
+    \emph{$HistParamR   } \tab [numeric] table showing the progression steps in the search for optimal set: parameter values   \cr
+    \emph{$HistCrit     } \tab [numeric] table showing the progression steps in the search for optimal set: criterion values   \cr
+    \emph{$MatBoolCrit  } \tab [boolean] table giving the requested and actual time steps over which the model is calibrated   \cr
+    \emph{$CritName     } \tab [character] name of the calibration criterion used as objective function                        \cr
+    \emph{$CritBestValue} \tab [numeric] theoretical best criterion value                                                      \cr
+  }
 }
 
 
@@ -87,8 +87,8 @@ InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$Date
                                  Precip = BasinObs$P, PotEvap = BasinObs$E)
 
 ## calibration period selection
-Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y")=="01/01/1990"), 
-               which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y")=="31/12/1999"))
+Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"), 
+               which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1999-12-31"))
 
 ## preparation of RunOptions object
 RunOptions <- CreateRunOptions(FUN_MOD = RunModel_GR4J, InputsModel = InputsModel, 
@@ -96,7 +96,7 @@ RunOptions <- CreateRunOptions(FUN_MOD = RunModel_GR4J, InputsModel = InputsMode
 
 ## calibration criterion: preparation of the InputsCrit object
 InputsCrit <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
-                               RunOptions = RunOptions, Qobs = BasinObs$Qmm[Ind_Run])
+                               RunOptions = RunOptions, Obs = BasinObs$Qmm[Ind_Run])
 
 ## preparation of CalibOptions object
 CalibOptions <- CreateCalibOptions(FUN_MOD = RunModel_GR4J, FUN_CALIB = Calibration_Michel)
@@ -104,7 +104,7 @@ CalibOptions <- CreateCalibOptions(FUN_MOD = RunModel_GR4J, FUN_CALIB = Calibrat
 ## calibration
 OutputsCalib <- Calibration_Michel(InputsModel = InputsModel, RunOptions = RunOptions, 
                                  InputsCrit = InputsCrit, CalibOptions = CalibOptions, 
-                                 FUN_MOD = RunModel_GR4J, FUN_CRIT = ErrorCrit_NSE)
+                                 FUN_MOD = RunModel_GR4J)
 
 ## simulation
 Param <- OutputsCalib$ParamFinalR
@@ -116,12 +116,12 @@ plot(OutputsModel, Qobs = BasinObs$Qmm[Ind_Run])
 
 ## efficiency criterion: Nash-Sutcliffe Efficiency
 InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
-                                RunOptions = RunOptions, Qobs = BasinObs$Qmm[Ind_Run])
+                                RunOptions = RunOptions, Obs = BasinObs$Qmm[Ind_Run])
 OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
 
 ## efficiency criterion: Kling-Gupta Efficiency
 InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_KGE, InputsModel = InputsModel, 
-                                RunOptions = RunOptions, Qobs = BasinObs$Qmm[Ind_Run])
+                                RunOptions = RunOptions, Obs = BasinObs$Qmm[Ind_Run])
 OutputsCrit <- ErrorCrit_KGE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
 }
 
@@ -133,14 +133,15 @@ Laurent Coron, Claude Michel, Olivier Delaigue, Guillaume Thirel
 
 \references{
 Michel, C. (1991),
-       Hydrologie appliquée aux petits bassins ruraux, Hydrology handbook (in French), Cemagref, Antony, France.
+       Hydrologie appliquée aux petits bassins ruraux,
+       Hydrology handbook (in French), Cemagref, Antony, France.
 }
 
 
 \seealso{
 \code{\link{Calibration}},
-         \code{\link{RunModel_GR4J}}, \code{\link{TransfoParam_GR4J}}, \code{\link{ErrorCrit_RMSE}},
-         \code{\link{CreateInputsModel}}, \code{\link{CreateRunOptions}}, 
-         \code{\link{CreateInputsCrit}}, \code{\link{CreateCalibOptions}}.
+\code{\link{RunModel_GR4J}}, \code{\link{TransfoParam}}, \code{\link{ErrorCrit_RMSE}},
+\code{\link{CreateInputsModel}}, \code{\link{CreateRunOptions}}, 
+\code{\link{CreateInputsCrit}}, \code{\link{CreateCalibOptions}}.
 }
 

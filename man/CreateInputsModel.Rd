@@ -44,13 +44,13 @@ CreateInputsModel(FUN_MOD, DatesR, Precip, PrecipScale = TRUE, PotEvap = NULL,
 
 \value{
 [list] object of class \emph{InputsModel} containing the data required to evaluate the model outputs; it can include the following:
-         \tabular{ll}{
-         \emph{$DatesR              }  \tab   [POSIXlt] vector of dates \cr
-         \emph{$Precip              }  \tab   [numeric] time series of total precipitation (catchment average) [mm/time step] \cr
-         \emph{$PotEvap             }  \tab   [numeric] time series of potential evapotranspiration (catchment average) [mm/time step], \cr\tab defined if FUN_MOD includes GR4H, GR4J, GR5J, GR6J, GR2M or GR1A \cr \cr
-         \emph{$LayerPrecip         }  \tab   [list] list of time series of precipitation (layer average) [mm/time step], \cr\tab defined if  \code{FUN_MOD} includes CemaNeige \cr \cr
-         \emph{$LayerTempMean       }  \tab   [list] list of time series of mean air temperature (layer average) [°C], \cr\tab defined if  \code{FUN_MOD} includes CemaNeige \cr \cr
-         \emph{$LayerFracSolidPrecip}  \tab   [list] list of time series of solid precipitation fraction (layer average) [-], \cr\tab defined if  \code{FUN_MOD} includes CemaNeige \cr \cr
+  \tabular{ll}{
+    \emph{$DatesR              } \tab [POSIXlt] vector of dates \cr
+    \emph{$Precip              } \tab [numeric] time series of total precipitation (catchment average) [mm/time step] \cr
+    \emph{$PotEvap             } \tab [numeric] time series of potential evapotranspiration (catchment average) [mm/time step], \cr\tab defined if FUN_MOD includes GR4H, GR4J, GR5J, GR6J, GR2M or GR1A \cr \cr
+    \emph{$LayerPrecip         } \tab [list] list of time series of precipitation (layer average) [mm/time step], \cr\tab defined if \code{FUN_MOD} includes CemaNeige \cr \cr
+    \emph{$LayerTempMean       } \tab [list] list of time series of mean air temperature (layer average) [°C], \cr\tab defined if \code{FUN_MOD} includes CemaNeige \cr \cr
+    \emph{$LayerFracSolidPrecip} \tab [list] list of time series of solid precipitation fraction (layer average) [-], \cr\tab defined if \code{FUN_MOD} includes CemaNeige \cr \cr
          }
 }
 
@@ -78,15 +78,15 @@ InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$Date
                                  Precip = BasinObs$P, PotEvap = BasinObs$E)
 
 ## run period selection
-Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y")=="01/01/1990"), 
-               which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y")=="31/12/1999"))
+Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"), 
+               which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1999-12-31"))
 
 ## preparation of the RunOptions object
 RunOptions <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
                                InputsModel = InputsModel, IndPeriod_Run = Ind_Run)
 
 ## simulation
-Param <- c(734.568, -0.840, 109.809, 1.971)
+Param <- c(X1 = 734.568, X2 = -0.840, X3 = 109.809, X4 = 1.971)
 OutputsModel <- RunModel(InputsModel = InputsModel, RunOptions = RunOptions, Param = Param, 
                          FUN_MOD = RunModel_GR4J)
 
@@ -95,9 +95,8 @@ plot(OutputsModel, Qobs = BasinObs$Qmm[Ind_Run])
 
 ## efficiency criterion: Nash-Sutcliffe Efficiency
 InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
-                                RunOptions = RunOptions, Qobs = BasinObs$Qmm[Ind_Run])
+                                RunOptions = RunOptions, Obs = BasinObs$Qmm[Ind_Run])
 OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
-
 }
 
 
@@ -107,6 +106,6 @@ Laurent Coron
 
 
 \seealso{
-\code{\link{RunModel}}, \code{\link{CreateRunOptions}}, \code{\link{CreateInputsCrit}}, \code{\link{CreateCalibOptions}}, \code{\link{DataAltiExtrapolation_Valery}}
+\code{\link{RunModel}}, \code{\link{CreateRunOptions}}, \code{\link{CreateInputsCrit}},
+\code{\link{CreateCalibOptions}}, \code{\link{DataAltiExtrapolation_Valery}}
 }
-

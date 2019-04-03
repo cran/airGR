@@ -39,12 +39,12 @@ DataAltiExtrapolation_Valery(DatesR, Precip, PrecipScale = TRUE,
 \value{
 list containing the extrapolated series of precip. and air temp. on each elevation layer
          \tabular{ll}{                                                                                                      
-           \emph{$LayerPrecip         }  \tab  [list] list of time series of daily precipitation (layer average) [mm/d]        \cr
-           \emph{$LayerTempMean       }  \tab  [list] list of time series of daily mean air temperature (layer average) [°C]  \cr
-           \emph{$LayerTempMin        }  \tab  [list] list of time series of daily min air temperature (layer average) [°C]   \cr
-           \emph{$LayerTempMax        }  \tab  [list] list of time series of daily max air temperature (layer average) [°C]   \cr
-           \emph{$LayerFracSolidPrecip}  \tab  [list] list of time series of daily solid precip. fract. (layer average) [-]     \cr
-           \emph{$ZLayers             }  \tab  [numeric] vector of median elevation for each layer                              \cr
+           \emph{$LayerPrecip         } \tab [list] list of time series of daily precipitation (layer average) [mm/d]      \cr
+           \emph{$LayerTempMean       } \tab [list] list of time series of daily mean air temperature (layer average) [°C] \cr
+           \emph{$LayerTempMin        } \tab [list] list of time series of daily min air temperature (layer average) [°C]  \cr
+           \emph{$LayerTempMax        } \tab [list] list of time series of daily max air temperature (layer average) [°C]  \cr
+           \emph{$LayerFracSolidPrecip} \tab [list] list of time series of daily solid precip. fract. (layer average) [-]  \cr
+           \emph{$ZLayers             } \tab [numeric] vector of median elevation for each layer                           \cr
          }
 }
 
@@ -64,17 +64,22 @@ This function is used by the \code{\link{CreateInputsModel}} function.
 
 
 \author{
-Laurent Coron, Audrey Valéry, Pierre Brigode, Olivier Delaigue, Guillaume Thirel
+Laurent Coron, Audrey Valéry, Olivier Delaigue, Pierre Brigode, Guillaume Thirel
 }
 
 
 \references{
-Turcotte, R., L.-G. Fortin, V. Fortin, J.-P. Fortin and J.-P. Villeneuve (2007), 
-      Operational analysis of the spatial distribution and the temporal evolution of the snowpack water equivalent 
-      in southern Quebec, Canada, Nordic Hydrology, 38(3), 211, doi:10.2166/nh.2007.009. \cr
-  Valéry, A. (2010), Modélisation précipitations-débit sous influence nivale ? : Elaboration d'un module neige 
-      et évaluation sur 380 bassins versants, PhD thesis (in french), AgroParisTech, Paris, France. \cr
-  USACE (1956), Snow Hydrology, pp. 437, U.S. Army Coprs of Engineers (USACE) North Pacific Division, Portland, Oregon, USA.
+Turcotte, R., L.-G. Fortin, V. Fortin, J.-P. Fortin and J.-P. Villeneuve (2007). 
+  Operational analysis of the spatial distribution and the temporal evolution of the snowpack water equivalent in southern Quebec, Canada,
+  Nordic Hydrology, 38(3), 211. doi:10.2166/nh.2007.009.
+\cr\cr
+Valéry, A. (2010),
+  Modélisation précipitations-débit sous influence nivale ? : Elaboration d'un module neige et évaluation sur 380 bassins versants. 
+  PhD thesis (in french), AgroParisTech, Paris, France.
+\cr\cr
+USACE (1956),
+  Snow Hydrology, pp. 437. 
+  U.S. Army Coprs of Engineers (USACE) North Pacific Division, Portland, Oregon, USA.
 }
 
 

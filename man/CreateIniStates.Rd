@@ -9,10 +9,11 @@
 
 
 \usage{
-CreateIniStates(FUN_MOD, InputsModel,
+CreateIniStates(FUN_MOD, InputsModel, IsHyst = FALSE,
   ProdStore = 350, RoutStore = 90, ExpStore = NULL,
   UH1 = NULL, UH2 = NULL,
   GCemaNeigeLayers = NULL, eTGCemaNeigeLayers = NULL,
+  GthrCemaNeigeLayers = NULL, GlocmaxCemaNeigeLayers = NULL,
   verbose = TRUE)
 }
 
@@ -21,6 +22,8 @@ CreateIniStates(FUN_MOD, InputsModel,
 \item{FUN_MOD}{[function] hydrological model function (e.g. RunModel_GR4J, RunModel_CemaNeigeGR4J)}
 
 \item{InputsModel}{[object of class \code{InputsModel}] see \code{\link{CreateInputsModel}} for details}
+
+\item{IsHyst}{[boolean] boolean indicating if the hysteresis version of CemaNeige is used. See details}
 
 \item{ProdStore}{[numeric] production store level [mm]}
 
@@ -36,6 +39,10 @@ CreateIniStates(FUN_MOD, InputsModel,
 
 \item{eTGCemaNeigeLayers}{(optional) [numeric] snow pack thermal state [°C], possibly used to create the CemaNeige model initial state}
 
+\item{GthrCemaNeigeLayers}{(optional) [numeric] melt threshold [mm], possibly used to create the CemaNeige model initial state in case the Linear Hysteresis version is used}
+
+\item{GlocmaxCemaNeigeLayers}{(optional) [numeric] local melt threshold for hysteresis [mm], possibly used to create the CemaNeige model initial state in case the Linear Hysteresis version is used}
+
 \item{verbose}{(optional) [boolean] boolean indicating if the function is run in verbose mode or not, default = \code{TRUE}}
 
 }
@@ -43,11 +50,11 @@ CreateIniStates(FUN_MOD, InputsModel,
 
 \value{
 [list] object of class \code{IniStates} containing the initial model internal states; it always includes the following:
-         \tabular{ll}{
-         \emph{$Store          }  \tab  [numeric] list of store levels (\emph{$Prod}, \emph{$Rout} and \emph{$Exp}) \cr
-         \emph{$UH             }  \tab  [numeric] list of unit hydrographs levels (\emph{$UH1} and \emph{$UH2}) \cr
-         \emph{$CemaNeigeLayers}  \tab  [numeric] list of CemaNeige variables (\emph{$G} and \emph{$eTG})
-         }
+  \tabular{ll}{
+    \emph{$Store          } \tab [numeric] list of store levels (\emph{$Prod}, \emph{$Rout} and \emph{$Exp}) \cr
+    \emph{$UH             } \tab [numeric] list of unit hydrographs levels (\emph{$UH1} and \emph{$UH2}) \cr
+    \emph{$CemaNeigeLayers} \tab [numeric] list of CemaNeige variables (\emph{$G} and \emph{$eTG})
+  }
 }
 
 
@@ -76,8 +83,8 @@ InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$Date
                                  Precip = BasinObs$P, PotEvap = BasinObs$E)
 
 ## run period selection
-Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y \%H:\%M")=="01/01/1990 00:00"), 
-               which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y \%H:\%M")=="31/12/1991 00:00"))
+Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"), 
+               which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1999-12-31"))
 
 
 ### preparation of the IniStates object with low values of ProdStore and RoutStore
@@ -85,7 +92,8 @@ IniStates <- CreateIniStates(FUN_MOD = RunModel_GR4J, InputsModel = InputsModel,
                              ProdStore = 0, RoutStore = 0, ExpStore = NULL,
                              UH1 = c(0.52, 0.54, 0.15, rep(0, 17)),
                              UH2 = c(0.057, 0.042, 0.015, 0.005, rep(0, 36)),
-                             GCemaNeigeLayers = NULL, eTGCemaNeigeLayers = NULL)
+                             GCemaNeigeLayers = NULL, eTGCemaNeigeLayers = NULL,
+                             GthrCemaNeigeLayers = NULL, GlocmaxCemaNeigeLayers = NULL)
 str(IniStates)  
 
 ## preparation of the RunOptions object
@@ -94,8 +102,9 @@ RunOptions <- CreateRunOptions(FUN_MOD = RunModel_GR4J, InputsModel = InputsMode
                                IndPeriod_Run = Ind_Run, IniStates = IniStates)
                                
 ## simulation
-Param <- c(257.238, 1.012, 88.235, 2.208)
-OutputsModel <- RunModel_GR4J(InputsModel = InputsModel, RunOptions = RunOptions, Param = Param)
+Param <- c(X1 = 257.238, X2 = 1.012, X3 = 88.235, X4 = 2.208)
+OutputsModel <- RunModel_GR4J(InputsModel = InputsModel,
+                              RunOptions = RunOptions, Param = Param)
 
 ## results preview
 plot(OutputsModel, Qobs = BasinObs$Qmm[Ind_Run])                               
@@ -106,7 +115,8 @@ IniStates <- CreateIniStates(FUN_MOD = RunModel_GR4J, InputsModel = InputsModel,
                              ProdStore = 450, RoutStore = 100, ExpStore = NULL,
                              UH1 = c(0.52, 0.54, 0.15, rep(0, 17)),
                              UH2 = c(0.057, 0.042, 0.015, 0.005, rep(0, 36)),
-                             GCemaNeigeLayers = NULL, eTGCemaNeigeLayers = NULL)
+                             GCemaNeigeLayers = NULL, eTGCemaNeigeLayers = NULL,
+                             GthrCemaNeigeLayers = NULL, GlocmaxCemaNeigeLayers = NULL)
 str(IniStates)  
 
 ## preparation of the RunOptions object
@@ -115,8 +125,9 @@ RunOptions <- CreateRunOptions(FUN_MOD = RunModel_GR4J, InputsModel = InputsMode
                                IndPeriod_Run = Ind_Run, IniStates = IniStates)
                                
 ## simulation
-Param <- c(257.238, 1.012, 88.235, 2.208)
-OutputsModel <- RunModel_GR4J(InputsModel = InputsModel, RunOptions = RunOptions, Param = Param)
+Param <- c(X1 = 257.238, X2 = 1.012, X3 = 88.235, X4 = 2.208)
+OutputsModel <- RunModel_GR4J(InputsModel = InputsModel,
+                              RunOptions = RunOptions, Param = Param)
 
 ## results preview
 plot(OutputsModel, Qobs = BasinObs$Qmm[Ind_Run]) 
@@ -131,4 +142,3 @@ Olivier Delaigue
 \seealso{
 \code{\link{CreateRunOptions}}
 }
-

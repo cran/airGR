@@ -1,0 +1,246 @@
+---
+title: "Using satellite snow cover area data for calibrating and improving CemaNeige"
+bibliography: V00_airgr_ref.bib
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Using CemaNeige with Hysteresis}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{r, warning=FALSE, include=FALSE}
+library(airGR)
+```
+
+
+# Introduction
+
+## Scope
+
+Rainfall-runoff models that include a snow accumulation and melt module are still often calibrated using only discharge observations. This can result in poor snow modeling as the swnow module parameters can distorted in order to allow skilful discharge simulation.
+  
+After the work of @riboust_revisiting_2019, we propose now in **airGR** an improved version of the degree-day CemaNeige snow and accumulation module. This new version is based on a more accurate representation of the relationship that exists at the basin scale between the Snow Water Equivalent (SWE) and the Snow Cover Area (SCA). To do so, a linear SWE-SCA hysteresis, which represents the fact that snow accumulation is rather homogeneous on the basin and snow melt is more heterogeneous, was implemented.
+  
+This new CemaNeige version has two more parameters to calibrate. It also presents the advantage of allowing using satellite snow data to constrain the calibration in addition to discharge. 
+@riboust_revisiting_2019 show that while the simulated discharge is not significantly improved, the snow simulation is much improved. In addition, they show that the model is more robust (i.e. transferable in time) in terms of discharge, which has many implications for climate change impact studies.
+  
+The configuration that was identified as optimal by @riboust_revisiting_2019 includes a CemaNeige module run on 5 elevation bands and an objective function determine by a composite function of KGE' calculated on discharge (75 % weight) and KGE' calculated on each elevation band (5 % for each).
+  
+In this page, we show how to use and calibrate this new CemaNeige version. 
+  
+  
+## Data preparation
+  
+We load an example data set from the package. Please note that this data set includes MODIS data that was pre-calculated for 5 elevation bands and for which days with few data (more than 40 % cloud coverage) were assigned as missing values. 
+  
+  
+## loading catchment data
+```{r, warning=FALSE}
+data(X0310010)
+summary(BasinObs)
+```
+
+
+## Object model preparation
+
+We assume that the R global environment contains data and functions from the [Get Started](V01_get_started.html) vignette.
+
+The calibration period has been defined from 2000-09-01 to 2005-08-31, and the validation period from 2005-09-01 to 2010-07-31. CemaNeige will be used in coupling with GR4J in this vignette.
+
+
+```{r, warning=FALSE}
+## preparation of the InputsModel object
+InputsModel <- CreateInputsModel(FUN_MOD = RunModel_CemaNeigeGR4J,
+                                 DatesR = BasinObs$DatesR, Precip = BasinObs$P,
+                                 PotEvap = BasinObs$E, TempMean = BasinObs$T,
+                                 ZInputs = median(BasinInfo$HypsoData),
+                                 HypsoData = BasinInfo$HypsoData, NLayers = 5)
+
+## ---- calibration step
+
+## calibration period selection
+Ind_Cal <- seq(which(format(BasinObs$DatesR, format = "%Y-%m-%d") == "2000-09-01"), 
+               which(format(BasinObs$DatesR, format = "%Y-%m-%d") == "2005-08-31"))
+
+
+## ---- validation step
+
+## validation period selection
+Ind_Val <- seq(which(format(BasinObs$DatesR, format = "%Y-%m-%d") == "2005-09-01"), 
+               which(format(BasinObs$DatesR, format = "%Y-%m-%d") == "2010-07-31"))
+```
+
+
+
+# Calibration and evaluation of the new CemaNeige module
+
+In order to use the Linear Hysteresis, a new argument (`IsHyst`) is added in the `CreateRunOptions()` and `CreateCalibOptions()` functions and has to be set to `TRUE`. 
+
+```{r, warning=FALSE}
+## preparation of the RunOptions object for the calibration period
+RunOptions_Cal <- CreateRunOptions(FUN_MOD = RunModel_CemaNeigeGR4J,
+                                   InputsModel = InputsModel, IndPeriod_Run = Ind_Cal,
+                                   IsHyst = TRUE)
+
+## preparation of the RunOptions object for the validation period
+RunOptions_Val <- CreateRunOptions(FUN_MOD = RunModel_CemaNeigeGR4J,
+                                   InputsModel = InputsModel, IndPeriod_Run = Ind_Val,
+                                   IsHyst = TRUE)
+
+## preparation of the CalibOptions object
+CalibOptions <- CreateCalibOptions(FUN_MOD = RunModel_CemaNeigeGR4J,
+                                   FUN_CALIB = Calibration_Michel,
+                                   IsHyst = TRUE)
+```
+
+In order to calibrate and assess the model performance, we will follow the recommendations of @riboust_revisiting_2019. This is now possible in **airGR** with the added functionality that permits calculating composite criteria by combining different metrics. 
+
+
+```{r, warning=FALSE}
+## efficiency criterion: 75 % KGE'(Q) + 5 % KGE'(SCA) on each of the 5 layers
+InputsCrit_Cal  <- CreateInputsCrit(FUN_CRIT = rep("ErrorCrit_KGE2", 6),
+                                    InputsModel = InputsModel, RunOptions = RunOptions_Cal,
+                                    Obs = list(BasinObs$Qmm[Ind_Cal],
+                                               BasinObs$SCA1[Ind_Cal],
+                                               BasinObs$SCA2[Ind_Cal],
+                                               BasinObs$SCA3[Ind_Cal],
+                                               BasinObs$SCA4[Ind_Cal],
+                                               BasinObs$SCA5[Ind_Cal]),
+                                    VarObs = list("Q", "SCA", "SCA", "SCA", "SCA", "SCA"),
+                                    Weights = list(0.75, 0.05, 0.05, 0.05, 0.05, 0.05))
+
+InputsCrit_Val  <- CreateInputsCrit(FUN_CRIT = rep("ErrorCrit_KGE2", 6),
+                                    InputsModel = InputsModel, RunOptions = RunOptions_Val,
+                                    Obs = list(BasinObs$Qmm[Ind_Val],
+                                               BasinObs$SCA1[Ind_Val],
+                                               BasinObs$SCA2[Ind_Val],
+                                               BasinObs$SCA3[Ind_Val],
+                                               BasinObs$SCA4[Ind_Val],
+                                               BasinObs$SCA5[Ind_Val]),
+                                    VarObs = list("Q", "SCA", "SCA", "SCA", "SCA", "SCA"),
+                                    Weights = list(0.75, 0.05, 0.05, 0.05, 0.05, 0.05))
+``` 
+
+We can now calibrate the model.
+
+```{r, warning=FALSE}
+## calibration
+OutputsCalib <- Calibration(InputsModel = InputsModel, RunOptions = RunOptions_Cal,
+                            InputsCrit = InputsCrit_Cal, CalibOptions = CalibOptions,
+                            FUN_MOD = RunModel_CemaNeigeGR4J,
+                            FUN_CALIB = Calibration_Michel)
+```
+
+
+Now we can run it on the calibration period and assess it. 
+
+```{r, warning=FALSE, message=FALSE}
+## run on the calibration period
+OutputsModel_Cal <- RunModel_CemaNeigeGR4J(InputsModel = InputsModel,
+                                           RunOptions = RunOptions_Cal, 
+                                           Param = OutputsCalib$ParamFinalR)
+
+## evaluation 
+OutputsCrit_Cal <- ErrorCrit(InputsCrit = InputsCrit_Cal, OutputsModel = OutputsModel_Cal)
+```
+
+
+Find below the performance of the model over the calibration period. 
+
+```{r, warning=FALSE}
+str(OutputsCrit_Cal, max.level = 2)
+```
+
+Now we can run the model on the validation period and assess it. 
+
+```{r, warning=FALSE, message=FALSE}
+## run on the validation period
+OutputsModel_Val <- RunModel_CemaNeigeGR4J(InputsModel = InputsModel,
+                                           RunOptions = RunOptions_Val, 
+                                           Param = OutputsCalib$ParamFinalR)
+
+## evaluation 
+OutputsCrit_Val <- ErrorCrit(InputsCrit = InputsCrit_Val, OutputsModel = OutputsModel_Val)
+```
+
+Find below the performance of the model over the validation period. 
+
+```{r, warning=FALSE}
+str(OutputsCrit_Val, max.level = 2)
+```
+
+
+
+# Comparison with the performance of the initial CemaNeige version 
+
+Here we use the same InputsModel object and calibration and validation periods. However, we have to redefine the way we run the model (`RunOptions` argument), calibrate and assess it (`InputsCrit` argument). The objective function is only based on KGE'(Q). Note how we set the `IsHyst` argument to `FALSE` in the `CreateRunOptions()`  and the  `CreateCalibOptions()` functions.
+
+```{r, warning=FALSE}
+## preparation of RunOptions object
+RunOptions_Cal_NoHyst <- CreateRunOptions(FUN_MOD = RunModel_CemaNeigeGR4J,
+                                          InputsModel = InputsModel,
+                                          IndPeriod_Run = Ind_Cal,
+                                          IsHyst = FALSE)
+
+RunOptions_Val_NoHyst <- CreateRunOptions(FUN_MOD = RunModel_CemaNeigeGR4J,
+                                          InputsModel = InputsModel, 
+                                          IndPeriod_Run = Ind_Val,
+                                          IsHyst = FALSE)
+
+InputsCrit_Cal_NoHyst <- CreateInputsCrit(FUN_CRIT = ErrorCrit_KGE2,
+                                          InputsModel = InputsModel,
+                                          RunOptions = RunOptions_Cal_NoHyst,
+                                          Obs = BasinObs$Qmm[Ind_Cal], VarObs = "Q")
+
+## preparation of CalibOptions object
+CalibOptions_NoHyst <- CreateCalibOptions(FUN_MOD = RunModel_CemaNeigeGR4J,
+                                          FUN_CALIB = Calibration_Michel,
+                                          IsHyst = FALSE)
+```
+
+We can now calibrate the model.
+
+```{r, warning=FALSE}
+## calibration
+OutputsCalib_NoHyst <- Calibration(InputsModel = InputsModel, InputsCrit = InputsCrit_Cal_NoHyst,
+                                   RunOptions = RunOptions_Cal_NoHyst, CalibOptions = CalibOptions_NoHyst,
+                                   FUN_MOD = RunModel_CemaNeigeGR4J, FUN_CALIB = Calibration_Michel)
+```
+
+And run it over the calibration and validation periods. 
+
+```{r, warning=FALSE}
+OutputsModel_Cal_NoHyst <- RunModel_CemaNeigeGR4J(InputsModel = InputsModel,
+                                                  RunOptions = RunOptions_Cal_NoHyst,  
+                                                  Param = OutputsCalib_NoHyst$ParamFinalR)
+
+OutputsModel_Val_NoHyst <- RunModel_CemaNeigeGR4J(InputsModel = InputsModel,
+                                                  RunOptions = RunOptions_Val_NoHyst, 
+                                                  Param = OutputsCalib_NoHyst$ParamFinalR)
+```
+
+In order to assess the model performance over the two periods, we will use the InputsCrit objects prepared before, which allow assessing also the performance in terms of snow simulation.
+
+
+```{r, warning=FALSE, message=FALSE}
+OutputsCrit_Cal_NoHyst <- ErrorCrit(InputsCrit = InputsCrit_Cal,
+                                    OutputsModel = OutputsModel_Cal_NoHyst)
+
+OutputsCrit_Val_NoHyst <- ErrorCrit(InputsCrit = InputsCrit_Val,
+                                    OutputsModel = OutputsModel_Val_NoHyst)
+```
+
+We can check the performance over the calibration and the validation period.
+
+```{r, warning=FALSE}
+str(OutputsCrit_Cal_NoHyst, max.level = 2)
+str(OutputsCrit_Val_NoHyst, max.level = 2)
+```
+
+We can see above that the performance of the initial model is slightly better than the new one over the calibration period in terms of discharge, but also that the new version calibrated using SCA provides better performance in terms of snow. 
+However, over the validation period, we see that the discharge simulated by the new version brings better performance (in addition to improved SCA also). This shows the interests of the combined use of a linear hysteresis and of SCA data for calibration in CemaNeige. 
+
+
+
+# References

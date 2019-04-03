@@ -1,27 +1,57 @@
-Calibration_Michel <- function(InputsModel, RunOptions, InputsCrit, CalibOptions,
-                               FUN_MOD, FUN_CRIT, FUN_TRANSFO = NULL, verbose = TRUE) {
+Calibration_Michel <- function(InputsModel, 
+                               RunOptions, 
+                               InputsCrit, 
+                               CalibOptions,
+                               FUN_MOD, 
+                               FUN_CRIT,           # deprecated
+                               FUN_TRANSFO = NULL, 
+                               verbose = TRUE) {
+  
+  
+  FUN_MOD  <- match.fun(FUN_MOD)
+  if (!missing(FUN_CRIT)) {
+    FUN_CRIT <- match.fun(FUN_CRIT)
+  }
+  if (!is.null(FUN_TRANSFO)) {
+    FUN_TRANSFO <- match.fun(FUN_TRANSFO)
+  }
   
   
   ##_____Arguments_check_____________________________________________________________________
   if (!inherits(InputsModel, "InputsModel")) {
-    stop("InputsModel must be of class 'InputsModel' \n")
-    return(NULL)
+    stop("'InputsModel' must be of class 'InputsModel'")
   }  
   if (!inherits(RunOptions, "RunOptions")) {
-    stop("RunOptions must be of class 'RunOptions' \n")
-    return(NULL)
+    stop("'RunOptions' must be of class 'RunOptions'")
   }  
   if (!inherits(InputsCrit, "InputsCrit")) {
-    stop("InputsCrit must be of class 'InputsCrit' \n")
-    return(NULL)
-  }  
+    stop("'InputsCrit' must be of class 'InputsCrit'")
+  }
+  if (inherits(InputsCrit, "Multi")) {
+    stop("'InputsCrit' must be of class 'Single' or 'Compo'")
+  }
+  if (inherits(InputsCrit, "Single")) {
+    listVarObs <- InputsCrit$VarObs
+  }
+  if (inherits(InputsCrit, "Compo")) {
+    listVarObs <- sapply(InputsCrit, FUN = "[[", "VarObs")
+  }
+  if ("SCA" %in% listVarObs & !"Gratio" %in% RunOptions$Outputs_Cal) {
+    warning("Missing 'Gratio' is automatically added to 'Output_Cal' in 'RunOptions' as it is necessary in the objective function for comparison with SCA")
+    RunOptions$Outputs_Cal <- c(RunOptions$Outputs_Cal, "Gratio")
+  }
+  if ("SWE" %in% listVarObs & !"SnowPack" %in% RunOptions$Outputs_Cal) {
+    warning("Missing 'SnowPack' is automatically added to 'Output_Cal' in 'RunOptions' as it is necessary in the objective function for comparison with SWE")
+    RunOptions$Outputs_Cal <- c(RunOptions$Outputs_Cal, "SnowPack")
+  }
   if (!inherits(CalibOptions, "CalibOptions")) {
-    stop("CalibOptions must be of class 'CalibOptions' \n")
-    return(NULL)
+    stop("'CalibOptions' must be of class 'CalibOptions'")
   }  
   if (!inherits(CalibOptions, "HBAN")) {
-    stop("CalibOptions must be of class 'HBAN' if Calibration_Michel is used \n")
-    return(NULL)
+    stop("'CalibOptions' must be of class 'HBAN' if 'Calibration_Michel' is used")
+  }
+  if (!missing(FUN_CRIT)) {
+    warning("argument 'FUN_CRIT' is deprecated. The error criterion function is now automatically get from the 'InputsCrit' object")
   }  
   
   
@@ -46,39 +76,62 @@ Calibration_Michel <- function(InputsModel, RunOptions, InputsCrit, CalibOptions
       FUN_TRANSFO <- TransfoParam_GR1A
     }
     if (identical(FUN_MOD, RunModel_CemaNeige    )) {
-      FUN_TRANSFO <- TransfoParam_CemaNeige
+      if (inherits(CalibOptions, "hysteresis")) {
+        FUN_TRANSFO <- TransfoParam_CemaNeigeHyst
+      } else {
+        FUN_TRANSFO <- TransfoParam_CemaNeige
+      }
     }
     if (identical(FUN_MOD, RunModel_CemaNeigeGR4J) | identical(FUN_MOD, RunModel_CemaNeigeGR5J) | identical(FUN_MOD, RunModel_CemaNeigeGR6J)) {
       if (identical(FUN_MOD, RunModel_CemaNeigeGR4J)) {
         FUN1 <- TransfoParam_GR4J
-        FUN2 <- TransfoParam_CemaNeige
       }
       if (identical(FUN_MOD, RunModel_CemaNeigeGR5J)) {
         FUN1 <- TransfoParam_GR5J
-        FUN2 <- TransfoParam_CemaNeige
       }
-      if (identical(FUN_MOD,RunModel_CemaNeigeGR6J)) {
+      if (identical(FUN_MOD, RunModel_CemaNeigeGR6J)) {
         FUN1 <- TransfoParam_GR6J
+      }
+      if (inherits(CalibOptions, "hysteresis")) {
+        FUN2 <- TransfoParam_CemaNeigeHyst
+      } else {
         FUN2 <- TransfoParam_CemaNeige
       }
-      FUN_TRANSFO <- function(ParamIn, Direction) {
-        Bool <- is.matrix(ParamIn)
-        if (Bool == FALSE) {
-          ParamIn <- rbind(ParamIn)
+      if (inherits(CalibOptions, "hysteresis")) {
+        FUN_TRANSFO <- function(ParamIn, Direction) {
+          Bool <- is.matrix(ParamIn)
+          if (!Bool) {
+            ParamIn <- rbind(ParamIn)
+          }
+          ParamOut <- NA * ParamIn
+          NParam   <- ncol(ParamIn)
+          ParamOut[,          1:(NParam-4)] <- FUN1(ParamIn[,          1:(NParam-4)], Direction)
+          ParamOut[, (NParam-3):NParam    ] <- FUN2(ParamIn[, (NParam-3):NParam    ], Direction)
+          if (!Bool) {
+            ParamOut <- ParamOut[1, ]
+          }
+          return(ParamOut)
         }
-        ParamOut <- NA * ParamIn
-        NParam   <- ncol(ParamIn)
-        ParamOut[,          1:(NParam-2)] <- FUN1(ParamIn[,          1:(NParam-2)], Direction)
-        ParamOut[, (NParam-1):NParam    ] <- FUN2(ParamIn[, (NParam-1):NParam    ], Direction)
-        if (Bool == FALSE) {
-          ParamOut <- ParamOut[1, ]
+      } else {
+        FUN_TRANSFO <- function(ParamIn, Direction) {
+          Bool <- is.matrix(ParamIn)
+          if (!Bool) {
+            ParamIn <- rbind(ParamIn)
+          }
+          ParamOut <- NA * ParamIn
+          NParam   <- ncol(ParamIn)
+          ParamOut[,          1:(NParam-2)] <- FUN1(ParamIn[,          1:(NParam-2)], Direction)
+          ParamOut[, (NParam-1):NParam    ] <- FUN2(ParamIn[, (NParam-1):NParam    ], Direction)
+          if (!Bool) {
+            ParamOut <- ParamOut[1, ]
+          }
+          return(ParamOut)
         }
-        return(ParamOut)
       }
+      
     }
     if (is.null(FUN_TRANSFO)) {
-      stop("FUN_TRANSFO was not found (in Calibration function) \n")
-      return(NULL)
+      stop("'FUN_TRANSFO' was not found (in 'Calibration' function)")
     }
   }
   
@@ -100,8 +153,7 @@ Calibration_Michel <- function(InputsModel, RunOptions, InputsCrit, CalibOptions
     NParam <- ncol(CalibOptions$StartParamDistrib)
   }
   if (NParam > 20) {
-    stop("Calibration_Michel can handle a maximum of 20 parameters \n")
-    return(NULL)
+    stop("Calibration_Michel can handle a maximum of 20 parameters")
   }
   HistParamR    <- matrix(NA, nrow = 500 * NParam, ncol = NParam)
   HistParamT    <- matrix(NA, nrow = 500 * NParam, ncol = NParam)
@@ -170,8 +222,9 @@ Calibration_Michel <- function(InputsModel, RunOptions, InputsCrit, CalibOptions
     ##Model_run
     Param <- CandidatesParamR[iNew, ]
     OutputsModel <- FUN_MOD(InputsModel, RunOptions, Param)
+    
     ##Calibration_criterion_computation
-    OutputsCrit <- FUN_CRIT(InputsCrit, OutputsModel, verbose = FALSE)      
+    OutputsCrit <- ErrorCrit(InputsCrit, OutputsModel, verbose = FALSE)
     if (!is.na(OutputsCrit$CritValue)) {
       if (OutputsCrit$CritValue * OutputsCrit$Multiplier < CritOptim) {
         CritOptim <- OutputsCrit$CritValue * OutputsCrit$Multiplier
@@ -197,7 +250,7 @@ Calibration_Michel <- function(InputsModel, RunOptions, InputsCrit, CalibOptions
   }
   ParamStartT <- FUN_TRANSFO(ParamStartR, "RT")
   CritStart   <- CritOptim
-  NRuns       <- NRuns+nrow(CandidatesParamR)
+  NRuns       <- NRuns + nrow(CandidatesParamR)
   if (verbose) {
     if (Ncandidates > 1) {
       message(sprintf("\t Screening completed (%s runs)", NRuns))
@@ -205,8 +258,8 @@ Calibration_Michel <- function(InputsModel, RunOptions, InputsCrit, CalibOptions
     if (Ncandidates == 1) {
       message("\t Starting point for steepest-descent local search:")
     }
-    message("\t     Param = ", paste(sprintf("%8.3f", ParamStartR), collapse = " , "))
-    message(sprintf("\t     Crit %-12s = %.4f", CritName, CritStart * Multiplier))
+    message("\t     Param = ", paste(sprintf("%8.3f", ParamStartR), collapse = ", "))
+    message(sprintf("\t     Crit. %-12s = %.4f", CritName, CritStart * Multiplier))
   }
   ##Results_archiving________________________________________________________
   HistParamR[1, ] <- ParamStartR
@@ -220,22 +273,20 @@ Calibration_Michel <- function(InputsModel, RunOptions, InputsCrit, CalibOptions
   
   
   ##Definition_of_the_function_creating_new_parameter_sets_through_a_step_by_step_progression_procedure
-  ProposeCandidatesLoc <- function(NewParamOptimT, OldParamOptimT, RangesT, OptimParam,Pace) {
+  ProposeCandidatesLoc <- function(NewParamOptimT, OldParamOptimT, RangesT, OptimParam, Pace) {
     ##Format_checking
     if (nrow(NewParamOptimT) != 1 | nrow(OldParamOptimT) != 1) {
-      stop("each input set must be a matrix of one single line \n")
-      return(NULL)
+      stop("each input set must be a matrix of one single line")
     }
     if (ncol(NewParamOptimT)!=ncol(OldParamOptimT) | ncol(NewParamOptimT) != length(OptimParam)) {
-      stop("each input set must have the same number of values \n")
-      return(NULL)
+      stop("each input set must have the same number of values")
     }
     ##Proposal_of_new_parameter_sets ###(local search providing 2 * NParam-1 new sets)
     NParam <- ncol(NewParamOptimT)
     VECT <- NULL
     for (I in 1:NParam) {
       ##We_check_that_the_current_parameter_should_indeed_be_optimised
-      if (OptimParam[I] == TRUE) {
+      if (OptimParam[I]) {
         for (J in 1:2) {
           Sign <- 2 * J - 3   #Sign can be equal to -1 or +1
           ##We_define_the_new_potential_candidate
@@ -321,7 +372,7 @@ Calibration_Michel <- function(InputsModel, RunOptions, InputsCrit, CalibOptions
       Param <- CandidatesParamR[iNew, ]
       OutputsModel <- FUN_MOD(InputsModel, RunOptions, Param)
       ##Calibration_criterion_computation
-      OutputsCrit <- FUN_CRIT(InputsCrit, OutputsModel, verbose = FALSE)      
+      OutputsCrit <- ErrorCrit(InputsCrit, OutputsModel, verbose = FALSE)      
       if (!is.na(OutputsCrit$CritValue)) {
         if (OutputsCrit$CritValue * OutputsCrit$Multiplier < CritOptim) {
           CritOptim <- OutputsCrit$CritValue * OutputsCrit$Multiplier
@@ -382,7 +433,7 @@ Calibration_Michel <- function(InputsModel, RunOptions, InputsCrit, CalibOptions
       Param <- CandidatesParamR[iNew, ]
       OutputsModel <- FUN_MOD(InputsModel, RunOptions, Param)
       ##Calibration_criterion_computation
-      OutputsCrit <- FUN_CRIT(InputsCrit, OutputsModel, verbose = FALSE)
+      OutputsCrit <- ErrorCrit(InputsCrit, OutputsModel, verbose = FALSE)
       if (OutputsCrit$CritValue * OutputsCrit$Multiplier < CritOptim) {
         CritOptim <- OutputsCrit$CritValue * OutputsCrit$Multiplier
         iNewOptim <- iNew
@@ -421,8 +472,18 @@ Calibration_Michel <- function(InputsModel, RunOptions, InputsCrit, CalibOptions
   NIter       <- 1 + ITER
   if (verbose) { 
     message(sprintf("\t Calibration completed (%s iterations, %s runs)", NIter, NRuns))
-    message("\t     Param = ", paste(sprintf("%8.3f", ParamFinalR), collapse = " , "))
-    message(sprintf("\t     Crit %-12s = %.4f", CritName, CritFinal * Multiplier))
+    message("\t     Param = ", paste(sprintf("%8.3f", ParamFinalR), collapse = ", "))
+    message(sprintf("\t     Crit. %-12s = %.4f", CritName, CritFinal * Multiplier))
+    if (inherits(InputsCrit, "Compo")) {
+      listweights  <- OutputsCrit$CritCompo$MultiCritWeights
+      listNameCrit <- OutputsCrit$CritCompo$MultiCritNames
+      msgForm <- paste(sprintf("%.2f", listweights), listNameCrit, sep = " * ", collapse = ", ")
+      msgForm <- unlist(strsplit(msgForm, split = ","))
+      msgFormSep <- rep(c(",", ",", ",\n\t\t    "), times = ceiling(length(msgForm)/3))[1: length(msgForm)]
+      msgForm <- paste(msgForm, msgFormSep, sep = "", collapse = "")
+      msgForm <- gsub("\\,\\\n\\\t\\\t    $|\\,$", "", msgForm)
+      message("\tFormula: sum(", msgForm, ")")
+    }
   }
   ##Results_archiving_______________________________________________________
   HistParamR <- cbind(HistParamR[1:NIter, ])
@@ -450,8 +511,4 @@ Calibration_Michel <- function(InputsModel, RunOptions, InputsCrit, CalibOptions
   
   
 }
-
-
-
-
 

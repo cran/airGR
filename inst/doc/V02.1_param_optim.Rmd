@@ -17,7 +17,7 @@ library(hydroPSO)
 library(Rmalschains)
 # source("airGR.R")
 set.seed(321)
-load(system.file("vignettes_data/Vignette_Param.rda", package = "airGR"))
+load(system.file("vignettesData/vignetteParamOptim.rda", package = "airGR"))
 ```
 
 
@@ -33,9 +33,10 @@ In this vignette, we use the **GR4J** model to illustrate the different optimiza
 In particular, we assume that the R global environment contains input climate data, observed discharge and functions from the [Get Started](V01_get_started.html) vignette, as shown below.
 Please note that the calibration period is defined in the `CreateRunOptions()` function .
 
-```{r, warning=FALSE, fig.keep='none', results='hide', fig.height=10, fig.width=10, eval=TRUE, echo=FALSE, message=FALSE}
-example("Calibration_Michel", echo = FALSE, ask = FALSE)
-```
+<!-- ```{r, warning=FALSE, fig.keep='none', results='hide', fig.height=10, fig.width=10, eval=TRUE, echo=FALSE, message=FALSE} -->
+<!-- example("Calibration_Michel", echo = FALSE, ask = FALSE) -->
+<!-- ``` -->
+
 ```{r, echo=TRUE, eval=FALSE}
 example("Calibration_Michel")
 ```
@@ -54,15 +55,15 @@ Here we choose to minimize the root mean square error.
 The change of the repository from the "real" parameter space to a "transformed" space ensures homogeneity of displacement in the different dimensions of the parameter space during the step-by-step procedure of the calibration algorithm of the model.
 
 
-```{r, warning=FALSE, results='hide'}
-OptimGR4J <- function(Param_Optim) {
+```{r, warning=FALSE, results='hide', eval=FALSE}
+OptimGR4J <- function(ParamOptim) {
   ## Transformation of the parameter set to real space
-  Param_Optim_Vre <- airGR::TransfoParam_GR4J(ParamIn = Param_Optim,
-                                              Direction = "TR")
+  RawParamOptim <- airGR::TransfoParam_GR4J(ParamIn = ParamOptim,
+                                            Direction = "TR")
   ## Simulation given a parameter set
   OutputsModel <- airGR::RunModel_GR4J(InputsModel = InputsModel,
                                        RunOptions = RunOptions,
-                                       Param = Param_Optim_Vre)
+                                       Param = RawParamOptim)
   ## Computation of the value of the performance criteria
   OutputsCrit <- airGR::ErrorCrit_RMSE(InputsCrit = InputsCrit,
                                        OutputsModel = OutputsModel,
@@ -73,7 +74,7 @@ OptimGR4J <- function(Param_Optim) {
 
 
 In addition, we need to define the lower and upper bounds of the four **GR4J** parameters in the transformed parameter space:
-```{r, warning=FALSE, results='hide'}
+```{r, warning=FALSE, results='hide', eval=FALSE}
 lowerGR4J <- rep(-9.99, times = 4)
 upperGR4J <- rep(+9.99, times = 4)
 ```
@@ -82,7 +83,8 @@ upperGR4J <- rep(+9.99, times = 4)
 
 We start with a local optimization strategy by using the PORT routines (using the `nlminb()` of the `stats` package) and by setting a starting point in the transformed parameter space:
 ```{r, warning=FALSE, results='hide', eval=FALSE}
-optPORT <- stats::nlminb(start = c(4.1, 3.9, -0.9, -8.7), 
+startGR4J <- c(4.1, 3.9, -0.9, -8.7)
+optPORT <- stats::nlminb(start = startGR4J, 
                          objective = OptimGR4J,
                          lower = lowerGR4J, upper = upperGR4J,
                          control = list(trace = 1))
@@ -100,19 +102,19 @@ optPORT_ <- function(x) {
                        lower = lowerGR4J, upper = upperGR4J,
                        control = list(trace = 1))
 }
-list_opt <- apply(startGR4J, 1, optPORT_)
+listOptPORT <- apply(startGR4J, MARGIN = 1, FUN = optPORT_)
 ```
 
 We can then extract the best parameter sets and the value of the performance criteria:
-```{r, warning=FALSE, results='hide'}
-list_par <- t(sapply(list_opt, function(x) x$par))
-list_obj <- sapply(list_opt, function(x) x$objective)
-df_port  <- data.frame(list_par, RMSE = list_obj)
+```{r, warning=FALSE, results='hide', eval=FALSE}
+parPORT <- t(sapply(listOptPORT, function(x) x$par))
+objPORT <- sapply(listOptPORT, function(x) x$objective)
+resPORT <- data.frame(parPORT, RMSE = objPORT)
 ```
 
 As can be seen below, the optimum performance criterion values (column *objective*) can differ from the global optimum value in many cases, resulting in various parameter sets.
 ```{r, warning=FALSE}
-summary(df_port)
+summary(resPORT)
 ```
 
 The existence of several local minima illustrates the importance of defining an appropriate starting point or of using a multi-start strategy or a global optimization strategy.
@@ -153,16 +155,18 @@ optMALS <- Rmalschains::malschains(fn = OptimGR4J,
 
 As it can be seen in the table below, the four additional optimization strategies tested lead to very close optima.
 
+```{r, warning=FALSE, echo=FALSE, eval=FALSE}
+resGLOB <- data.frame(Algo = c("airGR", "PORT", "DE", "PSO", "MA-LS"), 
+                      round(rbind(
+                        OutputsCalib$ParamFinalR                          ,
+                        airGR::TransfoParam_GR4J(ParamIn = optPORT$par                    , Direction = "TR"),
+                        airGR::TransfoParam_GR4J(ParamIn = as.numeric(optDE$optim$bestmem), Direction = "TR"),
+                        airGR::TransfoParam_GR4J(ParamIn = as.numeric(optPSO$par)         , Direction = "TR"),
+                        airGR::TransfoParam_GR4J(ParamIn = optMALS$sol                    , Direction = "TR")),
+                        digits = 3))
+```
 ```{r, warning=FALSE, echo=FALSE}
-data.frame(Algo = c("airGR", "PORT", "DE", "PSO", "MA-LS"), 
-           round(rbind(
-                                                OutputsCalib$ParamFinalR                          ,
-             airGR::TransfoParam_GR4J(ParamIn = optPORT$par                    , Direction = "TR"),
-             airGR::TransfoParam_GR4J(ParamIn = as.numeric(optDE$optim$bestmem), Direction = "TR"),
-             airGR::TransfoParam_GR4J(ParamIn = as.numeric(optPSO$par)         , Direction = "TR"),
-             airGR::TransfoParam_GR4J(ParamIn = optMALS$sol                    , Direction = "TR")),
-             digits = 3))
-
+resGLOB
 ```
 
 <!-- This is an expected result because the response surface for quadratic performance criteria of the **GR4J** model is generally sufficiently well defined in the transformed parameter space to allow using a local optimization strategy instead of a more time consuming global optimization strategy. -->

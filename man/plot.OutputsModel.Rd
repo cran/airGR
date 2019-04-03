@@ -3,7 +3,7 @@
 
 \name{plot.OutputsModel}
 \alias{plot.OutputsModel}
-\alias{plot_OutputsModel}
+\alias{plot}
 
 
 \title{Default preview of model outputs}

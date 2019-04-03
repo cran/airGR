@@ -10,7 +10,7 @@
 
 \usage{
 CreateCalibOptions(FUN_MOD, FUN_CALIB = Calibration_Michel,
-  FUN_TRANSFO = NULL, FixedParam = NULL,
+  FUN_TRANSFO = NULL, IsHyst = FALSE, FixedParam = NULL,
   SearchRanges = NULL, StartParamList = NULL,
   StartParamDistrib = NULL)
 }
@@ -22,6 +22,8 @@ CreateCalibOptions(FUN_MOD, FUN_CALIB = Calibration_Michel,
 \item{FUN_CALIB}{(optional) [function] calibration algorithm function (e.g. Calibration_Michel), default = \code{Calibration_Michel}}
 
 \item{FUN_TRANSFO}{(optional) [function] model parameters transformation function, if the \code{FUN_MOD} used is native in the package, \code{FUN_TRANSFO} is automatically defined}
+
+\item{IsHyst}{[boolean] boolean indicating if the hysteresis version of CemaNeige is used. See details}
 
 \item{FixedParam}{(optional) [numeric] vector giving the values set for the non-optimised parameter values (NParam columns, 1 line)
 \cr Example:
@@ -58,12 +60,12 @@ CreateCalibOptions(FUN_MOD, FUN_CALIB = Calibration_Michel,
 }
 \value{
 [list] object of class \emph{CalibOptions} containing the data required to evaluate the model outputs; it can include the following:
-         \tabular{ll}{
-         \emph{$FixedParam       }  \tab   [numeric] vector giving the values to allocate to non-optimised parameter values \cr
-         \emph{$SearchRanges     }  \tab   [numeric] matrix giving the ranges of raw parameters \cr
-         \emph{$StartParamList   }  \tab   [numeric] matrix of parameter sets used for grid-screening calibration procedure \cr
-         \emph{$StartParamDistrib}  \tab   [numeric] matrix of parameter values used for grid-screening calibration procedure \cr
-         }
+  \tabular{ll}{
+    \emph{$FixedParam       } \tab [numeric] vector giving the values to allocate to non-optimised parameter values   \cr
+    \emph{$SearchRanges     } \tab [numeric] matrix giving the ranges of raw parameters                               \cr
+    \emph{$StartParamList   } \tab [numeric] matrix of parameter sets used for grid-screening calibration procedure   \cr
+    \emph{$StartParamDistrib} \tab [numeric] matrix of parameter values used for grid-screening calibration procedure \cr
+  }
 }
 
 
@@ -74,7 +76,12 @@ Creation of the \emph{CalibOptions} object required by the \code{Calibration*} f
 
 \details{
 Users wanting to use \code{FUN_MOD}, \code{FUN_CALIB} or \code{FUN_TRANSFO} functions that are not included in 
-the package must create their own \code{CalibOptions} object accordingly.
+the package must create their own \code{CalibOptions} object accordingly. \cr
+
+## ---- CemaNeige version
+
+If \code{IsHyst = FALSE}, the original CemaNeige version from Valéry et al. (2014) is used. \cr
+If \code{IsHyst = TRUE}, the CemaNeige version from Riboust et al. (2019) is used. Compared to the original version, this version of CemaNeige needs two more parameters and it includes a representation of the hysteretic relationship between the Snow Cover Area (SCA) and the Snow Water Equivalent (SWE) in the catchment. The hysteresis included in airGR is the Modified Linear hysteresis (LH*); it is represented on panel b) of Fig. 3 in Riboust et al. (2019). Riboust et al. (2019) advise to use the LH* version of CemaNeige with parameters calibrated using an objective function combining 75 \% of KGE calculated on discharge simulated from a rainfall-runoff model compared to observed discharge and 5 \% of KGE calculated on SCA on 5 CemaNeige elevation bands compared to satellite (e.g. MODIS) SCA (see Eq. (18), Table 3 and Fig. 6). Riboust et al. (2019)'s tests were realized with GR4J as the chosen rainfall-runoff model. \cr
 }
 
 
@@ -89,8 +96,8 @@ InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$Date
                                  Precip = BasinObs$P, PotEvap = BasinObs$E)
 
 ## calibration period selection
-Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y")=="01/01/1990"), 
-               which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y")=="31/12/1999"))
+Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"), 
+               which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1999-12-31"))
 
 ## preparation of RunOptions object
 RunOptions <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
@@ -98,7 +105,7 @@ RunOptions <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
 
 ## calibration criterion: preparation of the InputsCrit object
 InputsCrit <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
-                               RunOptions = RunOptions, Qobs = BasinObs$Qmm[Ind_Run])
+                               RunOptions = RunOptions, Obs = BasinObs$Qmm[Ind_Run])
 
 ## preparation of CalibOptions object
 CalibOptions <- CreateCalibOptions(FUN_MOD = RunModel_GR4J, FUN_CALIB = Calibration_Michel)
@@ -106,7 +113,7 @@ CalibOptions <- CreateCalibOptions(FUN_MOD = RunModel_GR4J, FUN_CALIB = Calibrat
 ## calibration
 OutputsCalib <- Calibration(InputsModel = InputsModel, RunOptions = RunOptions,
                             InputsCrit = InputsCrit, CalibOptions = CalibOptions,
-                            FUN_MOD = RunModel_GR4J, FUN_CRIT = ErrorCrit_NSE, 
+                            FUN_MOD = RunModel_GR4J, 
                             FUN_CALIB = Calibration_Michel)
 
 ## simulation
@@ -119,23 +126,21 @@ plot(OutputsModel, Qobs = BasinObs$Qmm[Ind_Run])
 
 ## efficiency criterion: Nash-Sutcliffe Efficiency
 InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
-                                RunOptions = RunOptions, Qobs = BasinObs$Qmm[Ind_Run])
+                                RunOptions = RunOptions, Obs = BasinObs$Qmm[Ind_Run])
 OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
 
 ## efficiency criterion: Kling-Gupta Efficiency
 InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_KGE, InputsModel = InputsModel, 
-                                RunOptions = RunOptions, Qobs = BasinObs$Qmm[Ind_Run])
+                                RunOptions = RunOptions, Obs = BasinObs$Qmm[Ind_Run])
 OutputsCrit <- ErrorCrit_KGE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
-
 }
 
 
 \author{
-Laurent Coron
+Laurent Coron, Olivier Delaigue, Guillaume Thirel
 }
 
 
 \seealso{
 \code{\link{Calibration}}, \code{\link{RunModel}}
 }
-

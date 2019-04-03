@@ -25,16 +25,16 @@ bibentry(bibtype="Article",
 
 bibentry(bibtype="Manual",
          title = "{airGR}: Suite of {GR} Hydrological Models for Precipitation-Runoff Modelling",
-         author = personList(as.person("L. Coron"), as.person("C. Perrin"), as.person("O. Delaigue"), as.person("G. Thirel"), as.person("C. Michel")),
+         author = personList(as.person("L. Coron"), as.person("O. Delaigue"), as.person("G. Thirel"), as.person("C. Perrin"), as.person("C. Michel")),
          journal = "R News",
          year = year,
          note = note,
-         url = "https://webgr.irstea.fr/en/airGR/",
+         url = "https://CRAN.R-project.org/package=airGR/",
          textVersion = 
-           paste0("Coron, L., Perrin, C., Delaigue, O., Thirel, G. and Michel, C. (",
+           paste0("Coron, L., Delaigue, O., Thirel, G., Perrin, C. and Michel, C. (",
                   year,
                   "). airGR: Suite of GR Hydrological Models for Precipitation-Runoff Modelling. ",
                   note,
-                  ". URL: https://webgr.irstea.fr/en/airGR/."
+                  ". URL: https://CRAN.R-project.org/package=airGR/."
                   )
 )

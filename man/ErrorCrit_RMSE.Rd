@@ -35,7 +35,7 @@ ErrorCrit_RMSE(InputsCrit, OutputsModel, warnings = TRUE, verbose = TRUE)
 
 
 \description{
-Function which computes an error criterion based on the root mean square error (RMSE).
+Function which computes an error criterion based on the root-mean-square error (RMSE).
 }
 
 
@@ -47,12 +47,51 @@ the use of the function for model calibration: the product CritValue * Multiplie
 
 
 \examples{
-## see example of the ErrorCrit function
+library(airGR)
+
+## loading catchment data
+data(L0123001)
+
+## preparation of the InputsModel object
+InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$DatesR, 
+                                 Precip = BasinObs$P, PotEvap = BasinObs$E)
+
+## run period selection
+Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"), 
+               which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1999-12-31"))
+
+## preparation of the RunOptions object
+RunOptions <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
+                               InputsModel = InputsModel, IndPeriod_Run = Ind_Run)
+
+## simulation
+Param <- c(X1 = 734.568, X2 = -0.840, X3 = 109.809, X4 = 1.971)
+OutputsModel <- RunModel(InputsModel = InputsModel, RunOptions = RunOptions, 
+                         Param = Param, FUN = RunModel_GR4J)
+
+## efficiency criterion: root-mean-square error
+InputsCrit <- CreateInputsCrit(FUN_CRIT = ErrorCrit_RMSE, InputsModel = InputsModel, 
+                               RunOptions = RunOptions, Obs = BasinObs$Qmm[Ind_Run])
+OutputsCrit <- ErrorCrit_RMSE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
+
+## efficiency criterion: root-mean-square error on log-transformed flows
+transfo <- "log"
+InputsCrit <- CreateInputsCrit(FUN_CRIT = ErrorCrit_RMSE, InputsModel = InputsModel, 
+                               RunOptions = RunOptions, Obs = BasinObs$Qmm[Ind_Run],
+                               transfo = transfo)
+OutputsCrit <- ErrorCrit_RMSE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
+
+## efficiency criterion: Kling-Gupta Efficiency above a threshold (quant. 75 \%)
+BoolCrit <- BasinObs$Qmm[Ind_Run] >= quantile(BasinObs$Qmm[Ind_Run], 0.75, na.rm = TRUE)
+InputsCrit <- CreateInputsCrit(FUN_CRIT = ErrorCrit_RMSE, InputsModel = InputsModel, 
+                               RunOptions = RunOptions, Obs = BasinObs$Qmm[Ind_Run],
+                               BoolCrit = BoolCrit)
+OutputsCrit <- ErrorCrit_RMSE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
 }
 
 
 \author{
-Laurent Coron, Ludovic Oudin
+Laurent Coron, Ludovic Oudin, Olivier Delaigue
 }
 
 

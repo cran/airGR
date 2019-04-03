@@ -23,7 +23,7 @@ str(RunOptions)
 
 ## ------------------------------------------------------------------------
 InputsCrit <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
-                               RunOptions = RunOptions, Qobs = BasinObs$Qmm[Ind_Run])
+                               RunOptions = RunOptions, Obs = BasinObs$Qmm[Ind_Run])
 str(InputsCrit)
 
 ## ------------------------------------------------------------------------
@@ -42,7 +42,7 @@ OutputsModel <- RunModel_GR4J(InputsModel = InputsModel, RunOptions = RunOptions
 str(OutputsModel)
 
 ## ----eval=F--------------------------------------------------------------
-#  plot(OutputsModel, Qobs = BasinObs$Qmm[Ind_Run])
+#  plot(OutputsModel, Obs = BasinObs$Qmm[Ind_Run])
 
 ## ------------------------------------------------------------------------
 OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)

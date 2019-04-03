@@ -11,9 +11,9 @@
 
 \format{Data frame of parameters containing four numeric vectors
 \itemize{
-  \item {GR4J X1} {production store capacity [mm]}
-  \item {GR4J X2} {intercatchment exchange coefficient [mm/d]}
-  \item {GR4J X3} {routing store capacity [mm]}
+  \item {GR4J X1}  {production store capacity [mm]}
+  \item {GR4J X2}  {intercatchment exchange coefficient [mm/d]}
+  \item {GR4J X3}  {routing store capacity [mm]}
   \item {GR4J X4u} {unajusted unit hydrograph time constant [d]}
 }}
 
@@ -31,9 +31,9 @@ As shown in Andréassian et al. (2014; figure 4), only using these parameters se
 
 
 \references{
-Andréassian, V., F. Bourgin, L. Oudin, T. Mathevet, C. Perrin, J. Lerat, L. Coron, L. Berthet (2014).
-      Seeking genericity in the selection of parameter sets: impact on hydrological model efficiency.
-      Water Resources Research, 50(10), 8356-8366, doi: 10.1002/2013WR014761.
+Andréassian, V., F. Bourgin, L. Oudin, T. Mathevet, C. Perrin, J. Lerat, L. Coron, L. Berthet (2014). 
+  Seeking genericity in the selection of parameter sets: impact on hydrological model efficiency. 
+  Water Resources Research, 50(10), 8356-8366. doi: 10.1002/2013WR014761.
 }
 
 
@@ -59,8 +59,8 @@ InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$Date
 ## ---- calibration step
 
 ## short calibration period selection (< 6 months)
-Ind_Cal <- seq(which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y")=="01/01/1990"), 
-               which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y")=="28/02/1990"))
+Ind_Cal <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"), 
+               which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-02-28"))               
 
 ## preparation of the RunOptions object for the calibration period
 RunOptions_Cal <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
@@ -85,8 +85,8 @@ Param_Best <- unlist(Param_Sets_GR4J[which.max(OutputsCrit_Loop), ])
 ## ---- validation step
 
 ## validation period selection
-Ind_Val <- seq(which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y")=="01/03/1990"), 
-               which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y")=="31/12/1999"))
+Ind_Val <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-03-01"), 
+               which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1999-12-31"))              
 
 ## preparation of the RunOptions object for the validation period
 RunOptions_Val <- CreateRunOptions(FUN_MOD = RunModel_GR4J,

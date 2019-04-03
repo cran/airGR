@@ -6,7 +6,7 @@
 \alias{BasinInfo}
 
 
-\title{Data sample: characteristics of a fictional catchment (L0123001, L0123002 or L0123003)}
+\title{Data sample: characteristics of a different catchments}
 
 
 \format{List named 'BasinInfo' containing
@@ -18,6 +18,9 @@
 
 
 \description{
+L0123001, L0123002 and L0123003 are fictional catchments. \cr
+X0310010 contains actual data from the Durance River at Embrun [La Clapière] (Hautes-Alpes, France). \cr
+\cr
 R-object containing the code, station's name, area and hypsometric curve of the catchment.
 }
 

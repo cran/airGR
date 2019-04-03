@@ -1,122 +1,339 @@
 CreateInputsCrit <- function(FUN_CRIT,
                              InputsModel,
                              RunOptions,
-                             Qobs,
+                             Qobs,              # deprecated
+                             Obs,
+                             VarObs = "Q",
                              BoolCrit = NULL,
                              transfo = "",
-                             Ind_zeroes = NULL,
+                             Weights = NULL,
+                             Ind_zeroes = NULL, # deprecated
                              epsilon = NULL,
+                             warnings = TRUE,
                              verbose = TRUE) {
   
   
   ObjectClass <- NULL
   
   
-  ##check_FUN_CRIT
-  BOOL <- FALSE
+  ## ---------- check arguments
+  
+  if (!missing(Qobs)) {
+    if (missing(Obs)) {
+      if (warnings) {
+        warning("argument 'Qobs' is deprecated. Please use 'Obs' and 'VarObs' instead")
+      }
+      Obs <- Qobs
+      # VarObs <- "Qobs"
+    } else {
+      warning("argument 'Qobs' is deprecated. The values set in 'Obs' will be used instead")
+    }
+  }
+  if (!missing(Ind_zeroes) & warnings) {
+    warning("deprecated 'Ind_zeroes' argument")
+  }
+  if (!missing(verbose)) {
+    warning("deprecated 'verbose' argument. Use 'warnings', instead")
+  }
+  
+  
+  ## check 'InputsModel'
+  if (!inherits(InputsModel, "InputsModel")) {
+    stop("'InputsModel' must be of class 'InputsModel'")
+  }
+  
+  
+  ## length of index of period to be used for the model run
+  LLL <- length(InputsModel$DatesR[RunOptions$IndPeriod_Run])
+  
+  
+  ## check 'Obs' and definition of idLayer
+  vecObs <- unlist(Obs)
+  if (length(vecObs) %% LLL != 0 | !is.numeric(vecObs)) {
+    stop(sprintf("'Obs' must be a (list of) vector(s) of numeric values of length %i", LLL), call. = FALSE)
+  }
+  if (!is.list(Obs)) {
+    idLayer <- list(1L)
+    Obs <- list(Obs)
+  } else {
+    idLayer <- lapply(Obs, function(i) {
+        if (is.list(i)) {
+          length(i)
+        } else {
+          1L
+        }
+      })
+    Obs <- lapply(Obs, function(x) rowMeans(as.data.frame(x)))
+  }
+
+  
+  ## create list of arguments
+  listArgs <- list(FUN_CRIT   = FUN_CRIT,
+                   Obs        = Obs,
+                   VarObs     = VarObs,
+                   BoolCrit   = BoolCrit,
+                   idLayer    = idLayer,
+                   transfo    = transfo,
+                   Weights    = Weights,
+                   epsilon    = epsilon)
+  
+  
+  ## check lists lengths
+  for (iArgs in names(listArgs)) {
+    if (iArgs %in% c("Weights", "BoolCrit", "epsilon")) {
+      if (any(is.null(listArgs[[iArgs]]))) {
+        listArgs[[iArgs]] <- lapply(seq_along(listArgs$FUN_CRIT), function(x) NULL)
+      }
+    }
+    if (iArgs %in% c("FUN_CRIT", "VarObs", "transfo", "Weights") & length(listArgs[[iArgs]]) > 1L) {
+      listArgs[[iArgs]] <- as.list(listArgs[[iArgs]])
+    }
+    if (!is.list(listArgs[[iArgs]])) {
+      listArgs[[iArgs]] <- list(listArgs[[iArgs]])
+    }
+  }
+  
+  ## check 'FUN_CRIT'
+  listArgs$FUN_CRIT <- lapply(listArgs$FUN_CRIT, FUN = match.fun)
+  
+  
+  ## check 'VarObs'
+  if (missing(VarObs)) {
+    listArgs$VarObs <- as.list(rep("Q", times = length(listArgs$Obs)))
+    # if (warnings) {
+    #   warning("'VarObs' automatically set to \"Q\"")
+    # }
+  }
+  
+  
+  ## check 'VarObs' + 'RunOptions'
+  if ("Q" %in% VarObs & !inherits(RunOptions, "GR")) {
+    stop("'VarObs' cannot contain Q if a GR rainfall-runoff model is not used")
+  }
+  if (any(c("SCA", "SWE") %in% VarObs) & !inherits(RunOptions, "CemaNeige")) {
+    stop("'VarObs' cannot contain SCA or SWE if CemaNeige is not used")
+  }
+  if ("SCA" %in% VarObs & inherits(RunOptions, "CemaNeige") & !"Gratio"   %in% RunOptions$Outputs_Sim) {
+    stop("'Gratio' is missing in 'Outputs_Sim' of 'RunOptions', which is necessary to output SCA with CemaNeige")
+  }
+  if ("SWE" %in% VarObs & inherits(RunOptions, "CemaNeige") & !"SnowPack" %in% RunOptions$Outputs_Sim) {
+    stop("'SnowPack' is missing in 'Outputs_Sim' of 'RunOptions', which is necessary to output SWE with CemaNeige")
+  }
+
+  
+  ## check 'transfo'
+  if (missing(transfo)) {
+    listArgs$transfo <- as.list(rep("", times = length(listArgs$Obs)))
+    # if (warnings) {
+    #   warning("'transfo' automatically set to \"\"")
+    # }
+  }  
+  
+  ## check length of each args
+  if (length(unique(sapply(listArgs, FUN = length))) != 1) {
+    stopListArgs <- paste(sapply(names(listArgs), shQuote), collapse = ", ")
+    stop(sprintf("arguments %s must have the same length", stopListArgs))
+  }
+  
+  
+  ## check 'RunOptions'
+  if (!inherits(RunOptions , "RunOptions")) {
+    stop("'RunOptions' must be of class 'RunOptions'")
+  }
+  
+  
+  ## check 'Weights'
+  if (length(listArgs$Weights) > 1 & sum(unlist(listArgs$Weights)) == 0 & !any(sapply(listArgs$Weights, is.null))) {
+    stop("sum of 'Weights' cannot be equal to zero")
+  }
+
+  
+  ## ---------- reformat
+  
+  ## reformat list of arguments
+  listArgs2 <- lapply(seq_along(listArgs$FUN_CRIT), function(i) lapply(listArgs, "[[", i))
+  
+  ## preparation of warning messages
+  inVarObs  <- c("Q", "SCA", "SWE")
+  msgVarObs <- "'VarObs' must be a (list of) character vector(s) and one of %s"
+  msgVarObs <- sprintf(msgVarObs, paste(sapply(inVarObs, shQuote), collapse = ", "))
+  inTransfo  <- c("", "sqrt", "log", "inv", "sort")
+  msgTransfo <- "'transfo' must be a (list of) character vector(s) and one of %s"
+  msgTransfo <- sprintf(msgTransfo, paste(sapply(inTransfo, shQuote), collapse = ", "))
+  
+  
+  ## ---------- loop on the list of inputs
+  
+  InputsCrit <- lapply(listArgs2, function(iListArgs2) {
     
-    if (identical(FUN_CRIT, ErrorCrit_NSE) | identical(FUN_CRIT, ErrorCrit_KGE) |
-        identical(FUN_CRIT, ErrorCrit_KGE2) | identical(FUN_CRIT, ErrorCrit_RMSE)) {
-      BOOL <- TRUE
+    ## check 'FUN_CRIT'
+    if (!(identical(iListArgs2$FUN_CRIT, ErrorCrit_NSE ) | identical(iListArgs2$FUN_CRIT, ErrorCrit_KGE ) |
+          identical(iListArgs2$FUN_CRIT, ErrorCrit_KGE2) | identical(iListArgs2$FUN_CRIT, ErrorCrit_RMSE))) {
+      stop("incorrect 'FUN_CRIT' for use in 'CreateInputsCrit'", call. = FALSE)
     }
-    if (!BOOL) {
-      stop("incorrect FUN_CRIT for use in CreateInputsCrit \n")
-      return(NULL)
-    }
-    
-    ##check_arguments
-    if (inherits(InputsModel, "InputsModel") == FALSE) {
-      stop("InputsModel must be of class 'InputsModel' \n")
-      return(NULL)
-    }
-    if (inherits(RunOptions , "RunOptions") == FALSE) {
-      stop("RunOptions must be of class 'RunOptions' \n")
-      return(NULL)
+    if (identical(iListArgs2$FUN_CRIT, ErrorCrit_RMSE) & length(listArgs$Weights) > 1 & all(!is.null(unlist(listArgs$Weights)))) {
+      stop("calculating a composite criterion with the RMSE is not allowed since RMSE is not a dimensionless metric", call. = FALSE)
     }
     
-    LLL <- length(InputsModel$DatesR[RunOptions$IndPeriod_Run])
-    
-    if (is.null(Qobs)) {
-      stop("Qobs is missing \n")
-      return(NULL)
-    }
-    if (!is.vector(Qobs)) {
-      stop(paste("Qobs must be a vector of numeric values \n", sep = ""))
-      return(NULL)
-    }
-    if (!is.numeric(Qobs)) {
-      stop(paste("Qobs must be a vector of numeric values \n", sep = ""))
-      return(NULL)
-    }
-    if (length(Qobs) != LLL) {
-      stop("Qobs and InputsModel series must have the same length \n")
-      return(NULL)
-    }
-    if (is.null(BoolCrit)) {
-      BoolCrit <- rep(TRUE, length(Qobs))
-    }
-    if (!is.logical(BoolCrit)) {
-      stop("BoolCrit must be a vector of boolean \n")
-      return(NULL)
-    }
-    if (length(BoolCrit) != LLL) {
-      stop("BoolCrit and InputsModel series must have the same length \n")
-      return(NULL)
-    }
-    if (is.null(transfo)) {
-      stop("transfo must be a chosen among the following: '', 'sqrt', 'log' or 'inv' or 'sort' \n")
-      return(NULL)
-    }
-    if (!is.vector(transfo)) {
-      stop("transfo must be a chosen among the following: '', 'sqrt', 'log' or 'inv' or 'sort' \n")
-      return(NULL)
-    }
-    if (length(transfo) != 1) {
-      stop("transfo must be a chosen among the following: '', 'sqrt', 'log' or 'inv' or 'sort' \n")
-      return(NULL)
-    }
-    if (!is.character(transfo)) {
-      stop("transfo must be a chosen among the following: '', 'sqrt', 'log' or 'inv' or 'sort' \n")
-      return(NULL)
-    }
-    if (! transfo %in% c("", "sqrt", "log", "inv", "sort")) {
-      stop("transfo must be a chosen among the following: '', 'sqrt', 'log' or 'inv' or 'sort' \n")
-      return(NULL)
+    ## check 'Obs'
+    if (!is.vector(iListArgs2$Obs) | length(iListArgs2$Obs) != LLL | !is.numeric(iListArgs2$Obs)) {
+      stop(sprintf("'Obs' must be a (list of) vector(s) of numeric values of length %i", LLL), call. = FALSE)
     }
     
-    if (!missing(Ind_zeroes)) {
-      warning("Deprecated \"Ind_zeroes\" argument")
+    ## check 'BoolCrit'
+    if (is.null(iListArgs2$BoolCrit)) {
+      iListArgs2$BoolCrit <- rep(TRUE, length(iListArgs2$Obs))
+    }
+    if (!is.logical(iListArgs2$BoolCrit)) {
+      stop("'BoolCrit' must be a (list of) vector(s) of boolean", call. = FALSE)
+    }
+    if (length(iListArgs2$BoolCrit) != LLL) {
+      stop("'BoolCrit' and 'InputsModel' series must have the same length", call. = FALSE)
+    }
+    
+    ## check 'VarObs'
+    if (!is.vector(iListArgs2$VarObs) | length(iListArgs2$VarObs) != 1 | !is.character(iListArgs2$VarObs) | !all(iListArgs2$VarObs %in% inVarObs)) {
+      stop(msgVarObs, call. = FALSE)
+    }
+    
+    ## check 'VarObs' + 'Obs'
+    if (any(iListArgs2$VarObs %in% "SCA")) {
+      idSCA <- which(iListArgs2$VarObs == "SCA")
+      if (length(idSCA) == 1L) {
+        vecSCA <- iListArgs2$Obs
+      } else {
+        vecSCA <- unlist(iListArgs2$Obs[idSCA])
+      }
+      if (min(vecSCA, na.rm = TRUE) < 0 | max(vecSCA, na.rm = TRUE) > 1) {
+        stop("'Obs' outside [0,1] for \"SCA\"", call. = FALSE)
+      }
+    } 
+    inPosVarObs <- c("Q", "SWE")
+    if (any(iListArgs2$VarObs %in% inPosVarObs)) {
+      idQSS <- which(iListArgs2$VarObs %in% inPosVarObs)
+      if (length(idQSS) == 1L) {
+        vecQSS <- iListArgs2$Obs
+      } else {
+        vecQSS <- unlist(iListArgs2$Obs[idQSS])
+      }
+      if (min(vecQSS, na.rm = TRUE) < 0) {
+        stop(sprintf("'Obs' outside [0,Inf[ for \"%s\"", iListArgs2$VarObs), call. = FALSE)
+      }
+    }
+    
+    
+    ## check 'transfo'
+    if (is.null(iListArgs2$transfo) | !is.vector(iListArgs2$transfo) | length(iListArgs2$transfo) != 1 | !is.character(iListArgs2$transfo) | !all(iListArgs2$transfo %in% inTransfo)) {
+      stop(msgTransfo, call. = FALSE)
+    }
+    
+    ## check 'Weights'
+    if (!is.null(iListArgs2$Weights)) {
+      if (!is.vector(iListArgs2$Weights) | length(iListArgs2$Weights) != 1 | !is.numeric(iListArgs2$Weights) | any(iListArgs2$Weights < 0)) {
+        stop("'Weights' must be a single (list of) positive or equal to zero value(s)", call. = FALSE)
+      }
+    }
+    
+    ## check 'epsilon'
+    if (!is.null(iListArgs2$epsilon)) {
+      if (!is.vector(iListArgs2$epsilon) | length(iListArgs2$epsilon) != 1 | !is.numeric(iListArgs2$epsilon) | any(iListArgs2$epsilon <= 0)) {
+        stop("'epsilon' must be a single (list of) positive value(s)", call. = FALSE)
+      }
+    } else if (iListArgs2$transfo %in% c("log", "inv") & any(iListArgs2$Obs %in% 0) & warnings) {
+      warning("zeroes detected in Obs: the corresponding time-steps will be excluded by the 'ErrorCrit*' functions as the epsilon argument was set to NULL", call. = FALSE)
+    }
+    
+    ## check 'transfo' + 'FUN_CRIT'
+    if (iListArgs2$transfo == "log" & warnings) {
+      warn_log_kge <- "we do not advise using the %s with a log transformation on Obs (see the details section in the 'CreateInputsCrit' help)"
+      if (identical(iListArgs2$FUN_CRIT, ErrorCrit_KGE)) {
+        warning(sprintf(warn_log_kge, "KGE"), call. = FALSE)
+      }
+      if (identical(iListArgs2$FUN_CRIT, ErrorCrit_KGE2)) {
+        warning(sprintf(warn_log_kge, "KGE'"), call. = FALSE)
+      }
     }
 
-    if (!is.null(epsilon)) {
-      if (!is.vector(epsilon) | length(epsilon) != 1 | !is.numeric(epsilon) | any(epsilon <= 0)) {
-        stop("epsilon must a be single positive value \n")
-        return(NULL)
-      }
-    } else if (transfo %in% c("log", "inv") & any(Qobs %in% 0) & verbose) {
-      warning("zeroes detected in Qobs: the corresponding time-steps will be exclude by the 'ErrorCrit*' functions if the epsilon agrument = NULL")
-    }
+    ## Create InputsCrit
+    iInputsCrit <- list(FUN_CRIT   = iListArgs2$FUN_CRIT,
+                        Obs        = iListArgs2$Obs,
+                        VarObs     = iListArgs2$VarObs,
+                        BoolCrit   = iListArgs2$BoolCrit,
+                        idLayer    = iListArgs2$idLayer,
+                        transfo    = iListArgs2$transfo,
+                        epsilon    = iListArgs2$epsilon,
+                        Weights    = iListArgs2$Weights)
+    class(iInputsCrit) <- c("Single", "InputsCrit", ObjectClass)
+    return(iInputsCrit)
     
-    if (transfo == "log" & verbose) {
-      warn_log_kge <- "we do not advise using the %s with a log transformation on Qobs (see the details part in the 'CreateInputsCrit' help)"
-      if (identical(FUN_CRIT, ErrorCrit_KGE)) {
-          warning(sprintf(warn_log_kge, "KGE"))
+  })
+  names(InputsCrit) <- paste0("IC", seq_along(InputsCrit))
+  
+  
+  listVarObs <- sapply(InputsCrit, FUN = "[[", "VarObs")
+  inCnVarObs <- c("SCA", "SWE")
+  if (!"ZLayers" %in% names(InputsModel)) {
+    if(any(listVarObs %in% inCnVarObs)) {
+      stop(sprintf("'VarObs' can not be equal to %i if CemaNeige is not used",
+                   paste(sapply(inCnVarObs, shQuote), collapse = " or ")))
+    }
+  } else {
+    listGroupLayer0 <- sapply(InputsCrit, FUN = "[[", "idLayer")
+    listGroupLayer <- rep(listVarObs, times = listGroupLayer0)
+    tabGroupLayer  <- as.data.frame(table(listGroupLayer))
+    colnames(tabGroupLayer) <- c("VarObs", "freq")
+    nLayers <- length(InputsModel$ZLayers)
+    for (iInCnVarObs in inCnVarObs) {
+      if (any(listVarObs %in% iInCnVarObs)) {
+        if (tabGroupLayer[tabGroupLayer$VarObs %in% iInCnVarObs, "freq"] != nLayers) {
+          stop(sprintf("'Obs' must contain %i vector(s) about %s", nLayers, iInCnVarObs))
         }
-      if (identical(FUN_CRIT, ErrorCrit_KGE2)) {
-          warning(sprintf(warn_log_kge, "KGE'"))
       }
     }
-    
-    ##Create_InputsCrit
-    InputsCrit <- list(BoolCrit   = BoolCrit,
-                       Qobs       = Qobs,
-                       transfo    = transfo,
-                       epsilon    = epsilon)
-    
-    class(InputsCrit) <- c("InputsCrit", ObjectClass)
-    
-    return(InputsCrit)
-    
-    
-    
   }
+  
+  ## define idLayer as an index of the layer to use
+  for (iInCnVarObs in unique(listVarObs)) {
+    if (iInCnVarObs == "Q") {
+      for (i in which(listVarObs == iInCnVarObs)) {
+        InputsCrit[[i]]$idLayer <- NA
+      }
+    } else {
+      aa <- listGroupLayer0[listVarObs == iInCnVarObs]
+      aa <- unname(aa)
+      bb <- cumsum(c(0, aa[-length(aa)]))
+      cc <- lapply(seq_along(aa), function(x) seq_len(aa[x]) + bb[x])
+      k <- 1
+      for (i in which(listVarObs == iInCnVarObs)) {
+        InputsCrit[[i]]$idLayer <- cc[[k]]
+        k <- k + 1
+      }
+    }
+  }
+
+  
+  ## if only one criterion --> not a list of InputsCrit but directly an InputsCrit
+  if (length(InputsCrit) < 2) {
+    InputsCrit <- InputsCrit[[1L]]
+    InputsCrit["Weights"] <- list(Weights = NULL)
+  } else {
+    if (any(sapply(listArgs$Weights, is.null))) {
+      for (iListArgs in InputsCrit) {
+        iListArgs$Weights <- NULL
+      }
+      class(InputsCrit) <- c("Multi", "InputsCrit", ObjectClass)
+    } else {
+      class(InputsCrit) <- c("Compo", "InputsCrit", ObjectClass)
+    }
+    combInputsCrit <- combn(x = length(InputsCrit), m = 2)
+    apply(combInputsCrit, MARGIN = 2, function(i) {
+      equalInputsCrit <- identical(InputsCrit[[i[1]]], InputsCrit[[i[2]]])
+      if(equalInputsCrit) {
+        warning(sprintf("elements %i and %i of the criteria list are identical. This might not be necessary", i[1], i[2]), call. = FALSE)
+      }
+    })
+  }
+  
+  return(InputsCrit)
+  
+}

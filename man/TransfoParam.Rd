@@ -3,22 +3,41 @@
 
 \name{TransfoParam}
 \alias{TransfoParam}
+\alias{TransfoParam_GR1A}
+\alias{TransfoParam_GR2M}
+\alias{TransfoParam_GR4J}
+\alias{TransfoParam_GR5J}
+\alias{TransfoParam_GR6J}
+\alias{TransfoParam_GR4H}
+\alias{TransfoParam_CemaNeige}
+\alias{TransfoParam_CemaNeigeHyst}
 
 
 \title{Transformation of the parameters using the provided function}
 
 
 \usage{
+## Generic function
 TransfoParam(ParamIn, Direction, FUN_TRANSFO)
+
+## Specific functions
+TransfoParam_GR1A(ParamIn, Direction)
+TransfoParam_GR2M(ParamIn, Direction)
+TransfoParam_GR4J(ParamIn, Direction)
+TransfoParam_GR5J(ParamIn, Direction)
+TransfoParam_GR6J(ParamIn, Direction)
+TransfoParam_GR4H(ParamIn, Direction)
+TransfoParam_CemaNeige(ParamIn, Direction)
+TransfoParam_CemaNeigeHyst(ParamIn, Direction)
 }
 
 
 \arguments{
-\item{ParamIn}{[numeric] matrix of parameter sets (sets in line, parameter values in column)}
+\item{ParamIn}{[numeric] vector or matrix of parameter sets (sets in line, parameter values in column)}
 
 \item{Direction}{[character] direction of the transformation: use \code{"RT"} for Raw -> Transformed and \code{"TR"} for Transformed -> Raw}
 
-\item{FUN_TRANSFO}{[function] model parameters transformation function (e.g. \code{\link{TransfoParam_GR4J}}, \code{\link{TransfoParam_CemaNeige}})}
+\item{FUN_TRANSFO}{[function] model parameters transformation function (e.g. \code{TransfoParam_GR4J}, \code{TransfoParam_CemaNeige})}
 }
 \value{
 \emph{ParamOut} [numeric] matrix of parameter sets (sets in line, parameter values in column)
@@ -33,6 +52,8 @@ Function which transforms model parameters using the provided function (from raw
 \examples{
 library(airGR)
 
+## ---- generic function
+
 ## transformation Raw -> Transformed for the GR4J model
 Xraw  <- matrix(c(+221.41, -3.63,  +30.00, +1.37,
                   +347.23, -1.03,  +60.34, +1.76,
@@ -46,15 +67,26 @@ Xtran <- matrix(c(+3.60, -2.00, +3.40, -9.10,
                   +4.50, -0.10, +5.00, -8.10),
                   ncol = 4, byrow = TRUE)
 Xraw  <- TransfoParam(ParamIn = Xtran, Direction = "TR", FUN_TRANSFO = TransfoParam_GR4J)
+
+
+## ---- specific function
+
+## transformation Raw -> Transformed for the GR4J model
+Xraw  <- matrix(c(+221.41, -3.63,  +30.00, +1.37,
+                  +347.23, -1.03,  +60.34, +1.76,
+                  +854.06, -0.10, +148.41, +2.34),
+                  ncol = 4, byrow = TRUE)
+Xtran <- TransfoParam_GR4J(ParamIn = Xraw , Direction = "RT")
+
+## transformation Transformed -> Raw for the GR4J model
+Xtran <- matrix(c(+3.60, -2.00, +3.40, -9.10,
+                  +3.90, -0.90, +4.10, -8.70,
+                  +4.50, -0.10, +5.00, -8.10),
+                  ncol = 4, byrow = TRUE)
+Xraw  <- TransfoParam_GR4J(ParamIn = Xtran, Direction = "TR")
 }
 
 
 \author{
-Laurent Coron
+Laurent Coron, Olivier Delaigue
 }
-
-
-\seealso{
-\code{\link{TransfoParam_GR4J}}, \code{\link{TransfoParam_GR5J}}, \code{\link{TransfoParam_GR6J}}, \code{\link{TransfoParam_CemaNeige}}
-}
-

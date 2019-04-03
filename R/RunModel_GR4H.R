@@ -1,16 +1,16 @@
 RunModel_GR4H <- function(InputsModel,RunOptions,Param){
 
     NParam <- 4;
-    FortranOutputs <- c("PotEvap","Precip","Prod","AE","Perc","PR","Q9","Q1","Rout","Exch","AExch","QR","QD","Qsim");
+    FortranOutputs <- .FortranOutputs(GR = "GR4H")$GR
 
     ##Arguments_check
-      if(inherits(InputsModel,"InputsModel")==FALSE){ stop("InputsModel must be of class 'InputsModel' \n"); return(NULL); }  
-      if(inherits(InputsModel,"hourly"     )==FALSE){ stop("InputsModel must be of class 'hourly'      \n"); return(NULL); }  
-      if(inherits(InputsModel,"GR"         )==FALSE){ stop("InputsModel must be of class 'GR'          \n"); return(NULL); }  
-      if(inherits(RunOptions,"RunOptions"  )==FALSE){ stop("RunOptions must be of class 'RunOptions'   \n"); return(NULL); }  
-      if(inherits(RunOptions,"GR"          )==FALSE){ stop("RunOptions must be of class 'GR'           \n"); return(NULL); }  
-      if(!is.vector(Param) | !is.numeric(Param)){ stop("Param must be a numeric vector \n"); return(NULL); }
-      if(sum(!is.na(Param))!=NParam){ stop(paste("Param must be a vector of length ",NParam," and contain no NA \n",sep="")); return(NULL); }
+      if(inherits(InputsModel,"InputsModel")==FALSE){ stop("'InputsModel' must be of class 'InputsModel'") }  
+      if(inherits(InputsModel,"hourly"     )==FALSE){ stop("'InputsModel' must be of class 'hourly'     ") }  
+      if(inherits(InputsModel,"GR"         )==FALSE){ stop("'InputsModel' must be of class 'GR'         ") }  
+      if(inherits(RunOptions,"RunOptions"  )==FALSE){ stop("'RunOptions' must be of class 'RunOptions'  ") }  
+      if(inherits(RunOptions,"GR"          )==FALSE){ stop("'RunOptions' must be of class 'GR'          ") }  
+      if(!is.vector(Param) | !is.numeric(Param)){ stop("'Param' must be a numeric vector") }
+      if(sum(!is.na(Param))!=NParam){ stop(paste("'Param' must be a vector of length ",NParam," and contain no NA",sep="")) }
       Param <- as.double(Param);
       
       Param_X1X3_threshold <- 1e-2
@@ -100,4 +100,3 @@ RunModel_GR4H <- function(InputsModel,RunOptions,Param){
       return(OutputsModel);
 
 }
-

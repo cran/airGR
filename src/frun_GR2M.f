@@ -104,7 +104,7 @@ C       E      Value of potential evapotranspiration during the time step [mm/mo
 C Outputs:
 C       St     Vector of model states at the end of the time step [mm]
 C       Q      Value of simulated flow at the catchment outlet for the time step [mm/month]
-C       MISC   Vector of model outputs for the time step [mm]
+C       MISC   Vector of model outputs for the time step [mm/month]
 C**********************************************************************
       Implicit None
       INTEGER NMISC,NParam
@@ -117,36 +117,36 @@ C**********************************************************************
       DOUBLEPRECISION WS,tanHyp,S1,S2
       DOUBLEPRECISION P1,P2,P3,R1,R2,AE,EXCH
 
-      DOUBLEPRECISION TWS, Sr, Rr ! speed-up
-	  
+      DOUBLEPRECISION TWS, Sr ! speed-up
+
 C Production store
       WS=P/Param(1)  
       IF(WS.GT.13.)WS=13.
-	  
- 	  ! speed-up
-	  TWS = tanHyp(WS)
-	  S1=(St(1)+Param(1)*TWS)/(1.+St(1)/Param(1)*TWS)                 
-	  ! S1=(X(1)+Param(1)*tanHyp(WS))/(1.+X(1)/Param(1)*tanHyp(WS))                 
-  	  ! fin speed-up
 
-	  P1=P+St(1)-S1                  
+      ! speed-up
+      TWS = tanHyp(WS)
+      S1=(St(1)+Param(1)*TWS)/(1.+St(1)/Param(1)*TWS)                 
+      ! S1=(X(1)+Param(1)*tanHyp(WS))/(1.+X(1)/Param(1)*tanHyp(WS))                 
+      ! fin speed-up
+
+      P1=P+St(1)-S1                  
       WS=E/Param(1)         
       IF(WS.GT.13.)WS=13.
-	  
- 	  ! speed-up
-	  TWS = tanHyp(WS)
+
+      ! speed-up
+      TWS = tanHyp(WS)
       S2=S1*(1.-TWS)/(1.+(1.-S1/Param(1))*TWS)  
       ! S2=S1*(1.-tanHyp(WS))/(1.+(1.-S1/Param(1))*tanHyp(WS))  
- 	  ! fin speed-up
-	  AE = S1 - S2
+      ! fin speed-up
+      AE = S1 - S2
                 
 C Percolation
- 	  ! speed-up
-	  Sr = S2/Param(1)
-	  Sr = Sr * Sr * Sr + 1.
+      ! speed-up
+      Sr = S2/Param(1)
+      Sr = Sr * Sr * Sr + 1.
       St(1)=S2/Sr**(1./3.)
       ! X(1)=S2/(1+(S2/Param(1))**3.)**(1./3.)         
- 	  ! fin speed-up
+      ! fin speed-up
 
       P2=S2-St(1)  
       P3=P1+P2
@@ -156,7 +156,7 @@ C QR calculation (routing store)
 
 C Water exchange
       R2=Param(2)*R1
-	  EXCH = R2 - R1
+      EXCH = R2 - R1
 
 C Total runoff
       Q=R2*R2/(R2+60.)
@@ -168,13 +168,13 @@ C Updating store level
 C Variables storage
       MISC( 1)=E             ! PE     ! [numeric] observed potential evapotranspiration [mm/month]
       MISC( 2)=P             ! Precip ! [numeric] observed total precipitation  [mm/month]
-      MISC( 3)=AE            ! AE     ! [numeric] actual evapotranspiration [mm/month]
+      MISC( 3)=St(1)         ! Prod   ! [numeric] production store level (St(1)) [mm]
       MISC( 4)=P1            ! Pn     ! [numeric] net rainfall (P1) [mm/month]
-      MISC( 5)=P2            ! Perc   ! [numeric] percolation (P2) [mm/month]
-      MISC( 6)=P3            ! PR     ! [numeric] P3=P1+P2 [mm/month]
-      MISC( 7)=EXCH          ! EXCH   ! [numeric] groundwater exchange (EXCH) [mm/month]
-      MISC( 8)=St(1)         ! Prod   ! [numeric] production store level (St(1)) [mm]
-      MISC( 9)=St(2)         ! Rout   ! [numeric] routing store level (St(2)) [mm]
+      MISC( 5)=AE            ! AE     ! [numeric] actual evapotranspiration [mm/month]
+      MISC( 6)=P2            ! Perc   ! [numeric] percolation (P2) [mm/month]
+      MISC( 7)=P3            ! PR     ! [numeric] P3=P1+P2 [mm/month]
+      MISC( 8)=St(2)         ! Rout   ! [numeric] routing store level (St(2)) [mm]
+      MISC( 9)=EXCH          ! EXCH   ! [numeric] groundwater exchange (EXCH) [mm/month]
       MISC(10)=Q             ! Qsim   ! [numeric] simulated outflow at catchment outlet [mm/month]
 
 

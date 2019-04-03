@@ -7,7 +7,7 @@
 */
 
 /* .Fortran calls */
-extern void F77_NAME(frun_cemaneige)(int *, double *, double *, double *, double *, int *, double *, int *, double *, int *, int *, double *, double *);
+extern void F77_NAME(frun_cemaneige)(int *, double *, double *, double *, double *, int *, double *, int *, double *, int *, int *, int *, double *, double *);
 extern void F77_NAME(frun_gr1a)(int *, double *, double *, int *, double *, int *, double *, int *, int *, double *, double *);
 extern void F77_NAME(frun_gr2m)(int *, double *, double *, int *, double *, int *, double *, int *, int *, double *, double *);
 extern void F77_NAME(frun_gr4h)(int *, double *, double *, int *, double *, int *, double *, int *, int *, double *, double *);
@@ -16,7 +16,7 @@ extern void F77_NAME(frun_gr5j)(int *, double *, double *, int *, double *, int 
 extern void F77_NAME(frun_gr6j)(int *, double *, double *, int *, double *, int *, double *, int *, int *, double *, double *);
 
 static const R_FortranMethodDef FortranEntries[] = {
-    {"frun_cemaneige", (DL_FUNC) &F77_NAME(frun_cemaneige), 13},
+    {"frun_cemaneige", (DL_FUNC) &F77_NAME(frun_cemaneige), 14},
     {"frun_gr1a",      (DL_FUNC) &F77_NAME(frun_gr1a),      11},
     {"frun_gr2m",      (DL_FUNC) &F77_NAME(frun_gr2m),      11},
     {"frun_gr4h",      (DL_FUNC) &F77_NAME(frun_gr4h),      11},

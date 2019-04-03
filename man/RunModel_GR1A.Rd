@@ -20,21 +20,21 @@ RunModel_GR1A(InputsModel, RunOptions, Param)
 
 \item{Param}{[numeric] vector of 1 parameter
 \tabular{ll}{                                                                      
-GR1A X1      \tab model parameter [-] \cr
+GR1A X1 \tab model parameter [-] \cr
 }}
 }
 
 
 \value{
 [list] list containing the function outputs organised as follows:                                         
-         \tabular{ll}{                                                                                         
-         \emph{$DatesR  }          \tab [POSIXlt] series of dates                                                     \cr
-         \emph{$PotEvap }          \tab [numeric] series of input potential evapotranspiration [mm/y]                 \cr
-         \emph{$Precip  }          \tab [numeric] series of input total precipitation [mm/y]                          \cr
-         \emph{$Qsim    }          \tab [numeric] series of simulated discharge [mm/y]                                \cr
-         \emph{$StateEnd}          \tab [numeric] states at the end of the run (NULL) [-] \cr         
-         }                                                                                                     
-         (refer to the provided references or to the package source code for further details on these model outputs)
+  \tabular{ll}{                                                                                         
+    \emph{$DatesR  } \tab [POSIXlt] series of dates                                     \cr
+    \emph{$PotEvap } \tab [numeric] series of input potential evapotranspiration [mm/y] \cr
+    \emph{$Precip  } \tab [numeric] series of input total precipitation [mm/y]          \cr
+    \emph{$Qsim    } \tab [numeric] series of simulated discharge [mm/y]                \cr
+    \emph{$StateEnd} \tab [numeric] states at the end of the run (NULL) [-]             \cr         
+  }                                                                                                     
+  (refer to the provided references or to the package source code for further details on these model outputs)
 }
 
 
@@ -80,7 +80,7 @@ RunOptions <- CreateRunOptions(FUN_MOD = RunModel_GR1A,
                                InputsModel = InputsModel, IndPeriod_Run = Ind_Run)
 
 ## simulation
-Param <- c(0.840)
+Param <- c(X1 = 0.840)
 OutputsModel <- RunModel_GR1A(InputsModel = InputsModel, RunOptions = RunOptions, Param = Param)
 
 ## results preview
@@ -88,7 +88,7 @@ plot(OutputsModel, Qobs = BasinObs$Qmm[Ind_Run])
 
 ## efficiency criterion: Nash-Sutcliffe Efficiency
 InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
-                                RunOptions = RunOptions, Qobs = BasinObs$Qmm[Ind_Run])
+                                RunOptions = RunOptions, Obs = BasinObs$Qmm[Ind_Run])
 OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
 }
 
@@ -99,9 +99,9 @@ Laurent Coron, Claude Michel
 
 
 \references{
-Mouelhi S. (2003), 
-      Vers une chaîne cohérente de modèles pluie-débit conceptuels globaux aux pas de temps pluriannuel, annuel, mensuel et journalier,
-      PhD thesis (in French), ENGREF, Cemagref Antony, France. \cr
+Mouelhi S. (2003). 
+  Vers une chaîne cohérente de modèles pluie-débit conceptuels globaux aux pas de temps pluriannuel, annuel, mensuel et journalier. 
+  PhD thesis (in French), ENGREF, Cemagref Antony, France.
 }
 
 

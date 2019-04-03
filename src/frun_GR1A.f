@@ -49,6 +49,8 @@
       MISC = -999.999
 c      Outputs = -999.999  !initialization made in R
 
+      StateStart = -999.999  ! CRAN-compatibility updates
+      StateEnd = -999.999  ! CRAN-compatibility updates
 
 
       !--------------------------------------------------------------
@@ -91,7 +93,7 @@ C       P1     Value of rainfall during the current time step [mm/year]
 C       E1     Value of potential evapotranspiration during the current time step [mm/year]
 C Outputs:
 C       Q      Value of simulated flow at the catchment outlet for the current time step [mm/year]
-C       MISC   Vector of model outputs for the time step [mm]
+C       MISC   Vector of model outputs for the time step [mm/year]
 C**********************************************************************
       Implicit None
       INTEGER NMISC,NParam
@@ -102,7 +104,7 @@ C**********************************************************************
       DOUBLEPRECISION P0,P1,E1,Q
 
       DOUBLEPRECISION tt ! speed-up
-	  
+
 C Runoff
       ! speed-up
       tt = (0.7*P1+0.3*P0)/Param(1)/E1

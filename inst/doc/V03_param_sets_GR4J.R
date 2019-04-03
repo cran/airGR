@@ -3,7 +3,6 @@ library(airGR)
 options(digits = 3)
 
 ## ---- warning=FALSE------------------------------------------------------
-
 ## loading catchment data
 data(L0123001)
 
@@ -36,7 +35,7 @@ RunOptions_Cal <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
 
 ## efficiency criterion: Nash-Sutcliffe Efficiency
 InputsCrit_Cal  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
-                                    RunOptions = RunOptions_Cal, Qobs = BasinObs$Qmm[Ind_Cal])
+                                    RunOptions = RunOptions_Cal, Obs = BasinObs$Qmm[Ind_Cal])
 
 
 ## ---- validation step
@@ -51,7 +50,7 @@ RunOptions_Val <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
 
 ## efficiency criterion (Nash-Sutcliffe Efficiency) on the validation period
 InputsCrit_Val  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
-                                RunOptions = RunOptions_Val, Qobs = BasinObs$Qmm[Ind_Val])
+                                RunOptions = RunOptions_Val, Obs = BasinObs$Qmm[Ind_Val])
 
 
 ## ---- warning=FALSE, message=FALSE---------------------------------------
@@ -89,7 +88,8 @@ OutputsCrit_Cal <- ErrorCrit_NSE(InputsCrit = InputsCrit_Cal, OutputsModel = Out
 
 
 ## validation 
-OutputsModel_Val <- RunModel_GR4J(InputsModel = InputsModel, RunOptions = RunOptions_Val, Param = OutputsCalib$ParamFinalR)
+OutputsModel_Val <- RunModel_GR4J(InputsModel = InputsModel, RunOptions = RunOptions_Val,
+                                  Param = OutputsCalib$ParamFinalR)
 OutputsCrit_Val <- ErrorCrit_NSE(InputsCrit = InputsCrit_Val, OutputsModel = OutputsModel_Val)
 
 ## ---- warning=FALSE, message=FALSE, echo=FALSE---------------------------

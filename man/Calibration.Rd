@@ -27,7 +27,7 @@ Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions, FUN_MOD,
 
 \item{FUN_CRIT}{[function] error criterion function (e.g. \code{\link{ErrorCrit_RMSE}}, \code{\link{ErrorCrit_NSE}})}
 
-\item{FUN_CALIB}{(optional) [function] calibration algorithm function (e.g. \code{\link{Calibration_Michel}}), \code{default = Calibration_Michel}}
+\item{FUN_CALIB}{(deprecated) [function] calibration algorithm function (e.g. \code{\link{Calibration_Michel}}), \code{default = Calibration_Michel}}
 
 \item{FUN_TRANSFO}{(optional) [function] model parameters transformation function, if the \code{FUN_MOD} used is native in the package \code{FUN_TRANSFO} is automatically defined}
 
@@ -56,8 +56,8 @@ InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$Date
                                  Precip = BasinObs$P, PotEvap = BasinObs$E)
 
 ## calibration period selection
-Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y")=="01/01/1990"), 
-               which(format(BasinObs$DatesR, format = "\%d/\%m/\%Y")=="31/12/1999"))
+Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"), 
+               which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1999-12-31"))
 
 ## preparation of RunOptions object
 RunOptions <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
@@ -65,7 +65,7 @@ RunOptions <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
 
 ## calibration criterion: preparation of the InputsCrit object
 InputsCrit <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
-                               RunOptions = RunOptions, Qobs = BasinObs$Qmm[Ind_Run])
+                               RunOptions = RunOptions, Obs = BasinObs$Qmm[Ind_Run])
 
 ## preparation of CalibOptions object
 CalibOptions <- CreateCalibOptions(FUN_MOD = RunModel_GR4J, FUN_CALIB = Calibration_Michel)
@@ -73,7 +73,7 @@ CalibOptions <- CreateCalibOptions(FUN_MOD = RunModel_GR4J, FUN_CALIB = Calibrat
 ## calibration
 OutputsCalib <- Calibration(InputsModel = InputsModel, RunOptions = RunOptions,
                             InputsCrit = InputsCrit,  CalibOptions = CalibOptions,
-                            FUN_MOD = RunModel_GR4J, FUN_CRIT = ErrorCrit_NSE, 
+                            FUN_MOD = RunModel_GR4J, 
                             FUN_CALIB = Calibration_Michel)
 
 ## simulation
@@ -86,25 +86,25 @@ plot(OutputsModel, Qobs = BasinObs$Qmm[Ind_Run])
 
 ## efficiency criterion: Nash-Sutcliffe Efficiency
 InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
-                                RunOptions = RunOptions, Qobs = BasinObs$Qmm[Ind_Run])
+                                RunOptions = RunOptions, Obs = BasinObs$Qmm[Ind_Run])
 OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
 
 ## efficiency criterion: Kling-Gupta Efficiency
 InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_KGE, InputsModel = InputsModel, 
-                                RunOptions = RunOptions, Qobs = BasinObs$Qmm[Ind_Run])
+                                RunOptions = RunOptions, Obs = BasinObs$Qmm[Ind_Run])
 OutputsCrit <- ErrorCrit_KGE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
 }
 
 
 \author{
-Laurent Coron
+Laurent Coron, Olivier Delaigue
 }
 
 
 \seealso{
 \code{\link{Calibration_Michel}},
-         \code{\link{ErrorCrit}}, \code{\link{TransfoParam}},
-         \code{\link{CreateInputsModel}}, \code{\link{CreateRunOptions}}, 
-         \code{\link{CreateInputsCrit}}, \code{\link{CreateCalibOptions}}.
+\code{\link{ErrorCrit}}, \code{\link{TransfoParam}},
+\code{\link{CreateInputsModel}}, \code{\link{CreateRunOptions}}, 
+\code{\link{CreateInputsCrit}}, \code{\link{CreateCalibOptions}}.
 }
 

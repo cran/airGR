@@ -1,17 +1,16 @@
 RunModel_GR6J <- function(InputsModel,RunOptions,Param){
 
     NParam <- 6;
-    FortranOutputs <- c("PotEvap", "Precip", "Prod", "Pn", "Ps", "AE", "Perc", "PR", "Q9", "Q1",
-			"Rout", "Exch", "AExch1", "AExch2", "AExch", "QR", "QRExp", "Exp", "QD", "Qsim");
+    FortranOutputs <- .FortranOutputs(GR = "GR6J")$GR
 
     ##Arguments_check
-      if(inherits(InputsModel,"InputsModel")==FALSE){ stop("InputsModel must be of class 'InputsModel' \n"); return(NULL); }  
-      if(inherits(InputsModel,"daily"      )==FALSE){ stop("InputsModel must be of class 'daily'       \n"); return(NULL); }  
-      if(inherits(InputsModel,"GR"         )==FALSE){ stop("InputsModel must be of class 'GR'          \n"); return(NULL); }  
-      if(inherits(RunOptions,"RunOptions"  )==FALSE){ stop("RunOptions must be of class 'RunOptions'   \n"); return(NULL); }  
-      if(inherits(RunOptions,"GR"          )==FALSE){ stop("RunOptions must be of class 'GR'           \n"); return(NULL); }  
-      if(!is.vector(Param) | !is.numeric(Param)){ stop("Param must be a numeric vector \n"); return(NULL); }
-      if(sum(!is.na(Param))!=NParam){ stop(paste("Param must be a vector of length ",NParam," and contain no NA \n",sep="")); return(NULL); }
+      if(inherits(InputsModel,"InputsModel")==FALSE){ stop("'InputsModel' must be of class 'InputsModel'") }  
+      if(inherits(InputsModel,"daily"      )==FALSE){ stop("'InputsModel' must be of class 'daily'      ") }  
+      if(inherits(InputsModel,"GR"         )==FALSE){ stop("'InputsModel' must be of class 'GR'         ") }  
+      if(inherits(RunOptions,"RunOptions"  )==FALSE){ stop("'RunOptions' must be of class 'RunOptions'  ") }  
+      if(inherits(RunOptions,"GR"          )==FALSE){ stop("'RunOptions' must be of class 'GR'          ") }  
+      if(!is.vector(Param) | !is.numeric(Param)){ stop("'Param' must be a numeric vector") }
+      if(sum(!is.na(Param))!=NParam){ stop(paste("'Param' must be a vector of length ",NParam," and contain no NA",sep="")) }
       Param <- as.double(Param);
       
       Param_X1X3X6_threshold <- 1e-2

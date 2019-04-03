@@ -4,10 +4,10 @@
 \encoding{UTF-8}
 \title{Suite of GR Hydrological Models for Precipitation-Runoff Modelling}
 \description{
-This package brings into R the hydrological modelling tools used at IRSTEA-Antony (HYCAR Research Unit, France), including rainfall-runoff models (\strong{GR4H}, \strong{GR4J}, \strong{GR5J}, \strong{GR6J}, \strong{GR2M}, \strong{GR1A}) and a snow accumulation and melt model (\strong{CemaNeige}). Each model core is coded in FORTRAN to ensure low computational time. The other package functions (i.e. mainly the calibration algorithm and the computation of the efficiency criteria) are coded in R. \cr
+This package brings into R the hydrological modelling tools used at IRSTEA-Antony (HYCAR Research Unit, France), including rainfall-runoff models (\strong{GR4H}, \strong{GR4J}, \strong{GR5J}, \strong{GR6J}, \strong{GR2M}, \strong{GR1A}) and a snow accumulation and melt model (\strong{CemaNeige}). Each model core is coded in FORTRAN to ensure low computational time. The other package functions (i.e. mainly the calibration algorithm and the computation of the efficiency criteria) are coded in R. \cr\cr
 
 
-##### Functions and objects #####
+## ---- Functions and objects
 
 The airGR package has been designed to fulfil two major requirements: facilitate the use by non-expert users and allow flexibility regarding the addition of external criteria, models or calibration algorithms. The names of the functions and their arguments were chosen to this end. 
 
@@ -16,37 +16,38 @@ The package is mostly based on three families of functions: \cr
 - the functions belonging to the \code{\link{ErrorCrit}} family require two arguments: \emph{InputsCrit} and \emph{OutputsModel}; please refer to help pages \code{\link{CreateInputsCrit}} and \code{\link{RunModel}} for further details and examples; \cr
 - the functions belonging to the \code{\link{Calibration}} family require four arguments: \emph{InputsModel}, \emph{RunOptions}, \emph{InputsCrit} and \emph{CalibOptions};  please refer to help pages \code{\link{CreateInputsModel}}, \code{\link{CreateRunOptions}}, \code{\link{CreateInputsCrit}} and \code{\link{CreateCalibOptions}} for further details and examples.
 
-In order to limit the risk of mis-use and increase the flexibility of these main functions, we imposed the structure of their arguments and defined their class. Most users will not need to worry about these imposed structures since functions are provided to prepare these arguments for them: \code{\link{CreateInputsModel}}, \code{\link{CreateRunOptions}}, \code{\link{CreateInputsCrit}}, \code{\link{CreateCalibOptions}}. However, advanced users wishing to supplement the package with their own models will need to comply with these imposed structures and refer to the package source codes to get all the specification requirements. \cr
+In order to limit the risk of mis-use and increase the flexibility of these main functions, we imposed the structure of their arguments and defined their class. Most users will not need to worry about these imposed structures since functions are provided to prepare these arguments for them: \code{\link{CreateInputsModel}}, \code{\link{CreateRunOptions}}, \code{\link{CreateInputsCrit}}, \code{\link{CreateCalibOptions}}. However, advanced users wishing to supplement the package with their own models will need to comply with these imposed structures and refer to the package source codes to get all the specification requirements. \cr\cr
 
 
-##### Models #####
+## ---- Models
 
 Six hydrological models and one snow melt and accumulation model are implemented in airGR. The snow model can also be used alone or with the daily hydrological models, and each hydrological model can either be used alone or together with the snow model. \cr
 These models can be called within airGR using the following functions: \cr 
-- \code{\link{RunModel_GR4H}}: four-parameter hourly lumped hydrological model (Mathevet, 2005) \cr
-- \code{\link{RunModel_GR4J}}: four-parameter daily lumped hydrological model (Perrin \emph{et al.}, 2003) \cr
-- \code{\link{RunModel_GR5J}}: five-parameter daily lumped hydrological model (Le Moine, 2008) \cr
-- \code{\link{RunModel_GR6J}}: six-parameter daily lumped hydrological model (Pushpalatha \emph{et al.}, 2011) \cr
-- \code{\link{RunModel_GR2M}}: two-parameter monthly lumped hydrological model (Mouelhi, 2003 ; Mouelhi \emph{et al.}, 2006a) \cr
-- \code{\link{RunModel_GR1A}}: one-parameter yearly lumped hydrological model (Mouelhi, 2003 ; Mouelhi \emph{et al.}, 2006b) \cr
-- \code{\link{RunModel_CemaNeige}}: two-parameter degree-day snow melt and accumulation daily model (Valéry \emph{et al.}, 2014) \cr
-- \code{\link{RunModel_CemaNeigeGR4J}}: combined use of GR4J and CemaNeige \cr
-- \code{\link{RunModel_CemaNeigeGR5J}}: combined use of GR5J and CemaNeige \cr
-- \code{\link{RunModel_CemaNeigeGR6J}}: combined use of GR6J and CemaNeige \cr
+  - \code{\link{RunModel_GR4H}}: four-parameter hourly lumped hydrological model (Mathevet, 2005) \cr
+  - \code{\link{RunModel_GR4J}}: four-parameter daily lumped hydrological model (Perrin \emph{et al.}, 2003) \cr
+  - \code{\link{RunModel_GR5J}}: five-parameter daily lumped hydrological model (Le Moine, 2008) \cr
+  - \code{\link{RunModel_GR6J}}: six-parameter daily lumped hydrological model (Pushpalatha \emph{et al.}, 2011) \cr
+  - \code{\link{RunModel_GR2M}}: two-parameter monthly lumped hydrological model (Mouelhi, 2003 ; Mouelhi \emph{et al.}, 2006a) \cr
+  - \code{\link{RunModel_GR1A}}: one-parameter yearly lumped hydrological model (Mouelhi, 2003 ; Mouelhi \emph{et al.}, 2006b) \cr
+  - \code{\link{RunModel_CemaNeige}}: two-parameter degree-day snow melt and accumulation daily model (Valéry \emph{et al.}, 2014) \cr
+  - \code{\link{RunModel_CemaNeigeGR4J}}: combined use of GR4J and CemaNeige \cr
+  - \code{\link{RunModel_CemaNeigeGR5J}}: combined use of GR5J and CemaNeige \cr
+  - \code{\link{RunModel_CemaNeigeGR6J}}: combined use of GR6J and CemaNeige \cr\cr
 
 
-##### How to get started #####
+## ---- How to get started
 
 To learn how to use the functions from the airGR package, it is recommended to follow the five steps described below: \cr
-1. refer to the help for \code{\link{RunModel_GR4J}} then run the provided example to assess how to make a simulation; \cr
-2. refer to the help for \code{\link{CreateInputsModel}} to understand how the inputs of a model are prepared/organised; \cr
-3. refer to the help for \code{\link{CreateRunOptions}} to understand how the run options of a model are parametrised/organised; \cr
-4. refer to the help for \code{\link{ErrorCrit_NSE}} and \code{\link{CreateInputsCrit}} to understand how the computation of an error criterion is prepared/made; \cr
-5. refer to the help for \code{\link{Calibration_Michel}}, run the provided example and then refer to the help for \code{\link{CreateCalibOptions}} to understand how a model calibration is prepared/made. \cr
+  1. refer to the help for \code{\link{RunModel_GR4J}} then run the provided example to assess how to make a simulation; \cr
+  2. refer to the help for \code{\link{CreateInputsModel}} to understand how the inputs of a model are prepared/organised; \cr
+  3. refer to the help for \code{\link{CreateRunOptions}} to understand how the run options of a model are parametrised/organised; \cr
+  4. refer to the help for \code{\link{ErrorCrit_NSE}} and \code{\link{CreateInputsCrit}} to understand how the computation of an error criterion is prepared/made; \cr
+  5. refer to the help for \code{\link{Calibration_Michel}}, run the provided example and then refer to the help for \code{\link{CreateCalibOptions}} to understand how a model calibration is prepared/made. \cr
 
-For more information and to get started with the package, you can refer to the vignette (\code{vignette("airGR")}) and go on the \href{https://webgr.irstea.fr/airGR-website}{airGR website}.
+For more information and to get started with the package, you can refer to the vignette (\code{vignette("airGR")}) and go on the \href{https://hydrogr.github.io/airGR/}{airGR website}. \cr\cr
 
-##### References #####
+
+## ---- References
 
 - Le Moine, N. (2008). Le bassin versant de surface vu par le souterrain : une voie d'amélioration des performances et du réalisme des modèles pluie-débit ?, PhD thesis (in French), UPMC - Cemagref Antony, Paris, France, 324 pp. \cr
 - Mathevet, T. (2005). Quels modèles pluie-débit globaux pour le pas de temps horaire ? Développement empirique et comparaison de modèles sur un large échantillon de bassins versants, PhD thesis (in French), ENGREF - Cemagref Antony, Paris, France, 463 pp. \cr

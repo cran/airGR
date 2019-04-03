@@ -142,13 +142,13 @@ The `CreateInputsCrit()` function allows to prepare the input in order to calcul
   * `FUN_CRIT`: the name of the error criterion function (the available functions are introduced later on)
   * `InputsModel`: the inputs of the hydrological model previously prepared by the `CreateInputsModel()` function
   * `RunOptions`: the options of the hydrological model previously prepared by the `CreateRunOptions()` function 
-  * `Qobs`: the observed discharge expressed in *mm/time step*
+  * `Obs`: the observed discharge expressed in *mm/time step*
 
 Missing values (`NA`) are **allowed** for observed discharge.
 
 ```{r}
 InputsCrit <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
-                               RunOptions = RunOptions, Qobs = BasinObs$Qmm[Ind_Run])
+                               RunOptions = RunOptions, Obs = BasinObs$Qmm[Ind_Run])
 str(InputsCrit)
 ```
 
@@ -240,7 +240,7 @@ Although it is possible for the user to design its own graphics from the outputs
   * correlation plot between simulated and observed discharge (if observed discharge provided)
   
 ```{r,eval=F}
-plot(OutputsModel, Qobs = BasinObs$Qmm[Ind_Run])
+plot(OutputsModel, Obs = BasinObs$Qmm[Ind_Run])
 ```
 
 Moreover, if the CemaNeige model is used, the air temperature and the simulated snowpack water equivalent time series are plotted. 

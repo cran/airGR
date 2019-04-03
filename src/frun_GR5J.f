@@ -49,8 +49,8 @@
       StUH2=0.
 
       !initilisation of model states using StateStart
-	  St(1) = StateStart(1)
-	  St(2) = StateStart(2)
+      St(1) = StateStart(1)
+      St(2) = StateStart(2)
 
       DO I=1,2*NH
       StUH2(I)=StateStart(7+NH+I)
@@ -64,7 +64,7 @@
       !Param(5) : intercatchment exchange threshold (X5 - CES2) [-]
 
       !computation of HU ordinates
-	  OrdUH2 = 0.
+      OrdUH2 = 0.
 
       D=2.5
       CALL UH2(OrdUH2,Param(4),D)
@@ -93,8 +93,8 @@ c        MISC = -999.999
         ENDDO
       ENDDO
       !model states at the end of the run
-	  StateEnd(1) = St(1)
-	  StateEnd(2) = St(2)
+      StateEnd(1) = St(1)
+      StateEnd(2) = St(2)
       DO K=1,2*NH
       StateEnd(7+NH+K)=StUH2(K)
       ENDDO
@@ -139,7 +139,7 @@ C**********************************************************************
       DOUBLEPRECISION MISC(NMISC)
       DOUBLEPRECISION P1,E,Q
       DOUBLEPRECISION A,B,EN,ER,PN,PR,PS,WS,tanHyp
-      DOUBLEPRECISION PERC,PRHU1,PRHU2,EXCH,QR,QD,Q1,Q9
+      DOUBLEPRECISION PERC,EXCH,QR,QD,Q1,Q9
       DOUBLEPRECISION AE,AEXCH1,AEXCH2
       INTEGER K
 
@@ -155,44 +155,44 @@ C Interception and production store
       PN=0.
       WS=EN/A
       IF(WS.GT.13.)WS=13.
-	  ! speed-up
-	  TWS = tanHyp(WS)
-	  Sr = St(1)/A
-      ER=St(1)*(2.-Sr)*TWS/(1.+(1.-Sr)*TWS)
-      ! ER=X(2)*(2.-X(2)/A)*tanHyp(WS)/(1.+(1.-X(2)/A)*tanHyp(WS))
-	  ! fin speed-up  
-      AE=ER+P1
-      St(1)=St(1)-ER
-	  PS=0.
-      PR=0.
+        ! speed-up
+        TWS = tanHyp(WS)
+        Sr = St(1)/A
+        ER=St(1)*(2.-Sr)*TWS/(1.+(1.-Sr)*TWS)
+        ! ER=X(2)*(2.-X(2)/A)*tanHyp(WS)/(1.+(1.-X(2)/A)*tanHyp(WS))
+        ! fin speed-up  
+        AE=ER+P1
+        St(1)=St(1)-ER
+        PS=0.
+        PR=0.
       ELSE
-      EN=0.
-      AE=E
-      PN=P1-E
-      WS=PN/A
-      IF(WS.GT.13.)WS=13.
-	  ! speed-up
-	  TWS = tanHyp(WS)
-	  Sr = St(1)/A
-      PS=A*(1.-Sr*Sr)*TWS/(1.+Sr*TWS)
-      ! PS=A*(1.-(X(2)/A)**2.)*tanHyp(WS)/(1.+X(2)/A*tanHyp(WS))
-	  ! fin speed-up
-	  
-      PR=PN-PS
-      St(1)=St(1)+PS
+        EN=0.
+        AE=E
+        PN=P1-E
+        WS=PN/A
+        IF(WS.GT.13.)WS=13.
+        ! speed-up
+        TWS = tanHyp(WS)
+        Sr = St(1)/A
+        PS=A*(1.-Sr*Sr)*TWS/(1.+Sr*TWS)
+        ! PS=A*(1.-(X(2)/A)**2.)*tanHyp(WS)/(1.+X(2)/A*tanHyp(WS))
+        ! fin speed-up
+        
+        PR=PN-PS
+        St(1)=St(1)+PS
       ENDIF
 
 C Percolation from production store
       IF(St(1).LT.0.)St(1)=0.
 
-	  ! speed-up
-	  ! (9/4)**4 = 25.62890625
- 	  Sr = St(1)/Param(1)
-	  Sr = Sr * Sr
-	  Sr = Sr * Sr
+      ! speed-up
+      ! (9/4)**4 = 25.62890625
+      Sr = St(1)/Param(1)
+      Sr = Sr * Sr
+      Sr = Sr * Sr
       PERC=St(1)*(1.-1./SQRT(SQRT(1.+Sr/25.62890625)))
-	  ! PERC=X(2)*(1.-(1.+(X(2)/(9./4.*Param(1)))**4.)**(-0.25))
-	  ! fin speed-up
+      ! PERC=X(2)*(1.-(1.+(X(2)/(9./4.*Param(1)))**4.)**(-0.25))
+      ! fin speed-up
 
       St(1)=St(1)-PERC
 
@@ -200,7 +200,7 @@ C Percolation from production store
 
 C Convolution of unit hydrograph UH2
       DO K=1,MAX(1,MIN(2*NH-1,2*INT(Param(4)+1.)))
-      StUH2(K)=StUH2(K+1)+OrdUH2(K)*PR
+        StUH2(K)=StUH2(K+1)+OrdUH2(K)*PR
       ENDDO
       StUH2(2*NH)=OrdUH2(2*NH)*PR
 
@@ -217,13 +217,13 @@ C Routing store
       St(2)=St(2)+Q9+EXCH
       IF(St(2).LT.0.)St(2)=0.
 
-	  ! speed-up
-	  Rr = St(2)/Param(3)
-	  Rr = Rr * Rr
-	  Rr = Rr * Rr
+      ! speed-up
+      Rr = St(2)/Param(3)
+      Rr = Rr * Rr
+      Rr = Rr * Rr
       QR=St(2)*(1.-1./SQRT(SQRT(1.+Rr)))
       ! QR=X(1)*(1.-(1.+(X(1)/Param(3))**4.)**(-1./4.))
-	  ! fin speed-up
+      ! fin speed-up
 
       St(2)=St(2)-QR
 
@@ -245,11 +245,11 @@ C Variables storage
       MISC( 6)=AE            ! AE     ! actual evapotranspiration [mm/day]
       MISC( 7)=PERC          ! Perc   ! percolation (PERC) [mm/day]
       MISC( 8)=PR            ! PR     ! PR=PN-PS+PERC [mm/day]
-      MISC( 9)=Q9	         ! Q9     ! outflow from UH1 (Q9) [mm/day]
-      MISC(10)=Q1		     ! Q1     ! outflow from UH2 (Q1) [mm/day]
+      MISC( 9)=Q9            ! Q9     ! outflow from UH1 (Q9) [mm/day]
+      MISC(10)=Q1            ! Q1     ! outflow from UH2 (Q1) [mm/day]
       MISC(11)=St(2)         ! Rout   ! routing store level (St(2)) [mm]
       MISC(12)=EXCH          ! Exch   ! potential semi-exchange between catchments (EXCH) [mm/day]
-      MISC(13)=AEXCH1 		 ! AExch1 ! actual exchange between catchments from branch 1 (AEXCH1) [mm/day]
+      MISC(13)=AEXCH1        ! AExch1 ! actual exchange between catchments from branch 1 (AEXCH1) [mm/day]
       MISC(14)=AEXCH2        ! AExch2 ! actual exchange between catchments from branch 2 (AEXCH2) [mm/day]
       MISC(15)=AEXCH1+AEXCH2 ! AExch  ! actual total exchange between catchments (AEXCH1+AEXCH2) [mm/day]
       MISC(16)=QR            ! QR     ! outflow from routing store (QR) [mm/day]

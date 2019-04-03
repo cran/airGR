@@ -460,8 +460,7 @@ DataAltiExtrapolation_Valery <- function(DatesR,
   
   ##Temperature_extrapolation____________________________________________________________________
   ##Initialisation
-    LayerTempMean <-
-      list()
+    LayerTempMean <- list()
     LayerTempMin <- list()
     LayerTempMax <- list()
     
@@ -486,7 +485,6 @@ DataAltiExtrapolation_Valery <- function(DatesR,
         if (!is.null(TempMin) & !is.null(TempMax)) {
           LayerTempMin[[iLayer]]  <- as.double(TempMin  + (ZInputs - ZLayers[iLayer]) * abs(TabGradT[, "grad_Tmin"]) /  100)
           LayerTempMax[[iLayer]]  <- as.double(TempMax  + (ZInputs - ZLayers[iLayer]) * abs(TabGradT[, "grad_Tmax"]) /  100)
-          
         }
       }
     }
@@ -499,15 +497,17 @@ DataAltiExtrapolation_Valery <- function(DatesR,
     ##Thresold_of_inputs_median_elevation
     Zthreshold <- 1500
     
+    ##Option
+    Option <- "USACE"
+    if (!is.na(ZInputs)) {
+      if (ZInputs < Zthreshold & !is.null(TempMin) & !is.null(TempMax)) {
+        Option <- "Hydrotel"
+      }
+    }
+    
     ##On_each_elevation_layer...
     for (iLayer in 1:NLayers) {
-      Option <- "USACE"
-      
-      if (!is.na(ZInputs)) {
-        if (ZInputs < Zthreshold & !is.null(TempMin) & !is.null(TempMax)) {
-          Option <- "Hydrotel"
-        }
-      }
+
       ##Turcotte_formula_from_Hydrotel
       if (Option == "Hydrotel") {
         TempMin <- LayerTempMin[[iLayer]]
@@ -527,7 +527,14 @@ DataAltiExtrapolation_Valery <- function(DatesR,
       }
       LayerFracSolidPrecip[[iLayer]] <- as.double(SolidFraction)
     }
-  
+   namesLayer <- sprintf("L%i", seq_along(LayerPrecip))
+   names(LayerPrecip)          <- namesLayer
+   names(LayerTempMean)        <- namesLayer
+   if (!is.null(TempMin) & !is.null(TempMax)) {
+     names(LayerTempMin)         <- namesLayer
+     names(LayerTempMax)         <- namesLayer
+   }
+   names(LayerFracSolidPrecip) <- namesLayer
   
   
   
@@ -541,5 +548,4 @@ DataAltiExtrapolation_Valery <- function(DatesR,
     
     
 }
-
 
