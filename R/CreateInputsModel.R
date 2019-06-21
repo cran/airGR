@@ -59,6 +59,13 @@ CreateInputsModel <- function(FUN_MOD,
       
       BOOL <- TRUE
     }
+    if (identical(FUN_MOD, RunModel_CemaNeigeGR4H)) {
+      ObjectClass <- c(ObjectClass, "hourly", "GR", "CemaNeige")
+      
+      TimeStep <- as.integer(60 * 60)
+      
+      BOOL <- TRUE
+    }
     if (!BOOL) {
       stop("incorrect 'FUN_MOD' for use in 'CreateInputsModel'")
     }

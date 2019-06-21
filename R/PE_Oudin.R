@@ -1,21 +1,16 @@
-PEdaily_Oudin <- function(JD, Temp, LatRad, Lat, LatUnit = c("rad", "deg")) {
+PE_Oudin <- function(JD, Temp,
+                     Lat, LatUnit = c("rad", "deg"),
+                     TimeStepIn = "daily", TimeStepOut = "daily") {
   
-  ## ---------- deprecated function
-  
-  .Deprecated(new = "PEdaily_Oudin", package = NULL,
-              
-              msg = "deprecated function\nplease, use PE_Oudin() instead",
-              
-              old = as.character(sys.call(sys.parent()))[1L])
   
   ## ---------- check arguments
   
-  if (!missing(LatRad)) {
-    warning("Deprecated \"LatRad\" argument. Please, use \"Lat\" instead.")
-    if (missing(Lat)) {
-      Lat <- LatRad
-    }
-  }
+  # if (!missing(LatRad)) {
+  #   warning("Deprecated 'LatRad' argument. Please, use 'Lat' instead.")
+  #   if (missing(Lat)) {
+  #     Lat <- LatRad
+  #   }
+  # }
   if (!(inherits(JD, "numeric") | inherits(JD, "integer"))) {
     stop("'JD' must be of class 'numeric'")
   }
@@ -45,6 +40,34 @@ PEdaily_Oudin <- function(JD, Temp, LatRad, Lat, LatUnit = c("rad", "deg")) {
   }
   if (any(JD < 0) | any(JD > 366)) {
     stop("'JD' must only contain integers from 1 to 366")
+  }
+  if (!inherits(TimeStepIn, "character") | length(TimeStepIn) != 1) {
+    stop("'TimeStepIn' must be a 'character' of length one")
+  }
+  if (!inherits(TimeStepOut, "character") | length(TimeStepOut) != 1) {
+    stop("'TimeStepIn' must be a 'character' of length one")
+  }
+  if (!(TimeStepIn %in% c("daily", "hourly"))) {
+    stop("'TimeStepIn' must be one of \"daily\" or \"hourly\"")
+  }
+  if (!(TimeStepOut %in% c("daily", "hourly"))) {
+    stop("'TimeStepOut' must be one of \"daily\" or \"hourly\"")
+  }
+  rleJD <- rle(JD)
+  if (TimeStepIn == "daily" & any(rleJD$lengths != 1)) {
+    stop("each day must have only one identical value of julian days")
+  }
+  if (TimeStepIn == "hourly" & any(rleJD$lengths != 24)) {
+    stop("each day must have 24 identical values of julian days (one for each hour)")
+  }
+  
+  
+  ## ---------- hourly inputs aggregation
+  
+  if (TimeStepIn == "hourly") {
+    JD <- rleJD$values
+    idJD <- rep(seq_along(JD), each = rleJD$lengths[1L])
+    Temp <- as.vector(tapply(X = Temp, INDEX = idJD, FUN = mean))
   }
   
   
@@ -90,14 +113,28 @@ PEdaily_Oudin <- function(JD, Temp, LatRad, Lat, LatUnit = c("rad", "deg")) {
     if (is.na(Temp[k])) {
       PE_Oudin_D[k] <- NA
     } else {
-    if (Temp[k] >= -5.0) {
-      PE_Oudin_D[k] <- GE * (Temp[k] + 5) / 100 / 28.5
-    } else {
-      PE_Oudin_D[k] <- 0
-    }
+      if (Temp[k] >= -5.0) {
+        PE_Oudin_D[k] <- GE * (Temp[k] + 5) / 100 / 28.5
+      } else {
+        PE_Oudin_D[k] <- 0
+      }
     }
     
   }
+  
+  
+  ## ---------- disaggregate PE from daily to hourly
+  
+  if (TimeStepOut == "hourly") {
+    parab_D2H <- c(0.000, 0.000, 0.000, 0.000, 0.000, 0.000,
+                   0.035, 0.062, 0.079, 0.097, 0.110, 0.117,
+                   0.117, 0.110, 0.097, 0.079, 0.062, 0.035,
+                   0.000, 0.000, 0.000, 0.000, 0.000, 0.000)
+    PE_Oudin_H <- rep(PE_Oudin_D, each = 24) * rep(parab_D2H, times = length(PE_Oudin_D))
+  }
+  
+  
+  ## ---------- outputs warnings
   
   if (any(is.na(Temp))) {
     if (any(is.na(PE_Oudin_D))) {
@@ -110,6 +147,11 @@ PEdaily_Oudin <- function(JD, Temp, LatRad, Lat, LatUnit = c("rad", "deg")) {
     warning("returned 'PE' time series contains missing value(s)")
   }
   
-  return(PE_Oudin_D)
+  if (TimeStepOut == "daily") {
+    PE_Oudin <- PE_Oudin_D
+  } else {
+    PE_Oudin <- PE_Oudin_H
+  }
+  return(PE_Oudin)
   
 }

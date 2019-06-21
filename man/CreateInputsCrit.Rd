@@ -32,7 +32,7 @@ CreateInputsCrit(FUN_CRIT, InputsModel, RunOptions,
 
 \item{BoolCrit}{(optional) [boolean (atomic or list)] boolean (the same length as \code{Obs}) giving the time steps to consider in the computation (all time steps are considered by default)}
 
-\item{transfo}{(optional) [character (atomic or list)] name of the transformation (e.g. \code{""}, \code{"sqrt"}, \code{"log"}, \code{"inv"}, \code{"sort"})}
+\item{transfo}{(optional) [character (atomic or list)] name of the transformation (e.g. \code{""}, \code{"sqrt"}, \code{"log"}, \code{"inv"}, \code{"sort"}, \code{"boxcox"} or a numeric value for power transformation (see details))}
 
 \item{Weights}{(optional) [numeric (atomic or list)] vector of weights necessary to calculate a composite criterion (the same length as \code{FUN_CRIT}) giving the weights to use for elements of \code{FUN_CRIT} [-]. See details}
 
@@ -53,7 +53,7 @@ CreateInputsCrit(FUN_CRIT, InputsModel, RunOptions,
     \emph{$Obs       } \tab [numeric] series of observed variable(s) ([mm/time step] for discharge or SWE, [-] for SCA) \cr
     \emph{$VarObs    } \tab [character] names of the observed variable(s) \cr
     \emph{$BoolCrit  } \tab [boolean] boolean giving the time steps considered in the computation \cr
-    \emph{$transfo   } \tab [character] name of the transformation (e.g. \code{""}, \code{"sqrt"}, \code{"log"}, \code{"inv"}, \code{"sort"}) \cr
+    \emph{$transfo   } \tab [character] name of the transformation (e.g. \code{""}, \code{"sqrt"}, \code{"log"}, \code{"inv"}, \code{"sort"}, \code{"boxcox"} or a number for power transformation) \cr
     \emph{$epsilon   } \tab [numeric] small value to add to all observations and simulations when \code{"log"} or \code{"inv"} transformations are used [same unit as \code{Obs}] \cr
     \emph{$Weights   } \tab [numeric] vector (same length as \code{VarObs}) giving the weights to use for elements of \code{FUN_CRIT} [-] \cr
   }
@@ -72,12 +72,16 @@ Creation of the \code{InputsCrit} object required to the \code{ErrorCrit_*} func
 
 \details{
 Users wanting to use \code{FUN_CRIT} functions that are not included in the package must create their own InputsCrit object accordingly. \cr \cr
+The syntax of the power transformation allows a numeric or a string of characters. For example for a squared transformation, the following can be used: \code{transfo = 2}, \code{transfo = "2"} or \code{transfo = "^2"}. Negative values are allowed. Fraction values are not allowed (e.g., \code{"-1/2"} must instead be written \code{"-0.5"}).
+\cr \cr
+In order to make sure that KGE and KGE2 remain dimensionless and not impacted by zero values, the Box-Cox transformation (\code{transfo = "boxcox"}) uses the formulation given in Equation 10 of Santos et al. (2018). Lambda is set to 0.25 accordingly. 
+\cr \cr
 The epsilon value is useful when \code{"log"} or \code{"inv"} transformations are used (to avoid calculation of the inverse or of the logarithm of zero). The impact of this value and a recommendation about the epsilon value to use (usually one hundredth of average observation) are discussed in Pushpalatha et al. (2012) for NSE and in Santos et al. (2018) for KGE and KGE'. \cr \cr
 We do not advise computing KGE or KGE' with log-transformation as it might be wrongly influenced by discharge values close to 0 or 1 and the criterion value is dependent on the discharge unit. See Santos et al. (2018) for more details and alternative solutions (see the references list below). \cr \cr
 Users can set the following arguments as atomic or list: \code{FUN_CRIT}, \code{Obs}, \code{VarObs}, \code{BoolCrit}, \code{transfo}, \code{Weights}. If the list format is chosen, all the lists must have the same length. \cr
 Calculation of a single criterion (e.g. NSE computed on discharge) is prepared by providing to \code{CreateInputsCrit} arguments atomics only. \cr
 Calculation of multiple criteria (e.g. NSE computed on discharge and RMSE computed on discharge) is prepared by providing to \code{CreateInputsCrit} arguments lists except for \code{Weights} that must be set as \code{NULL}. \cr
-Calculation of a composite criterion (e.g. the average between NSE computed on dscharge and NSE computed on log of discharge) is prepared by providing to \code{CreateInputsCrit} arguments lists including \code{Weights}. \cr
+Calculation of a composite criterion (e.g. the average between NSE computed on discharge and NSE computed on log of discharge) is prepared by providing to \code{CreateInputsCrit} arguments lists including \code{Weights}. \cr
 \code{\link{ErrorCrit_RMSE}} cannot be used in a composite criterion since it is not a unitless value.
 }
 

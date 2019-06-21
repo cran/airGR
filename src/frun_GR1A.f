@@ -1,6 +1,6 @@
 
 
-      SUBROUTINE frun_GR1A(
+      SUBROUTINE frun_gr1a(
                                  !inputs
      &                             LInputs      , ! [integer] length of input and output series
      &                             InputsPrecip , ! [double] input series of total precipitation [mm/year]
@@ -16,7 +16,7 @@
      &                             StateEnd     ) ! [double] state variables at the end of the model run (none here)
 
 
-      !DEC$ ATTRIBUTES DLLEXPORT :: frun_GR1A
+      !DEC$ ATTRIBUTES DLLEXPORT :: frun_gr1a
 
 
       Implicit None

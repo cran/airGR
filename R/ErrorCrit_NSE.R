@@ -1,151 +1,47 @@
 ErrorCrit_NSE <- function(InputsCrit, OutputsModel, warnings = TRUE, verbose = TRUE) {
   
-  
-  ##Arguments_check________________________________
-  if (!inherits(InputsCrit, "InputsCrit")) {
-    stop("'InputsCrit' must be of class 'InputsCrit'")
-  }
-  if (inherits(InputsCrit, "Multi") | inherits(InputsCrit, "Compo")) {
-    stop("'InputsCrit' must be of class 'Single'. Use the 'ErrorCrit' function on objects of class 'Multi' or 'Compo' with NSE")
-  }
+  ## Arguments check
   if (!inherits(OutputsModel, "OutputsModel")) {
     stop("'OutputsModel' must be of class 'OutputsModel'")
   }
   
+  EC <- .ErrorCrit(InputsCrit = InputsCrit, Crit = "NSE",  OutputsModel = OutputsModel, warnings = warnings)
   
-  ##Initialisation_________________________________
-  CritName <- NA
-  CritVar  <- InputsCrit$VarObs
-  if (InputsCrit$transfo == "") {
-    CritName <- "NSE[CritVar]"
-  }
-  if (InputsCrit$transfo == "sqrt") {
-    CritName <- "NSE[sqrt(CritVar)]"
-  }
-  if (InputsCrit$transfo == "log") {
-    CritName <- "NSE[log(CritVar)]"
-  }
-  if (InputsCrit$transfo == "inv") {
-    CritName <- "NSE[1/CritVar]"
-  }
-  if (InputsCrit$transfo == "sort") {
-    CritName <- "NSE[sort(CritVar)]"
-  }
-  CritName      <- gsub(pattern = "CritVar", replacement = CritVar, x = CritName)
-  CritValue     <- NA
-  CritBestValue <- +1
-  Multiplier    <- -1
-  ### must be equal to -1 or +1 only
+  CritValue <- NA
   
-  
-  ##Data_preparation_______________________________
-  VarObs <- InputsCrit$Obs
-  VarObs[!InputsCrit$BoolCrit] <- NA
-  if (InputsCrit$VarObs == "Q") {
-    VarSim <- OutputsModel$Qsim
-  }
-  if (InputsCrit$VarObs == "SCA") {
-    VarSim <- rowMeans(sapply(OutputsModel$CemaNeigeLayers[InputsCrit$idLayer], FUN = "[[", "Gratio"))
-  }
-  if (InputsCrit$VarObs == "SWE") {
-    VarSim <- rowMeans(sapply(OutputsModel$CemaNeigeLayers[InputsCrit$idLayer], FUN = "[[", "SnowPack"))
-  }
-  VarSim[!InputsCrit$BoolCrit] <- NA
-  
-  ##Data_transformation
-  if (InputsCrit$transfo %in% c("log", "inv") & is.null(InputsCrit$epsilon) & warnings) {
-    if (any(VarObs %in% 0)) {
-      warning("zeroes detected in 'Qobs': the corresponding time-steps will be excluded from the criteria computation if the epsilon argument of 'CreateInputsCrit' = NULL")
-    }
-    if (any(VarSim %in% 0)) {
-      warning("zeroes detected in 'Qsim': the corresponding time-steps will be excluded from the criteria computation if the epsilon argument of 'CreateInputsCrit' = NULL")
-    }  
-  }
-  if ("epsilon" %in% names(InputsCrit) & !is.null(InputsCrit$epsilon)) {
-    VarObs <- VarObs + InputsCrit$epsilon
-    VarSim <- VarSim + InputsCrit$epsilon
-  }
-  if (InputsCrit$transfo == "sqrt") {
-    VarObs <- sqrt(VarObs)
-    VarSim <- sqrt(VarSim)
-  }
-  if (InputsCrit$transfo == "log") {
-    VarObs <- log(VarObs)
-    VarSim <- log(VarSim)
-    VarSim[VarSim      < -1e100] <- NA
-  }
-  if (InputsCrit$transfo == "inv") {
-    VarObs <- 1 / VarObs
-    VarSim <- 1 / VarSim
-    VarSim[abs(VarSim) > 1e+100] <- NA
-  }
-  if (InputsCrit$transfo == "sort") {
-    VarSim[is.na(VarObs)] <- NA
-    VarSim <- sort(VarSim, na.last = TRUE)
-    VarObs <- sort(VarObs, na.last = TRUE)
-    InputsCrit$BoolCrit <- sort(InputsCrit$BoolCrit, decreasing = TRUE)
-  }
-  
-  ##TS_ignore
-  TS_ignore <- !is.finite(VarObs) | !is.finite(VarSim) | !InputsCrit$BoolCrit
-  Ind_TS_ignore <-  which(TS_ignore)
-  if (length(Ind_TS_ignore) == 0) {
-    Ind_TS_ignore <- NULL
-  }
-  if (sum(!TS_ignore) == 0) {
-    OutputsCrit <- list(NA)
-    names(OutputsCrit) <- c("CritValue")
-    return(OutputsCrit)
-  }
-  if (inherits(OutputsModel, "hourly")) {
-    WarningTS <- 365
-  }
-  if (inherits(OutputsModel, "daily")) {
-    WarningTS <- 365
+  if (EC$CritCompute) {
+    ## Other variables preparation
+    meanVarObs <- mean(EC$VarObs[!EC$TS_ignore])
+    meanVarSim <- mean(EC$VarSim[!EC$TS_ignore])
     
-  }
-  if (inherits(OutputsModel, "monthly")) {
-    WarningTS <-  12
-  }
-  if (inherits(OutputsModel, "yearly")) {
-    WarningTS <-   3
-  }
-  if (sum(!TS_ignore) < WarningTS & warnings) {
-    warning("\t criterion computed on less than ", WarningTS, " time-steps")
-  }
-  
-  ##Other_variables_preparation
-  meanVarObs <- mean(VarObs[!TS_ignore])
-  meanVarSim <- mean(VarSim[!TS_ignore])
-  
-  
-  ##ErrorCrit______________________________________
-  Emod <- sum((VarSim[!TS_ignore] - VarObs[!TS_ignore])^2)
-  Eref <- sum((VarObs[!TS_ignore] - mean(VarObs[!TS_ignore]))^2)
-  
-  if (Emod == 0 & Eref == 0) {
-    Crit <- 0
-  } else {
-    Crit <- (1 - Emod / Eref)
-  }
-  if (is.numeric(Crit) & is.finite(Crit)) {
-    CritValue <- Crit
+    ## ErrorCrit
+    Emod <- sum((EC$VarSim[!EC$TS_ignore] - EC$VarObs[!EC$TS_ignore])^2)
+    Eref <- sum((EC$VarObs[!EC$TS_ignore] - mean(EC$VarObs[!EC$TS_ignore]))^2)
+    
+    if (Emod == 0 & Eref == 0) {
+      Crit <- 0
+    } else {
+      Crit <- (1 - Emod / Eref)
+    }
+    if (is.numeric(Crit) & is.finite(Crit)) {
+      CritValue <- Crit
+    }
+    
+    ## Verbose
+    if (verbose) {
+      message(sprintf("Crit. %s = %.4f", EC$CritName, CritValue))
+    }
   }
   
   
-  ##Verbose______________________________________
-  if (verbose) {
-    message("Crit. ", CritName, " = ", sprintf("%.4f", CritValue), "\n")
-  }
-  
-  
-  ##Output_________________________________________
+  ## Output
   OutputsCrit <- list(CritValue       = CritValue,
-                      CritName        = CritName,
-                      CritBestValue   = CritBestValue,
-                      Multiplier      = Multiplier,
-                      Ind_notcomputed = Ind_TS_ignore)
+                      CritName        = EC$CritName,
+                      CritBestValue   = EC$CritBestValue,
+                      Multiplier      = EC$Multiplier,
+                      Ind_notcomputed = EC$Ind_TS_ignore)  
   
   class(OutputsCrit) <- c("NSE", "ErrorCrit")
   return(OutputsCrit)
+  
 }

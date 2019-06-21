@@ -33,7 +33,7 @@ str(CalibOptions)
 ## ------------------------------------------------------------------------
 OutputsCalib <- Calibration_Michel(InputsModel = InputsModel, RunOptions = RunOptions,
                                    InputsCrit = InputsCrit, CalibOptions = CalibOptions,
-                                   FUN_MOD = RunModel_GR4J, FUN_CRIT = ErrorCrit_NSE)
+                                   FUN_MOD = RunModel_GR4J)
 Param <- OutputsCalib$ParamFinalR
 Param
 
@@ -42,7 +42,7 @@ OutputsModel <- RunModel_GR4J(InputsModel = InputsModel, RunOptions = RunOptions
 str(OutputsModel)
 
 ## ----eval=F--------------------------------------------------------------
-#  plot(OutputsModel, Obs = BasinObs$Qmm[Ind_Run])
+#  plot(OutputsModel, Qobs = BasinObs$Qmm[Ind_Run])
 
 ## ------------------------------------------------------------------------
 OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)

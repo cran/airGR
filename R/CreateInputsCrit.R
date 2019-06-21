@@ -57,15 +57,15 @@ CreateInputsCrit <- function(FUN_CRIT,
     Obs <- list(Obs)
   } else {
     idLayer <- lapply(Obs, function(i) {
-        if (is.list(i)) {
-          length(i)
-        } else {
-          1L
-        }
-      })
+      if (is.list(i)) {
+        length(i)
+      } else {
+        1L
+      }
+    })
     Obs <- lapply(Obs, function(x) rowMeans(as.data.frame(x)))
   }
-
+  
   
   ## create list of arguments
   listArgs <- list(FUN_CRIT   = FUN_CRIT,
@@ -73,7 +73,7 @@ CreateInputsCrit <- function(FUN_CRIT,
                    VarObs     = VarObs,
                    BoolCrit   = BoolCrit,
                    idLayer    = idLayer,
-                   transfo    = transfo,
+                   transfo    = as.character(transfo),
                    Weights    = Weights,
                    epsilon    = epsilon)
   
@@ -119,7 +119,7 @@ CreateInputsCrit <- function(FUN_CRIT,
   if ("SWE" %in% VarObs & inherits(RunOptions, "CemaNeige") & !"SnowPack" %in% RunOptions$Outputs_Sim) {
     stop("'SnowPack' is missing in 'Outputs_Sim' of 'RunOptions', which is necessary to output SWE with CemaNeige")
   }
-
+  
   
   ## check 'transfo'
   if (missing(transfo)) {
@@ -146,7 +146,7 @@ CreateInputsCrit <- function(FUN_CRIT,
   if (length(listArgs$Weights) > 1 & sum(unlist(listArgs$Weights)) == 0 & !any(sapply(listArgs$Weights, is.null))) {
     stop("sum of 'Weights' cannot be equal to zero")
   }
-
+  
   
   ## ---------- reformat
   
@@ -157,8 +157,8 @@ CreateInputsCrit <- function(FUN_CRIT,
   inVarObs  <- c("Q", "SCA", "SWE")
   msgVarObs <- "'VarObs' must be a (list of) character vector(s) and one of %s"
   msgVarObs <- sprintf(msgVarObs, paste(sapply(inVarObs, shQuote), collapse = ", "))
-  inTransfo  <- c("", "sqrt", "log", "inv", "sort")
-  msgTransfo <- "'transfo' must be a (list of) character vector(s) and one of %s"
+  inTransfo  <- c("", "sqrt", "log", "inv", "sort", "boxcox") # pow is not checked by inTransfo, but appears in the warning message and checkef after (see ## check 'transfo')
+  msgTransfo <- "'transfo' must be a (list of) character vector(s) and one of %s, or numeric value for power transformation"
   msgTransfo <- sprintf(msgTransfo, paste(sapply(inTransfo, shQuote), collapse = ", "))
   
   
@@ -216,6 +216,9 @@ CreateInputsCrit <- function(FUN_CRIT,
       } else {
         vecQSS <- unlist(iListArgs2$Obs[idQSS])
       }
+      if (all(is.na(vecQSS))) {
+        stop("'Obs' contains only missing values", call. = FALSE)
+      }
       if (min(vecQSS, na.rm = TRUE) < 0) {
         stop(sprintf("'Obs' outside [0,Inf[ for \"%s\"", iListArgs2$VarObs), call. = FALSE)
       }
@@ -223,8 +226,18 @@ CreateInputsCrit <- function(FUN_CRIT,
     
     
     ## check 'transfo'
-    if (is.null(iListArgs2$transfo) | !is.vector(iListArgs2$transfo) | length(iListArgs2$transfo) != 1 | !is.character(iListArgs2$transfo) | !all(iListArgs2$transfo %in% inTransfo)) {
+    if (is.null(iListArgs2$transfo) | !is.vector(iListArgs2$transfo) | length(iListArgs2$transfo) != 1 | !is.character(iListArgs2$transfo)) {
       stop(msgTransfo, call. = FALSE)
+    }
+    isNotInTransfo <- !(iListArgs2$transfo %in% inTransfo)
+    if (any(isNotInTransfo)) {
+      powTransfo <- iListArgs2$transfo[isNotInTransfo]
+      powTransfo <- gsub("\\^|[[:alpha:]]", "", powTransfo)
+      numExpTransfo <- suppressWarnings(as.numeric(powTransfo))
+      if (any(is.na(numExpTransfo))) {
+        stop(msgTransfo, call. = FALSE)
+      }
+      iListArgs2$transfo <- paste0("^", iListArgs2$transfo)
     }
     
     ## check 'Weights'
@@ -253,6 +266,7 @@ CreateInputsCrit <- function(FUN_CRIT,
         warning(sprintf(warn_log_kge, "KGE'"), call. = FALSE)
       }
     }
+    
 
     ## Create InputsCrit
     iInputsCrit <- list(FUN_CRIT   = iListArgs2$FUN_CRIT,
@@ -269,6 +283,12 @@ CreateInputsCrit <- function(FUN_CRIT,
   })
   names(InputsCrit) <- paste0("IC", seq_along(InputsCrit))
   
+  ## define FUN_CRIT as a characater string
+  listErrorCrit <- c("ErrorCrit_KGE", "ErrorCrit_KGE2", "ErrorCrit_NSE",  "ErrorCrit_RMSE")
+  InputsCrit <- lapply(InputsCrit, function(i) {
+    i$FUN_CRIT <- listErrorCrit[sapply(listErrorCrit, function(j) identical(i$FUN_CRIT, get(j)))]
+    i
+    })
   
   listVarObs <- sapply(InputsCrit, FUN = "[[", "VarObs")
   inCnVarObs <- c("SCA", "SWE")
@@ -310,7 +330,7 @@ CreateInputsCrit <- function(FUN_CRIT,
       }
     }
   }
-
+  
   
   ## if only one criterion --> not a list of InputsCrit but directly an InputsCrit
   if (length(InputsCrit) < 2) {

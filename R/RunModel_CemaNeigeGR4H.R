@@ -1,43 +1,41 @@
-RunModel_CemaNeigeGR6J <- function(InputsModel,RunOptions,Param){
+RunModel_CemaNeigeGR4H <- function(InputsModel,RunOptions,Param){
 
   
+  ## Initialization of variables
   IsHyst <- inherits(RunOptions, "hysteresis")
-  NParam <- ifelse(test = IsHyst, yes = 10L, no = 8L)
-  NParamCN <- NParam - 6L
+  NParam <- ifelse(test = IsHyst, yes = 8L, no = 6L)
+  NParamCN <- NParam - 4L
   NStates <- 4L
-  FortranOutputs <- .FortranOutputs(GR = "GR6J", isCN = TRUE)
+  FortranOutputs <- .FortranOutputs(GR = "GR4H", isCN = TRUE)
 
+    
     ##Arguments_check
-      if(inherits(InputsModel,"InputsModel")==FALSE){ stop("'InputsModel' must be of class 'InputsModel'") }  
-      if(inherits(InputsModel,"daily"      )==FALSE){ stop("'InputsModel' must be of class 'daily'      ") }  
-      if(inherits(InputsModel,"GR"         )==FALSE){ stop("'InputsModel' must be of class 'GR'         ") }  
-      if(inherits(InputsModel,"CemaNeige"  )==FALSE){ stop("'InputsModel' must be of class 'CemaNeige'  ") }  
-      if(inherits(RunOptions,"RunOptions"  )==FALSE){ stop("'RunOptions' must be of class 'RunOptions'  ") }  
-      if(inherits(RunOptions,"GR"          )==FALSE){ stop("'RunOptions' must be of class 'GR'          ") }  
-      if(inherits(RunOptions,"CemaNeige"   )==FALSE){ stop("'RunOptions' must be of class 'CemaNeige'   ") }  
+      if(!inherits(InputsModel,"InputsModel")){ stop("'InputsModel' must be of class 'InputsModel'") }  
+      if(!inherits(InputsModel,"hourly"     )){ stop("'InputsModel' must be of class 'hourly'     ") }  
+      if(!inherits(InputsModel,"GR"         )){ stop("'InputsModel' must be of class 'GR'         ") }  
+      if(!inherits(InputsModel,"CemaNeige"  )){ stop("'InputsModel' must be of class 'CemaNeige'  ") }  
+      if(!inherits(RunOptions,"RunOptions"  )){ stop("'RunOptions' must be of class 'RunOptions'  ") }  
+      if(!inherits(RunOptions,"GR"          )){ stop("'RunOptions' must be of class 'GR'          ") }  
+      if(!inherits(RunOptions,"CemaNeige"   )){ stop("'RunOptions' must be of class 'CemaNeige'   ") }  
       if(!is.vector(Param) | !is.numeric(Param)){ stop("'Param' must be a numeric vector") }
       if(sum(!is.na(Param))!=NParam){ stop(paste("'Param' must be a vector of length ",NParam," and contain no NA",sep="")) }
       Param <- as.double(Param);
-      
-      Param_X1X3X6_threshold <- 1e-2
-      Param_X4_threshold     <- 0.5
-      if (Param[1L] < Param_X1X3X6_threshold) {
-        warning(sprintf("Param[1] (X1: production store capacity [mm]) < %.2f\n X1 set to %.2f", Param_X1X3X6_threshold, Param_X1X3X6_threshold))
-        Param[1L] <- Param_X1X3X6_threshold
+
+      Param_X1X3_threshold <- 1e-2
+      Param_X4_threshold   <- 0.5
+      if (Param[1L] < Param_X1X3_threshold) {
+        warning(sprintf("Param[1] (X1: production store capacity [mm]) < %.2f\n X1 set to %.2f", Param_X1X3_threshold, Param_X1X3_threshold))
+        Param[1L] <- Param_X1X3_threshold
       }
-      if (Param[3L] < Param_X1X3X6_threshold) {
-        warning(sprintf("Param[3] (X3: routing store capacity [mm]) < %.2f\n X3 set to %.2f", Param_X1X3X6_threshold, Param_X1X3X6_threshold))
-        Param[3L] <- Param_X1X3X6_threshold
+      if (Param[3L] < Param_X1X3_threshold) {
+        warning(sprintf("Param[3] (X3: routing store capacity [mm]) < %.2f\n X3 set to %.2f", Param_X1X3_threshold, Param_X1X3_threshold))
+        Param[3L] <- Param_X1X3_threshold
       }
       if (Param[4L] < Param_X4_threshold) {
-        warning(sprintf("Param[4] (X4: unit hydrograph time constant [d]) < %.2f\n X4 set to %.2f", Param_X4_threshold, Param_X4_threshold))
+        warning(sprintf("Param[4] (X4: unit hydrograph time constant [hour]) < %.2f\n X4 set to %.2f", Param_X4_threshold, Param_X4_threshold))
         Param[4L] <- Param_X4_threshold
       }      
-      if (Param[6L] < Param_X1X3X6_threshold) {
-        warning(sprintf("Param[6] (X6: coefficient for emptying exponential store [mm]) < %.2f\n X6 set to %.2f", Param_X1X3X6_threshold, Param_X1X3X6_threshold))
-        Param[6L] <- Param_X1X3X6_threshold
-      }         
-
+      
     ##Input_data_preparation
       if(identical(RunOptions$IndPeriod_WarmUp,as.integer(0))){ RunOptions$IndPeriod_WarmUp <- NULL; }
       IndPeriod1     <- c(RunOptions$IndPeriod_WarmUp,RunOptions$IndPeriod_Run);
@@ -51,38 +49,38 @@ RunModel_CemaNeigeGR6J <- function(InputsModel,RunOptions,Param){
       ExportDatesR   <- "DatesR"   %in% RunOptions$Outputs_Sim;
       ExportStateEnd <- "StateEnd" %in% RunOptions$Outputs_Sim;
 
-
+      
     ##SNOW_MODULE________________________________________________________________________________##
-    if(inherits(RunOptions,"CemaNeige")==TRUE){
+    if(inherits(RunOptions,"CemaNeige")){
       if("all" %in% RunOptions$Outputs_Sim){ IndOutputsCemaNeige <- as.integer(1:length(FortranOutputs$CN)); 
       } else { IndOutputsCemaNeige <- which(FortranOutputs$CN %in% RunOptions$Outputs_Sim);  }
       CemaNeigeLayers <- list(); CemaNeigeStateEnd <- NULL; NameCemaNeigeLayers <- "CemaNeigeLayers";
 
-      
+
     ##Call_DLL_CemaNeige_________________________
       for(iLayer in 1:NLayers){
         if (!IsHyst) {
-          StateStartCemaNeige <- RunOptions$IniStates[(7 + 20 + 40) + c(iLayer, iLayer+NLayers)]
+          StateStartCemaNeige <- RunOptions$IniStates[(7 + 20*24 + 40*24) + c(iLayer, iLayer+NLayers)]
         } else {
-          StateStartCemaNeige <- RunOptions$IniStates[(7 + 20 + 40) + c(iLayer, iLayer+NLayers, iLayer+2*NLayers, iLayer+3*NLayers)]
+          StateStartCemaNeige <- RunOptions$IniStates[(7 + 20*24 + 40*24) + c(iLayer, iLayer+NLayers, iLayer+2*NLayers, iLayer+3*NLayers)]
         }
         RESULTS <- .Fortran("frun_cemaneige",PACKAGE="airGR",
                         ##inputs
-                            LInputs=LInputSeries,                                                          ### length of input and output series
-                            InputsPrecip=InputsModel$LayerPrecip[[iLayer]][IndPeriod1],                    ### input series of total precipitation [mm/d]
-                            InputsFracSolidPrecip=InputsModel$LayerFracSolidPrecip[[iLayer]][IndPeriod1],  ### input series of fraction of solid precipitation [0-1]
-                            InputsTemp=InputsModel$LayerTemp[[iLayer]][IndPeriod1],                        ### input series of air mean temperature [degC]
-                            MeanAnSolidPrecip=RunOptions$MeanAnSolidPrecip[iLayer],                        ### value of annual mean solid precip [mm/y]
-                            NParam=as.integer(NParamCN),                                                   ### number of model parameters = 2 or 4
-                            Param=as.double(ParamCemaNeige),                                               ### parameter set
-                            NStates=as.integer(NStates),                                                   ### number of state variables used for model initialising = 4
-                            StateStart=StateStartCemaNeige,                                                ### state variables used when the model run starts
-                            IsHyst = as.integer(IsHyst),                       ### use of hysteresis                        
-                            NOutputs=as.integer(length(IndOutputsCemaNeige)),                              ### number of output series
-                            IndOutputs=IndOutputsCemaNeige,                                                ### indices of output series
+                            LInputs=LInputSeries,                                                         ### length of input and output series
+                            InputsPrecip=InputsModel$LayerPrecip[[iLayer]][IndPeriod1],                   ### input series of total precipitation [mm/h]
+                            InputsFracSolidPrecip=InputsModel$LayerFracSolidPrecip[[iLayer]][IndPeriod1], ### input series of fraction of solid precipitation [0-1]
+                            InputsTemp=InputsModel$LayerTemp[[iLayer]][IndPeriod1],                       ### input series of air mean temperature [degC]
+                            MeanAnSolidPrecip=RunOptions$MeanAnSolidPrecip[iLayer],                       ### value of annual mean solid precip [mm/y]
+                            NParam=as.integer(NParamCN),                                                  ### number of model parameters = 2 or 4
+                            Param=as.double(ParamCemaNeige),                                              ### parameter set
+                            NStates=as.integer(NStates),                                                  ### number of state variables used for model initialisation = 4
+                            StateStart=StateStartCemaNeige,                                               ### state variables used when the model run starts
+                            IsHyst = as.integer(IsHyst),                                                  ### use of hysteresis
+                            NOutputs=as.integer(length(IndOutputsCemaNeige)),                             ### number of output series
+                            IndOutputs=IndOutputsCemaNeige,                                               ### indices of output series
                         ##outputs                                                               
-                            Outputs=matrix(as.double(-999.999),nrow=LInputSeries,ncol=length(IndOutputsCemaNeige)),  ### output series [mm]
-                            StateEnd=rep(as.double(-999.999),as.integer(NStates))                                    ### state variables at the end of the model run
+                            Outputs=matrix(as.double(-999.999),nrow=LInputSeries,ncol=length(IndOutputsCemaNeige)), ### output series [mm]
+                            StateEnd=rep(as.double(-999.999),as.integer(NStates))                                   ### state variables at the end of the model run
                          )
         RESULTS$Outputs[ round(RESULTS$Outputs ,3)==(-999.999)] <- NA;
         RESULTS$StateEnd[round(RESULTS$StateEnd,3)==(-999.999)] <- NA;
@@ -98,7 +96,7 @@ RunModel_CemaNeigeGR6J <- function(InputsModel,RunOptions,Param){
       } ###ENDFOR_iLayer
       names(CemaNeigeLayers) <- sprintf("Layer%02i", seq_len(NLayers))
     } ###ENDIF_RunSnowModule
-    if(inherits(RunOptions,"CemaNeige")==FALSE){
+    if(!inherits(RunOptions,"CemaNeige")){
       CemaNeigeLayers <- list(); CemaNeigeStateEnd <- NULL; NameCemaNeigeLayers <- NULL;
       CatchMeltAndPliq  <- InputsModel$Precip[IndPeriod1]; }
 
@@ -110,17 +108,16 @@ RunModel_CemaNeigeGR6J <- function(InputsModel,RunOptions,Param){
 
     ##Use_of_IniResLevels
       if(!is.null(RunOptions$IniResLevels)){
-        RunOptions$IniStates[1] <- RunOptions$IniResLevels[1] * ParamMod[1] ### production store level (mm)
-        RunOptions$IniStates[2] <- RunOptions$IniResLevels[2] * ParamMod[3] ### routing store level (mm)
-        RunOptions$IniStates[3] <- RunOptions$IniResLevels[3]               ### exponential store level (mm)
+        RunOptions$IniStates[1] <- RunOptions$IniResLevels[1]*ParamMod[1];  ### production store level (mm)
+        RunOptions$IniStates[2] <- RunOptions$IniResLevels[2]*ParamMod[3];  ### routing store level (mm)
       }
 
     ##Call_fortan
-      RESULTS <- .Fortran("frun_gr6j",PACKAGE="airGR",
+      RESULTS <- .Fortran("frun_gr4h",PACKAGE="airGR",
                  ##inputs
                      LInputs=LInputSeries,                          ### length of input and output series
-                     InputsPrecip=CatchMeltAndPliq,                 ### input series of total precipitation [mm/d]
-                     InputsPE=InputsModel$PotEvap[IndPeriod1],      ### input series potential evapotranspiration [mm/d]
+                     InputsPrecip=CatchMeltAndPliq,                 ### input series of total precipitation [mm/h]
+                     InputsPE=InputsModel$PotEvap[IndPeriod1],      ### input series potential evapotranspiration [mm/h]
                      NParam=NParamMod,                              ### number of model parameter
                      Param=ParamMod,                                ### parameter set
                      NStates=NStatesMod,                            ### number of state variables used for model initialising
@@ -133,11 +130,11 @@ RunModel_CemaNeigeGR6J <- function(InputsModel,RunOptions,Param){
                      )
       RESULTS$Outputs[ round(RESULTS$Outputs ,3)==(-999.999)] <- NA;
       RESULTS$StateEnd[round(RESULTS$StateEnd,3)==(-999.999)] <- NA;
-      if (ExportStateEnd) { 
+      if (ExportStateEnd) {
         idNStates <- seq_len(NStates*NLayers) %% NStates
-        RESULTS$StateEnd <- CreateIniStates(FUN_MOD = RunModel_CemaNeigeGR6J, InputsModel = InputsModel, IsHyst = IsHyst,
-                                            ProdStore = RESULTS$StateEnd[1L], RoutStore = RESULTS$StateEnd[2L], ExpStore = RESULTS$StateEnd[3L],
-                                            UH1 = RESULTS$StateEnd[(1:20)+7], UH2 = RESULTS$StateEnd[(1:40)+(7+20)],
+        RESULTS$StateEnd <- CreateIniStates(FUN_MOD = RunModel_CemaNeigeGR4H, InputsModel = InputsModel, IsHyst = IsHyst,
+                                            ProdStore = RESULTS$StateEnd[1L], RoutStore = RESULTS$StateEnd[2L], ExpStore = NULL,
+                                            UH1 = RESULTS$StateEnd[(1:(20*24))+7], UH2 = RESULTS$StateEnd[(1:(40*24))+(7+20*24)],
                                             GCemaNeigeLayers       = CemaNeigeStateEnd[seq_len(NStates*NLayers)[idNStates == 3]],
                                             eTGCemaNeigeLayers     = CemaNeigeStateEnd[seq_len(NStates*NLayers)[idNStates == 2]],
                                             GthrCemaNeigeLayers    = CemaNeigeStateEnd[seq_len(NStates*NLayers)[idNStates == 1]], 
@@ -145,28 +142,28 @@ RunModel_CemaNeigeGR6J <- function(InputsModel,RunOptions,Param){
                                             verbose = FALSE)
       }
       
-      if(inherits(RunOptions,"CemaNeige")==TRUE & "Precip" %in% RunOptions$Outputs_Sim){ RESULTS$Outputs[,which(FortranOutputs$GR[IndOutputsMod]=="Precip")] <- InputsModel$Precip[IndPeriod1]; }
+      if(inherits(RunOptions,"CemaNeige") & "Precip" %in% RunOptions$Outputs_Sim){ RESULTS$Outputs[,which(FortranOutputs$GR[IndOutputsMod]=="Precip")] <- InputsModel$Precip[IndPeriod1]; }
 
     ##Output_data_preparation
       ##OutputsModel_only
-      if(ExportDatesR==FALSE & ExportStateEnd==FALSE){
+      if(!ExportDatesR & !ExportStateEnd){
         OutputsModel <- c( lapply(seq_len(RESULTS$NOutputs), function(i) RESULTS$Outputs[IndPeriod2,i]),
                            list(CemaNeigeLayers) );
         names(OutputsModel) <- c(FortranOutputs$GR[IndOutputsMod],NameCemaNeigeLayers); }
       ##DatesR_and_OutputsModel_only
-      if(ExportDatesR==TRUE & ExportStateEnd==FALSE){
+      if( ExportDatesR & !ExportStateEnd){
         OutputsModel <- c( list(InputsModel$DatesR[RunOptions$IndPeriod_Run]),
                            lapply(seq_len(RESULTS$NOutputs), function(i) RESULTS$Outputs[IndPeriod2,i]),
                            list(CemaNeigeLayers) );
         names(OutputsModel) <- c("DatesR",FortranOutputs$GR[IndOutputsMod],NameCemaNeigeLayers);      }
       ##OutputsModel_and_SateEnd_only
-      if(ExportDatesR==FALSE & ExportStateEnd==TRUE){
+      if(!ExportDatesR & ExportStateEnd){
         OutputsModel <- c( lapply(seq_len(RESULTS$NOutputs), function(i) RESULTS$Outputs[IndPeriod2,i]),
                            list(CemaNeigeLayers),
                            list(RESULTS$StateEnd) );
         names(OutputsModel) <- c(FortranOutputs$GR[IndOutputsMod],NameCemaNeigeLayers,"StateEnd");      }
       ##DatesR_and_OutputsModel_and_SateEnd
-      if(ExportDatesR==TRUE & ExportStateEnd==TRUE){
+      if( ExportDatesR & ExportStateEnd){
         OutputsModel <- c( list(InputsModel$DatesR[RunOptions$IndPeriod_Run]),
                            lapply(seq_len(RESULTS$NOutputs), function(i) RESULTS$Outputs[IndPeriod2,i]),
                            list(CemaNeigeLayers),
@@ -175,11 +172,11 @@ RunModel_CemaNeigeGR6J <- function(InputsModel,RunOptions,Param){
 
     ##End
       rm(RESULTS); 
-      class(OutputsModel) <- c("OutputsModel","daily","GR","CemaNeige");
+   
+      class(OutputsModel) <- c("OutputsModel","hourly","GR","CemaNeige");
       if(IsHyst) {
         class(OutputsModel) <- c(class(OutputsModel), "hysteresis")
       }
       return(OutputsModel);
 
 }
-

@@ -3,7 +3,7 @@ RunModel_CemaNeige <- function(InputsModel, RunOptions, Param) {
   
   ## Initialization of variables
   IsHyst <- inherits(RunOptions, "hysteresis")
-  NParam <- ifelse(test = IsHyst, yes = 4L, no = 2L)
+  NParamCN <- ifelse(test = IsHyst, yes = 4L, no = 2L)
   NStates <- 4L
   FortranOutputsCemaNeige <- .FortranOutputs(GR = NULL, isCN = TRUE)$CN
   
@@ -12,8 +12,8 @@ RunModel_CemaNeige <- function(InputsModel, RunOptions, Param) {
   if (!inherits(InputsModel, "InputsModel")) {
     stop("'InputsModel' must be of class 'InputsModel'")
   }
-  if (!inherits(InputsModel, "daily")) {
-    stop("'InputsModel' must be of class 'daily'")
+  if (!inherits(InputsModel, "daily") & !inherits(InputsModel, "hourly")) {
+    stop("'InputsModel' must be of class 'daily' or 'hourly'")
   }
   if (!inherits(InputsModel, "CemaNeige")) {
     stop("'InputsModel' must be of class 'CemaNeige'")
@@ -27,10 +27,18 @@ RunModel_CemaNeige <- function(InputsModel, RunOptions, Param) {
   if (!is.vector(Param) | !is.numeric(Param)) {
     stop("'Param' must be a numeric vector")
   }
-  if (sum(!is.na(Param)) != NParam) {
-    stop(sprintf("'Param' must be a vector of length %i and contain no NA", NParam))
+  if (sum(!is.na(Param)) != NParamCN) {
+    stop(sprintf("'Param' must be a vector of length %i and contain no NA", NParamCN))
   }
-  
+  if (inherits(InputsModel, "daily")) {
+    time_step <- "daily"
+    time_mult <- 1
+  }
+  if (inherits(InputsModel, "hourly")) {
+    time_step <- "hourly"
+    time_mult <- 24
+  }
+
   ## Input_data_preparation
   if (identical(RunOptions$IndPeriod_WarmUp, 0)) {
     RunOptions$IndPeriod_WarmUp <- NULL
@@ -67,20 +75,20 @@ RunModel_CemaNeige <- function(InputsModel, RunOptions, Param) {
   for (iLayer in 1:NLayers) {
     
     if (!IsHyst) {
-      StateStartCemaNeige <- RunOptions$IniStates[(7 + 20 + 40) + c(iLayer, iLayer+NLayers)]
+      StateStartCemaNeige <- RunOptions$IniStates[(7 + 20*time_mult + 40*time_mult) + c(iLayer, iLayer+NLayers)]
     } else {
-      StateStartCemaNeige <- RunOptions$IniStates[(7 + 20 + 40) + c(iLayer, iLayer+NLayers, iLayer+2*NLayers, iLayer+3*NLayers)]
+      StateStartCemaNeige <- RunOptions$IniStates[(7 + 20*time_mult + 40*time_mult) + c(iLayer, iLayer+NLayers, iLayer+2*NLayers, iLayer+3*NLayers)]
     }
-    RESULTS <- .Fortran("frun_CemaNeige", PACKAGE = "airGR",
+    RESULTS <- .Fortran("frun_cemaneige", PACKAGE = "airGR",
                         ## inputs
                         LInputs = as.integer(length(IndPeriod1)),                                       ### length of input and output series
-                        InputsPrecip = InputsModel$LayerPrecip[[iLayer]][IndPeriod1],                   ### input series of total precipitation [mm/d]
+                        InputsPrecip = InputsModel$LayerPrecip[[iLayer]][IndPeriod1],                   ### input series of total precipitation [mm/time step]
                         InputsFracSolidPrecip = InputsModel$LayerFracSolidPrecip[[iLayer]][IndPeriod1], ### input series of fraction of solid precipitation [0-1]
                         InputsTemp = InputsModel$LayerTemp[[iLayer]][IndPeriod1],                       ### input series of air mean temperature [degC]
                         MeanAnSolidPrecip = RunOptions$MeanAnSolidPrecip[iLayer],                       ### value of annual mean solid precip [mm/y]
-                        NParam = as.integer(NParam),                                                    ### number of model parameter
+                        NParam = as.integer(NParamCN),                                                  ### number of model parameters = 2 or 4
                         Param = as.double(ParamCemaNeige),                                              ### parameter set
-                        NStates = as.integer(NStates),                                                  ### number of state variables used for model initialising
+                        NStates = as.integer(NStates),                                                  ### number of state variables used for model initialisation = 4
                         StateStart = StateStartCemaNeige,                                               ### state variables used when the model run starts
                         IsHyst = as.integer(IsHyst),                                                    ### use of hysteresis
                         NOutputs = as.integer(length(IndOutputsCemaNeige)),                             ### number of output series
@@ -89,9 +97,9 @@ RunModel_CemaNeige <- function(InputsModel, RunOptions, Param) {
                         Outputs = matrix(-999.999,                                                      ### output series [mm]
                                          nrow = length(IndPeriod1),
                                          ncol = length(IndOutputsCemaNeige)),
-                        StateEnd = rep(-999.999, NStates)                                               ### state variables at the end of the model run (reservoir levels [mm] and HU)
+                        StateEnd = rep(-999.999, NStates)                                               ### state variables at the end of the model run
     )
-    RESULTS$Outputs[round(RESULTS$Outputs  , 3) == -999.999] <- NA
+    RESULTS$Outputs[ round(RESULTS$Outputs , 3) == -999.999] <- NA
     RESULTS$StateEnd[round(RESULTS$StateEnd, 3) == -999.999] <- NA
     
     
@@ -145,7 +153,7 @@ RunModel_CemaNeige <- function(InputsModel, RunOptions, Param) {
   
   
   ## End
-  class(OutputsModel) <- c("OutputsModel", "daily", "CemaNeige")
+  class(OutputsModel) <- c("OutputsModel", time_step, "CemaNeige")
   if(IsHyst) {
     class(OutputsModel) <- c(class(OutputsModel), "hysteresis")
   }

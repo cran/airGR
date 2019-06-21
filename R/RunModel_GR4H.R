@@ -47,7 +47,7 @@ RunModel_GR4H <- function(InputsModel,RunOptions,Param){
       }
 
     ##Call_fortan
-      RESULTS <- .Fortran("frun_GR4H",PACKAGE="airGR",
+      RESULTS <- .Fortran("frun_gr4h",PACKAGE="airGR",
                  ##inputs
                      LInputs=LInputSeries,                             ### length of input and output series
                      InputsPrecip=InputsModel$Precip[IndPeriod1],      ### input series of total precipitation [mm/h]

@@ -1,6 +1,6 @@
 
 
-      SUBROUTINE frun_GR5J(
+      SUBROUTINE frun_gr5j(
                                  !inputs
      &                             LInputs      , ! [integer] length of input and output series
      &                             InputsPrecip , ! [double]  input series of total precipitation [mm/day]
@@ -16,7 +16,7 @@
      &                             StateEnd     ) ! [double]  state variables at the end of the model run (store levels [mm] and Unit Hydrograph (UH) storages [mm])
 
 
-      !DEC$ ATTRIBUTES DLLEXPORT :: frun_GR5J
+      !DEC$ ATTRIBUTES DLLEXPORT :: frun_gr5j
 
 
       Implicit None

@@ -229,7 +229,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
                                <span class="dt">RunOptions =</span> RunOptions, <span class="dt">Obs =</span> BasinObs<span class="op">$</span>Qmm[Ind_Run])
 <span class="kw">str</span>(InputsCrit)</code></pre></div>
 <pre><code>## List of 8
-##  $ FUN_CRIT:function (InputsCrit, OutputsModel, warnings = TRUE, verbose = TRUE)  
+##  $ FUN_CRIT: chr &quot;ErrorCrit_NSE&quot;
 ##  $ Obs     : num [1:3652] 1.99 1.8 2.86 2.4 3.31 ...
 ##  $ VarObs  : chr &quot;Q&quot;
 ##  $ BoolCrit: logi [1:3652] TRUE TRUE TRUE TRUE TRUE TRUE ...
@@ -277,10 +277,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ol>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OutputsCalib &lt;-<span class="st"> </span><span class="kw">Calibration_Michel</span>(<span class="dt">InputsModel =</span> InputsModel, <span class="dt">RunOptions =</span> RunOptions,
                                    <span class="dt">InputsCrit =</span> InputsCrit, <span class="dt">CalibOptions =</span> CalibOptions,
-                                   <span class="dt">FUN_MOD =</span> RunModel_GR4J, <span class="dt">FUN_CRIT =</span> ErrorCrit_NSE)</code></pre></div>
-<pre><code>## Warning in Calibration_Michel(InputsModel = InputsModel, RunOptions =
-## RunOptions, : argument 'FUN_CRIT' is deprecated. The error criterion
-## function is now automatically get from the 'InputsCrit' object</code></pre>
+                                   <span class="dt">FUN_MOD =</span> RunModel_GR4J)</code></pre></div>
 <pre><code>## Grid-Screening in progress (0% 20% 40% 60% 80% 100%)
 ##   Screening completed (81 runs)
 ##       Param =  247.151,   -0.020,   83.096,    2.384
@@ -352,7 +349,7 @@ Param</code></pre></div>
 <li>cumulative frequency plot for simulated discharge (and for observed discharge if provided)</li>
 <li>correlation plot between simulated and observed discharge (if observed discharge provided)</li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(OutputsModel, <span class="dt">Obs =</span> BasinObs<span class="op">$</span>Qmm[Ind_Run])</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(OutputsModel, <span class="dt">Qobs =</span> BasinObs<span class="op">$</span>Qmm[Ind_Run])</code></pre></div>
 <p>Moreover, if the CemaNeige model is used, the air temperature and the simulated snowpack water equivalent time series are plotted.</p>
 </div>
 <div id="efficiency-criterion" class="section level2">

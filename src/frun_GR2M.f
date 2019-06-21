@@ -1,6 +1,6 @@
 
 
-      SUBROUTINE frun_GR2M(
+      SUBROUTINE frun_gr2m(
                                  !inputs
      &                             LInputs      , ! [integer] length of input and output series
      &                             InputsPrecip , ! [double]  input series of total precipitation [mm/month]
@@ -16,7 +16,7 @@
      &                             StateEnd     ) ! [double]  state variables at the end of the model run (store levels [mm])
 
 
-      !DEC$ ATTRIBUTES DLLEXPORT :: frun_GR2M
+      !DEC$ ATTRIBUTES DLLEXPORT :: frun_gr2m
 
 
       Implicit None

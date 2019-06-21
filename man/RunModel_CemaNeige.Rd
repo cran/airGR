@@ -18,10 +18,10 @@ RunModel_CemaNeige(InputsModel, RunOptions, Param)
 
 \item{RunOptions}{[object of class \emph{RunOptions}] see \code{\link{CreateRunOptions}} for details}
 
-\item{Param}{[numeric] vector of 2 (or 4 parameters if \code{IsHyst = TRUE})
+\item{Param}{[numeric] vector of 2 (or 4 parameters if \code{IsHyst = TRUE}, see \code{\link{CreateRunOptions}} for details)
 \tabular{ll}{                                                                      
 CemaNeige X1 \tab weighting coefficient for snow pack thermal state [-]                   \cr
-CemaNeige X2 \tab degree-day melt coefficient [mm/°C/d]                                   \cr
+CemaNeige X2 \tab degree-day melt coefficient [mm/°C/time step]                           \cr
 CemaNeige X3 \tab (optional) accumulation threshold [mm] (needed if \code{IsHyst = TRUE}) \cr
 CemaNeige X4 \tab (optional) percentage (between 0 and 1) of annual snowfall defining the melt threshold [-] (needed if \code{IsHyst = TRUE}) \cr
 }}
@@ -51,12 +51,12 @@ CemaNeige X4 \tab (optional) percentage (between 0 and 1) of annual snowfall def
 
 
 \description{
-Function which performs a single run for the CemaNeige daily snow module.
+Function which performs a single run for the CemaNeige snow module at the daily or hourly time step.
 }
 
 
 \details{
-The choice of the CemaNeige version is explained in \code{\link{CreateRunOptions}}. \cr
+The choice of the CemaNeige version (i.e. with or without hysteresis) is explained in \code{\link{CreateRunOptions}}. \cr
 For further details on the model, see the references section. \cr
 For further details on the argument structures and initialisation options, see \code{\link{CreateRunOptions}}.
 }

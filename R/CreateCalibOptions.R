@@ -48,6 +48,10 @@ CreateCalibOptions <- function(FUN_MOD,
       ObjectClass <- c(ObjectClass, "CemaNeige")
       BOOL <- TRUE
     }
+    if (identical(FUN_MOD, RunModel_CemaNeigeGR4H)) {
+      ObjectClass <- c(ObjectClass, "CemaNeigeGR4H")
+      BOOL <- TRUE
+    }    
     if (identical(FUN_MOD, RunModel_CemaNeigeGR4J)) {
       ObjectClass <- c(ObjectClass, "CemaNeigeGR4J")
       BOOL <- TRUE
@@ -84,7 +88,8 @@ CreateCalibOptions <- function(FUN_MOD,
     ##check_FUN_TRANSFO
     if (is.null(FUN_TRANSFO)) {
       ##_set_FUN1
-      if (identical(FUN_MOD, RunModel_GR4H)) {
+      if (identical(FUN_MOD, RunModel_GR4H) |
+          identical(FUN_MOD, RunModel_CemaNeigeGR4H)) {
         FUN1 <- TransfoParam_GR4H
       }
       if (identical(FUN_MOD, RunModel_GR4J) |
@@ -190,6 +195,9 @@ CreateCalibOptions <- function(FUN_MOD,
     if ("CemaNeige" %in% ObjectClass) {
       NParam <- 2
     }
+    if ("CemaNeigeGR4H" %in% ObjectClass) {
+      NParam <- 6
+    }    
     if ("CemaNeigeGR4J" %in% ObjectClass) {
       NParam <- 6
     }
@@ -305,6 +313,11 @@ CreateCalibOptions <- function(FUN_MOD,
                              -9.14, +6.90,
                              +4.10, +7.21), ncol = 2, byrow = TRUE)
         }
+        if ("CemaNeigeGR4H" %in% ObjectClass) {
+          ParamT <- matrix(c(+5.12, -1.18, +4.34, -9.69, -9.96, +6.63,
+                             +5.58, -0.85, +4.74, -9.47, -9.14, +6.90,
+                             +6.01, -0.50, +5.14, -8.87, +4.10, +7.21), ncol = 6, byrow = TRUE)
+        }      
         if ("CemaNeigeGR4J" %in% ObjectClass) {
           ParamT <- matrix(c(+5.13, -1.60, +3.03, -9.05, -9.96, +6.63,
                              +5.51, -0.61, +3.74, -8.51, -9.14, +6.90,

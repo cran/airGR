@@ -37,6 +37,10 @@ CreateIniStates <- function(FUN_MOD, InputsModel, IsHyst = FALSE,
     ObjectClass <- c(ObjectClass, "CemaNeige", "daily")
     BOOL <- TRUE
   }
+  if (identical(FUN_MOD, RunModel_CemaNeigeGR4H)) {
+    ObjectClass <- c(ObjectClass, "GR", "CemaNeige", "hourly")
+    BOOL <- TRUE
+  }
   if (identical(FUN_MOD, RunModel_CemaNeigeGR4J) |
       identical(FUN_MOD, RunModel_CemaNeigeGR5J) |
       identical(FUN_MOD, RunModel_CemaNeigeGR6J)) {

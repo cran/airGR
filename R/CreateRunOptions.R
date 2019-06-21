@@ -40,6 +40,10 @@ CreateRunOptions <- function(FUN_MOD, InputsModel, IndPeriod_WarmUp = NULL, IndP
     ObjectClass <- c(ObjectClass, "GR", "CemaNeige", "daily")
     BOOL <- TRUE
   }
+  if (identical(FUN_MOD, RunModel_CemaNeigeGR4H)) {
+    ObjectClass <- c(ObjectClass, "GR", "CemaNeige", "hourly")
+    BOOL <- TRUE
+  }
   if (IsHyst) {
     ObjectClass <- c(ObjectClass, "hysteresis")
   }
@@ -156,7 +160,7 @@ CreateRunOptions <- function(FUN_MOD, InputsModel, IndPeriod_WarmUp = NULL, IndP
       if (!is.vector(IniResLevels) | !is.numeric(IniResLevels) | any(is.na(IniResLevels))) {
         stop("'IniResLevels' must be a vector of numeric values")
       }
-      if ((identical(FUN_MOD, RunModel_GR4H) |
+      if ((identical(FUN_MOD, RunModel_GR4H) | identical(FUN_MOD, RunModel_CemaNeigeGR4H) |
            identical(FUN_MOD, RunModel_GR4J) | identical(FUN_MOD, RunModel_CemaNeigeGR4J) |
            identical(FUN_MOD, RunModel_GR5J) | identical(FUN_MOD, RunModel_CemaNeigeGR5J) |
            identical(FUN_MOD, RunModel_GR2M)) &
@@ -194,7 +198,7 @@ CreateRunOptions <- function(FUN_MOD, InputsModel, IndPeriod_WarmUp = NULL, IndP
   NState <- NULL
   if ("GR" %in% ObjectClass | "CemaNeige" %in% ObjectClass) {
     if ("hourly"  %in% ObjectClass) {
-      NState <- 7 + 3 * 24 * 20
+      NState <- 7 + 3 * 24 * 20+ 4 * NLayers
     }
     if ("daily"   %in% ObjectClass) {
       NState <- 7 + 3 * 20 + 4 * NLayers
@@ -267,7 +271,7 @@ CreateRunOptions <- function(FUN_MOD, InputsModel, IndPeriod_WarmUp = NULL, IndP
   
   ##Outputs_all
   Outputs_all <- NULL
-  if (identical(FUN_MOD,RunModel_GR4H)) {
+  if (identical(FUN_MOD,RunModel_GR4H) | identical(FUN_MOD,RunModel_CemaNeigeGR4H)) {
     Outputs_all <- c(Outputs_all, .FortranOutputs(GR = "GR4H")$GR)
   }
   if (identical(FUN_MOD,RunModel_GR4J) | identical(FUN_MOD,RunModel_CemaNeigeGR4J)) {

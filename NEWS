@@ -3,6 +3,48 @@ Release History of the airGR Package
 
 
 
+
+##################### 1.3.2.23 Release Notes (2019-06-20) #####################
+
+
+#### New features
+
+- CreateInputsCrit() now allows power (as a numeric or as a character) and the Box-Cox transformations in the transfo argument.
+
+- Added RunModel_CemaNeigeGR4H() function to run the hourly model GR4H with the CemaNeige module.
+
+- Added PE_Oudin() function to compute Oudin's potential evapotranspiration for hourly or daily time steps.
+
+
+#### Deprecated and defunct
+
+- The PEdaily_Oudin() function is deprecated and his use has been replaced by the use of PE_Oudin().
+
+- plot.OutputsModel() now presents a LayoutMat argument (and additionnal related argument: LayoutWidths, LayoutHeights) to specify complex plot arrangements.
+
+#### Bug fixes
+
+- Fixed bug in plot.OutputsModel(). The function now runs correctly when the which argument contains the "CorQQ" value without "CumFreq".
+
+
+#### Major user-visible changes
+
+- plot.OutputsModel() can now draw PE or error time series if the which argument is set to "all" or "PotEvap" or "Error".
+
+- plot.OutputsModel() now allows new values for the which argument: "all" corresponds to all graphs, "synth" corresponds to the main graphs (default value; corresponding to "all" in the previous versions of the package) (i.e. c("Precip", "Temp", "SnowPack", "Flows", "Regime", "CumFreq", "CorQQ")), "ts" corresponds to the time series graphs (i.e. c("Precip", "PotEvap", "Temp", "SnowPack", "Flows")) and "perf" corresponds to the performance graphs (i.e. c("Error", "Regime", "CumFreq", "CorQQ")).
+
+
+#### Minor user-visible changes
+
+- .ErrorCrit() private function added to check inputs into ErrorCrit_*() functions. The ErrorCrit_*() functions were simplified accordingly.
+
+- CreateInputsCrit() now returns FUN_CRIT as a character string.
+
+- An example is addeed to illustred the use of the plot.OutputsModel() function.
+
+
+
+
 ##################### 1.2.13.16 Release Notes (2019-04-03) #####################
 
 
@@ -29,7 +71,7 @@ Release History of the airGR Package
 
 - CreateInputsCrit() now presents a warnings argument to replace the verbose action (the verbose argument is kept to print messages).
 
-- In CreateInputsCrit(), it is now possible to set the following arguments as atomic (as before) or as list: FUN_CRIT, VarObs, Obs, BoolCrit, transfo, Weights. If the list format is chosen, all the lists must have the same length. XXXXX mélange new args et usage XXXX
+- In CreateInputsCrit(), it is now possible to set the following arguments as atomic (as before) or as list: FUN_CRIT, VarObs, Obs, BoolCrit, transfo, Weights. If the list format is chosen, all the lists must have the same length.
 
 - CreateRunOptions(), CreateIniStates() and CreateCalibOptions() now present a IsHyst argument to give the possibility to use the Linear Hysteresis with CemaNeige. The objects returned present an hysteresis class.
 
@@ -43,7 +85,6 @@ Release History of the airGR Package
 
 
 #### Major user-visible changes
-
 
 - CreateInputsCrit() now return a list of InputsCrit (each element is of the Single class) in the cases of multiple or a composite criteria.
 

@@ -30,6 +30,7 @@ These models can be called within airGR using the following functions: \cr
   - \code{\link{RunModel_GR2M}}: two-parameter monthly lumped hydrological model (Mouelhi, 2003 ; Mouelhi \emph{et al.}, 2006a) \cr
   - \code{\link{RunModel_GR1A}}: one-parameter yearly lumped hydrological model (Mouelhi, 2003 ; Mouelhi \emph{et al.}, 2006b) \cr
   - \code{\link{RunModel_CemaNeige}}: two-parameter degree-day snow melt and accumulation daily model (Valéry \emph{et al.}, 2014) \cr
+  - \code{\link{RunModel_CemaNeigeGR4H}}: combined use of GR4H and CemaNeige \cr
   - \code{\link{RunModel_CemaNeigeGR4J}}: combined use of GR4J and CemaNeige \cr
   - \code{\link{RunModel_CemaNeigeGR5J}}: combined use of GR5J and CemaNeige \cr
   - \code{\link{RunModel_CemaNeigeGR6J}}: combined use of GR6J and CemaNeige \cr\cr
@@ -60,4 +61,8 @@ For more information and to get started with the package, you can refer to the v
 
 }
 
-\keyword{hydrology, model, efficiency criterion, calibration, GR4J}
+\concept{hydrology}
+\concept{model}
+\concept{efficiency criterion}
+\concept{calibration}
+\concept{GR4J}

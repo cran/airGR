@@ -19,10 +19,11 @@ ErrorCrit <- function(InputsCrit, OutputsModel, FUN_CRIT, warnings = TRUE, verbo
   
   ## ----- Single criterion
   if (inherits(InputsCrit, "Single")) {
-    OutputsCrit <- InputsCrit$FUN_CRIT(InputsCrit = InputsCrit,
-                                       OutputsModel = OutputsModel,
-                                       warnings = warnings,
-                                       verbose = verbose)
+    FUN_CRIT <- match.fun(InputsCrit$FUN_CRIT)
+    OutputsCrit <- FUN_CRIT(InputsCrit = InputsCrit,
+                            OutputsModel = OutputsModel,
+                            warnings = warnings,
+                            verbose = verbose)
   }
   
   
@@ -30,10 +31,11 @@ ErrorCrit <- function(InputsCrit, OutputsModel, FUN_CRIT, warnings = TRUE, verbo
   
   if (inherits(InputsCrit, "Multi") | inherits(InputsCrit, "Compo")) {
     listOutputsCrit <- lapply(InputsCrit, FUN = function(iInputsCrit) {
-      iInputsCrit$FUN_CRIT(InputsCrit = iInputsCrit,
-                           OutputsModel = OutputsModel,
-                           warnings = warnings,
-                           verbose = verbose)
+      FUN_CRIT <- match.fun(iInputsCrit$FUN_CRIT)
+      FUN_CRIT(InputsCrit = iInputsCrit,
+               OutputsModel = OutputsModel,
+               warnings = warnings,
+               verbose = verbose)
     })
     
     listValCrit  <- sapply(listOutputsCrit, function(x) x[["CritValue"]])
@@ -70,7 +72,7 @@ ErrorCrit <- function(InputsCrit, OutputsModel, FUN_CRIT, warnings = TRUE, verbo
     }
     
   }
-
+  
   return(OutputsCrit)
   
 }

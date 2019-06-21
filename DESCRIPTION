@@ -2,8 +2,8 @@ Package: airGR
 Type: Package
 Title: Suite of GR Hydrological Models for Precipitation-Runoff
         Modelling
-Version: 1.2.13.16
-Date: 2019-04-03
+Version: 1.3.2.23
+Date: 2019-06-20
 Authors@R: c(
   person("Laurent", "Coron", role = c("aut", "trl"), comment = c(ORCID = "0000-0002-1503-6204")),
   person("Olivier", "Delaigue", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-7668-8468"), email = "airGR@irstea.fr"),
@@ -16,7 +16,7 @@ Authors@R: c(
   person("Nicolas", "Le Moine", role = c("ctb")),
   person("Thibaut", "Mathevet", role = c("ctb")),
   person("Safouane", "Mouelhi", role = c("ctb")),
-  person("Ludovic", "Oudin", role = c("ctb")),
+  person("Ludovic", "Oudin", role = c("ctb"), comment = c(ORCID = "0000-0002-3712-0933")),
   person("Raji", "Pushpalatha", role = c("ctb")),
   person("Audrey", "Valéry", role = c("ctb"))
   )
@@ -29,7 +29,7 @@ URL: https://hydrogr.github.io/airGR/
 NeedsCompilation: yes
 Encoding: UTF-8
 VignetteBuilder: knitr
-Packaged: 2019-04-03 14:10:57 UTC; olivier.delaigue
+Packaged: 2019-06-20 12:07:45 UTC; olivier.delaigue
 Author: Laurent Coron [aut, trl] (<https://orcid.org/0000-0002-1503-6204>),
   Olivier Delaigue [aut, cre] (<https://orcid.org/0000-0002-7668-8468>),
   Guillaume Thirel [aut] (<https://orcid.org/0000-0002-1444-1830>),
@@ -42,9 +42,9 @@ Author: Laurent Coron [aut, trl] (<https://orcid.org/0000-0002-1503-6204>),
   Nicolas Le Moine [ctb],
   Thibaut Mathevet [ctb],
   Safouane Mouelhi [ctb],
-  Ludovic Oudin [ctb],
+  Ludovic Oudin [ctb] (<https://orcid.org/0000-0002-3712-0933>),
   Raji Pushpalatha [ctb],
   Audrey Valéry [ctb]
 Maintainer: Olivier Delaigue <airGR@irstea.fr>
 Repository: CRAN
-Date/Publication: 2019-04-03 14:50:03 UTC
+Date/Publication: 2019-06-21 08:20:30 UTC

@@ -18,7 +18,7 @@ RunModel_CemaNeigeGR6J(InputsModel, RunOptions, Param)
 
 \item{RunOptions}{[object of class \emph{RunOptions}] see \code{\link{CreateRunOptions}} for details}
 
-\item{Param}{[numeric] vector of 8 (or 10 parameters if \code{IsHyst = TRUE})
+\item{Param}{[numeric] vector of 8 (or 10 parameters if \code{IsHyst = TRUE}, see \code{\link{CreateRunOptions}} for details)
 \tabular{ll}{                                                                  
 GR6J X1      \tab production store capacity [mm]                                          \cr
 GR6J X2      \tab intercatchment exchange coefficient [mm/d]                              \cr

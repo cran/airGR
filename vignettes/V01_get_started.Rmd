@@ -195,7 +195,7 @@ The calibration algorithm optimizes the error criterion selected as objective-fu
 ```{r}
 OutputsCalib <- Calibration_Michel(InputsModel = InputsModel, RunOptions = RunOptions,
                                    InputsCrit = InputsCrit, CalibOptions = CalibOptions,
-                                   FUN_MOD = RunModel_GR4J, FUN_CRIT = ErrorCrit_NSE)
+                                   FUN_MOD = RunModel_GR4J)
 Param <- OutputsCalib$ParamFinalR
 Param
 ```
@@ -240,7 +240,7 @@ Although it is possible for the user to design its own graphics from the outputs
   * correlation plot between simulated and observed discharge (if observed discharge provided)
   
 ```{r,eval=F}
-plot(OutputsModel, Obs = BasinObs$Qmm[Ind_Run])
+plot(OutputsModel, Qobs = BasinObs$Qmm[Ind_Run])
 ```
 
 Moreover, if the CemaNeige model is used, the air temperature and the simulated snowpack water equivalent time series are plotted. 

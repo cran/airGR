@@ -2,16 +2,16 @@
 
 
 
-      SUBROUTINE frun_CEMANEIGE(
+      SUBROUTINE frun_cemaneige(
                                  !inputs
      &                             LInputs              , ! [integer] length of input and output series
-     &                             InputsPrecip         , ! [double]  input series of total precipitation [mm]
+     &                             InputsPrecip         , ! [double]  input series of total precipitation [mm/time step]
      &                             InputsFracSolidPrecip, ! [double]  input series of fraction of solid precipitation [0-1]
      &                             InputsTemp           , ! [double]  input series of air mean temperature [degC]
      &                             MeanAnSolidPrecip    , ! [double]  value of annual mean solid precip [mm/y]
      &                             NParam               , ! [integer] number of model parameter
      &                             Param                , ! [double]  parameter set
-     &                             NStates              , ! [integer] number of state variables used for model initialising = 2
+     &                             NStates              , ! [integer] number of state variables used for model initialisation = 4
      &                             StateStart           , ! [double]  state variables used when the model run starts
      &                             IsHyst               , ! [logical] whether we should use the linear hysteresis or not
      &                             NOutputs             , ! [integer] number of output series
@@ -21,7 +21,7 @@
      &                             StateEnd             ) ! [double]  state variables at the end of the model run
 
 
-      !DEC$ ATTRIBUTES DLLEXPORT :: frun_CemaNeige
+      !DEC$ ATTRIBUTES DLLEXPORT :: frun_cemaneige
 
 
       Implicit None
@@ -153,14 +153,14 @@ c      Outputs = -999.999  !initialisation made in R
 
         !Storage of outputs
         DO I=1,NOutputs
-          IF(IndOutputs(I).EQ.1)  Outputs(k,I)=Pliq          ! Pliq         ! observed liquid precipitation [mm/day]
-          IF(IndOutputs(I).EQ.2)  Outputs(k,I)=Psol          ! Psol         ! observed solid precipitation [mm/day]
+          IF(IndOutputs(I).EQ.1)  Outputs(k,I)=Pliq          ! Pliq         ! observed liquid precipitation [mm/time step]
+          IF(IndOutputs(I).EQ.2)  Outputs(k,I)=Psol          ! Psol         ! observed solid precipitation [mm/time step]
           IF(IndOutputs(I).EQ.3)  Outputs(k,I)=G             ! SnowPack     ! snow pack [mm]
           IF(IndOutputs(I).EQ.4)  Outputs(k,I)=eTG           ! ThermalState ! thermal state [°C]
           IF(IndOutputs(I).EQ.5)  Outputs(k,I)=Gratio        ! Gratio       ! Gratio [-]
-          IF(IndOutputs(I).EQ.6)  Outputs(k,I)=PotMelt       ! PotMelt      ! potential snow melt [mm/day]
-          IF(IndOutputs(I).EQ.7)  Outputs(k,I)=Melt          ! Melt         ! melt [mm/day]
-          IF(IndOutputs(I).EQ.8)  Outputs(k,I)=PliqAndMelt   ! PliqAndMelt  ! liquid precipitation + melt [mm/day]
+          IF(IndOutputs(I).EQ.6)  Outputs(k,I)=PotMelt       ! PotMelt      ! potential snow melt [mm/time step]
+          IF(IndOutputs(I).EQ.7)  Outputs(k,I)=Melt          ! Melt         ! melt [mm/time step]
+          IF(IndOutputs(I).EQ.8)  Outputs(k,I)=PliqAndMelt   ! PliqAndMelt  ! liquid precipitation + melt [mm/time step]
           IF(IndOutputs(I).EQ.9)  Outputs(k,I)=InputsTemp(k) ! Temp         ! air temperature [°C]
           IF(IndOutputs(I).EQ.10) Outputs(k,I)=Gthreshold    ! Gthreshold   ! melt threshold [mm]
           IF(IndOutputs(I).EQ.11) Outputs(k,I)=Glocalmax     ! Glocalmax    ! local melt threshold for hysteresis [mm]

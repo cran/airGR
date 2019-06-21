@@ -42,7 +42,7 @@ RunModel_GR2M <- function(InputsModel,RunOptions,Param){
       }
 
     ##Call_fortan
-      RESULTS <- .Fortran("frun_GR2M",PACKAGE="airGR",
+      RESULTS <- .Fortran("frun_gr2M",PACKAGE="airGR",
                  ##inputs
                      LInputs=LInputSeries,                             ### length of input and output series
                      InputsPrecip=InputsModel$Precip[IndPeriod1],      ### input series of total precipitation [mm/month]

@@ -1,28 +1,45 @@
-plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea = NULL, which = "all", log_scale = FALSE,
-                              cex.axis = 1, cex.lab = 0.9, cex.leg = 0.9, lwd = 1, verbose = TRUE, ...) {
+plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea = NULL, which = "synth", log_scale = FALSE,
+                              cex.axis = 1, cex.lab = 0.9, cex.leg = 0.9, lwd = 1,
+                              LayoutMat = NULL, LayoutWidths = rep.int(1, ncol(LayoutMat)), LayoutHeights = rep.int(1, nrow(LayoutMat)),
+                              verbose = TRUE, ...) {
+  
+  
+  ## save default graphical parameters and resetting on exit
+  opar <- par(no.readonly = TRUE)
+  on.exit(par(opar))
+  
   
   OutputsModel <- x
+  
+  
+  
+  ## ---------- check arguments
   
   if (!inherits(OutputsModel, "GR") & !inherits(OutputsModel, "CemaNeige")) {
     stop("'OutputsModel' not in the correct format for default plotting")
   }
   
-  
+  ## check 'OutputsModel'
   BOOL_Dates <- FALSE
-  
   if ("DatesR" %in% names(OutputsModel)) {
     BOOL_Dates <- TRUE
   }
-  BOOL_Pobs <- FALSE
   
+  BOOL_Pobs <- FALSE
   if ("Precip" %in% names(OutputsModel)) {
     BOOL_Pobs <- TRUE
   }
-  BOOL_Qsim <- FALSE
   
+  BOOL_Eobs <- FALSE
+  if ("PotEvap" %in% names(OutputsModel)) {
+    BOOL_Eobs <- TRUE
+  }
+  
+  BOOL_Qsim <- FALSE
   if ("Qsim"   %in% names(OutputsModel)) {
     BOOL_Qsim <- TRUE
   }
+  
   BOOL_Qobs <- FALSE
   if (BOOL_Qsim & length(Qobs) == length(OutputsModel$Qsim)) {
     if (sum(is.na(Qobs)) != length(Qobs)) {
@@ -31,13 +48,19 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
   } else if (inherits(OutputsModel, "GR") & !is.null(Qobs)) {
     warning("incorrect length of 'Qobs'. Time series of observed flow not drawn")
   }
-  BOOL_Snow <- FALSE
   
+  BOOL_Error <- FALSE
+  if (BOOL_Qsim & BOOL_Qobs) {
+    BOOL_Error <- TRUE
+  }
+  
+  BOOL_Snow <- FALSE
   if ("CemaNeigeLayers" %in% names(OutputsModel)) {
     if ("SnowPack" %in% names(OutputsModel$CemaNeigeLayers[[1]])) {
       BOOL_Snow <- TRUE
     }
   }
+  
   BOOL_Psol <- FALSE
   if ("CemaNeigeLayers" %in% names(OutputsModel)) {
     if ("Psol"     %in% names(OutputsModel$CemaNeigeLayers[[1]])) {
@@ -45,30 +68,73 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
     }
   }
   
+  
+  ## check 'which'
+  whichNeedQobs  <- c("Error", "CorQQ")
+  whichDashboard <- c("all", "synth", "ts", "perf")
+  whichAll   <- c("Precip", "PotEvap", "Temp", "SnowPack", "Flows", "Error", "Regime", "CumFreq", "CorQQ")
+  whichSynth <- c("Precip"           , "Temp", "SnowPack", "Flows"         , "Regime", "CumFreq", "CorQQ")
+  whichTS    <- c("Precip", "PotEvap", "Temp", "SnowPack", "Flows"                                       )
+  whichPerf  <- c(                                                  "Error", "Regime", "CumFreq", "CorQQ")
+  whichCN    <- c(                     "Temp", "SnowPack"                                                )
+  warnMsgWhich   <- "'which' must be a vector of character"
+  warnMsgNoQobs  <- "the %s plot(s) cannot be drawn if there is no 'Qobs'"
+  warnMsgWhichCN <- sprintf("incorrect element found in argument 'which':\n\twithout CemaNeige, %s are not available \n\tit can only contain %s",
+                            paste0(shQuote(whichCN), collapse = " and "),
+                            paste0(shQuote(c(whichDashboard, whichAll[!whichAll %in% whichCN])), collapse = ", "))
   if (is.null(which)) {
-    stop("'which' must be a vector of character")
+    stop(warnMsgWhich)
   }
   if (!is.vector(which)) {
-    stop("'which' must be a vector of character")
+    stop(warnMsgWhich)
   }
   if (!is.character(which)) {
-    stop("'which' must be a vector of character")
+    stop(warnMsgWhich)
   }
-  if (any(!which %in% c("all", "Precip", 'Temp', "SnowPack", "Flows", "Regime", "CumFreq", "CorQQ"))) {
-    stop("incorrect element found in argument 'which':\nit can only contain 'all', 'Precip', 'Temp', 'SnowPack', 'Flows', 'Regime', 'CumFreq' or 'CorQQ'")
+  if (any(!which %in% c(whichDashboard, whichAll))) {
+    stop(sprintf("incorrect element found in argument 'which': %s\nit can only contain %s",
+                 paste0(shQuote(which[!which %in% c(whichDashboard, whichAll)])),
+                 paste0(shQuote(c(whichDashboard, whichAll)), collapse = ", ")))
   }
-  if (all(which %in% c("Temp", "SnowPack")) & !inherits(OutputsModel, "CemaNeige")) {
-    stop("Incorrect element found in argument 'which':\nwithout CemaNeige it can only contain 'all', 'Precip', 'Flows', 'Regime', 'CumFreq' or 'CorQQ'")
+  if (all(which %in% whichCN) & !inherits(OutputsModel, "CemaNeige")) {
+    stop(warnMsgWhichCN)
   }
-  if (length(unique(which %in% c("Temp", "SnowPack"))) == 2 & !inherits(OutputsModel, "CemaNeige")) {
-    warning("Incorrect element found in argument 'which':\nit can only contain 'all', 'Precip', 'Flows', 'Regime', 'CumFreq' or 'CorQQ'\nwithout CemaNeige 'Temp' and 'SnowPack' are not available")
-  }  
-  
+  if (length(unique(which %in% whichCN)) == 2 & !inherits(OutputsModel, "CemaNeige")) {
+    warning(warnMsgWhichCN)
+  }
+  if (all(!which %in% c("all", "synth", "ts", whichCN)) & !inherits(OutputsModel, "GR")) {
+    stop(sprintf("incorrect element found in argument 'which': \nwith CemaNeige alone, only %s are available",
+                 paste0(shQuote(c("all", "synth", "ts", "Temp", "SnowPack")), collapse = ", ")))
+  }
+  if (any(!which %in% c("all", "synth", "ts", whichCN)) & !inherits(OutputsModel, "GR")) {
+    warning(sprintf("incorrect element found in argument 'which': \nwith CemaNeige alone, only %s are available",
+                    paste0(shQuote(c("all", "synth", "ts", "Temp", "SnowPack")), collapse = ", ")))
+  }
+  if ("perf" %in% which) {
+    which <- c(which, whichPerf)
+  }
+  if ("ts" %in% which) {
+    which <- c(which, whichTS)
+  }
+  if ("synth" %in% which) {
+    which <- c(which, whichSynth)
+  }
   if ("all" %in% which) {
-    which <- c("Precip", "Temp", "SnowPack", "Flows", "Regime", "CumFreq", "CorQQ")
+    which <- c(which, whichAll)
   }
+  if (is.null(Qobs) & inherits(OutputsModel, "GR")) {
+    if (length(which) == 1 & (any(which %in% whichNeedQobs))) {
+      stop(sprintf(warnMsgNoQobs, shQuote(which)))
+    }
+    if (length(which) != 1 & any(which %in% whichNeedQobs)) {
+      BOOL_CorQQ <- FALSE
+      BOOL_Error <- FALSE
+      warning(sprintf(warnMsgNoQobs, paste0(shQuote(whichNeedQobs), collapse = " and ")))
+    }
+  }
+
   
-  
+  ## check dates
   if (!BOOL_Dates) {
     stop("'OutputsModel' must contain at least 'DatesR' to allow plotting")
   }
@@ -141,13 +207,22 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
   }
   BOOL_QobsZero <- FALSE
   if (BOOL_Qobs) {
-    SelectQobsNotZero <- (round(Qobs[IndPeriod_Plot]             , 4) != 0)
+    SelectQobsNotZero <- round(Qobs[IndPeriod_Plot], 4) != 0
     BOOL_QobsZero <- sum(!SelectQobsNotZero, na.rm = TRUE) > 0
   }
   BOOL_QsimZero <- FALSE
   if (BOOL_Qsim) {
-    SelectQsimNotZero <- (round(OutputsModel$Qsim[IndPeriod_Plot], 4) != 0)
+    SelectQsimNotZero <- round(OutputsModel$Qsim[IndPeriod_Plot], 4) != 0
     BOOL_QsimZero <- sum(!SelectQsimNotZero, na.rm = TRUE) > 0
+  }
+  if ( BOOL_Qobs & !BOOL_Qsim) {
+    SelectNotZero <- SelectQobsNotZero
+  }
+  if (!BOOL_Qobs &  BOOL_Qsim) {
+    SelectNotZero <- SelectQsimNotZero
+  }
+  if ( BOOL_Qobs &  BOOL_Qsim) {
+    SelectNotZero <- SelectQobsNotZero & SelectQsimNotZero
   }
   if (BOOL_QobsZero & verbose) {
     warning("zeroes detected in 'Qobs': some plots in the log space will not be created using all time-steps")
@@ -157,76 +232,79 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
   }
   BOOL_FilterZero <- TRUE
   
-  ## Plots_choices
-  BOOLPLOT_Precip   <- ( "Precip"   %in% which & BOOL_Pobs )
-  BOOLPLOT_Temp     <- ( "Temp"     %in% which & BOOL_Snow )
-  BOOLPLOT_SnowPack <- ( "SnowPack" %in% which & BOOL_Snow )
-  BOOLPLOT_Flows    <- ( "Flows"    %in% which & (BOOL_Qsim | BOOL_Qobs) )
-  BOOLPLOT_Regime   <- ( "Regime"   %in% which & BOOL_TS & BOOL_Qsim & (NameTS %in% c("hour", "day", "month")) )
-  BOOLPLOT_CumFreq  <- ( "CumFreq"  %in% which & (BOOL_Qsim | BOOL_Qobs) & BOOL_FilterZero )
-  BOOLPLOT_CorQQ    <- ( "CorQQ"    %in% which & (BOOL_Qsim & BOOL_Qobs) & BOOL_FilterZero )
   
   
-  ## Options
+  ## ---------- plot
+  
+  ## plot choices
+  BOOLPLOT_Precip   <- "Precip"   %in% which &  BOOL_Pobs
+  BOOLPLOT_PotEvap  <- "PotEvap"  %in% which &  BOOL_Eobs
+  BOOLPLOT_Temp     <- "Temp"     %in% which &  BOOL_Snow
+  BOOLPLOT_SnowPack <- "SnowPack" %in% which &  BOOL_Snow
+  BOOLPLOT_Flows    <- "Flows"    %in% which & (BOOL_Qsim | BOOL_Qobs)
+  BOOLPLOT_Error    <- "Error"    %in% which &  BOOL_Error
+  BOOLPLOT_Regime   <- "Regime"   %in% which &  BOOL_Qsim & BOOL_TS & (NameTS %in% c("hour", "day", "month"))
+  BOOLPLOT_CumFreq  <- "CumFreq"  %in% which & (BOOL_Qsim | BOOL_Qobs) & BOOL_FilterZero
+  BOOLPLOT_CorQQ    <- "CorQQ"    %in% which & (BOOL_Qsim & BOOL_Qobs) & BOOL_FilterZero
+  
+  
+  ## options
   BLOC <- TRUE
   if (BLOC) {
     lwdk <- 1.8
     line <- 2.6
     bg   <- NA
     
-    matlayout <- NULL
-    iPlot <- 0
+    ## Set plot arrangement
+    if (is.null(LayoutMat)) {     
+      matlayout <- NULL
+      iPlot <- 0
+      iHght <- NULL
+      
+      listBOOLPLOT1 <- c(Precip = BOOLPLOT_Precip, PotEvap  = BOOLPLOT_PotEvap,
+                         Temp   = BOOLPLOT_Temp  , SnowPack = BOOLPLOT_SnowPack,
+                         Flows  = BOOLPLOT_Flows , Error    = BOOLPLOT_Error)
+      listBOOLPLOT2 <- c(Regime = BOOLPLOT_Regime, CumFreq  = BOOLPLOT_CumFreq,
+                         CorQQ = BOOLPLOT_CorQQ)
+      Sum1 <- sum(listBOOLPLOT1)
+      Sum2 <- sum(listBOOLPLOT2)
+      
+      for (k in seq_len(Sum1)) {
+        matlayout <- rbind(matlayout, iPlot + c(1, 1, 1))
+        iPlot <- iPlot + 1
+        iHght <- c(iHght, 0.7)
+      }
+      ## Flows plot is higher than the other TS
+      listBOOLPLOT1 <- listBOOLPLOT1[listBOOLPLOT1]
+      listBOOLPLOTF <- (names(listBOOLPLOT1) == "Flows") * BOOLPLOT_Flows
+      iHght <- iHght + listBOOLPLOTF * listBOOLPLOT1 * 0.3
+      if (Sum2 >= 1) {
+        iHght <- c(iHght, 1.0)
+      }
+      if ((Sum1 >= 1 & Sum2 != 0) | (Sum1 == 0 & Sum2 == 3)) {
+        matlayout <- rbind(matlayout, iPlot + c(1, 2, 3))
+        iPlot <- iPlot + 3
+      }
+      if (Sum1 == 0 & Sum2 == 2) {
+        matlayout <- rbind(matlayout, iPlot + c(1, 2))
+        iPlot <- iPlot + 2
+      }
+      if (Sum1 == 0 & Sum2 == 1) {
+        matlayout <- rbind(matlayout, iPlot + 1)
+        iPlot <- iPlot + 1
+      }
+
+      iPlotMax <- iPlot
+      LayoutWidths  <- rep.int(1, ncol(matlayout))
+      LayoutHeights <- iHght #rep.int(1, nrow(matlayout))
+    }
+    if (!is.null(LayoutMat)) {
+      matlayout <- LayoutMat
+    }
+    layout(matlayout, widths = LayoutWidths, heights = LayoutHeights)
     
-    Sum1 <- sum(c(BOOLPLOT_Precip, BOOLPLOT_SnowPack, BOOLPLOT_Flows))
-    Sum2 <- sum(c(BOOLPLOT_Regime, BOOLPLOT_CumFreq, BOOLPLOT_CorQQ))
-    if (BOOLPLOT_Precip) {
-      matlayout <- rbind(matlayout, c(iPlot+1, iPlot+1, iPlot+1))
-      iPlot <- iPlot + 1
-    }
-    if (BOOLPLOT_Temp) {
-      matlayout <- rbind(matlayout, c(iPlot+1, iPlot+1, iPlot+1), c(iPlot+1, iPlot+1, iPlot+1))
-      iPlot <- iPlot+1
-    }      
-    if (BOOLPLOT_SnowPack) {
-      matlayout <- rbind(matlayout, c(iPlot + 1, iPlot + 1, iPlot + 1), c(iPlot + 1, iPlot + 1, iPlot + 1))
-      iPlot <- iPlot + 1
-    }
-    if (BOOLPLOT_Flows) {
-      matlayout <- rbind(matlayout, c(iPlot + 1, iPlot + 1, iPlot + 1), c(iPlot + 1, iPlot + 1, iPlot + 1))
-      iPlot <- iPlot + 1
-    }
-    if ((Sum1 >= 1 & Sum2 != 0) | (Sum1 == 0 & Sum2 == 3)) {
-      matlayout <- rbind(matlayout, c(iPlot + 1, iPlot + 2, iPlot + 3), c(iPlot + 1, iPlot + 2, iPlot + 3))
-      iPlot <- iPlot + 3
-    }
-    if (Sum1 == 0 & Sum2 == 2) {
-      matlayout <- rbind(matlayout, c(iPlot + 1, iPlot + 2))
-      iPlot <- iPlot + 2
-    }
-    if (Sum1 == 0 & Sum2 == 1) {
-      matlayout <- rbind(matlayout, iPlot + 1)
-      iPlot <- iPlot + 1
-    }
-    iPlotMax <- iPlot
+
     
-    # isRStudio <- Sys.getenv("RSTUDIO") == "1";
-    # if (!isRStudio) {
-    #   if (Sum1 == 1 & Sum2 == 0) {width = 10; height = 05;}
-    #   if (Sum1 == 1 & Sum2 != 0) {width = 10; height = 07;}
-    #   if (Sum1 == 2 & Sum2 == 0) {width = 10; height = 05;}
-    #   if (Sum1 == 2 & Sum2 != 0) {width = 10; height = 07;}
-    #   if (Sum1 == 3 & Sum2 == 0) {width = 10; height = 07;}
-    #   if (Sum1 == 3 & Sum2 != 0) {width = 10; height = 10;}
-    #   if (Sum1 == 0 & Sum2 == 1) {width = 05; height = 05;}
-    #   if (Sum1 == 0 & Sum2 == 2) {width = 10; height = 04;}
-    #   if (Sum1 == 0 & Sum2 == 3) {width = 10; height = 03;}
-    #   dev.new(width = width, height = height)
-    #}
-    
-    opar <- par(no.readonly = TRUE)
-    on.exit(par(opar))
-    
-    layout(matlayout)
     
     Xaxis <- 1:length(IndPeriod_Plot)
     if (BOOL_Dates) {
@@ -243,14 +321,11 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
     }
     
     if (!is.null(BasinArea)) {
-      Factor_MMH_M3S <- 60 * 60
-      Factor_MMD_M3S <- 60 * 60 * 24
-      Factor_MMM_M3S <- 60 * 60 * 24 * 365.25 / 12
-      Factor_MMY_M3S <- 60 * 60 * 24 * 365.25
-      if (NameTS == "hour" ) Factor_UNIT_M3S <- Factor_MMH_M3S
-      if (NameTS == "day"  ) Factor_UNIT_M3S <- Factor_MMD_M3S
-      if (NameTS == "month") Factor_UNIT_M3S <- Factor_MMM_M3S
-      if (NameTS == "year" ) Factor_UNIT_M3S <- Factor_MMY_M3S
+      Factor_UNIT_M3S <- switch(NameTS,
+                                hour  = 60 * 60,
+                                day   = 60 * 60 * 24,
+                                month = 60 * 60 * 24 * 365.25 / 12,
+                                year  = 60 * 60 * 24 * 365.25)
       Factor_UNIT_M3S <- BasinArea / (Factor_UNIT_M3S / 1000)
     }
   }
@@ -272,7 +347,7 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
     kPlot <- kPlot + 1
     mar <- c(3, 5, 1, 5)
     
-    par(new = FALSE, mar = mar, las = 0)
+    par(new = FALSE, mar = mar)
     ylim1 <- range(OutputsModel$Precip[IndPeriod_Plot], na.rm = TRUE)
     ylim2 <- ylim1 * c(1.0, 1.1)
     ylim2 <- rev(ylim2)
@@ -286,9 +361,7 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
          col = "royalblue", lwd = lwdP * lwdk, lend = 1,
          xlab = "", ylab = "", ...)
     axis(side = 2, at = pretty(ylim1), labels = pretty(ylim1), cex.axis = cex.axis, ...)
-    par(las = 0)
     mtext(side = 2, paste("precip.", plotunit), cex = cex.lab, adj = 1, line = line)
-    par(las = 0)
     
     if (BOOL_Psol) {
       legend("bottomright", legend = c("solid","liquid"),
@@ -309,11 +382,37 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
   }
   
   
+  ## PotEvap
+  if (BOOLPLOT_PotEvap) {
+    kPlot <- kPlot + 1
+    mar <- c(3, 5, 1, 5)
+    
+    par(new = FALSE, mar = mar)
+    ylim1 <- range(OutputsModel$PotEvap[IndPeriod_Plot], na.rm = TRUE)
+    ylim2 <- ylim1 #* c(1.0, 1.1)
+    
+    plot(Xaxis, OutputsModel$PotEvap[IndPeriod_Plot],
+         type = "l", xaxt = "n", yaxt = "n", ylim = ylim2,
+         col = "green3", lwd = lwd * lwdk,
+         xlab = "", ylab = "", ...)
+    axis(side = 2, at = pretty(ylim1), labels = pretty(ylim1), cex.axis = cex.axis, ...)
+    
+    mtext(side = 2, paste("pot. evap.", plotunit), cex = cex.lab, line = line)
+    
+    if (BOOL_Dates) {
+      axis(side = 1, at = Seq1, labels = FALSE, cex.axis = cex.axis, ...)
+      axis(side = 1, at = Seq2, labels = Labels2, lwd.ticks = 1.5, cex.axis = cex.axis, ...)
+    } else {
+      axis(side = 1, at = pretty(Xaxis), labels = pretty(Xaxis), cex.axis = cex.axis, ...)
+    }
+  }
+  
+  
   ## Temp
   if (BOOLPLOT_Temp) {
     kPlot <- kPlot + 1
     mar <- c(3, 5, 1, 5)
-    par(new = FALSE, mar = mar, las = 0)
+    par(new = FALSE, mar = mar)
     ylim1 <- c(+99999, -99999)
     for(iLayer in 1:NLayers) {
       ylim1[1] <- min(ylim1[1], OutputsModel$CemaNeigeLayers[[iLayer]]$Temp)
@@ -331,9 +430,9 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
     abline(h = 0, col = "grey", lty = 2)
     lines(SnowPackLayerMean[IndPeriod_Plot], type = "l", lwd = lwd * lwdk *1.0, col = "darkorchid4")
     axis(side = 2, at = pretty(ylim1), labels = pretty(ylim1), cex.axis = cex.axis, ...)
-    par(las = 0)
+    
     mtext(side = 2, expression(paste("temp. [", degree, "C]"), sep = ""),  padj = 0.2, line = line, cex = cex.lab)
-    par(las = 0)
+    
     legend("topright", legend = c("mean", "layers"), col = c("darkorchid4", "orchid"),
            lty = c(1, 3), lwd = c(lwd*1.0, lwd*0.8),
            bty = "o", bg = bg, box.col = bg, cex = cex.leg)
@@ -351,7 +450,7 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
   if (BOOLPLOT_SnowPack) {
     kPlot <- kPlot + 1
     mar <- c(3, 5, 1, 5)
-    par(new = FALSE, mar = mar, las = 0)
+    par(new = FALSE, mar = mar)
     ylim1 <- c(+99999, -99999)
     for(iLayer in 1:NLayers) {
       ylim1[1] <- min(ylim1[1], OutputsModel$CemaNeigeLayers[[iLayer]]$SnowPack)
@@ -367,9 +466,8 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
       lines(OutputsModel$CemaNeigeLayers[[iLayer]]$SnowPack[IndPeriod_Plot], lty = 3, col = "royalblue", lwd = lwd * lwdk *0.8)
     }
     axis(side = 2, at = pretty(ylim1), labels = pretty(ylim1), cex.axis = cex.axis, ...)
-    par(las = 0)
+    
     mtext(side = 2, paste("snow pack", "[mm]"), line = line, cex = cex.lab)
-    par(las = 0)
     legend("topright", legend = c("mean", "layers"), col = c("royalblue", "royalblue"),
            lty = c(1, 3), lwd = c(lwd*1.2, lwd*0.8),
            bty = "o", bg = bg, box.col = bg, cex = cex.leg)
@@ -387,7 +485,7 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
   if (BOOLPLOT_Flows & log_scale) {
     kPlot <- kPlot + 1
     mar <- c(3, 5, 1, 5)
-    par(new = FALSE, mar = mar, las = 0)
+    par(new = FALSE, mar = mar)
     
     DATA2 <- Qobs
     DATA2[!SelectQobsNotZero] <- mean(Qobs, na.rm = TRUE) / 10000
@@ -401,7 +499,7 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
     if (BOOL_Qobs) {
       ylim1 <- range(c(ylim1, DATA2[IndPeriod_Plot]), na.rm = TRUE)
     }
-    ylim2 <- c(ylim1[1], 1.2*ylim1[2])
+    ylim2 <- c(ylim1[1], 1.1*ylim1[2])
     plot(Xaxis, rep(NA, length(Xaxis)), type = "n", ylim = ylim2, xlab = "", ylab = "", xaxt = "n", yaxt = "n", ...)
     txtleg <- NULL
     colleg <- NULL
@@ -416,15 +514,11 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
       colleg <- c(colleg, "orangered")
     }
     axis(side = 2, at = seqDATA1, labels = seqDATA2, cex.axis = cex.axis, ...)
-    par(las = 0)
     mtext(side = 2, paste("flow", plotunit), line = line, cex = cex.lab)
-    par(las = 0)
     if (!is.null(BasinArea)) {
       Factor <- Factor_UNIT_M3S
       axis(side = 4, at = seqDATA1ba, labels = seqDATA2ba, cex.axis = cex.axis, ...)
-      par(las = 0)
       mtext(side = 4, paste("flow", "[m3/s]"), line = line, cex = cex.lab)
-      par(las = 0)
     }
     if (BOOL_Dates) {
       axis(side = 1, at = Seq1, labels = FALSE, cex.axis = cex.axis, ...)
@@ -439,12 +533,12 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
   if (BOOLPLOT_Flows & !log_scale) {
     kPlot <- kPlot + 1
     mar <- c(3, 5, 1, 5)
-    par(new = FALSE, mar = mar, las = 0)
+    par(new = FALSE, mar = mar)
     ylim1 <- range(OutputsModel$Qsim[IndPeriod_Plot], na.rm = TRUE)
     if (BOOL_Qobs) {
       ylim1 <- range(c(ylim1, Qobs[IndPeriod_Plot]), na.rm = TRUE)
     }
-    ylim2 <- c(ylim1[1], 1.2*ylim1[2])
+    ylim2 <- c(ylim1[1], 1.1*ylim1[2])
     plot(Xaxis, rep(NA, length(Xaxis)), type = "n", ylim = ylim2, xlab = "", ylab = "", xaxt = "n", yaxt = "n", ...)
     txtleg <- NULL
     colleg <- NULL
@@ -459,15 +553,11 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
       colleg <- c(colleg, "orangered")
     }
     axis(side = 2, at = pretty(ylim1), labels = pretty(ylim1), cex.axis = cex.axis, ...)
-    par(las = 0)
     mtext(side = 2, paste("flow", plotunit), line = line, cex = cex.lab)
-    par(las = 0)
     if (!is.null(BasinArea)) {
       Factor <- Factor_UNIT_M3S
       axis(side = 4, at = pretty(ylim1*Factor)/Factor, labels = pretty(ylim1*Factor), cex.axis = cex.axis, ...)
-      par(las = 0)
       mtext(side = 4, paste("flow", "[m3/s]"), line = line, cex = cex.lab)
-      par(las = 0)
     }
     if (BOOL_Dates) {
       axis(side = 1, at = Seq1, labels = FALSE, cex.axis = cex.axis, ...)
@@ -480,30 +570,61 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
   }
   
   
+  ## Error
+  if (BOOLPLOT_Error) {
+    kPlot <- kPlot + 1
+    mar <- c(3, 5, 1, 5)
+    
+    if (log_scale) {
+      errorQ <- log(OutputsModel$Qsim[IndPeriod_Plot]) - log(Qobs[IndPeriod_Plot])
+    } else {
+      errorQ <- OutputsModel$Qsim[IndPeriod_Plot] - Qobs[IndPeriod_Plot]
+    }
+    par(new = FALSE, mar = mar)
+    ylim1 <- range(errorQ[SelectNotZero], na.rm = TRUE)
+    plot(Xaxis, errorQ,
+         type = "l", xaxt = "n", yaxt = "n", ylim = ylim1,
+         col = par("fg"), lwd = lwd * lwdk,
+         xlab = "", ylab = "",
+         panel.first = abline(h = 0, col = "royalblue"), ...)
+    axis(side = 2, at = pretty(ylim1), labels = pretty(ylim1), cex.axis = cex.axis, ...)
+    mtext(side = 2, paste("flow error", plotunit), cex = cex.lab, line = line)
+    if (!is.null(BasinArea)) {
+      Factor <- Factor_UNIT_M3S
+      axis(side = 4, at = pretty(ylim1*Factor)/Factor, labels = pretty(ylim1*Factor), cex.axis = cex.axis, ...)
+      mtext(side = 4, paste("flow error", "[m3/s]"), line = line, cex = cex.lab)
+    }
+    if (BOOL_Dates) {
+      axis(side = 1, at = Seq1, labels = FALSE, cex.axis = cex.axis, ...)
+      axis(side = 1, at = Seq2, labels = Labels2, lwd.ticks = 1.5, cex.axis = cex.axis, ...)
+    } else {
+      axis(side = 1, at = pretty(Xaxis), labels = pretty(Xaxis), cex.axis = cex.axis, ...)
+    }
+    if (log_scale) {
+      legend("bottomright", "log scale", lty = 1, col = NA, bty = "o", bg = bg, box.col = bg, cex = cex.leg)
+    }
+  }
+  
+  
   ## Regime
   if (BOOLPLOT_Regime) {
     kPlot <- kPlot + 1
     mar <- c(6, 5, 1, 5)
     plotunitregime <- "[mm/month]"
-    par(new = FALSE, mar = mar, las = 0)
+    par(new = FALSE, mar = mar)
     ## Empty plot
     if ((NameTS == "hour"  & length(IndPeriod_Plot) < 697) |
         (NameTS == "day"   & length(IndPeriod_Plot) <  30) |
         (NameTS == "month" & length(IndPeriod_Plot) <   2) |
         (NameTS == "year"  & length(IndPeriod_Plot) <   2)) {
-      plot(0, 0, type = "n", xaxt = "n", yaxt = "n", xlab = "", ylab = "")
-      par(las = 0)
+      plot(0, 0, type = "n", xaxt = "n", yaxt = "n", xlab = "", ylab = "", ...)
       mtext(side = 1, text = "", line = line, cex = cex.lab)
-      par(las = 0)
       text(0, 0, labels = "NO ENOUGH VALUES", col = "grey40")
-      par(las = 0)
-      txtlab <- "flow regime"
+      txtlab <- "flow"
       if (BOOL_Pobs) {
-        txtlab <- "precip. & flow regime"
+        txtlab <- "precip. & flow"
       }
-      par(las = 0)
       mtext(side = 2, paste(txtlab, plotunitregime), line = line, cex = cex.lab)
-      par(las = 0)
     } else {
       ## Data_formating_as_table
       DataModel <- as.data.frame(matrix(as.numeric(NA), nrow = length(IndPeriod_Plot), ncol = 5))
@@ -638,24 +759,18 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
       axis(side = 1, at = SeqX1, tick = TRUE , labels = xLabels1, cex.axis = cex.axis, ...)
       axis(side = 1, at = SeqX2, tick = FALSE, labels = xLabels2, cex.axis = cex.axis, ...)
       axis(side = 2, at = pretty(ylimQ), labels = pretty(ylimQ), cex.axis = cex.axis, ...)
-      par(las = 0)
       mtext(side = 1, labX, line = line, cex = cex.lab)
-      par(las = 0)
       posleg <- "topright"
-      txtlab <- "flow regime"
+      txtlab <- "flow"
       if (BOOL_Pobs) {
         posleg <- "right"
-        txtlab <- "precip. & flow regime"
+        txtlab <- "precip. & flow"
       }
-      par(las = 0)
       mtext(side = 2, paste(txtlab, plotunitregime), line = line, cex = cex.lab)
-      par(las = 0)
       if (!is.null(BasinArea)) {
         Factor <- Factor_UNIT_M3S / (365.25 / 12)
         axis(side = 4, at = pretty(ylimQ*Factor)/Factor, labels = pretty(ylimQ*Factor), cex.axis = cex.axis, ...)
-        par(las = 0)
-        mtext(side = 4, paste("flow regime", "[m3/s]"), line = line, cex = cex.lab)
-        par(las = 0)
+        mtext(side = 4, paste("flow", "[m3/s]"), line = line, cex = cex.lab)
       }
       ### posleg <- "topright"; if (BOOL_Pobs) {posleg <- "right";}
       ### legend(posleg, txtleg, col = colleg, lty = 1, lwd = lwdleg, bty = "o", bg = bg, box.col = bg, cex = cex.leg)
@@ -664,23 +779,22 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
   }
   
   
-  
   ## Cumulative_frequency
   if (BOOLPLOT_CumFreq) {
     kPlot <- kPlot + 1
     mar <- c(6, 5, 1, 5)
-    par(new = FALSE, mar = mar, las = 0)
+    par(new = FALSE, mar = mar)
     xlim <- c(0, 1)
     if ( BOOL_Qobs & !BOOL_Qsim) {
-      SelectNotZero <- SelectQobsNotZero
+      # SelectNotZero <- SelectQobsNotZero
       ylim <- range(log(Qobs[IndPeriod_Plot][SelectNotZero]), na.rm = TRUE)
     }
     if (!BOOL_Qobs &  BOOL_Qsim) {
-      SelectNotZero <- SelectQsimNotZero
+      # SelectNotZero <- SelectQsimNotZero
       ylim <- range(log(OutputsModel$Qsim[IndPeriod_Plot][SelectNotZero]), na.rm = TRUE)
     }
     if ( BOOL_Qobs &  BOOL_Qsim) {
-      SelectNotZero <- SelectQobsNotZero & SelectQsimNotZero
+      # SelectNotZero <- SelectQobsNotZero & SelectQsimNotZero
       ylim <- range(log(c(Qobs[IndPeriod_Plot][SelectNotZero], OutputsModel$Qsim[IndPeriod_Plot][SelectNotZero])), na.rm = TRUE)
     }
     SelectNotZero <- ifelse(is.na(SelectNotZero), FALSE, SelectNotZero)
@@ -690,13 +804,9 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
            xaxt = "n", yaxt = "n",
            xlab = "", ylab = "", ...)
       axis(side = 1, at = pretty(xlim), labels = pretty(xlim), cex.axis = cex.axis, ...)
-      par(las = 0)
       mtext(side = 1, text = "non-exceedance prob. [-]", line = line, cex = cex.lab)
-      par(las = 0)
       axis(side = 2, at = seqDATA1, labels = seqDATA2, cex.axis = cex.axis, ...) 
-      par(las = 0)
       mtext(side = 2, text = paste("flow", plotunit), line = line, cex = cex.lab)
-      par(las = 0)
       txtleg <- NULL
       colleg <- NULL
       if (BOOL_Qobs) {
@@ -705,9 +815,9 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
         Quant <- as.numeric(quantile(DATA2, SeqQuant, na.rm = TRUE))
         Fn <- ecdf(DATA2)
         YY <- DATA2
-        YY <- YY[order( Fn(DATA2) )]
+        YY <- YY[order(Fn(DATA2))]
         XX <- Fn(DATA2)
-        XX <- XX[order( Fn(DATA2) )]
+        XX <- XX[order(Fn(DATA2))]
         lines(XX, YY, lwd = lwd, col = par("fg"))
         txtleg <- c(txtleg, "observed")
         colleg <- c(colleg, par("fg"))
@@ -718,9 +828,9 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
         Quant <- as.numeric(quantile(DATA2, SeqQuant, na.rm = TRUE))
         Fn <- ecdf(DATA2)
         YY <- DATA2
-        YY <- YY[order( Fn(DATA2) )]
+        YY <- YY[order(Fn(DATA2))]
         XX <- Fn(DATA2)
-        XX <- XX[order( Fn(DATA2) )]
+        XX <- XX[order(Fn(DATA2))]
         lines(XX, YY, lwd = lwd, col = "orangered")
         txtleg <- c(txtleg, "simulated")
         colleg <- c(colleg, "orangered")
@@ -728,20 +838,14 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
       if (!is.null(BasinArea)) {
         Factor <- Factor_UNIT_M3S
         axis(side = 4, at = seqDATA1, labels = round(seqDATA2*Factor, digits = 2), cex.axis = cex.axis, ...)
-        par(las = 0)
         mtext(side = 4, paste("flow", "[m3/s]"), line = line, cex = cex.lab)
-        par(las = 0)
       }
       legend("topleft", txtleg, col = colleg, lty = 1, lwd = lwd, bty = "o", bg = bg, box.col = bg, cex = cex.leg)
       legend("bottomright", "log scale", lty = 1, col = NA, bty = "o", bg = bg, box.col = bg, cex = cex.leg)
     } else {
       plot(0, 0, type = "n", xaxt = "n", yaxt = "n", xlab = "", ylab = "", ...)
-      par(las = 0)
       mtext(side = 1, text = "non-exceedance prob. [-]", line = line, cex = cex.lab)
-      par(las = 0)
-      par(las = 0)
       mtext(side = 2, text = paste("flow", plotunit), line = line, cex = cex.lab)
-      par(las = 0)
       text(0, 0, labels = "NO COMMON DATA", col = "grey40")
     }
     box()
@@ -752,7 +856,7 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
   if (BOOLPLOT_CorQQ) {
     kPlot <- kPlot + 1
     mar <- c(6, 5, 1, 5)
-    par(new = FALSE, mar = mar, las = 0)
+    par(new = FALSE, mar = mar)
     if (any(SelectNotZero)) {
       ylim <- log(range(c(Qobs[IndPeriod_Plot][SelectQobsNotZero & SelectQsimNotZero], OutputsModel$Qsim[IndPeriod_Plot][SelectQobsNotZero & SelectQsimNotZero]), na.rm = TRUE))
       plot(log(Qobs[IndPeriod_Plot][SelectQobsNotZero & SelectQsimNotZero]),
@@ -762,41 +866,33 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
       abline(a = 0, b = 1, col = "royalblue", lwd = lwd)
       axis(side = 1, at = seqDATA1, labels = seqDATA2, cex = cex.leg, cex.axis = cex.axis, ...)
       axis(side = 2, at = seqDATA1, labels = seqDATA2, cex = cex.leg, cex.axis = cex.axis, ...)
-      par(las = 0)
       mtext(side = 1, paste("observed flow", plotunit), line = line, cex = cex.lab)
-      par(las = 0)
-      par(las = 0)
       mtext(side = 2, paste("simulated flow", plotunit), line = line, cex = cex.lab)
-      par(las = 0)
       if (!is.null(BasinArea)) {
         Factor <- Factor_UNIT_M3S
         axis(side = 4, at = seqDATA1, labels = round(seqDATA2*Factor, digits = 2), cex.axis = cex.axis, ...)
-        par(las = 0)
         mtext(side = 4, paste("simulated flow", "[m3/s]"), line = line, cex = cex.lab)
-        par(las = 0)
       }
       legend("bottomright", "log scale", lty = 1, col = NA, bty = "o", bg = bg, box.col = bg, cex = cex.leg)
     } else {
       plot(0, 0, type = "n", xaxt = "n", yaxt = "n", xlab = "", ylab = "", ...)
-      par(las = 0)
       mtext(side = 1, paste("observed flow", plotunit), line = line, cex = cex.lab)
-      par(las = 0)
-      par(las = 0)
       mtext(side = 2, paste("simulated flow", plotunit), line = line, cex = cex.lab)
-      par(las = 0)
       text(0, 0, labels = "NO COMMON DATA", col = "grey40")
     }
     box()
   }
   
   ## Empty_plots
-  while (kPlot < iPlotMax) {
-    kPlot <- kPlot + 1
-    par(new = FALSE)
-    plot(0, 0, type = "n", xlab = "", ylab = "", axes = FALSE, ...)
+  if (exists("iPlotMax")) {
+    while (kPlot < iPlotMax) {
+      kPlot <- kPlot + 1
+      par(new = FALSE)
+      plot(0, 0, type = "n", xlab = "", ylab = "", axes = FALSE, ...)
+    }
   }
   
   ## Restoring_layout_options
-  layout(1)
+  # layout(1)
   
 }

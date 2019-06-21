@@ -73,7 +73,7 @@ OutputsCrit_Loop <- apply(Param_Sets_GR4J, 1, function(Param) {
                                     RunOptions = RunOptions_Cal,
                                     Param = Param)
   InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
-                                  RunOptions = RunOptions_Cal, Qobs = BasinObs$Qmm[Ind_Cal])
+                                  RunOptions = RunOptions_Cal, Obs = BasinObs$Qmm[Ind_Cal])
   OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsModel_Cal)
   return(OutputsCrit$CritValue)
 })
@@ -102,6 +102,6 @@ plot(OutputsModel_Val, Qobs = BasinObs$Qmm[Ind_Val])
 
 ## efficiency criterion (Nash-Sutcliffe Efficiency) on the validation period
 InputsCrit_Val  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
-                                RunOptions = RunOptions_Val, Qobs = BasinObs$Qmm[Ind_Val])
+                                RunOptions = RunOptions_Val, Obs = BasinObs$Qmm[Ind_Val])
 OutputsCrit_Val <- ErrorCrit_NSE(InputsCrit = InputsCrit_Val, OutputsModel = OutputsModel_Val)
 }
