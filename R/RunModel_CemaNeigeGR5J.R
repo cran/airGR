@@ -133,9 +133,9 @@ RunModel_CemaNeigeGR5J <- function(InputsModel,RunOptions,Param){
         RESULTS$StateEnd <- CreateIniStates(FUN_MOD = RunModel_CemaNeigeGR5J, InputsModel = InputsModel, IsHyst = IsHyst,
                                             ProdStore = RESULTS$StateEnd[1L], RoutStore = RESULTS$StateEnd[2L], ExpStore = NULL,
                                             UH1 = NULL, UH2 = RESULTS$StateEnd[(1:40)+(7+20)],
-                                            GCemaNeigeLayers       = CemaNeigeStateEnd[seq_len(NStates*NLayers)[idNStates == 3]],
+                                            GCemaNeigeLayers       = CemaNeigeStateEnd[seq_len(NStates*NLayers)[idNStates == 1]],
                                             eTGCemaNeigeLayers     = CemaNeigeStateEnd[seq_len(NStates*NLayers)[idNStates == 2]],
-                                            GthrCemaNeigeLayers    = CemaNeigeStateEnd[seq_len(NStates*NLayers)[idNStates == 1]], 
+                                            GthrCemaNeigeLayers    = CemaNeigeStateEnd[seq_len(NStates*NLayers)[idNStates == 3]], 
                                             GlocmaxCemaNeigeLayers = CemaNeigeStateEnd[seq_len(NStates*NLayers)[idNStates == 0]],
                                             verbose = FALSE)
       }

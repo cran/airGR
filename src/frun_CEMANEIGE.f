@@ -58,8 +58,6 @@
       !initialisation of model states using StateStart
       G=StateStart(1)
       eTG=StateStart(2)
-      Gthreshold=StateStart(3)
-      Glocalmax=StateStart(4)
       Gratio=0.
       PliqAndMelt=0.
 
@@ -67,6 +65,8 @@
       CTG=Param(1)
       Kf=Param(2)
       IF (IsHyst) THEN
+        Gthreshold=StateStart(3)
+        Glocalmax=StateStart(4)
         Gacc=Param(3)
         prct=Param(4)
 

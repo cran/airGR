@@ -40,7 +40,7 @@ RunModel_CemaNeige <- function(InputsModel, RunOptions, Param) {
   }
 
   ## Input_data_preparation
-  if (identical(RunOptions$IndPeriod_WarmUp, 0)) {
+  if (identical(RunOptions$IndPeriod_WarmUp, as.integer(0))) {
     RunOptions$IndPeriod_WarmUp <- NULL
   }
   IndPeriod1     <- c(RunOptions$IndPeriod_WarmUp, RunOptions$IndPeriod_Run)
@@ -122,9 +122,9 @@ RunModel_CemaNeige <- function(InputsModel, RunOptions, Param) {
     CemaNeigeStateEnd <- CreateIniStates(FUN_MOD = RunModel_CemaNeige, InputsModel = InputsModel, IsHyst = IsHyst,
                                          ProdStore = NULL, RoutStore = NULL, ExpStore = NULL,
                                          UH1 = NULL, UH2 = NULL,
-                                         GCemaNeigeLayers       = CemaNeigeStateEnd[seq_len(NStates*NLayers)[idNStates == 3]],
+                                         GCemaNeigeLayers       = CemaNeigeStateEnd[seq_len(NStates*NLayers)[idNStates == 1]],
                                          eTGCemaNeigeLayers     = CemaNeigeStateEnd[seq_len(NStates*NLayers)[idNStates == 2]],
-                                         GthrCemaNeigeLayers    = CemaNeigeStateEnd[seq_len(NStates*NLayers)[idNStates == 1]], 
+                                         GthrCemaNeigeLayers    = CemaNeigeStateEnd[seq_len(NStates*NLayers)[idNStates == 3]], 
                                          GlocmaxCemaNeigeLayers = CemaNeigeStateEnd[seq_len(NStates*NLayers)[idNStates == 0]],
                                          verbose = FALSE)
   }

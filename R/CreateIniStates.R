@@ -203,10 +203,15 @@ CreateIniStates <- function(FUN_MOD, InputsModel, IsHyst = FALSE,
   if (is.null(GthrCemaNeigeLayers)) {
     GthrCemaNeigeLayers <- rep(Inf, NLayers)
   }
+  if (any(is.infinite(GthrCemaNeigeLayers))) {
+    GthrCemaNeigeLayers <- rep(Inf, NLayers)
+  }
   if (is.null(GlocmaxCemaNeigeLayers)) {
     GlocmaxCemaNeigeLayers <- rep(Inf, NLayers)
   }
-  
+  if (any(is.infinite(GlocmaxCemaNeigeLayers))) {
+    GlocmaxCemaNeigeLayers <- rep(Inf, NLayers)
+  }  
   
   # check negative values
   if (any(ProdStore < 0) | any(RoutStore < 0) |

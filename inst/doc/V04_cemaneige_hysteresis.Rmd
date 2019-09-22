@@ -11,6 +11,7 @@ vignette: >
 
 ```{r, warning=FALSE, include=FALSE}
 library(airGR)
+load(system.file("vignettesData/vignetteCNHysteresis.rda", package = "airGR"))
 ```
 
 
@@ -36,7 +37,7 @@ We load an example data set from the package. Please note that this data set inc
   
   
 ## loading catchment data
-```{r, warning=FALSE}
+```{r, warning=FALSE, eval=FALSE}
 data(X0310010)
 summary(BasinObs)
 ```
@@ -49,7 +50,7 @@ We assume that the R global environment contains data and functions from the [Ge
 The calibration period has been defined from 2000-09-01 to 2005-08-31, and the validation period from 2005-09-01 to 2010-07-31. CemaNeige will be used in coupling with GR4J in this vignette.
 
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, eval=FALSE}
 ## preparation of the InputsModel object
 InputsModel <- CreateInputsModel(FUN_MOD = RunModel_CemaNeigeGR4J,
                                  DatesR = BasinObs$DatesR, Precip = BasinObs$P,
@@ -77,7 +78,7 @@ Ind_Val <- seq(which(format(BasinObs$DatesR, format = "%Y-%m-%d") == "2005-09-01
 
 In order to use the Linear Hysteresis, a new argument (`IsHyst`) is added in the `CreateRunOptions()` and `CreateCalibOptions()` functions and has to be set to `TRUE`. 
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, eval=FALSE}
 ## preparation of the RunOptions object for the calibration period
 RunOptions_Cal <- CreateRunOptions(FUN_MOD = RunModel_CemaNeigeGR4J,
                                    InputsModel = InputsModel, IndPeriod_Run = Ind_Cal,
@@ -97,7 +98,7 @@ CalibOptions <- CreateCalibOptions(FUN_MOD = RunModel_CemaNeigeGR4J,
 In order to calibrate and assess the model performance, we will follow the recommendations of @riboust_revisiting_2019. This is now possible in **airGR** with the added functionality that permits calculating composite criteria by combining different metrics. 
 
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, eval=FALSE}
 ## efficiency criterion: 75 % KGE'(Q) + 5 % KGE'(SCA) on each of the 5 layers
 InputsCrit_Cal  <- CreateInputsCrit(FUN_CRIT = rep("ErrorCrit_KGE2", 6),
                                     InputsModel = InputsModel, RunOptions = RunOptions_Cal,
@@ -124,7 +125,7 @@ InputsCrit_Val  <- CreateInputsCrit(FUN_CRIT = rep("ErrorCrit_KGE2", 6),
 
 We can now calibrate the model.
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, eval=FALSE}
 ## calibration
 OutputsCalib <- Calibration(InputsModel = InputsModel, RunOptions = RunOptions_Cal,
                             InputsCrit = InputsCrit_Cal, CalibOptions = CalibOptions,
@@ -135,7 +136,7 @@ OutputsCalib <- Calibration(InputsModel = InputsModel, RunOptions = RunOptions_C
 
 Now we can run it on the calibration period and assess it. 
 
-```{r, warning=FALSE, message=FALSE}
+```{r, warning=FALSE, message=FALSE, eval=FALSE}
 ## run on the calibration period
 OutputsModel_Cal <- RunModel_CemaNeigeGR4J(InputsModel = InputsModel,
                                            RunOptions = RunOptions_Cal, 
@@ -154,7 +155,7 @@ str(OutputsCrit_Cal, max.level = 2)
 
 Now we can run the model on the validation period and assess it. 
 
-```{r, warning=FALSE, message=FALSE}
+```{r, warning=FALSE, message=FALSE, eval=FALSE}
 ## run on the validation period
 OutputsModel_Val <- RunModel_CemaNeigeGR4J(InputsModel = InputsModel,
                                            RunOptions = RunOptions_Val, 
@@ -176,7 +177,7 @@ str(OutputsCrit_Val, max.level = 2)
 
 Here we use the same InputsModel object and calibration and validation periods. However, we have to redefine the way we run the model (`RunOptions` argument), calibrate and assess it (`InputsCrit` argument). The objective function is only based on KGE'(Q). Note how we set the `IsHyst` argument to `FALSE` in the `CreateRunOptions()`  and the  `CreateCalibOptions()` functions.
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, eval=FALSE}
 ## preparation of RunOptions object
 RunOptions_Cal_NoHyst <- CreateRunOptions(FUN_MOD = RunModel_CemaNeigeGR4J,
                                           InputsModel = InputsModel,
@@ -201,7 +202,7 @@ CalibOptions_NoHyst <- CreateCalibOptions(FUN_MOD = RunModel_CemaNeigeGR4J,
 
 We can now calibrate the model.
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, eval=FALSE}
 ## calibration
 OutputsCalib_NoHyst <- Calibration(InputsModel = InputsModel, InputsCrit = InputsCrit_Cal_NoHyst,
                                    RunOptions = RunOptions_Cal_NoHyst, CalibOptions = CalibOptions_NoHyst,
@@ -210,7 +211,7 @@ OutputsCalib_NoHyst <- Calibration(InputsModel = InputsModel, InputsCrit = Input
 
 And run it over the calibration and validation periods. 
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, eval=FALSE}
 OutputsModel_Cal_NoHyst <- RunModel_CemaNeigeGR4J(InputsModel = InputsModel,
                                                   RunOptions = RunOptions_Cal_NoHyst,  
                                                   Param = OutputsCalib_NoHyst$ParamFinalR)
@@ -223,7 +224,7 @@ OutputsModel_Val_NoHyst <- RunModel_CemaNeigeGR4J(InputsModel = InputsModel,
 In order to assess the model performance over the two periods, we will use the InputsCrit objects prepared before, which allow assessing also the performance in terms of snow simulation.
 
 
-```{r, warning=FALSE, message=FALSE}
+```{r, warning=FALSE, message=FALSE, eval=FALSE}
 OutputsCrit_Cal_NoHyst <- ErrorCrit(InputsCrit = InputsCrit_Cal,
                                     OutputsModel = OutputsModel_Cal_NoHyst)
 
