@@ -36,7 +36,7 @@ RunModel_GR5J(InputsModel, RunOptions, Param)
     \emph{$PotEvap } \tab [numeric] series of input potential evapotranspiration [mm/d]              \cr
     \emph{$Precip  } \tab [numeric] series of input total precipitation [mm/d]                       \cr
     \emph{$Prod    } \tab [numeric] series of production store level [mm]                            \cr
-    \emph{$Pn      } \tab [numeric] series of net rainfall [mm/d]                         			     \cr
+    \emph{$Pn      } \tab [numeric] series of net rainfall [mm/d]                                    \cr
     \emph{$Ps      } \tab [numeric] series of the part of Pn filling the production store [mm/d]     \cr
     \emph{$AE      } \tab [numeric] series of actual evapotranspiration [mm/d]                       \cr
     \emph{$Perc    } \tab [numeric] series of percolation (PERC) [mm/d]                              \cr
@@ -106,7 +106,7 @@ OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsMode
 
 
 \author{
-Laurent Coron, Claude Michel, Nicolas Le Moine
+Laurent Coron, Claude Michel, Nicolas Le Moine, Olivier Delaigue, Guillaume Thirel
 }
 
 
@@ -118,7 +118,7 @@ Le Moine, N. (2008).
 \cr\cr
 Pushpalatha, R., C. Perrin, N. Le Moine, T. Mathevet, and V. Andréassian (2011). 
   A downward structural sensitivity analysis of hydrological models to improve low-flow simulation. 
-  Journal of Hydrology, 411(1-2), 66-76. doi:10.1016/j.jhydrol.2011.09.034.
+  Journal of Hydrology, 411(1-2), 66-76. doi: 10.1016/j.jhydrol.2011.09.034.
 }
 
 

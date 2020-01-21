@@ -1,14 +1,24 @@
 CreateRunOptions <- function(FUN_MOD, InputsModel, IndPeriod_WarmUp = NULL, IndPeriod_Run,
-                             IniStates = NULL, IniResLevels = NULL, 
+                             IniStates = NULL, IniResLevels = NULL, Imax = NULL,
                              Outputs_Cal = NULL, Outputs_Sim = "all",
-                             RunSnowModule, MeanAnSolidPrecip = NULL, IsHyst = FALSE, 
+                             RunSnowModule, MeanAnSolidPrecip = NULL,
+                             IsHyst = FALSE,
                              warnings = TRUE, verbose = TRUE) {
   
   if (!missing(RunSnowModule)) {
     warning("deprecated 'RunSnowModule' argument: please adapt 'FUN_MOD' instead.", call. = FALSE)
   }
-  if (!is.logical(IsHyst) | length(IsHyst) != 1L) {
-    stop("'IsHyst' must be a 'logical' of length 1")
+  if (!is.null(Imax)) {
+    if (!is.numeric(Imax) | length(Imax) != 1L) {
+      stop("'Imax' must be a non negative 'numeric' value of length 1")
+    } else {
+      if (Imax < 0) {
+        stop("'Imax' must be a non negative 'numeric' value of length 1")
+      }
+    }
+    IsIntStore <- TRUE
+  } else {
+    IsIntStore <- FALSE
   }
   ObjectClass <- NULL
   
@@ -16,7 +26,7 @@ CreateRunOptions <- function(FUN_MOD, InputsModel, IndPeriod_WarmUp = NULL, IndP
   
   ##check_FUN_MOD
   BOOL <- FALSE
-  if (identical(FUN_MOD, RunModel_GR4H)) {
+  if (identical(FUN_MOD, RunModel_GR4H) | identical(FUN_MOD, RunModel_GR5H)) {
     ObjectClass <- c(ObjectClass, "GR", "hourly")
     BOOL <- TRUE
   }
@@ -40,15 +50,25 @@ CreateRunOptions <- function(FUN_MOD, InputsModel, IndPeriod_WarmUp = NULL, IndP
     ObjectClass <- c(ObjectClass, "GR", "CemaNeige", "daily")
     BOOL <- TRUE
   }
-  if (identical(FUN_MOD, RunModel_CemaNeigeGR4H)) {
+  if (identical(FUN_MOD, RunModel_CemaNeigeGR4H) | identical(FUN_MOD, RunModel_CemaNeigeGR5H)) {
     ObjectClass <- c(ObjectClass, "GR", "CemaNeige", "hourly")
     BOOL <- TRUE
+  }
+  if (IsIntStore) {
+    ObjectClass <- c(ObjectClass, "interception")
   }
   if (IsHyst) {
     ObjectClass <- c(ObjectClass, "hysteresis")
   }
   if (!BOOL) {
     stop("incorrect 'FUN_MOD' for use in 'CreateRunOptions'")
+  }
+  
+  if (!"CemaNeige" %in% ObjectClass & "hysteresis" %in% ObjectClass) {
+    stop("'IsHyst' cannot be TRUE for the chosen 'FUN_MOD'")
+  }
+  if (!(identical(FUN_MOD, RunModel_GR5H) | identical(FUN_MOD, RunModel_CemaNeigeGR5H)) & "interception" %in% ObjectClass) {
+    stop("'IMax' cannot be set for the chosen 'FUN_MOD'")
   }
   
   ##check_InputsModel
@@ -157,26 +177,64 @@ CreateRunOptions <- function(FUN_MOD, InputsModel, IndPeriod_WarmUp = NULL, IndP
   ## check IniResLevels    
   if ("GR" %in% ObjectClass & ("monthly" %in% ObjectClass | "daily" %in% ObjectClass | "hourly" %in% ObjectClass)) {
     if (!is.null(IniResLevels)) {
-      if (!is.vector(IniResLevels) | !is.numeric(IniResLevels) | any(is.na(IniResLevels))) {
-        stop("'IniResLevels' must be a vector of numeric values")
+      # if (!is.vector(IniResLevels) | !is.numeric(IniResLevels) | any(is.na(IniResLevels))) {
+      if (!is.vector(IniResLevels) | is.character(IniResLevels) | is.factor(IniResLevels) | length(IniResLevels) != 4) {      
+        stop("'IniResLevels' must be a vector of 4 numeric values")
       }
-      if ((identical(FUN_MOD, RunModel_GR4H) | identical(FUN_MOD, RunModel_CemaNeigeGR4H) |
-           identical(FUN_MOD, RunModel_GR4J) | identical(FUN_MOD, RunModel_CemaNeigeGR4J) |
-           identical(FUN_MOD, RunModel_GR5J) | identical(FUN_MOD, RunModel_CemaNeigeGR5J) |
-           identical(FUN_MOD, RunModel_GR2M)) &
-          length(IniResLevels) != 2) {
-        stop("the length of 'IniResLevels' must be 2 for the chosen 'FUN_MOD'")
+      # if ((identical(FUN_MOD, RunModel_GR4H) | identical(FUN_MOD, RunModel_CemaNeigeGR4H) |
+      #      # (identical(FUN_MOD, RunModel_GR5H) & !IsIntStore) |
+      #      identical(FUN_MOD, RunModel_GR5H) |          
+      #      identical(FUN_MOD, RunModel_GR4J) | identical(FUN_MOD, RunModel_CemaNeigeGR4J) |
+      #      identical(FUN_MOD, RunModel_GR5J) | identical(FUN_MOD, RunModel_CemaNeigeGR5J) |
+      #      identical(FUN_MOD, RunModel_GR2M)) &
+      #     length(IniResLevels) != 2) {
+      #   stop("the length of 'IniResLevels' must be 2 for the chosen 'FUN_MOD'")
+      # }      
+      if (any(is.na(IniResLevels[1:2]))) {
+        stop("the first 2 values of 'IniResLevels' cannot be missing values for the chosen 'FUN_MOD'")
       }
-      if ((identical(FUN_MOD,RunModel_GR6J) | identical(FUN_MOD,RunModel_CemaNeigeGR6J)) &
-          length(IniResLevels) != 3) {
-        stop("the length of 'IniResLevels' must be 3 for the chosen 'FUN_MOD'")
-      }
-    } else if (is.null(IniStates)) {
-      if (identical(FUN_MOD, RunModel_GR6J) | identical(FUN_MOD, RunModel_CemaNeigeGR6J)) {
-        IniResLevels <- as.double(c(0.3, 0.5, 0))
+      # if ((identical(FUN_MOD,RunModel_GR6J) | identical(FUN_MOD,RunModel_CemaNeigeGR6J) |
+      #      (identical(FUN_MOD, RunModel_GR5H) & IsIntStore)) &
+      #     length(IniResLevels) != 3) {
+      #   stop("the length of 'IniResLevels' must be 3 for the chosen 'FUN_MOD'")
+      # }      
+      if ((identical(FUN_MOD,RunModel_GR6J) | identical(FUN_MOD,RunModel_CemaNeigeGR6J))) {
+        if (is.na(IniResLevels[3L])) {     
+          stop("the third value of 'IniResLevels' cannot be a missing value for the chosen 'FUN_MOD'")
+        }
       } else {
-        IniResLevels <- as.double(c(0.3, 0.5, NA))
+        if (!is.na(IniResLevels[3L])) {
+          warning("the third value of 'IniResLevels' is set to NA value for the chosen 'FUN_MOD'. Only GR6J presents an exponential store")
+          IniResLevels[3L] <- NA
+        }
       }
+      if (identical(FUN_MOD,RunModel_GR5H) | identical(FUN_MOD,RunModel_CemaNeigeGR5H)) {
+        if (IsIntStore & is.na(IniResLevels[4L])) { 
+          stop("the fourth value of 'IniResLevels' cannot be a missing value for the chosen 'FUN_MOD' (GR5H with an interception store)")
+        }
+        if (!IsIntStore & !is.na(IniResLevels[4L])) { 
+          warning("the fourth value of 'IniResLevels' is set to NA value for the chosen 'FUN_MOD'. Only GR5H used with an 'Imax' value presents an interception store")
+          IniResLevels[4L] <- NA
+        }
+      } else {
+        if (!is.na(IniResLevels[4L])) {  
+          warning("the fourth value of 'IniResLevels' is set to NA value for the chosen 'FUN_MOD'. Only GR5H used with an 'Imax' value presents an interception store")
+          IniResLevels[4L] <- NA
+        }
+      }   
+    } else if (is.null(IniStates)) {
+      IniResLevels <- as.double(c(0.3, 0.5, NA, NA))
+      if (identical(FUN_MOD, RunModel_GR6J) | identical(FUN_MOD, RunModel_CemaNeigeGR6J)) {
+        IniResLevels <- as.double(c(0.3, 0.5, 0, NA))
+      }
+      if ((identical(FUN_MOD, RunModel_GR5H) | identical(FUN_MOD, RunModel_CemaNeigeGR5H)) & IsIntStore) {
+        IniResLevels <- as.double(c(0.3, 0.5, NA, 0))
+      }
+      # if (!identical(FUN_MOD, RunModel_GR6J) & !identical(FUN_MOD, RunModel_CemaNeigeGR6J) &
+      #     !identical(FUN_MOD, RunModel_GR5H) & !identical(FUN_MOD, RunModel_CemaNeigeGR5H)) {
+      # if (is.null(IniStates)) {     
+      #   IniResLevels <- as.double(c(0.3, 0.5, NA, NA))
+      # }
     }
   } else {
     if (!is.null(IniResLevels)) {
@@ -221,14 +279,23 @@ CreateRunOptions <- function(FUN_MOD, InputsModel, IndPeriod_WarmUp = NULL, IndP
     if (identical(FUN_MOD, RunModel_GR1A) & !is.null(IniStates)) { ## GR1A
       stop(paste0("'IniStates' is not available for the chosen 'FUN_MOD'"))
     }
-    if ((identical(FUN_MOD, RunModel_GR5J) | identical(FUN_MOD, RunModel_CemaNeigeGR5J)) & !all(is.na(IniStates$UH$UH1))) { ## GR5J
+    if ((identical(FUN_MOD, RunModel_GR5J) | identical(FUN_MOD, RunModel_CemaNeigeGR5J) |
+         identical(FUN_MOD, RunModel_GR5H) | identical(FUN_MOD, RunModel_CemaNeigeGR5H)) &
+        !all(is.na(IniStates$UH$UH1))) { ## GR5J or GR5H    
       stop(paste0("non convenient 'IniStates' for the chosen 'FUN_MOD'.' In 'IniStates', 'UH1' has to be a vector of NA for GR5J"))
     }
     if ((identical(FUN_MOD, RunModel_GR6J) | identical(FUN_MOD, RunModel_CemaNeigeGR6J)) & is.na(IniStates$Store$Exp)) { ## GR6J
       stop(paste0("non convenient 'IniStates' for the chosen 'FUN_MOD'.' GR6J needs an exponential store value in 'IniStates'"))
     }
+    if ((identical(FUN_MOD, RunModel_GR5H) | identical(FUN_MOD, RunModel_CemaNeigeGR5H)) & is.na(IniStates$Store$Int)) { ## GR5H interception
+      
+      stop(paste0("non convenient 'IniStates' for the chosen 'FUN_MOD'.' GR5H (with interception store) needs an interception store value in 'IniStates'"))
+    }
     if (!(identical(FUN_MOD, RunModel_GR6J) | identical(FUN_MOD, RunModel_CemaNeigeGR6J)) & !is.na(IniStates$Store$Exp)) { ## except GR6J
       stop(paste0("non convenient 'IniStates' for the chosen 'FUN_MOD'.' No exponential store value needed in 'IniStates'"))
+    }
+    if (!(identical(FUN_MOD, RunModel_GR5H) | identical(FUN_MOD, RunModel_CemaNeigeGR5H)) & !is.na(IniStates$Store$Int)) { ## except GR5H interception
+      stop(paste0("non convenient 'IniStates' for the chosen 'FUN_MOD'.' No interception store value needed in 'IniStates'"))
     }
     # if (length(na.omit(unlist(IniStates))) != NState) {
     #   stop(paste0("the length of IniStates must be ", NState, " for the chosen FUN_MOD"))
@@ -236,9 +303,6 @@ CreateRunOptions <- function(FUN_MOD, InputsModel, IndPeriod_WarmUp = NULL, IndP
     if ((!"CemaNeige" %in% ObjectClass &  inherits(IniStates, "CemaNeige")) | 
         ( "CemaNeige" %in% ObjectClass & !inherits(IniStates, "CemaNeige"))) {
       stop("'FUN_MOD' and 'IniStates' must be both of class 'CemaNeige'")
-    }
-    if (!"CemaNeige" %in% ObjectClass & "hysteresis" %in% ObjectClass) {
-      stop("'IsHyst' cannot be TRUE for the chosen 'FUN_MOD'")
     }
     if (( "hysteresis" %in% ObjectClass & !inherits(IniStates, "hysteresis")) |
         (!"hysteresis" %in% ObjectClass &  inherits(IniStates, "hysteresis"))) {
@@ -256,7 +320,7 @@ CreateRunOptions <- function(FUN_MOD, InputsModel, IndPeriod_WarmUp = NULL, IndP
     if (!"CemaNeige" %in% ObjectClass & any(is.na(IniStates$CemaNeigeLayers$Glocmax))) {
       IniStates$CemaNeigeLayers$Glocmax <- NULL
     }
-    IniStates$Store$Rest <- rep(NA, 4)
+    IniStates$Store$Rest <- rep(NA, 3)
     IniStates <- unlist(IniStates)
     IniStates[is.na(IniStates)] <- 0
     if ("monthly" %in% ObjectClass) {
@@ -273,6 +337,9 @@ CreateRunOptions <- function(FUN_MOD, InputsModel, IndPeriod_WarmUp = NULL, IndP
   Outputs_all <- NULL
   if (identical(FUN_MOD,RunModel_GR4H) | identical(FUN_MOD,RunModel_CemaNeigeGR4H)) {
     Outputs_all <- c(Outputs_all, .FortranOutputs(GR = "GR4H")$GR)
+  }
+  if (identical(FUN_MOD,RunModel_GR5H) | identical(FUN_MOD,RunModel_CemaNeigeGR5H)) {
+    Outputs_all <- c(Outputs_all, .FortranOutputs(GR = "GR5H")$GR)
   }
   if (identical(FUN_MOD,RunModel_GR4J) | identical(FUN_MOD,RunModel_CemaNeigeGR4J)) {
     Outputs_all <- c(Outputs_all, .FortranOutputs(GR = "GR4J")$GR)
@@ -454,6 +521,9 @@ CreateRunOptions <- function(FUN_MOD, InputsModel, IndPeriod_WarmUp = NULL, IndP
   
   if ("CemaNeige" %in% ObjectClass) {
     RunOptions <- c(RunOptions, list(MeanAnSolidPrecip = MeanAnSolidPrecip))
+  }
+  if ("interception" %in% ObjectClass) {
+    RunOptions <- c(RunOptions, list(Imax = Imax))
   }
   class(RunOptions) <- c("RunOptions", ObjectClass)
   

@@ -25,11 +25,11 @@ ErrorCrit_RMSE(InputsCrit, OutputsModel, warnings = TRUE, verbose = TRUE)
 \value{
 [list] list containing the function outputs organised as follows:
          \tabular{ll}{
-         \emph{$CritValue      }   \tab   [numeric] value of the criterion \cr
-         \emph{$CritName       }   \tab   [character] name of the criterion \cr
-         \emph{$CritBestValue  }   \tab   [numeric] theoretical best criterion value \cr
-         \emph{$Multiplier     }   \tab   [numeric] integer indicating whether the criterion is indeed an error (+1) or an efficiency (-1) \cr
-         \emph{$Ind_notcomputed}   \tab   [numeric] indices of the time steps where \emph{InputsCrit$BoolCrit} = \code{FALSE} or no data is available \cr
+         \emph{$CritValue      } \tab [numeric] value of the criterion \cr
+         \emph{$CritName       } \tab [character] name of the criterion \cr
+         \emph{$CritBestValue  } \tab [numeric] theoretical best criterion value \cr
+         \emph{$Multiplier     } \tab [numeric] integer indicating whether the criterion is indeed an error (+1) or an efficiency (-1) \cr
+         \emph{$Ind_notcomputed} \tab [numeric] indices of the time steps where \emph{InputsCrit$BoolCrit} = \code{FALSE} or no data is available \cr
          }
 }
 

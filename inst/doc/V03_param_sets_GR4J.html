@@ -7,6 +7,7 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -68,7 +69,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -177,10 +178,9 @@ InputsCrit_Val  &lt;-<span class="st"> </span><span class="kw">CreateInputsCrit<
 })</code></pre></div>
 <p>Find below the 27 criteria corresponding to the different parameter sets.</p>
 <p>The criterion values are quite low (from -1.639 to 0.336), which can be expected as this does not represents an actual calibration.</p>
-<pre><code>##  [1]  0.0573  0.1331 -0.0168  0.1613  0.0345  0.1046 -0.0458  0.3359
-##  [9]  0.2440 -0.3858 -0.0830 -1.0930  0.2843  0.2792  0.1505 -0.0209
-## [17] -0.0825  0.1298  0.2903 -0.1188 -0.3834 -0.0836  0.0279 -0.0488
-## [25] -0.1675  0.1719 -1.6386</code></pre>
+<pre><code>##  [1]  0.0573  0.1331 -0.0168  0.1613  0.0345  0.1046 -0.0458  0.3359  0.2440
+## [10] -0.3858 -0.0830 -1.0930  0.2843  0.2792  0.1505 -0.0209 -0.0825  0.1298
+## [19]  0.2903 -0.1188 -0.3834 -0.0836  0.0279 -0.0488 -0.1675  0.1719 -1.6386</code></pre>
 <p>The parameter set corresponding to the best criterion is the following:</p>
 <pre><code>##     X1     X2     X3     X4 
 ## 291.00   0.30 109.10   2.01</code></pre>
@@ -220,6 +220,9 @@ InputsCrit_Val  &lt;-<span class="st"> </span><span class="kw">CreateInputsCrit<
 </div>
 </div>
 
+
+
+<!-- code folding -->
 
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

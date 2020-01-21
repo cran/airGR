@@ -188,7 +188,7 @@ CreateInputsCrit <- function(FUN_CRIT,
       stop("'BoolCrit' must be a (list of) vector(s) of boolean", call. = FALSE)
     }
     if (length(iListArgs2$BoolCrit) != LLL) {
-      stop("'BoolCrit' and 'InputsModel' series must have the same length", call. = FALSE)
+      stop("'BoolCrit' and the period defined in 'RunOptions' must have the same length", call. = FALSE)
     }
     
     ## check 'VarObs'

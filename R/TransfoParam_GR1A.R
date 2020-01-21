@@ -2,7 +2,6 @@ TransfoParam_GR1A <- function(ParamIn, Direction) {
   
   ## number of model parameters
   NParam <- 1L
-  NParam <- 2L
   
   
   ## check arguments

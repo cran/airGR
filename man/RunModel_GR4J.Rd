@@ -34,15 +34,15 @@ RunModel_GR4J(InputsModel, RunOptions, Param)
     \emph{$DatesR  } \tab [POSIXlt] series of dates                                                          \cr
     \emph{$PotEvap } \tab [numeric] series of input potential evapotranspiration [mm/d]                      \cr
     \emph{$Precip  } \tab [numeric] series of input total precipitation [mm/d]                               \cr
-    \emph{$Prod    } \tab [numeric] series of production store level [mm]                 	                 \cr
-    \emph{$Pn      } \tab [numeric] series of net rainfall [mm/d]                         			             \cr
+    \emph{$Prod    } \tab [numeric] series of production store level [mm]                                    \cr
+    \emph{$Pn      } \tab [numeric] series of net rainfall [mm/d]                                            \cr
     \emph{$Ps      } \tab [numeric] series of the part of Pn filling the production store [mm/d]             \cr
     \emph{$AE      } \tab [numeric] series of actual evapotranspiration [mm/d]                               \cr
     \emph{$Perc    } \tab [numeric] series of percolation (PERC) [mm/d]                                      \cr
     \emph{$PR      } \tab [numeric] series of PR=Pn-Ps+Perc [mm/d]                                           \cr
     \emph{$Q9      } \tab [numeric] series of UH1 outflow (Q9) [mm/d]                                        \cr
     \emph{$Q1      } \tab [numeric] series of UH2 outflow (Q1) [mm/d]                                        \cr
-    \emph{$Rout    } \tab [numeric] series of routing store level [mm]                     		               \cr
+    \emph{$Rout    } \tab [numeric] series of routing store level [mm]                                       \cr
     \emph{$Exch    } \tab [numeric] series of potential semi-exchange between catchments [mm/d]              \cr
     \emph{$AExch1  } \tab [numeric] series of actual exchange between catchments for branch 1 [mm/d]         \cr
     \emph{$AExch2  } \tab [numeric] series of actual exchange between catchments for branch 2 [mm/d]         \cr
@@ -105,14 +105,14 @@ OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsMode
 
 
 \author{
-Laurent Coron, Claude Michel, Charles Perrin
+Laurent Coron, Claude Michel, Charles Perrin, Olivier Delaigue
 }
 
 
 \references{
 Perrin, C., C. Michel and V. Andréassian (2003). 
   Improvement of a parsimonious model for streamflow simulation. 
-  Journal of Hydrology, 279(1-4), 275-289. doi:10.1016/S0022-1694(03)00225-7.
+  Journal of Hydrology, 279(1-4), 275-289. doi: 10.1016/S0022-1694(03)00225-7.
 }
 
 

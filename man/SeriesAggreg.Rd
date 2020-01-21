@@ -17,9 +17,9 @@ SeriesAggreg(TabSeries, TimeFormat, NewTimeFormat, ConvertFun,
 \arguments{
 \item{TabSeries}{[POSIXt+numeric] data.frame containing the vector of dates (POSIXt) and the time series values numeric)}
 
-\item{TimeFormat}{[character] desired format (i.e. \code{"hourly"}, \code{"daily"}, \code{"monthly"} or \code{"yearly"})}
+\item{TimeFormat}{[character] input time-step format (i.e. \code{"hourly"}, \code{"daily"}, \code{"monthly"} or \code{"yearly"})}
 
-\item{NewTimeFormat}{[character] desired format (i.e. \code{"hourly"}, \code{"daily"}, \code{"monthly"} or \code{"yearly"})}
+\item{NewTimeFormat}{[character] output time-step format (i.e. \code{"hourly"}, \code{"daily"}, \code{"monthly"} or \code{"yearly"})}
 
 \item{ConvertFun}{[character] names of aggregation functions (e.g. for P[mm], T[degC], Q[mm] : \code{ConvertFun = c("sum", "mean", "sum"}))}
 

@@ -78,7 +78,7 @@ Laurent Coron, Ludovic Oudin, Olivier Delaigue, Guillaume Thirel
 Oudin, L., F. Hervieu, C. Michel, C. Perrin, V. Andréassian, F. Anctil and C. Loumagne (2005). 
   Which potential evapotranspiration input for a lumped rainfall-runoff model?: 
   Part 2-Towards a simple and efficient potential evapotranspiration model for rainfall-runoff modelling. 
-  Journal of Hydrology, 303(1-4), 290-306. doi:10.1016/j.jhydrol.2004.08.026.
+  Journal of Hydrology, 303(1-4), 290-306. doi: 10.1016/j.jhydrol.2004.08.026.
 \cr\cr
 Lobligeois, F. (2014).
   Mieux connaitre la distribution spatiale des pluies améliore-t-il la modélisation des crues ? Diagnostic sur 181 bassins versants français.

@@ -9,6 +9,7 @@
 \alias{TransfoParam_GR5J}
 \alias{TransfoParam_GR6J}
 \alias{TransfoParam_GR4H}
+\alias{TransfoParam_GR5H}
 \alias{TransfoParam_CemaNeige}
 \alias{TransfoParam_CemaNeigeHyst}
 
@@ -27,6 +28,7 @@ TransfoParam_GR4J(ParamIn, Direction)
 TransfoParam_GR5J(ParamIn, Direction)
 TransfoParam_GR6J(ParamIn, Direction)
 TransfoParam_GR4H(ParamIn, Direction)
+TransfoParam_GR5H(ParamIn, Direction)
 TransfoParam_CemaNeige(ParamIn, Direction)
 TransfoParam_CemaNeigeHyst(ParamIn, Direction)
 }

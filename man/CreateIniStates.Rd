@@ -9,8 +9,8 @@
 
 
 \usage{
-CreateIniStates(FUN_MOD, InputsModel, IsHyst = FALSE,
-  ProdStore = 350, RoutStore = 90, ExpStore = NULL,
+CreateIniStates(FUN_MOD, InputsModel, IsHyst = FALSE, IsIntStore = FALSE,
+  ProdStore = 350, RoutStore = 90, ExpStore = NULL, IntStore = NULL,
   UH1 = NULL, UH2 = NULL,
   GCemaNeigeLayers = NULL, eTGCemaNeigeLayers = NULL,
   GthrCemaNeigeLayers = NULL, GlocmaxCemaNeigeLayers = NULL,
@@ -25,11 +25,15 @@ CreateIniStates(FUN_MOD, InputsModel, IsHyst = FALSE,
 
 \item{IsHyst}{[boolean] boolean indicating if the hysteresis version of CemaNeige is used. See details}
 
-\item{ProdStore}{[numeric] production store level [mm]}
+\item{IsIntStore}{[boolean] boolean indicating if the interception store is used in GR5H. See details}
 
-\item{RoutStore}{[numeric] routing store level [mm]}
+\item{ProdStore}{[numeric] production store level [mm] for all GR models except GR1A}
+
+\item{RoutStore}{[numeric] routing store level [mm] for all GR models except GR1A}
 
 \item{ExpStore}{(optional) [numeric] series of exponential store level (negative) [mm] for the GR6J model}
+
+\item{IntStore}{(optional) [numeric] series rainfall neutralisation or interception store level [mm] for the GR5H model}
 
 \item{UH1}{(optional) [numeric] unit hydrograph 1 levels [mm]}
 
@@ -53,7 +57,7 @@ CreateIniStates(FUN_MOD, InputsModel, IsHyst = FALSE,
   \tabular{ll}{
     \emph{$Store          } \tab [numeric] list of store levels (\emph{$Prod}, \emph{$Rout} and \emph{$Exp}) \cr
     \emph{$UH             } \tab [numeric] list of unit hydrographs levels (\emph{$UH1} and \emph{$UH2}) \cr
-    \emph{$CemaNeigeLayers} \tab [numeric] list of CemaNeige variables (\emph{$G} and \emph{$eTG})
+    \emph{$CemaNeigeLayers} \tab [numeric] list of CemaNeige variables (\emph{$G}, \emph{$eTG}, \emph{$GthrCemaNeigeLayers} and \emph{$GlocmaxCemaNeigeLayers})
   }
 }
 
@@ -63,10 +67,10 @@ Creation of the \emph{IniStates} object possibly required by the \code{\link{Cre
 }
 
 \details{
-20 numeric values are required for UH1 and 40 numeric values are required for UH2 if GR4J, GR5J or GR6J are used (respectively 20*24 and 40*24 for the hourly model GR4H).Please note that depending on the X4 parameter value that will be provided when running the model, not all the values may be used (only the first int(X4)+1 values are used for UH1 and the first 2*int(X4)+1 for UH2). \cr
-\code{GCemaNeigeLayers} and \code{eTGCemaNeigeLayers} require each numeric values as many as given in \code{\link{CreateInputsModel}} with the \code{NLayersargument}. \code{eTGCemaNeigeLayers} values can be negatives.\cr
-The structure of the object of class \code{IniStates} returned is always exactly the same for all models (except for the unit hydrographs levels that contain more values with GR4H), even if some states do nt exist (e.g. \emph{$UH$UH1} for GR2M).  \cr
-If CemaNeige is not used, \emph{$CemaNeigeLayers$G} and \emph{$CemaNeigeLayers$eTG} are set to \code{NA}. \cr
+20 numeric values are required for UH1 and 40 numeric values are required for UH2 if GR4J, GR5J or GR6J are used (respectively 20*24 and 40*24 for the hourly models GR4H and GR5H). Please note that depending on the X4 parameter value that will be provided when running the model, not all the values may be used (only the first int(X4)+1 values are used for UH1 and the first 2*int(X4)+1 for UH2). \cr
+\code{GCemaNeigeLayers} and \code{eTGCemaNeigeLayers} require each numeric values as many as given in \code{\link{CreateInputsModel}} with the \code{NLayers} argument. \code{eTGCemaNeigeLayers} values can be negative.\cr
+The structure of the object of class \code{IniStates} returned is always exactly the same for all models (except for the unit hydrographs levels that contain more values with GR4H and GR5H), even if some states do not exist (e.g. \emph{$UH$UH1} for GR2M).  \cr
+If CemaNeige is not used, \emph{$CemaNeigeLayers$G}, \emph{$CemaNeigeLayers$eTG} \emph{$CemaNeigeLayers$GthrCemaNeigeLayers} and \emph{$CemaNeigeLayers$GlocmaxCemaNeigeLayers} are set to \code{NA}. \cr
 
 Nota: the \code{StateEnd} objects from the outputs of \code{RunModel*} functions already respect the format given by the \code{CreateIniStates} function. 
 }

@@ -13,7 +13,7 @@ CreateInputsModel <- function(FUN_MOD,
     
     ##check_FUN_MOD
     BOOL <- FALSE
-    if (identical(FUN_MOD, RunModel_GR4H)) {
+    if (identical(FUN_MOD, RunModel_GR4H) | identical(FUN_MOD, RunModel_GR5H)) {
       ObjectClass <- c(ObjectClass, "hourly", "GR")
       
       TimeStep <- as.integer(60 * 60)
@@ -59,7 +59,7 @@ CreateInputsModel <- function(FUN_MOD,
       
       BOOL <- TRUE
     }
-    if (identical(FUN_MOD, RunModel_CemaNeigeGR4H)) {
+    if (identical(FUN_MOD, RunModel_CemaNeigeGR4H) | identical(FUN_MOD, RunModel_CemaNeigeGR5H)) {
       ObjectClass <- c(ObjectClass, "hourly", "GR", "CemaNeige")
       
       TimeStep <- as.integer(60 * 60)
@@ -242,7 +242,7 @@ CreateInputsModel <- function(FUN_MOD,
       Select <- (max(which(BOOL_NA)) + 1):length(BOOL_NA)
       
       if (Select[1L] > Select[2L]) {
-        stop("time series could not be trunced since missing values were detected at the list time-step")
+        stop("time series could not be trunced since missing values were detected at the last time-step")
       }
       if ("GR" %in% ObjectClass) {
         Precip  <- Precip[Select]

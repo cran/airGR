@@ -107,7 +107,7 @@ Laurent Coron, Olivier Delaigue
 \references{
 Gupta, H. V., Kling, H., Yilmaz, K. K. and Martinez, G. F. (2009). 
   Decomposition of the mean squared error and NSE performance criteria: Implications for improving hydrological modelling. 
-  Journal of Hydrology, 377(1-2), 80-91. doi:10.1016/j.jhydrol.2009.08.003. 
+  Journal of Hydrology, 377(1-2), 80-91. doi: 10.1016/j.jhydrol.2009.08.003. 
 }
 
 

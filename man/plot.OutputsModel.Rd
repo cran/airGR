@@ -32,9 +32,9 @@
 
 \item{BasinArea}{(optional) [numeric] basin area [km2], used to plot flow axes in m3/s}
 
-\item{which}{(optional) [character] choice of plots \cr (e.g. c(\code{"Precip"}, \code{"Temp"}, \code{"SnowPack"}, \code{"Flows"}, \code{"Regime"}, \code{"CumFreq"}, \code{"CorQQ"})), default = \code{"synth"}, see details below}
+\item{which}{(optional) [character] choice of plots \cr (e.g. c(\code{"Precip"}, \code{"Temp"}, \code{"SnowPack"}, \code{"Flows"}, \code{"Error"}, \code{"Regime"}, \code{"CumFreq"}, \code{"CorQQ"})), default = \code{"synth"}, see details below}
 
-\item{log_scale}{(optional) [boolean] indicating if the flow time series axis and the flow error time series axis are to be logarithmic, default = \code{FALSE}}
+\item{log_scale}{(optional) [boolean] indicating if the flow and the error time series axis and the flow error time series axis are to be logarithmic, default = \code{FALSE}}
 
 \item{cex.axis}{(optional) [numeric] the magnification to be used for axis annotation relative to the current setting of \code{cex}}
 
@@ -71,9 +71,11 @@ Different types of independent graphs are available (depending on the model, but
 \itemize{
   \item \code{"Precip"}: time series of total precipitation
   \item \code{"PotEvap"}: time series of potential evapotranspiration
+  \item \code{"ActEvap"}: time series of simulated actual evapotranspiration (overlaid to \code{"PotEvap"} if already drawn)
   \item \code{"Temp"}: time series of temperature (plotted only if CemaNeige is used)
   \item \code{"SnowPack"}: time series of snow water equivalent (plotted only if CemaNeige is used)
   \item \code{"Flows"}: time series of simulated flows (and observed flows if provided)
+  \item \code{"Error"}: time series of simulated flows minus observed flows (and observed flows if provided)
   \item \code{"Regime"}: interannual median monthly simulated flow (and observed flows if provided)
   \item \code{"CorQQ"}: correlation plot between simulated and observed flows (only if observed flows provided)
   \item \code{"CumFreq"}: cumulative frequency plot for simulated flows (and observed flows if provided)
@@ -84,7 +86,7 @@ Different dashboards of results including various graphs are available:
   \item \code{"perf"}: corresponds to \code{"Error"}, \code{"Regime"}, \code{"CumFreq"} and \code{"CorQQ"}
   \item \code{"ts"}: corresponds to \code{"Precip"}, \code{"PotEvap"}, \code{"Temp"}, \code{"SnowPack"} and \code{"Flows"}
   \item \code{"synth"}: corresponds to \code{"Precip"}, \code{"Temp"}, \code{"SnowPack"}, \code{"Flows"}, \code{"Regime"}, \code{"CumFreq"} and \code{"CorQQ"}
-  \item \code{"all"}: corresponds to \code{"Precip"}, \code{"PotEvap"}, \code{"Temp"}, \code{"SnowPack"}, \code{"Flows"}, \code{"Error"}, \code{"Regime"}, \code{"CumFreq"} and \code{"CorQQ"}
+  \item \code{"all"}: corresponds to \code{"Precip"}, \code{"PotEvap"}, \code{"ActuEvap"}, \code{"Temp"}, \code{"SnowPack"}, \code{"Flows"}, \code{"Error"}, \code{"Regime"}, \code{"CumFreq"} and \code{"CorQQ"}
   }
   
 If several dashboards are selected, or if an independent graph is called with a dashboard, the graphical device will include all the requested graphs without redundancy.

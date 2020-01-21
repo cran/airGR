@@ -7,6 +7,7 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -68,7 +69,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -97,23 +98,26 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p><strong>airGR</strong> is a package that brings into the <a href="https://cran.r-project.org/"><strong>R software</strong></a> the hydrological modelling tools used and developed at the <a href="https://webgr.irstea.fr/en/">Catchment Hydrology Research Group</a> at <a href="http://www.irstea.fr/en/">Irstea (France)</a>, including the <a href="https://webgr.irstea.fr/en/modeles/"><strong>GR rainfall-runoff models</strong></a> and a snowmelt and accumulation model, <a href="https://webgr.irstea.fr/en/modeles/modele-de-neige/"><strong>CemaNeige</strong></a>. Each model core is coded in <strong>Fortran</strong> to ensure low computational time. The other package functions (i.e. mainly the calibration algorithm and the efficiency criteria calculation) are coded in <strong>R</strong>.</p>
+<p><strong>airGR</strong> is a package that brings into the <a href="https://cran.r-project.org/"><strong>R software</strong></a> the hydrological modelling tools used and developed at the <a href="https://webgr.inrae.fr/en/">Catchment Hydrology Research Group</a> at <a href="https://webgr.inrae.fr/en/">INRAE (France)</a>, including the <a href="https://webgr.inrae.fr/en/modeles/"><strong>GR rainfall-runoff models</strong></a> and a snowmelt and accumulation model, <a href="https://webgr.inrae.fr/en/models/snow-model/"><strong>CemaNeige</strong></a>. Each model core is coded in <strong>Fortran</strong> to ensure low computational time. The other package functions (i.e. mainly the calibration algorithm and the efficiency criteria calculation) are coded in <strong>R</strong>.</p>
 <p>The <strong>airGR</strong> package has been designed to fulfill two major requirements: to facilitate the use by non-expert users and to allow flexibility regarding the addition of external criteria, models or calibration algorithms. The names of the functions and their arguments were chosen to this end. <strong>airGR</strong> also contains basics plotting facilities.</p>
 <p>Six hydrological models and one snowmelt and accumulation model are implemented in <strong>airGR</strong>. The snow model can be used alone or together with the daily hydrological models.</p>
 <p>The models can be called within <strong>airGR</strong> using the following functions:</p>
 <ul>
 <li><code>RunModel_GR4H()</code>: four-parameter hourly lumped hydrological model <span class="citation">(Mathevet 2005)</span></li>
+<li><code>RunModel_GR5H()</code>: five-parameter hourly lumped hydrological model <span class="citation">(Ficchi 2017; Ficchì, Perrin, and Andréassian 2019)</span></li>
 <li><code>RunModel_GR4J()</code>: four-parameter daily lumped hydrological model <span class="citation">(Perrin, Michel, and Andréassian 2003)</span></li>
 <li><code>RunModel_GR5J()</code>: five-parameter daily lumped hydrological model <span class="citation">(Le Moine 2008)</span></li>
 <li><code>RunModel_GR6J()</code>: six-parameter daily lumped hydrological model <span class="citation">(Pushpalatha et al. 2011)</span></li>
 <li><code>RunModel_GR2M()</code>: two-parameter monthly lumped hydrological model <span class="citation">(Mouelhi 2003; Mouelhi et al. 2006a)</span></li>
 <li><code>RunModel_GR1A()</code>: one-parameter yearly lumped hydrological model <span class="citation">(Mouelhi 2003; Mouelhi et al. 2006b)</span></li>
 <li><code>RunModel_CemaNeige()</code>: two-parameter degree-day snowmelt and accumulation model <span class="citation">(Valéry, Andréassian, and Perrin 2014)</span></li>
+<li><code>RunModel_CemaNeigeGR4H()</code>: combined use of <strong>GR4H</strong> and <strong>CemaNeige</strong></li>
+<li><code>RunModel_CemaNeigeGR5H()</code>: combined use of <strong>GR5H</strong> and <strong>CemaNeige</strong></li>
 <li><code>RunModel_CemaNeigeGR4J()</code>: combined use of <strong>GR4J</strong> and <strong>CemaNeige</strong></li>
 <li><code>RunModel_CemaNeigeGR5J()</code>: combined use of <strong>GR5J</strong> and <strong>CemaNeige</strong></li>
 <li><code>RunModel_CemaNeigeGR6J()</code>: combined use of <strong>GR6J</strong> and <strong>CemaNeige</strong></li>
 </ul>
-<p>The <a href="https://webgr.irstea.fr/en/modeles/modele-de-prevision-grp/"><strong>GRP</strong></a> forecasting model and the <a href="https://webgr.irstea.fr/en/modeles/otamin/"><strong>Otamin</strong></a> predictive uncertainty tool are not available in <strong>airGR</strong>.</p>
+<p>The <a href="https://webgr.inrae.fr/en/models/hydrological-forecasting-model-grp/"><strong>GRP</strong></a> forecasting model and the <a href="https://webgr.inrae.fr/en/software/otamin/"><strong>Otamin</strong></a> predictive uncertainty tool are not available in <strong>airGR</strong>.</p>
 <p>In this vignette, we show how to prepare and run a calibration and a simulation with airGR hydrological models.</p>
 </div>
 <div id="loading-data" class="section level1">
@@ -205,7 +209,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ##  $ IndPeriod_WarmUp: int [1:365] 1828 1829 1830 1831 1832 1833 1834 1835 1836 1837 ...
 ##  $ IndPeriod_Run   : int [1:3652] 2193 2194 2195 2196 2197 2198 2199 2200 2201 2202 ...
 ##  $ IniStates       : num [1:67] 0 0 0 0 0 0 0 0 0 0 ...
-##  $ IniResLevels    : num [1:3] 0.3 0.5 NA
+##  $ IniResLevels    : num [1:4] 0.3 0.5 NA NA
 ##  $ Outputs_Cal     : chr &quot;Qsim&quot;
 ##  $ Outputs_Sim     : chr [1:20] &quot;DatesR&quot; &quot;PotEvap&quot; &quot;Precip&quot; &quot;Prod&quot; ...
 ##  - attr(*, &quot;class&quot;)= chr [1:3] &quot;RunOptions&quot; &quot;GR&quot; &quot;daily&quot;</code></pre>
@@ -325,10 +329,11 @@ Param</code></pre></div>
 ##  $ QD      : num [1:3652] 0.381 0.375 0.447 0.584 0.572 ...
 ##  $ Qsim    : num [1:3652] 2.43 2.37 2.8 3.14 3.35 ...
 ##  $ StateEnd:List of 3
-##   ..$ Store          :List of 3
+##   ..$ Store          :List of 4
 ##   .. ..$ Prod: num 189
 ##   .. ..$ Rout: num 48.9
 ##   .. ..$ Exp : num NA
+##   .. ..$ Int : num NA
 ##   ..$ UH             :List of 2
 ##   .. ..$ UH1: num [1:20] 0.514 0.54 0.148 0 0 ...
 ##   .. ..$ UH2: num [1:40] 0.056306 0.057176 0.042253 0.012187 0.000578 ...
@@ -367,6 +372,12 @@ Param</code></pre></div>
 <div id="references" class="section level1 unnumbered">
 <h1>References</h1>
 <div id="refs" class="references">
+<div id="ref-ficchi_adaptive_2017">
+<p>Ficchi, Andrea. 2017. “An Adaptive Hydrological Model for Multiple Time-Steps: Diagnostics and Improvements Based on Fluxes Consistency.” PhD thesis, Université Pierre et Marie Curie, Paris 6. <a href="http://www.theses.fr/2017PA066097" class="uri">http://www.theses.fr/2017PA066097</a>.</p>
+</div>
+<div id="ref-ficchi_hydrological_2019">
+<p>Ficchì, Andrea, Charles Perrin, and Vazken Andréassian. 2019. “Hydrological Modelling at Multiple Sub-Daily Time Steps: Model Improvement via Flux-Matching.” <em>Journal of Hydrology</em>, June. doi:<a href="https://doi.org/10.1016/j.jhydrol.2019.05.084">10.1016/j.jhydrol.2019.05.084</a>.</p>
+</div>
 <div id="ref-le_moine_bassin_2008">
 <p>Le Moine, Nicolas. 2008. “Le Bassin Versant de Surface Vu Par Le Souterrain : Une Voie d’amélioration Des Performances et Du Réalisme Des Modèles Pluie-Débit ?” PhD thesis, Université Pierre et Marie Curie, Paris 6. <a href="http://webgr.irstea.fr/wp-content/uploads/2012/07/2008-LE_MOINE-THESE.pdf" class="uri">http://webgr.irstea.fr/wp-content/uploads/2012/07/2008-LE_MOINE-THESE.pdf</a>.</p>
 </div>
@@ -394,6 +405,9 @@ Param</code></pre></div>
 </div>
 </div>
 
+
+
+<!-- code folding -->
 
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

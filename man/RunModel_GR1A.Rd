@@ -26,14 +26,14 @@ GR1A X1 \tab model parameter [-] \cr
 
 
 \value{
-[list] list containing the function outputs organised as follows:                                         
-  \tabular{ll}{                                                                                         
+[list] list containing the function outputs organised as follows:
+  \tabular{ll}{
     \emph{$DatesR  } \tab [POSIXlt] series of dates                                     \cr
     \emph{$PotEvap } \tab [numeric] series of input potential evapotranspiration [mm/y] \cr
     \emph{$Precip  } \tab [numeric] series of input total precipitation [mm/y]          \cr
     \emph{$Qsim    } \tab [numeric] series of simulated discharge [mm/y]                \cr
-    \emph{$StateEnd} \tab [numeric] states at the end of the run (NULL) [-]             \cr         
-  }                                                                                                     
+    \emph{$StateEnd} \tab [numeric] states at the end of the run (NULL) [-]             \cr
+  }
   (refer to the provided references or to the package source code for further details on these model outputs)
 }
 
@@ -94,7 +94,7 @@ OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsMode
 
 
 \author{
-Laurent Coron, Claude Michel
+Laurent Coron, Claude Michel, Olivier Delaigue, Guillaume Thirel
 }
 
 

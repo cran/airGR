@@ -26,7 +26,7 @@ X0310010 contains in addition MODIS snow cover area (SCA) data retrieved from th
 \cr \cr
 Times series for L0123001, L0123002 and X0310010 are at the daily time step for use with daily models such as GR4J, GR5J, GR6J, CemaNeigeGR4J, CemaNeigeGR5J and CemaNeigeGR6J. \cr
 Times series for X0310010 are provided in order to test hysteresis version of CemaNeige (see \code{\link{CreateRunOptions}} (Riboust et al., 2019). \cr
-Times series for L0123003 are at the hourly time step for use with hourly models such as GR4H.
+Times series for L0123003 are at the hourly time step for use with hourly models such as GR4H or GR5H.
 }
 
 
@@ -40,11 +40,11 @@ Times series for L0123003 are at the hourly time step for use with hourly models
 \references{
 Riboust P., Thirel G., Moine N.L. and Ribstein P. (2019). 
   Revisiting a Simple Degree-Day Model for Integrating Satellite Data: Implementation of Swe-Sca Hystereses. 
-  Journal of Hydrology and Hydromechanics 67, 70–81. https://doi.org/10.2478/johh-2018-0004.
+  Journal of Hydrology and Hydromechanics 67, 70–81. doi: 10.2478/johh-2018-0004.
 \cr\cr
 Vidal J., Martin E., Franchistéguy L., Baillon M. and Soubeyroux J. (2010). 
   A 50-year high-resolution atmospheric reanalysis over France with the Safran system. 
-  International Journal of Climatology 30, 1627–1644. https://doi.org/10.1002/joc.2003.
+  International Journal of Climatology 30, 1627–1644. doi: 10.1002/joc.2003.
 }
 
 \seealso{

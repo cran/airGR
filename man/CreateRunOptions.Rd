@@ -11,7 +11,7 @@
 \usage{
 CreateRunOptions(FUN_MOD, InputsModel,
   IndPeriod_WarmUp = NULL, IndPeriod_Run,
-  IniStates = NULL, IniResLevels = NULL,
+  IniStates = NULL, IniResLevels = NULL, Imax = NULL,
   Outputs_Cal = NULL, Outputs_Sim = "all",
   RunSnowModule, MeanAnSolidPrecip = NULL,
   IsHyst = FALSE,
@@ -31,6 +31,9 @@ CreateRunOptions(FUN_MOD, InputsModel,
 \item{IniStates}{(optional) [numeric] object of class \code{IniStates} [mm and °C], see \code{\link{CreateIniStates}} for details}
 
 \item{IniResLevels}{(optional) [numeric] vector of initial fillings for the GR stores (2 or 3 values according to the model) [- and/or mm]; see details}
+
+\item{Imax}{(optional) [numeric] an atomic vector of the maximum capacity of the GR5H interception store [mm]; see \code{\link{RunModel_GR5H}}}
+
 
 \item{Outputs_Cal}{(optional) [character] vector giving the outputs needed for the calibration \cr (e.g. c("Qsim")), the fewer outputs
  the faster the calibration}
@@ -59,6 +62,7 @@ CreateRunOptions(FUN_MOD, InputsModel,
     \emph{IniResLevels     } \tab [numeric] vector of initial filling rates for production and routing stores [-] and level for the exponential store for GR6J [mm]\cr
     \emph{Outputs_Cal      } \tab [character] character vector giving only the outputs needed for the calibration \cr
     \emph{Outputs_Sim      } \tab [character] character vector giving the requested outputs \cr
+    \emph{Imax             } \tab [numeric] vector giving the maximal capacity of the GR5H interception store \cr
     \emph{MeanAnSolidPrecip} \tab [numeric] vector giving the annual mean of average solid precipitation for each layer [mm/y] \cr
   }
 }
@@ -86,7 +90,7 @@ A default configuration is used for initialisation if these vectors are not defi
 \item \code{IndPeriod_WarmUp} default setting ensures a one-year warm-up using the time steps preceding the \code{IndPeriod_Run}. 
 The actual length of this warm-up might be shorter depending on data availability (no missing value of climate inputs being allowed in model input series).
 
-\item \code{IniStates} and \code{IniResLevels} are automatically set to initialise all the model states at 0, except for the production and routing stores which are respectively initialised at 30 \% and 50 \% of their capacity. In case GR6J is used, the exponential store is initialised by default with 0 mm. This initialisation is made at the very beginning of the model call (i.e. at the beginning of \code{IndPeriod_WarmUp} or at the beginning of \code{IndPeriod_Run} if the warm-up period is disabled).
+\item \code{IniStates} and \code{IniResLevels} are automatically set to initialise all the model states at 0, except for the production and routing stores levels which are respectively initialised at 30 \% and 50 \% of their capacity. In case GR5H is used with an interception store, the intercetion store level is initialised by default with 0 mm. In case GR6J is used, the exponential store level is initialised by default with 0 mm. This initialisation is made at the very beginning of the model call (i.e. at the beginning of \code{IndPeriod_WarmUp} or at the beginning of \code{IndPeriod_Run} if the warm-up period is disabled).
 }
 
 (2) Customisation of initialisation options:
@@ -104,7 +108,7 @@ However, it is also possible to perform a long-term initialisation if other indi
 \item remark 2:	if \code{IniStates} is used, two possibilities are offered:\cr
 - \code{IniStates} can be set to the \emph{$StateEnd} output of a previous \code{RunModel} call, as \emph{$StateEnd} already respects the correct format; \cr
 - \code{IniStates} can be created with the \code{\link{CreateIniStates}} function.
-\item remark 3:	in addition to \code{IniStates}, \code{IniResLevels} allows to set the filling rate of the production and routing stores for the GR models. For instance for GR4J and GR5J: \code{IniResLevels = c(0.3, 0.5)} should be used to obtain initial fillings of 30 \% and 50 \% for the production and routing stores, respectively. For GR6J, \code{IniResLevels = c(0.3, 0.5, 0)} should be use to obtain initial fillings of 30 \% and 50 \% for the production, routing stores and 0 mm for the exponential store, respectively. \code{IniResLevels} is optional and can only be used if \code{IniStates} is also defined (the state values corresponding to these two other stores in \code{IniStates} are not used in such case).
+\item remark 3:	in addition to \code{IniStates}, \code{IniResLevels} allows to set the filling rate of the production and routing stores for the GR models. For instance for GR4J and GR5J: \code{IniResLevels = c(0.3, 0.5, NA, NA)} should be used to obtain initial fillings of 30 \% and 50 \% for the production and routing stores, respectively. For GR6J, \code{IniResLevels = c(0.3, 0.5, 0, NA)} should be used to obtain initial fillings of 30 \% and 50 \% for the production and routing stores levels and 0 mm for the exponential store level, respectively. For GR5H with an interception store, \code{IniResLevels = c(0.3, 0.5, NA, 0.4)} should be used to obtain initial fillings of 30 \%, 50 \% and 40 \% for the production, routing and interception stores levels, respectively. \code{IniResLevels} is optional and can only be used if \code{IniStates} is also defined (the state values corresponding to these two other stores in \code{IniStates} are not used in such case).
 }
 }
 
@@ -157,5 +161,5 @@ Laurent Coron, Olivier Delaigue, Guillaume Thirel
 
 \seealso{
 \code{\link{RunModel}}, \code{\link{CreateInputsModel}}, \code{\link{CreateInputsCrit}},
-\code{\link{CreateCalibOptions}}, \code{\link{CreateIniStates}}
+\code{\link{CreateCalibOptions}}, \code{\link{CreateIniStates}}, \code{\link{Imax}}
 }

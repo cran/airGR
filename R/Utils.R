@@ -33,16 +33,17 @@
                "Perc", "PR",
                "Rout", "Exch",
                "Qsim")
-  } else if (GR == "GR4H") {
-    outGR <- c("PotEvap", "Precip", "Prod",
-               "AE",
+  } else if (GR == "GR5H") {
+    outGR <- c("PotEvap", "Precip", "Interc", "Prod", "Pn", "Ps",
+               "AE", "EI", "ES",
                "Perc", "PR",
                "Q9", "Q1",
-               "Rout", "Exch",
+               "Rout", "Exch", 
+               "AExch1", "AExch2",
                "AExch", "QR",
                "QD",
                "Qsim")
-  } else if (GR %in% c("GR4J", "GR5J")) {
+  } else if (GR %in% c("GR4J", "GR5J", "GR4H")) {
     outGR <- c("PotEvap", "Precip", "Prod", "Pn", "Ps",
                "AE",
                "Perc", "PR",
@@ -148,7 +149,7 @@
       warning("zeroes detected in 'Qsim': the corresponding time-steps will be excluded from the criteria computation if the epsilon argument of 'CreateInputsCrit' = NULL", call. = FALSE)
     }  
   }
-  if ("epsilon" %in% names(InputsCrit) & !is.null(InputsCrit$epsilon)) {
+  if ("epsilon" %in% names(InputsCrit) & !is.null(InputsCrit$epsilon) & !(InputsCrit$transfo == "boxcox")) {
     VarObs <- VarObs + InputsCrit$epsilon
     VarSim <- VarSim + InputsCrit$epsilon
   }
@@ -173,8 +174,9 @@
     InputsCrit$BoolCrit <-  sort(InputsCrit$BoolCrit, decreasing = TRUE)
   }
   if (InputsCrit$transfo == "boxcox") {
-    VarSim <- (VarSim^0.25 - 0.01 * mean(VarSim, na.rm = TRUE)) / 0.25
-    VarObs <- (VarObs^0.25 - 0.01 * mean(VarObs, na.rm = TRUE)) / 0.25
+    muTransfoVarObs <- (0.01 * mean(VarObs, na.rm = TRUE))^0.25
+    VarSim <- (VarSim^0.25 - muTransfoVarObs) / 0.25
+    VarObs <- (VarObs^0.25 - muTransfoVarObs) / 0.25
   }
   if (grepl("\\^", InputsCrit$transfo)) {
     VarObs <- VarObs^transfoPow
@@ -221,7 +223,6 @@
                            CritCompute = CritCompute,
                            TS_ignore = TS_ignore,
                            Ind_TS_ignore = Ind_TS_ignore)
-  
 }
 
 

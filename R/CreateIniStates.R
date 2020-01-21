@@ -1,5 +1,5 @@
-CreateIniStates <- function(FUN_MOD, InputsModel, IsHyst = FALSE,
-                            ProdStore = 350, RoutStore = 90, ExpStore = NULL,
+CreateIniStates <- function(FUN_MOD, InputsModel, IsHyst = FALSE, IsIntStore = FALSE,
+                            ProdStore = 350, RoutStore = 90, ExpStore = NULL, IntStore = NULL,
                             UH1 = NULL, UH2 = NULL,
                             GCemaNeigeLayers = NULL, eTGCemaNeigeLayers = NULL,
                             GthrCemaNeigeLayers = NULL, GlocmaxCemaNeigeLayers = NULL,
@@ -16,7 +16,7 @@ CreateIniStates <- function(FUN_MOD, InputsModel, IsHyst = FALSE,
   
   ## check FUN_MOD
   BOOL <- FALSE
-  if (identical(FUN_MOD, RunModel_GR4H)) {
+  if (identical(FUN_MOD, RunModel_GR4H) | identical(FUN_MOD, RunModel_GR5H)) {
     ObjectClass <- c(ObjectClass, "GR", "hourly")
     BOOL <- TRUE
   }
@@ -37,7 +37,7 @@ CreateIniStates <- function(FUN_MOD, InputsModel, IsHyst = FALSE,
     ObjectClass <- c(ObjectClass, "CemaNeige", "daily")
     BOOL <- TRUE
   }
-  if (identical(FUN_MOD, RunModel_CemaNeigeGR4H)) {
+  if (identical(FUN_MOD, RunModel_CemaNeigeGR4H) | identical(FUN_MOD, RunModel_CemaNeigeGR5H)) {
     ObjectClass <- c(ObjectClass, "GR", "CemaNeige", "hourly")
     BOOL <- TRUE
   }
@@ -52,6 +52,9 @@ CreateIniStates <- function(FUN_MOD, InputsModel, IsHyst = FALSE,
   }
   if (!"CemaNeige" %in% ObjectClass & IsHyst) {
     stop("'IsHyst' cannot be TRUE if CemaNeige is not used in 'FUN_MOD'")
+  }
+  if (!(identical(FUN_MOD, RunModel_GR5H) | identical(FUN_MOD, RunModel_CemaNeigeGR5H)) & IsIntStore) {
+    stop("'IsIntStore' cannot be TRUE if GR5H is not used in 'FUN_MOD'")
   }
   
   ## check InputsModel
@@ -103,6 +106,12 @@ CreateIniStates <- function(FUN_MOD, InputsModel, IsHyst = FALSE,
       warning(sprintf("'%s' does not require 'UH1'. Values set to NA", nameFUN_MOD))
     }
     UH1 <- rep(Inf, UH1n)
+  }  
+  if ((!identical(FUN_MOD, RunModel_GR5H) | identical(FUN_MOD, RunModel_CemaNeigeGR5H)) & !is.null(IntStore)) {
+    if (verbose) {
+      warning(sprintf("'%s' does not require 'IntStore'. Values set to NA", nameFUN_MOD))
+    }
+    IntStore <- Inf
   }
  
   if ("CemaNeige" %in% ObjectClass & ! "GR" %in% ObjectClass) {
@@ -124,6 +133,12 @@ CreateIniStates <- function(FUN_MOD, InputsModel, IsHyst = FALSE,
       }
     }
     ExpStore <- Inf
+    if (!is.null(IntStore)) {
+      if (verbose) {
+        warning(sprintf("'%s' does not require 'IntStore'. Values set to NA", nameFUN_MOD))
+      }
+    }
+    IntStore <- Inf
     if (!is.null(UH1)) {
       if (verbose) {
         warning(sprintf("'%s' does not require 'UH1'. Values set to NA", nameFUN_MOD))
@@ -136,6 +151,9 @@ CreateIniStates <- function(FUN_MOD, InputsModel, IsHyst = FALSE,
       }
     }
     UH2 <- rep(Inf, UH2n)
+  }
+  if(IsIntStore & is.null(IntStore)) {
+      stop(sprintf("'%s' need values for 'IntStore'", nameFUN_MOD))
   }
   if("CemaNeige" %in% ObjectClass & !IsHyst &
      (is.null(GCemaNeigeLayers) | is.null(eTGCemaNeigeLayers))) {
@@ -178,6 +196,9 @@ CreateIniStates <- function(FUN_MOD, InputsModel, IsHyst = FALSE,
   if (is.null(ExpStore)) {
     ExpStore <- Inf 
   }
+  if (is.null(IntStore)) {
+    IntStore <- Inf 
+  }
   if (is.null(UH1)) {
     if ("hourly"  %in% ObjectClass) {
       k <- 24
@@ -214,10 +235,10 @@ CreateIniStates <- function(FUN_MOD, InputsModel, IsHyst = FALSE,
   }  
   
   # check negative values
-  if (any(ProdStore < 0) | any(RoutStore < 0) |
+  if (any(ProdStore < 0) | any(RoutStore < 0) | any(IntStore < 0) |
       any(UH1 < 0) | any(UH2 < 0) |
       any(GCemaNeigeLayers < 0)) {
-    stop("Negative values are not allowed for any of 'ProdStore', 'RoutStore', 'UH1', 'UH2', 'GCemaNeigeLayers'")
+    stop("Negative values are not allowed for any of 'ProdStore', 'RoutStore', 'IntStore', 'UH1', 'UH2', 'GCemaNeigeLayers'")
   }
   
   
@@ -230,6 +251,9 @@ CreateIniStates <- function(FUN_MOD, InputsModel, IsHyst = FALSE,
   }
   if (!is.numeric(ExpStore) || length(ExpStore) != 1L) {
     stop("'ExpStore' must be numeric of length one")
+  }
+  if (!is.numeric(IntStore) || length(IntStore) != 1L) {
+    stop("'IntStore' must be numeric of length one")
   }
   if ( "hourly" %in% ObjectClass & (!is.numeric(UH1) || length(UH1) != UH1n * 24)) {
     stop(sprintf("'UH1' must be numeric of length 480 (%i * 24)", UH1n))
@@ -260,7 +284,7 @@ CreateIniStates <- function(FUN_MOD, InputsModel, IsHyst = FALSE,
   
 
   ## format output
-  IniStates <- list(Store = list(Prod = ProdStore, Rout = RoutStore, Exp = ExpStore),
+  IniStates <- list(Store = list(Prod = ProdStore, Rout = RoutStore, Exp = ExpStore, Int = IntStore),
                     UH = list(UH1 = UH1, UH2 = UH2),
                     CemaNeigeLayers = list(G = GCemaNeigeLayers, eTG = eTGCemaNeigeLayers,
                                            Gthr = GthrCemaNeigeLayers, Glocmax = GlocmaxCemaNeigeLayers))
@@ -271,6 +295,9 @@ CreateIniStates <- function(FUN_MOD, InputsModel, IsHyst = FALSE,
   class(IniStatesNA) <- c("IniStates", ObjectClass)
   if(IsHyst) {
     class(IniStatesNA) <- c(class(IniStatesNA), "hysteresis")
+  }
+  if(IsIntStore) {
+    class(IniStatesNA) <- c(class(IniStatesNA), "interception")
   }
   
   return(IniStatesNA)

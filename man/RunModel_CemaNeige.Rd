@@ -31,20 +31,20 @@ CemaNeige X4 \tab (optional) percentage (between 0 and 1) of annual snowfall def
 \value{
 [list] list containing the function outputs organised as follows:                                         
          \tabular{ll}{
-         \emph{$DatesR}                                    \tab [POSIXlt] series of dates                                    \cr
-         \emph{$CemaNeigeLayers}                           \tab [list] list of CemaNeige outputs (1 list per layer)          \cr
-         \emph{$CemaNeigeLayers[[iLayer]]$Pliq         }   \tab [numeric] series of liquid precip. [mm/d]                    \cr
-         \emph{$CemaNeigeLayers[[iLayer]]$Psol         }   \tab [numeric] series of solid precip. [mm/d]                     \cr
-         \emph{$CemaNeigeLayers[[iLayer]]$SnowPack     }   \tab [numeric] series of snow pack [mm]                           \cr
-         \emph{$CemaNeigeLayers[[iLayer]]$ThermalState }   \tab [numeric] series of snow pack thermal state [°C]             \cr
-         \emph{$CemaNeigeLayers[[iLayer]]$Gratio       }   \tab [numeric] series of Gratio [0-1]                             \cr
-         \emph{$CemaNeigeLayers[[iLayer]]$PotMelt      }   \tab [numeric] series of potential snow melt [mm/d]               \cr
-         \emph{$CemaNeigeLayers[[iLayer]]$Melt         }   \tab [numeric] series of actual snow melt [mm/d]                  \cr
-         \emph{$CemaNeigeLayers[[iLayer]]$PliqAndMelt  }   \tab [numeric] series of liquid precip. + actual snow melt [mm/d] \cr
-         \emph{$CemaNeigeLayers[[iLayer]]$Temp         }   \tab [numeric] series of air temperature [°C]                     \cr
-         \emph{$CemaNeigeLayers[[iLayer]]$Gthreshold   }   \tab [numeric] series of melt threshold [mm]                      \cr
-         \emph{$CemaNeigeLayers[[iLayer]]$Glocalmax    }   \tab [numeric] series of local melt threshold for hysteresis [mm] \cr
-         \emph{$StateEnd}                                  \tab [numeric] states at the end of the run: CemaNeige states [mm & °C], \cr\tab see \code{\link{CreateIniStates}} for more details \cr
+         \emph{$DatesR}                                 \tab [POSIXlt] series of dates                                            \cr
+         \emph{$CemaNeigeLayers}                        \tab [list] list of CemaNeige outputs (1 list per layer)                  \cr
+         \emph{$CemaNeigeLayers[[iLayer]]$Pliq        } \tab [numeric] series of liquid precip. [mm/time step]                    \cr
+         \emph{$CemaNeigeLayers[[iLayer]]$Psol        } \tab [numeric] series of solid precip. [mm/time step]                     \cr
+         \emph{$CemaNeigeLayers[[iLayer]]$SnowPack    } \tab [numeric] series of snow pack [mm]                                   \cr
+         \emph{$CemaNeigeLayers[[iLayer]]$ThermalState} \tab [numeric] series of snow pack thermal state [°C]                     \cr
+         \emph{$CemaNeigeLayers[[iLayer]]$Gratio      } \tab [numeric] series of Gratio [0-1]                                     \cr
+         \emph{$CemaNeigeLayers[[iLayer]]$PotMelt     } \tab [numeric] series of potential snow melt [mm/time step]               \cr
+         \emph{$CemaNeigeLayers[[iLayer]]$Melt        } \tab [numeric] series of actual snow melt [mm/time step]                  \cr
+         \emph{$CemaNeigeLayers[[iLayer]]$PliqAndMelt } \tab [numeric] series of liquid precip. + actual snow melt [mm/time step] \cr
+         \emph{$CemaNeigeLayers[[iLayer]]$Temp        } \tab [numeric] series of air temperature [°C]                             \cr
+         \emph{$CemaNeigeLayers[[iLayer]]$Gthreshold  } \tab [numeric] series of melt threshold [mm]                              \cr
+         \emph{$CemaNeigeLayers[[iLayer]]$Glocalmax   } \tab [numeric] series of local melt threshold for hysteresis [mm]         \cr
+         \emph{$StateEnd}                               \tab [numeric] states at the end of the run: CemaNeige states [mm & °C],  \cr\tab see \code{\link{CreateIniStates}} for more details \cr
          }                                                                                                     
          (refer to the provided references or to the package source code for further details on these model outputs)
 }
@@ -111,20 +111,20 @@ plot(OutputsModel)
 
 
 \author{
-Laurent Coron, Olivier Delaigue
+Laurent Coron, Audrey Valéry, Vazken Andréassian, Olivier Delaigue, Guillaume Thirel
 }
 
 
 \references{
 Riboust, P., G. Thirel, N. Le Moine and P. Ribstein (2019), 
       Revisiting a simple degree-day model for integrating satellite data: implementation of SWE-SCA hystereses.
-      Journal of Hydrology and Hydromechanics, doi:10.2478/johh-2018-0004, 67, 1, 70–81. \cr
+      Journal of Hydrology and Hydromechanics, doi: 10.2478/johh-2018-0004, 67, 1, 70–81. \cr
 Valéry, A., V. Andréassian and C. Perrin (2014), 
       "As simple as possible but not simpler": what is useful in a temperature-based snow-accounting routine? 
-      Part 1 - Comparison of six snow accounting routines on 380 catchments, Journal of Hydrology, doi:10.1016/j.jhydrol.2014.04.059. \cr
+      Part 1 - Comparison of six snow accounting routines on 380 catchments, Journal of Hydrology, doi: 10.1016/j.jhydrol.2014.04.059. \cr
 Valéry, A., V. Andréassian and C. Perrin (2014), 
       "As simple as possible but not simpler": What is useful in a temperature-based snow-accounting routine? 
-      Part 2 - Sensitivity analysis of the Cemaneige snow accounting routine on 380 catchments, Journal of Hydrology, doi:10.1016/j.jhydrol.2014.04.058.
+      Part 2 - Sensitivity analysis of the Cemaneige snow accounting routine on 380 catchments, Journal of Hydrology, doi: 10.1016/j.jhydrol.2014.04.058.
 }
 
 

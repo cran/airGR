@@ -54,6 +54,10 @@ Function which performs a single run for the GR2M monthly lumped model over the 
 \details{
 For further details on the model, see the references section.
 For further details on the argument structures and initialisation options, see \code{\link{CreateRunOptions}}.
+\cr
+\cr
+\if{html}{\figure{diagramGR2M-EN.png}{options: width="60\%" alt="Figure: diagramGR4J-EN.png"}}
+\if{latex}{\figure{diagramGR2M-EN.pdf}{options: width=6cm}}
 }
 
 
@@ -100,7 +104,7 @@ OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsMode
 
 
 \author{
-Laurent Coron, Claude Michel, Safouane Mouelhi
+Laurent Coron, Claude Michel, Safouane Mouelhi, Olivier Delaigue, Guillaume Thirel
 }
 
 
@@ -111,7 +115,7 @@ Mouelhi S. (2003).
 \cr\cr
 Mouelhi, S., C. Michel, C. Perrin and V. Andréassian (2006). 
   Stepwise development of a two-parameter monthly water balance model. 
-  Journal of Hydrology, 318(1-4), 200-214. doi:10.1016/j.jhydrol.2005.06.014.
+  Journal of Hydrology, 318(1-4), 200-214. doi: 10.1016/j.jhydrol.2005.06.014.
 }
 
 

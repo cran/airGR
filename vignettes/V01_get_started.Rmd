@@ -10,7 +10,7 @@ vignette: >
 
 # Introduction
 
-**airGR** is a package that brings into the [**R software**](https://cran.r-project.org/) the hydrological modelling tools used and developed at the [Catchment Hydrology Research Group](https://webgr.irstea.fr/en/) at [Irstea (France)](http://www.irstea.fr/en/), including the [**GR rainfall-runoff models**](https://webgr.irstea.fr/en/modeles/) and a snowmelt and accumulation model, [**CemaNeige**](https://webgr.irstea.fr/en/modeles/modele-de-neige/). Each model core is coded in **Fortran** to ensure low computational time. The other package functions (i.e. mainly the calibration algorithm and the efficiency criteria calculation) are coded in **R**. 
+**airGR** is a package that brings into the [**R software**](https://cran.r-project.org/) the hydrological modelling tools used and developed at the [Catchment Hydrology Research Group](https://webgr.inrae.fr/en/) at [INRAE (France)](https://webgr.inrae.fr/en/), including the [**GR rainfall-runoff models**](https://webgr.inrae.fr/en/modeles/) and a snowmelt and accumulation model, [**CemaNeige**](https://webgr.inrae.fr/en/models/snow-model/). Each model core is coded in **Fortran** to ensure low computational time. The other package functions (i.e. mainly the calibration algorithm and the efficiency criteria calculation) are coded in **R**. 
 
 
 The **airGR** package has been designed to fulfill two major requirements: to facilitate the use by non-expert users and to allow flexibility regarding the addition of external criteria, models or calibration algorithms. The names of the functions and their arguments were chosen to this end. **airGR** also contains basics plotting facilities. 
@@ -22,17 +22,20 @@ Six hydrological models and one snowmelt and accumulation model are implemented 
 The models can be called within **airGR** using the following functions: 
 
   * `RunModel_GR4H()`: four-parameter hourly lumped hydrological model [@mathevet_quels_2005] 
+  * `RunModel_GR5H()`: five-parameter hourly lumped hydrological model [@ficchi_adaptive_2017; @ficchi_hydrological_2019] 
   * `RunModel_GR4J()`: four-parameter daily lumped hydrological model [@perrin_improvement_2003] 
   * `RunModel_GR5J()`: five-parameter daily lumped hydrological model [@le_moine_bassin_2008] 
   * `RunModel_GR6J()`: six-parameter daily lumped hydrological model [@pushpalatha_downward_2011] 
   * `RunModel_GR2M()`: two-parameter monthly lumped hydrological model [@mouelhi_vers_2003; @mouelhi_stepwise_2006] 
   * `RunModel_GR1A()`: one-parameter yearly lumped hydrological model [@mouelhi_vers_2003; @mouelhi_linking_2006] 
   * `RunModel_CemaNeige()`: two-parameter degree-day snowmelt and accumulation model [@valery_as_2014] 
+  * `RunModel_CemaNeigeGR4H()`: combined use of **GR4H** and **CemaNeige** 
+  * `RunModel_CemaNeigeGR5H()`: combined use of **GR5H** and **CemaNeige** 
   * `RunModel_CemaNeigeGR4J()`: combined use of **GR4J** and **CemaNeige** 
   * `RunModel_CemaNeigeGR5J()`: combined use of **GR5J** and **CemaNeige** 
   * `RunModel_CemaNeigeGR6J()`: combined use of **GR6J** and **CemaNeige** 
 
-The [**GRP**](https://webgr.irstea.fr/en/modeles/modele-de-prevision-grp/) forecasting model and the [**Otamin**](https://webgr.irstea.fr/en/modeles/otamin/) predictive uncertainty tool are not available in **airGR**.
+The [**GRP**](https://webgr.inrae.fr/en/models/hydrological-forecasting-model-grp/) forecasting model and the [**Otamin**](https://webgr.inrae.fr/en/software/otamin/) predictive uncertainty tool are not available in **airGR**.
 
 In this vignette, we show how to prepare and run a calibration and a simulation with airGR hydrological models.
 

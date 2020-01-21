@@ -71,7 +71,7 @@ Laurent Coron, Audrey Valéry, Olivier Delaigue, Pierre Brigode, Guillaume Thire
 \references{
 Turcotte, R., L.-G. Fortin, V. Fortin, J.-P. Fortin and J.-P. Villeneuve (2007). 
   Operational analysis of the spatial distribution and the temporal evolution of the snowpack water equivalent in southern Quebec, Canada,
-  Nordic Hydrology, 38(3), 211. doi:10.2166/nh.2007.009.
+  Nordic Hydrology, 38(3), 211. doi: 10.2166/nh.2007.009.
 \cr\cr
 Valéry, A. (2010),
   Modélisation précipitations-débit sous influence nivale ? : Elaboration d'un module neige et évaluation sur 380 bassins versants. 

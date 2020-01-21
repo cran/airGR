@@ -32,7 +32,7 @@ CreateInputsCrit(FUN_CRIT, InputsModel, RunOptions,
 
 \item{BoolCrit}{(optional) [boolean (atomic or list)] boolean (the same length as \code{Obs}) giving the time steps to consider in the computation (all time steps are considered by default)}
 
-\item{transfo}{(optional) [character (atomic or list)] name of the transformation (e.g. \code{""}, \code{"sqrt"}, \code{"log"}, \code{"inv"}, \code{"sort"}, \code{"boxcox"} or a numeric value for power transformation (see details))}
+\item{transfo}{(optional) [character (atomic or list)] name of the transformation applied to the variables (e.g. \code{""}, \code{"sqrt"}, \code{"log"}, \code{"inv"}, \code{"sort"}, \code{"boxcox"} or a numeric value for power transformation (see details))}
 
 \item{Weights}{(optional) [numeric (atomic or list)] vector of weights necessary to calculate a composite criterion (the same length as \code{FUN_CRIT}) giving the weights to use for elements of \code{FUN_CRIT} [-]. See details}
 
@@ -72,12 +72,29 @@ Creation of the \code{InputsCrit} object required to the \code{ErrorCrit_*} func
 
 \details{
 Users wanting to use \code{FUN_CRIT} functions that are not included in the package must create their own InputsCrit object accordingly. \cr \cr
-The syntax of the power transformation allows a numeric or a string of characters. For example for a squared transformation, the following can be used: \code{transfo = 2}, \code{transfo = "2"} or \code{transfo = "^2"}. Negative values are allowed. Fraction values are not allowed (e.g., \code{"-1/2"} must instead be written \code{"-0.5"}).
-\cr \cr
-In order to make sure that KGE and KGE2 remain dimensionless and not impacted by zero values, the Box-Cox transformation (\code{transfo = "boxcox"}) uses the formulation given in Equation 10 of Santos et al. (2018). Lambda is set to 0.25 accordingly. 
-\cr \cr
-The epsilon value is useful when \code{"log"} or \code{"inv"} transformations are used (to avoid calculation of the inverse or of the logarithm of zero). The impact of this value and a recommendation about the epsilon value to use (usually one hundredth of average observation) are discussed in Pushpalatha et al. (2012) for NSE and in Santos et al. (2018) for KGE and KGE'. \cr \cr
+
+## ---- Transformations
+
+Transformations are simple functions applied to the observed and simulated variables used in order to change their distribution. Transformations are often used in hydrology for modifying the weight put on errors made for high flows or low flows. The following transformations are available: \cr \cr
+\itemize{
+  \item \code{""}: no transformation is used (default case)
+  \item \code{"sqrt"}: squared root transformation
+  \item \code{"log"}: logarithmic transformation (see below regarding the specific case of KGE or KGE2)
+  \item \code{"inv"}: inverse transformation 
+  \item \code{"sort"}: sort transformation (the simulated and observed variables are sorted from lowest to highest)
+  \item \code{"boxcox"}: Box-Cox transformation (see below for details)
+  \item numeric: power transformation (see below for details)
+}
 We do not advise computing KGE or KGE' with log-transformation as it might be wrongly influenced by discharge values close to 0 or 1 and the criterion value is dependent on the discharge unit. See Santos et al. (2018) for more details and alternative solutions (see the references list below). \cr \cr
+In order to make sure that KGE and KGE2 remain dimensionless and are not impacted by zero values, the Box-Cox transformation (\code{transfo = "boxcox"}) uses the formulation given in Equation 10 of Santos et al. (2018). Lambda is set to 0.25 accordingly. \cr \cr
+The syntax of the power transformation allows a numeric or a string of characters. For example for a squared transformation, the following can be used: \code{transfo = 2}, \code{transfo = "2"} or \code{transfo = "^2"}. Negative values are allowed. Fraction values are not allowed (e.g., \code{"-1/2"} must instead be written \code{"-0.5"}).\cr \cr
+
+## ---- The epsilon value
+
+The epsilon value is useful when \code{"log"} or \code{"inv"} transformations are used (to avoid calculation of the inverse or of the logarithm of zero). If an epsilon value is provided, then it is added to the observed and simulated variable time series at each time step and before the application of a transformation. The epsilon value has no effect when the \code{"boxcox"} transformation is used. The impact of this value and a recommendation about the epsilon value to use (usually one hundredth of average observation) are discussed in Pushpalatha et al. (2012) for NSE and in Santos et al. (2018) for KGE and KGE'. \cr \cr
+
+## ---- Single, multiple or composite criteria calculation
+
 Users can set the following arguments as atomic or list: \code{FUN_CRIT}, \code{Obs}, \code{VarObs}, \code{BoolCrit}, \code{transfo}, \code{Weights}. If the list format is chosen, all the lists must have the same length. \cr
 Calculation of a single criterion (e.g. NSE computed on discharge) is prepared by providing to \code{CreateInputsCrit} arguments atomics only. \cr
 Calculation of multiple criteria (e.g. NSE computed on discharge and RMSE computed on discharge) is prepared by providing to \code{CreateInputsCrit} arguments lists except for \code{Weights} that must be set as \code{NULL}. \cr
@@ -146,11 +163,11 @@ Olivier Delaigue, Laurent Coron, Guillaume Thirel
 \references{
 Pushpalatha, R., Perrin, C., Le Moine, N. and Andréassian, V. (2012). 
   A review of efficiency criteria suitable for evaluating low-flow simulations. 
-  Journal of Hydrology, 420-421: 171-182. doi:10.1016/j.jhydrol.2011.11.055.
+  Journal of Hydrology, 420-421: 171-182. doi: 10.1016/j.jhydrol.2011.11.055.
 \cr\cr
 Santos, L., Thirel, G. and Perrin, C. (2018). 
   Technical note: Pitfalls in using log-transformed flows within the KGE criterion. 
-  Hydrol. Earth Syst. Sci., 22, 4583-4591. doi:10.5194/hess-22-4583-2018.
+  Hydrol. Earth Syst. Sci., 22, 4583-4591. doi: 10.5194/hess-22-4583-2018.
 }
 
 

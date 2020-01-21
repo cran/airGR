@@ -31,21 +31,25 @@ RunModel_GR4H(InputsModel, RunOptions, Param)
 \value{
 [list] list containing the function outputs organised as follows:                                         
   \tabular{ll}{                                                                                         
-    \emph{$DatesR  } \tab [POSIXlt] series of dates                                             \cr
-    \emph{$PotEvap } \tab [numeric] series of input potential evapotranspiration [mm/h]         \cr
-    \emph{$Precip  } \tab [numeric] series of input total precipitation [mm/h]                  \cr
-    \emph{$Prod    } \tab [numeric] series of production store level [mm]                       \cr
-    \emph{$AE      } \tab [numeric] series of actual evapotranspiration [mm/h]                  \cr
-    \emph{$Perc    } \tab [numeric] series of percolation (PERC) [mm/h]                         \cr
-    \emph{$PR      } \tab [numeric] series of PR=Pn-Ps+Perc [mm/h]                              \cr
-    \emph{$Q9      } \tab [numeric] series of UH1 outflow (Q9) [mm/h]                           \cr
-    \emph{$Q1      } \tab [numeric] series of UH2 outflow (Q1) [mm/h]                           \cr
-    \emph{$Rout    } \tab [numeric] series of routing store level [mm]                          \cr
-    \emph{$Exch    } \tab [numeric] series of potential semi-exchange between catchments [mm/h] \cr
-    \emph{$AExch   } \tab [numeric] series of actual exchange between catchments (1+2) [mm/h]   \cr
-    \emph{$QR      } \tab [numeric] series of routing store outflow (QR) [mm/h]                 \cr
-    \emph{$QD      } \tab [numeric] series of direct flow from UH2 after exchange (QD) [mm/h]   \cr
-    \emph{$Qsim    } \tab [numeric] series of simulated discharge [mm/h]                        \cr
+    \emph{$DatesR  } \tab [POSIXlt] series of dates                                                 \cr
+    \emph{$PotEvap } \tab [numeric] series of input potential evapotranspiration [mm/h]             \cr
+    \emph{$Precip  } \tab [numeric] series of input total precipitation [mm/h]                      \cr
+    \emph{$Prod    } \tab [numeric] series of production store level [mm]                           \cr
+    \emph{$Pn      } \tab [numeric] series of net rainfall [mm/h]                                   \cr
+    \emph{$Ps      } \tab [numeric] series of the part of Pn filling the production store [mm/h]    \cr
+    \emph{$AE      } \tab [numeric] series of actual evapotranspiration [mm/h]                      \cr
+    \emph{$Perc    } \tab [numeric] series of percolation (PERC) [mm/h]                             \cr
+    \emph{$PR      } \tab [numeric] series of PR=Pn-Ps+Perc [mm/h]                                  \cr
+    \emph{$Q9      } \tab [numeric] series of UH1 outflow (Q9) [mm/h]                               \cr
+    \emph{$Q1      } \tab [numeric] series of UH2 outflow (Q1) [mm/h]                               \cr
+    \emph{$Rout    } \tab [numeric] series of routing store level [mm]                              \cr
+    \emph{$Exch    } \tab [numeric] series of potential semi-exchange between catchments [mm/h]     \cr
+    \emph{$AExch1  } \tab [numeric] series of actual exchange between catchments for branch 1 [mm/h]\cr
+    \emph{$AExch2  } \tab [numeric] series of actual exchange between catchments for branch 2 [mm/h]\cr
+    \emph{$AExch   } \tab [numeric] series of actual exchange between catchments (1+2) [mm/h]       \cr
+    \emph{$QR      } \tab [numeric] series of routing store outflow (QR) [mm/h]                     \cr
+    \emph{$QD      } \tab [numeric] series of direct flow from UH2 after exchange (QD) [mm/h]       \cr
+    \emph{$Qsim    } \tab [numeric] series of simulated discharge [mm/h]                            \cr
     \emph{$StateEnd} \tab [numeric] states at the end of the run (res. levels, UH1 levels, UH2 levels) [mm], see \code{\link{CreateIniStates}} for more details \cr
   }                                                                                                     
   (refer to the provided references or to the package source code for further details on these model outputs)
@@ -96,7 +100,7 @@ OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsMode
 
 
 \author{
-Laurent Coron, Charles Perrin, Thibaut Mathevet
+Laurent Coron, Charles Perrin, Thibaut Mathevet, Olivier Delaigue, Guillaume Thirel
 }
 
 

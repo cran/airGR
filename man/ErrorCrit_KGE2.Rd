@@ -107,11 +107,11 @@ Laurent Coron, Olivier Delaigue
 \references{
 Gupta, H. V., Kling, H., Yilmaz, K. K. and Martinez, G. F. (2009). 
   Decomposition of the mean squared error and NSE performance criteria: Implications for improving hydrological modelling. 
-  Journal of Hydrology, 377(1-2), 80-91. doi:10.1016/j.jhydrol.2009.08.003.
+  Journal of Hydrology, 377(1-2), 80-91. doi: 10.1016/j.jhydrol.2009.08.003.
 \cr\cr
 Kling, H., Fuchs, M. and Paulin, M. (2012). 
   Runoff conditions in the upper Danube basin under an ensemble of climate change scenarios. 
-  Journal of Hydrology, 424-425, 264-277. doi:10.1016/j.jhydrol.2012.01.011.
+  Journal of Hydrology, 424-425, 264-277. doi: 10.1016/j.jhydrol.2012.01.011.
 }
 
 

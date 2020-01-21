@@ -47,7 +47,7 @@ CreateInputsModel(FUN_MOD, DatesR, Precip, PrecipScale = TRUE, PotEvap = NULL,
   \tabular{ll}{
     \emph{$DatesR              } \tab [POSIXlt] vector of dates \cr
     \emph{$Precip              } \tab [numeric] time series of total precipitation (catchment average) [mm/time step] \cr
-    \emph{$PotEvap             } \tab [numeric] time series of potential evapotranspiration (catchment average) [mm/time step], \cr\tab defined if FUN_MOD includes GR4H, GR4J, GR5J, GR6J, GR2M or GR1A \cr \cr
+    \emph{$PotEvap             } \tab [numeric] time series of potential evapotranspiration (catchment average) [mm/time step], \cr\tab defined if FUN_MOD includes GR4H, GR5H, GR4J, GR5J, GR6J, GR2M or GR1A \cr \cr
     \emph{$LayerPrecip         } \tab [list] list of time series of precipitation (layer average) [mm/time step], \cr\tab defined if \code{FUN_MOD} includes CemaNeige \cr \cr
     \emph{$LayerTempMean       } \tab [list] list of time series of mean air temperature (layer average) [°C], \cr\tab defined if \code{FUN_MOD} includes CemaNeige \cr \cr
     \emph{$LayerFracSolidPrecip} \tab [list] list of time series of solid precipitation fraction (layer average) [-], \cr\tab defined if \code{FUN_MOD} includes CemaNeige \cr \cr

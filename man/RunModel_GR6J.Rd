@@ -19,7 +19,7 @@ RunModel_GR6J(InputsModel, RunOptions, Param)
 \item{RunOptions}{[object of class \emph{RunOptions}] see \code{\link{CreateRunOptions}} for details}
 
 \item{Param}{[numeric] vector of 6 parameters
-  \tabular{ll}{                                                            
+  \tabular{ll}{
     GR6J X1 \tab production store capacity [mm]                  \cr
     GR6J X2 \tab intercatchment exchange coefficient [mm/d]      \cr
     GR6J X3 \tab routing store capacity [mm]                     \cr
@@ -37,7 +37,7 @@ RunModel_GR6J(InputsModel, RunOptions, Param)
     \emph{$PotEvap } \tab [numeric] series of input potential evapotranspiration [mm/d]              \cr
     \emph{$Precip  } \tab [numeric] series of input total precipitation [mm/d]                       \cr
     \emph{$Prod    } \tab [numeric] series of production store level [mm]                            \cr
-    \emph{$Pn      } \tab [numeric] series of net rainfall [mm/d]                         			     \cr
+    \emph{$Pn      } \tab [numeric] series of net rainfall [mm/d]                                    \cr
     \emph{$Ps      } \tab [numeric] series of the part of Pn filling the production store [mm/d]     \cr
     \emph{$AE      } \tab [numeric] series of actual evapotranspiration [mm/d]                       \cr
     \emph{$Perc    } \tab [numeric] series of percolation (PERC) [mm/d]                              \cr
@@ -109,14 +109,14 @@ OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsMode
 
 
 \author{
-Laurent Coron, Claude Michel, Charles Perrin, Raji Pushpalatha, Nicolas Le Moine
+Laurent Coron, Claude Michel, Charles Perrin, Raji Pushpalatha, Nicolas Le Moine, Olivier Delaigue, Guillaume Thirel
 }
 
 
 \references{
 Pushpalatha, R., C. Perrin, N. Le Moine, T. Mathevet and V. Andréassian (2011). 
   A downward structural sensitivity analysis of hydrological models to improve low-flow simulation. 
-  Journal of Hydrology, 411(1-2), 66-76. doi:10.1016/j.jhydrol.2011.09.034.
+  Journal of Hydrology, 411(1-2), 66-76. doi: 10.1016/j.jhydrol.2011.09.034.
 }
 
 

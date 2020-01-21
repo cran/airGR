@@ -1,4 +1,4 @@
-## ---- include=FALSE, fig.keep='none', results='hide'---------------------
+## ---- include=FALSE, fig.keep='none', results='hide'--------------------------
 library(airGR)
 library(coda)
 library(FME)
@@ -8,14 +8,14 @@ library(dplyr)
 set.seed(123)
 load(system.file("vignettesData/vignetteParamMCMC.rda", package = "airGR"))
 
-## ---- echo=TRUE, eval=FALSE, eval=FALSE----------------------------------
+## ---- echo=TRUE, eval=FALSE, eval=FALSE---------------------------------------
 #  example("Calibration_Michel")
 
-## ---- echo=TRUE, eval=FALSE----------------------------------------------
+## ---- echo=TRUE, eval=FALSE---------------------------------------------------
 #  Likelihood <- sum((ObsY - ModY)^2, na.rm = TRUE)^(-sum(!is.na(ObsY)) / 2)
 #  LogLike <- -2 * log(Likelihood)
 
-## ---- results='hide', eval=FALSE-----------------------------------------
+## ---- results='hide', eval=FALSE----------------------------------------------
 #  LogLikeGR4J <- function(ParamOptim) {
 #    ## Transformation to real space
 #    RawParamOptim <- airGR::TransfoParam_GR4J(ParamIn = ParamOptim,
@@ -30,14 +30,14 @@ load(system.file("vignettesData/vignetteParamMCMC.rda", package = "airGR"))
 #    LogLike <- sum(!is.na(ObsY)) * log(sum((ObsY - ModY)^2, na.rm = TRUE))
 #  }
 
-## ---- results='hide', eval=FALSE-----------------------------------------
+## ---- results='hide', eval=FALSE----------------------------------------------
 #  optPORT <- stats::nlminb(start = c(4.1, 3.9, -0.9, -8.7),
 #                           objective = LogLikeGR4J,
 #                           lower = rep(-9.9, times = 4), upper = rep(9.9, times = 4),
 #                           control = list(trace = 1))
 #  iniParPORT <- optPORT$par
 
-## ---- results='hide', eval=FALSE-----------------------------------------
+## ---- results='hide', eval=FALSE----------------------------------------------
 #  iniParPORT <- data.frame(Chain1 = iniParPORT, Chain2 = iniParPORT, Chain3 = iniParPORT,
 #                             row.names = paste0("X", 1:4))
 #  iniParPORT <- sweep(iniParPORT, MARGIN = 2, STATS = c(1, 0.9, 1.1), FUN = "*")
@@ -57,23 +57,23 @@ load(system.file("vignettesData/vignetteParamMCMC.rda", package = "airGR"))
 #                 ntrydr       = 2)   ## Delayed Rejection
 #  })
 
-## ---- results='hide', eval=FALSE-----------------------------------------
+## ---- results='hide', eval=FALSE----------------------------------------------
 #  multDRAM <- coda::as.mcmc.list(lapply(mcmcDRAM, FUN = function(x) {
 #    coda::as.mcmc(airGR::TransfoParam_GR4J(as.matrix(x$pars), Direction = "TR"))
 #    }))
 #  gelRub <- coda::gelman.diag(multDRAM, autoburnin = TRUE)$mpsrf
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 gelRub
 
-## ---- fig.width=6, fig.height=9, warning=FALSE---------------------------
+## ---- fig.width=6, fig.height=9, warning=FALSE--------------------------------
 parDRAM <- ggmcmc::ggs(multDRAM) ## to convert objet for using by all ggs_* graphical functions
 ggmcmc::ggs_traceplot(parDRAM)
 
-## ---- fig.width=6, fig.height=9, warning=FALSE---------------------------
+## ---- fig.width=6, fig.height=9, warning=FALSE--------------------------------
 burnParDRAM <- dplyr::filter(parDRAM, Iteration > 1000) # to keep only the second half of the series
 ggmcmc::ggs_density(burnParDRAM)
 
-## ---- fig.width=6, fig.height=6, results='hide'--------------------------
+## ---- fig.width=6, fig.height=6, results='hide'-------------------------------
 ggmcmc::ggs_pairs(burnParDRAM, lower = list(continuous = "density"))
 

@@ -30,9 +30,14 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
     BOOL_Pobs <- TRUE
   }
   
-  BOOL_Eobs <- FALSE
+  BOOL_EPobs <- FALSE
   if ("PotEvap" %in% names(OutputsModel)) {
-    BOOL_Eobs <- TRUE
+    BOOL_EPobs <- TRUE
+  }
+  
+  BOOL_EAobs <- FALSE
+  if ("AE" %in% names(OutputsModel)) {
+    BOOL_EAobs <- TRUE
   }
   
   BOOL_Qsim <- FALSE
@@ -72,11 +77,12 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
   ## check 'which'
   whichNeedQobs  <- c("Error", "CorQQ")
   whichDashboard <- c("all", "synth", "ts", "perf")
-  whichAll   <- c("Precip", "PotEvap", "Temp", "SnowPack", "Flows", "Error", "Regime", "CumFreq", "CorQQ")
-  whichSynth <- c("Precip"           , "Temp", "SnowPack", "Flows"         , "Regime", "CumFreq", "CorQQ")
-  whichTS    <- c("Precip", "PotEvap", "Temp", "SnowPack", "Flows"                                       )
-  whichPerf  <- c(                                                  "Error", "Regime", "CumFreq", "CorQQ")
-  whichCN    <- c(                     "Temp", "SnowPack"                                                )
+  whichAll   <- c("Precip", "PotEvap", "ActuEvap", "Temp", "SnowPack", "Flows", "Error", "Regime", "CumFreq", "CorQQ")
+  whichSynth <- c("Precip"           ,             "Temp", "SnowPack", "Flows"         , "Regime", "CumFreq", "CorQQ")
+  whichTS    <- c("Precip", "PotEvap",             "Temp", "SnowPack", "Flows"                                       )
+  whichEvap  <- c(          "PotEvap", "ActuEvap"                                                                    )
+  whichPerf  <- c(                                                              "Error", "Regime", "CumFreq", "CorQQ")
+  whichCN    <- c(                                 "Temp", "SnowPack"                                                )
   warnMsgWhich   <- "'which' must be a vector of character"
   warnMsgNoQobs  <- "the %s plot(s) cannot be drawn if there is no 'Qobs'"
   warnMsgWhichCN <- sprintf("incorrect element found in argument 'which':\n\twithout CemaNeige, %s are not available \n\tit can only contain %s",
@@ -238,7 +244,8 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
   
   ## plot choices
   BOOLPLOT_Precip   <- "Precip"   %in% which &  BOOL_Pobs
-  BOOLPLOT_PotEvap  <- "PotEvap"  %in% which &  BOOL_Eobs
+  BOOLPLOT_PotEvap  <- "PotEvap"  %in% which &  BOOL_EPobs
+  BOOLPLOT_ActuEvap <- "ActuEvap" %in% which &  BOOL_EAobs
   BOOLPLOT_Temp     <- "Temp"     %in% which &  BOOL_Snow
   BOOLPLOT_SnowPack <- "SnowPack" %in% which &  BOOL_Snow
   BOOLPLOT_Flows    <- "Flows"    %in% which & (BOOL_Qsim | BOOL_Qobs)
@@ -261,7 +268,8 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
       iPlot <- 0
       iHght <- NULL
       
-      listBOOLPLOT1 <- c(Precip = BOOLPLOT_Precip, PotEvap  = BOOLPLOT_PotEvap,
+      listBOOLPLOT1 <- c(Precip = BOOLPLOT_Precip,
+                         PotEvap  = BOOLPLOT_PotEvap | BOOLPLOT_ActuEvap,
                          Temp   = BOOLPLOT_Temp  , SnowPack = BOOLPLOT_SnowPack,
                          Flows  = BOOLPLOT_Flows , Error    = BOOLPLOT_Error)
       listBOOLPLOT2 <- c(Regime = BOOLPLOT_Regime, CumFreq  = BOOLPLOT_CumFreq,
@@ -388,16 +396,58 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
     mar <- c(3, 5, 1, 5)
     
     par(new = FALSE, mar = mar)
-    ylim1 <- range(OutputsModel$PotEvap[IndPeriod_Plot], na.rm = TRUE)
+    if (!BOOLPLOT_ActuEvap) {
+      ylim1 <- range(OutputsModel$PotEvap[IndPeriod_Plot], na.rm = TRUE)
+      xlabE <- "pot. evap."
+    } else {
+      ylim1 <- range(c(OutputsModel$PotEvap[IndPeriod_Plot],
+                       OutputsModel$AE[IndPeriod_Plot]),
+                     na.rm = TRUE)
+      xlabE <- "evap."
+    }
     ylim2 <- ylim1 #* c(1.0, 1.1)
+    
     
     plot(Xaxis, OutputsModel$PotEvap[IndPeriod_Plot],
          type = "l", xaxt = "n", yaxt = "n", ylim = ylim2,
          col = "green3", lwd = lwd * lwdk,
          xlab = "", ylab = "", ...)
+    if (BOOLPLOT_ActuEvap) {
+      lines(Xaxis, OutputsModel$AE[IndPeriod_Plot],
+           type = "l", xaxt = "n", yaxt = "n", ylim = ylim2,
+           col = "green4", lwd = lwd * lwdk, lty = 3) 
+      legend("topright", legend = c("pot.", "actu."), col = c("green3", "green4"),
+             lty = c(1, 3), lwd = c(lwd*1.0, lwd*0.8),
+             bty = "o", bg = bg, box.col = bg, cex = cex.leg)
+    }
     axis(side = 2, at = pretty(ylim1), labels = pretty(ylim1), cex.axis = cex.axis, ...)
     
-    mtext(side = 2, paste("pot. evap.", plotunit), cex = cex.lab, line = line)
+    mtext(side = 2, paste(xlabE, plotunit), cex = cex.lab, line = line)
+    
+    if (BOOL_Dates) {
+      axis(side = 1, at = Seq1, labels = FALSE, cex.axis = cex.axis, ...)
+      axis(side = 1, at = Seq2, labels = Labels2, lwd.ticks = 1.5, cex.axis = cex.axis, ...)
+    } else {
+      axis(side = 1, at = pretty(Xaxis), labels = pretty(Xaxis), cex.axis = cex.axis, ...)
+    }
+  }
+  
+  ## ActuEvap
+  if (BOOLPLOT_ActuEvap & !BOOLPLOT_PotEvap) {
+    kPlot <- kPlot + 1
+    mar <- c(3, 5, 1, 5)
+    
+    par(new = FALSE, mar = mar)
+    ylim1 <- range(OutputsModel$AE[IndPeriod_Plot], na.rm = TRUE)
+    ylim2 <- ylim1 #* c(1.0, 1.1)
+    
+    plot(Xaxis, OutputsModel$AE[IndPeriod_Plot],
+         type = "l", xaxt = "n", yaxt = "n", ylim = ylim2,
+         col = "green4", lwd = lwd * lwdk,
+         xlab = "", ylab = "", ...)
+    axis(side = 2, at = pretty(ylim1), labels = pretty(ylim1), cex.axis = cex.axis, ...)
+    
+    mtext(side = 2, paste("actu. evap.", plotunit), cex = cex.lab, line = line)
     
     if (BOOL_Dates) {
       axis(side = 1, at = Seq1, labels = FALSE, cex.axis = cex.axis, ...)
@@ -487,10 +537,11 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
     mar <- c(3, 5, 1, 5)
     par(new = FALSE, mar = mar)
     
-    DATA2 <- Qobs
-    DATA2[!SelectQobsNotZero] <- mean(Qobs, na.rm = TRUE) / 10000
-    DATA2 <- log(DATA2)
-    
+    if (BOOL_Qobs) {    
+      DATA2 <- Qobs
+      DATA2[!SelectQobsNotZero] <- mean(Qobs, na.rm = TRUE) / 10000
+      DATA2 <- log(DATA2)
+    }
     DATA3 <- OutputsModel$Qsim
     DATA3[!SelectQsimNotZero] <- mean(OutputsModel$Qsim, na.rm = TRUE) / 10000
     DATA3 <- log(DATA3)

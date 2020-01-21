@@ -131,6 +131,7 @@ RunModel_CemaNeigeGR4J <- function(InputsModel,RunOptions,Param){
       RESULTS$Outputs[ round(RESULTS$Outputs ,3)==(-999.999)] <- NA;
       RESULTS$StateEnd[round(RESULTS$StateEnd,3)==(-999.999)] <- NA;
       if (ExportStateEnd) {
+        RESULTS$StateEnd[-3L] <- ifelse(RESULTS$StateEnd[-3L] < 0, 0, RESULTS$StateEnd[-3L]) ### remove negative values except for the ExpStore location
         idNStates <- seq_len(NStates*NLayers) %% NStates
         RESULTS$StateEnd <- CreateIniStates(FUN_MOD = RunModel_CemaNeigeGR4J, InputsModel = InputsModel, IsHyst = IsHyst,
                                             ProdStore = RESULTS$StateEnd[1L], RoutStore = RESULTS$StateEnd[2L], ExpStore = NULL,

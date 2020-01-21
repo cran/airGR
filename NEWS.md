@@ -2,12 +2,49 @@
 
 
 
+### 1.4.3.52 Release Notes (2020-01-20)
+
+
+#### New features
+
+- <code>plot.Outputsmodel()</code> now allows to draw actual evapotranspiration when <code>which = "ActuEvap"</code> or <code>which = "All"</code> (overlaid to potential evapotranspiration if already drawn).
+- Added <code>RunModel_GR5H()</code> and <code>RunModel_CemaNeigeGR5H()</code> functions to run the hourly model GR5H (with or without the CemaNeige module). These models present an optional additionnal interception store.
+- Added <code>Imax()</code> which allows to estimate the maximum capacity of the GR5H interception store.
+
+
+#### Bug fixes
+
+- Fixed bug in <code>TransfoParam_GR1A()</code>. The number of model parameters was wrong (2 instead of 1) which caused an error during the GR1A model calibration.
+- Fixed bug in <code>plot.OutputsModel()</code>. The function does not return any error message when <code>log_scale = TRUE</code>, <code>Qobs = NULL</code> and user want to draw flows time series.
+- Fixed bug in <code>RunModel_&#42;GR&#42;()</code>. The functions do not return any error message anymore due to slightly negative values returned by GR4H, GR4J, GR5J or GR6J Fortran codes (the message was returned by <code>CreateIniStates()</code> when the final states were created). The <code>RunModel_&#42;GR&#42;()</code> functions now return zero instead of these slightly negative values, except for the ExpStore where negatives values are allowed.
+- Fixed bug in the <code>.ErrorCrit()</code> function. The Box-Cox transformation formula is now corrected when the <code>ErrorCrit&#42;()</code> functions are used.
+
+
+#### Major user-visible changes
+
+- Added outputs to <code>RunModel_GR4H()</code> function (Pn, Ps, AExch1, AExch2).
+
+
+#### Minor user-visible changes
+
+- Added the diagram of GR2M in the <code>RunModel_GR2M()</code> documentation.
+- Fortran codes cleant and translated from F77 to F90.
+
+
+#### CRAN-compatibility updates
+
+- Cleaning of the Fortran codes (comment formatting).
+
+____________________________________________________________________________________
+
+
 ### 1.3.2.42 Release Notes (2019-09-20)
 
 
 #### Version control and issue tracking
 
 - Users can now track changes (<code>https://gitlab.irstea.fr/HYCAR-Hydro/airgr</code>) and issues (<code>https://gitlab.irstea.fr/HYCAR-Hydro/airgr/issues</code>).
+
 
 #### Bug fixes
 
@@ -40,6 +77,7 @@ ________________________________________________________________________________
 - The <code>PEdaily_Oudin()</code> function is deprecated and his use has been replaced by the use of <code>PE_Oudin()</code>.
 
 - <code>plot.OutputsModel()</code> now presents a <code>LayoutMat</code> argument (and additionnal related argument: <code>LayoutWidths</code>, <code>LayoutHeights</code>) to specify complex plot arrangements.
+
 
 #### Bug fixes
 
@@ -128,7 +166,7 @@ ________________________________________________________________________________
 
 - <code>.FortranOutputs()</code> private function added to manage Fortran outputs.
 
-- Outputs of frun_GR2M Fortran subroutine were reordered.
+- Outputs of <code>frun_GR2M</code> Fortran subroutine were reordered.
 
 - <code>DataAltiExtrapolation_Valery()</code> now returns named elements of lists relative to elevation layer.
 
@@ -325,6 +363,7 @@ ________________________________________________________________________________
 
 ### 1.0.4 Release Notes (2017-01-18)
 
+
 #### New features
 
 - <code>RunModel_CemaNeige()</code>, <code>RunModel_CemaNeigeGR4J()</code>, <code>RunModel_CemaNeigeGR5J()</code> and <code>RunModel_CemaNeigeGR6J()</code> now return air temperature for each elevation layer. 
@@ -345,6 +384,7 @@ ________________________________________________________________________________
 
 
 ### 1.0.3 Release Notes (2016-12-09)
+
 
 #### New features
 
@@ -410,6 +450,7 @@ ________________________________________________________________________________
 
 ### 1.0.1 Release Notes (2016-04-21)
 
+
 #### Deprecated and defunct
 
 - The <code>Calibration_HBAN()</code> and <code>DataAltiExtrapolation_HBAN()</code> functions have respectively been renamed as <code>Calibration_Michel()</code> and <code>DataAltiExtrapolation_Valery()</code> after the names of their creators.
@@ -443,6 +484,7 @@ ________________________________________________________________________________
 
 
 ### 0.8.1.2 Release Notes (2015-08-21)
+
 
 #### Bug fixes
 

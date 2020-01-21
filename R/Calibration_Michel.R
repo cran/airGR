@@ -60,6 +60,9 @@ Calibration_Michel <- function(InputsModel,
     if (identical(FUN_MOD, RunModel_GR4H         )) {
       FUN_TRANSFO <- TransfoParam_GR4H
     }
+    if (identical(FUN_MOD, RunModel_GR5H         )) {
+      FUN_TRANSFO <- TransfoParam_GR5H
+    }
     if (identical(FUN_MOD, RunModel_GR4J         )) {
       FUN_TRANSFO <- TransfoParam_GR4J
     }
@@ -82,10 +85,13 @@ Calibration_Michel <- function(InputsModel,
         FUN_TRANSFO <- TransfoParam_CemaNeige
       }
     }
-    if (identical(FUN_MOD, RunModel_CemaNeigeGR4H) |
+    if (identical(FUN_MOD, RunModel_CemaNeigeGR4H) | identical(FUN_MOD, RunModel_CemaNeigeGR5H) |
         identical(FUN_MOD, RunModel_CemaNeigeGR4J) | identical(FUN_MOD, RunModel_CemaNeigeGR5J) | identical(FUN_MOD, RunModel_CemaNeigeGR6J)) {
       if (identical(FUN_MOD, RunModel_CemaNeigeGR4H)) {
         FUN1 <- TransfoParam_GR4H
+      }
+      if (identical(FUN_MOD, RunModel_CemaNeigeGR5H)) {
+        FUN1 <- TransfoParam_GR5H
       }
       if (identical(FUN_MOD, RunModel_CemaNeigeGR4J)) {
         FUN1 <- TransfoParam_GR4J

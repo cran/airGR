@@ -39,7 +39,7 @@ CemaNeige X4 \tab (optional) percentage (between 0 and 1) of annual snowfall def
   \emph{$PotEvap }          \tab [numeric] series of input potential evapotranspiration [mm/d]              \cr
   \emph{$Precip  }          \tab [numeric] series of input total precipitation [mm/d]                       \cr
   \emph{$Prod    }          \tab [numeric] series of production store level [mm]                            \cr
-  \emph{$Pn      }          \tab [numeric] series of net rainfall [mm/d]                         			      \cr
+  \emph{$Pn      }          \tab [numeric] series of net rainfall [mm/d]                                    \cr
   \emph{$Ps      }          \tab [numeric] series of the part of Pn filling the production store [mm/d]     \cr
   \emph{$AE      }          \tab [numeric] series of actual evapotranspiration [mm/d]                       \cr
   \emph{$Perc    }          \tab [numeric] series of percolation (PERC) [mm/d]                              \cr
@@ -63,7 +63,7 @@ CemaNeige X4 \tab (optional) percentage (between 0 and 1) of annual snowfall def
   \emph{$CemaNeigeLayers[[iLayer]]$PotMelt      } \tab [numeric] series of potential snow melt [mm/d]               \cr
   \emph{$CemaNeigeLayers[[iLayer]]$Melt         } \tab [numeric] series of actual snow melt [mm/d]                  \cr
   \emph{$CemaNeigeLayers[[iLayer]]$PliqAndMelt  } \tab [numeric] series of liquid precip. + actual snow melt [mm/d] \cr
-  \emph{$CemaNeigeLayers[[iLayer]]$Temp         } \tab [numeric] series of air temperature [°C]                     \cr     
+  \emph{$CemaNeigeLayers[[iLayer]]$Temp         } \tab [numeric] series of air temperature [°C]                     \cr
   \emph{$CemaNeigeLayers[[iLayer]]$Gthreshold   } \tab [numeric] series of melt threshold [mm]                      \cr
   \emph{$CemaNeigeLayers[[iLayer]]$Glocalmax    } \tab [numeric] series of local melt threshold for hysteresis [mm] \cr
   \emph{$StateEnd}                                \tab [numeric] states at the end of the run: \cr\tab store & unit hydrographs levels [mm], CemaNeige states [mm & °C], \cr\tab see \code{\link{CreateIniStates}} for more details                               \cr
@@ -145,28 +145,28 @@ OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsMode
 
 
 \author{
-Laurent Coron, Audrey Valéry, Claude Michel, Charles Perrin, Vazken Andréassian, Olivier Delaigue
+Laurent Coron, Claude Michel, Charles Perrin, Audrey Valéry, Vazken Andréassian, Olivier Delaigue, Guillaume Thirel
 }
 
 
 \references{
 Perrin, C., C. Michel and V. Andréassian (2003). 
   Improvement of a parsimonious model for streamflow simulation. 
-  Journal of Hydrology, 279(1-4), 275-289, doi:10.1016/S0022-1694(03)00225-7.
+  Journal of Hydrology, 279(1-4), 275-289, doi: 10.1016/S0022-1694(03)00225-7.
 \cr\cr
 Riboust, P., G. Thirel, N. Le Moine and P. Ribstein (2019). 
   Revisiting a simple degree-day model for integrating satellite data: implementation of SWE-SCA hystereses. 
-  Journal of Hydrology and Hydromechanics. doi:10.2478/johh-2018-0004, 67, 1, 70–81.
+  Journal of Hydrology and Hydromechanics. doi: 10.2478/johh-2018-0004, 67, 1, 70–81.
 \cr\cr
 Valéry, A., V. Andréassian and C. Perrin (2014). 
   "As simple as possible but not simpler": what is useful in a temperature-based snow-accounting routine? 
   Part 1 - Comparison of six snow accounting routines on 380 catchments. 
-  Journal of Hydrology. doi:10.1016/j.jhydrol.2014.04.059.
+  Journal of Hydrology. doi: 10.1016/j.jhydrol.2014.04.059.
 \cr\cr
 Valéry, A., V. Andréassian and C. Perrin (2014). 
   "As simple as possible but not simpler": What is useful in a temperature-based snow-accounting routine? 
    Part 2 - Sensitivity analysis of the Cemaneige snow accounting routine on 380 catchments. 
-   Journal of Hydrology. doi:10.1016/j.jhydrol.2014.04.058.
+   Journal of Hydrology. doi: 10.1016/j.jhydrol.2014.04.058.
 }
 
 
