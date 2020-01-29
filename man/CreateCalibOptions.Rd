@@ -8,11 +8,16 @@
 \title{Creation of the CalibOptions object required but the Calibration functions}
 
 
+\description{
+Creation of the \emph{CalibOptions} object required by the \code{Calibration*} functions.
+}
+
+
 \usage{
 CreateCalibOptions(FUN_MOD, FUN_CALIB = Calibration_Michel,
-  FUN_TRANSFO = NULL, IsHyst = FALSE, FixedParam = NULL,
-  SearchRanges = NULL, StartParamList = NULL,
-  StartParamDistrib = NULL)
+                   FUN_TRANSFO = NULL, IsHyst = FALSE, FixedParam = NULL,
+                   SearchRanges = NULL, StartParamList = NULL,
+                   StartParamDistrib = NULL)
 }
 
 
@@ -66,11 +71,6 @@ CreateCalibOptions(FUN_MOD, FUN_CALIB = Calibration_Michel,
     \emph{$StartParamList   } \tab [numeric] matrix of parameter sets used for grid-screening calibration procedure   \cr
     \emph{$StartParamDistrib} \tab [numeric] matrix of parameter values used for grid-screening calibration procedure \cr
   }
-}
-
-
-\description{
-Creation of the \emph{CalibOptions} object required by the \code{Calibration*} functions.
 }
 
 

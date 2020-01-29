@@ -4,7 +4,7 @@
 \encoding{UTF-8}
 \title{Suite of GR Hydrological Models for Precipitation-Runoff Modelling}
 \description{
-This package brings into R the hydrological modelling tools used at INRAE-Antony (formerly IRSTEA, HYCAR Research Unit, France), including rainfall-runoff models (\strong{GR4H}, \strong{GR5H}, \strong{GR4J}, \strong{GR5J}, \strong{GR6J}, \strong{GR2M}, \strong{GR1A}) and a snow accumulation and melt model (\strong{CemaNeige}). Each model core is coded in FORTRAN to ensure low computational time. The other package functions (i.e. mainly the calibration algorithm and the computation of the efficiency criteria) are coded in R. \cr\cr
+This package brings into R the hydrological modelling tools developed at INRAE-Antony (formerly IRSTEA, HYCAR Research Unit, France), including rainfall-runoff models (\strong{GR4H}, \strong{GR5H}, \strong{GR4J}, \strong{GR5J}, \strong{GR6J}, \strong{GR2M}, \strong{GR1A}) and a snow accumulation and melt model (\strong{CemaNeige}). Each model core is coded in Fortran to ensure low computational time. The other package functions (i.e. mainly the calibration algorithm and the computation of the efficiency criteria) are coded in R. \cr\cr
 
 
 ## ---- Functions and objects
@@ -24,12 +24,12 @@ In order to limit the risk of mis-use and increase the flexibility of these main
 Seven hydrological models and one snow melt and accumulation model are implemented in airGR. The snow model can also be used alone or with the daily hydrological models, and each hydrological model can either be used alone or together with the snow model. \cr
 These models can be called within airGR using the following functions: \cr 
   - \code{\link{RunModel_GR4H}}: four-parameter hourly lumped hydrological model (Mathevet, 2005) \cr
-  - \code{\link{RunModel_GR5H}}: five-parameter hourly lumped hydrological model (Ficchi \emph{et al.}, 2019) \cr
+  - \code{\link{RunModel_GR5H}}: five-parameter hourly lumped hydrological model (Ficchi, 2017; Ficchi \emph{et al.}, 2019) \cr
   - \code{\link{RunModel_GR4J}}: four-parameter daily lumped hydrological model (Perrin \emph{et al.}, 2003) \cr
   - \code{\link{RunModel_GR5J}}: five-parameter daily lumped hydrological model (Le Moine, 2008) \cr
   - \code{\link{RunModel_GR6J}}: six-parameter daily lumped hydrological model (Pushpalatha \emph{et al.}, 2011) \cr
-  - \code{\link{RunModel_GR2M}}: two-parameter monthly lumped hydrological model (Mouelhi, 2003 ; Mouelhi \emph{et al.}, 2006a) \cr
-  - \code{\link{RunModel_GR1A}}: one-parameter yearly lumped hydrological model (Mouelhi, 2003 ; Mouelhi \emph{et al.}, 2006b) \cr
+  - \code{\link{RunModel_GR2M}}: two-parameter monthly lumped hydrological model (Mouelhi, 2003; Mouelhi \emph{et al.}, 2006a) \cr
+  - \code{\link{RunModel_GR1A}}: one-parameter yearly lumped hydrological model (Mouelhi, 2003; Mouelhi \emph{et al.}, 2006b) \cr
   - \code{\link{RunModel_CemaNeige}}: two-parameter degree-day snow melt and accumulation daily model (Valéry \emph{et al.}, 2014) \cr
   - \code{\link{RunModel_CemaNeigeGR4H}}: combined use of GR4H and CemaNeige \cr
   - \code{\link{RunModel_CemaNeigeGR5H}}: combined use of GR5H and CemaNeige \cr

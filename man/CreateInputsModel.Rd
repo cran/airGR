@@ -8,10 +8,15 @@
 \title{Creation of the InputsModel object required to the RunModel functions}
 
 
+\description{
+Creation of the \emph{InputsModel} object required to the \code{RunModel*} functions.
+}
+
+
 \usage{
 CreateInputsModel(FUN_MOD, DatesR, Precip, PrecipScale = TRUE, PotEvap = NULL,
-  TempMean = NULL, TempMin = NULL, TempMax = NULL, ZInputs = NULL, HypsoData = NULL,
-  NLayers = 5, verbose = TRUE)
+                  TempMean = NULL, TempMin = NULL, TempMax = NULL,
+                  ZInputs = NULL, HypsoData = NULL, NLayers = 5, verbose = TRUE)
 }
 
 
@@ -52,11 +57,6 @@ CreateInputsModel(FUN_MOD, DatesR, Precip, PrecipScale = TRUE, PotEvap = NULL,
     \emph{$LayerTempMean       } \tab [list] list of time series of mean air temperature (layer average) [°C], \cr\tab defined if \code{FUN_MOD} includes CemaNeige \cr \cr
     \emph{$LayerFracSolidPrecip} \tab [list] list of time series of solid precipitation fraction (layer average) [-], \cr\tab defined if \code{FUN_MOD} includes CemaNeige \cr \cr
          }
-}
-
-
-\description{
-Creation of the \emph{InputsModel} object required to the \code{RunModel*} functions.
 }
 
 

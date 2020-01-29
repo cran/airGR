@@ -8,14 +8,19 @@
 \title{Creation of the RunOptions object required to the RunModel functions}
 
 
+\description{
+Creation of the RunOptions object required to the \code{RunModel*} functions.
+}
+
+
 \usage{
 CreateRunOptions(FUN_MOD, InputsModel,
-  IndPeriod_WarmUp = NULL, IndPeriod_Run,
-  IniStates = NULL, IniResLevels = NULL, Imax = NULL,
-  Outputs_Cal = NULL, Outputs_Sim = "all",
-  RunSnowModule, MeanAnSolidPrecip = NULL,
-  IsHyst = FALSE,
-  warnings = TRUE, verbose = TRUE)
+                 IndPeriod_WarmUp = NULL, IndPeriod_Run,
+                 IniStates = NULL, IniResLevels = NULL, Imax = NULL,
+                 Outputs_Cal = NULL, Outputs_Sim = "all",
+                 RunSnowModule, MeanAnSolidPrecip = NULL,
+                 IsHyst = FALSE,
+                 warnings = TRUE, verbose = TRUE)
 }
 
 
@@ -65,11 +70,6 @@ CreateRunOptions(FUN_MOD, InputsModel,
     \emph{Imax             } \tab [numeric] vector giving the maximal capacity of the GR5H interception store \cr
     \emph{MeanAnSolidPrecip} \tab [numeric] vector giving the annual mean of average solid precipitation for each layer [mm/y] \cr
   }
-}
-
-
-\description{
-Creation of the RunOptions object required to the \code{RunModel*} functions.
 }
 
 

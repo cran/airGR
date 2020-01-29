@@ -7,10 +7,16 @@
 
 \title{Calibration algorithm that optimises the error criterion selected as objective function using the provided functions}
 
+
+\description{
+Calibration algorithm that optimises the error criterion selected as objective function using the provided functions.
+}
+
+
 \usage{
-Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions, FUN_MOD,
-  FUN_CRIT, FUN_CALIB = Calibration_Michel, FUN_TRANSFO = NULL,
-  verbose = TRUE)
+Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions,
+            FUN_MOD, FUN_CRIT, FUN_CALIB = Calibration_Michel,
+            FUN_TRANSFO = NULL, verbose = TRUE)
 }
 
 
@@ -37,11 +43,6 @@ Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions, FUN_MOD,
 
 \value{
 [list] see \code{\link{Calibration_Michel}}
-}
-
-
-\description{
-Calibration algorithm that optimises the error criterion selected as objective function using the provided functions.
 }
 
 

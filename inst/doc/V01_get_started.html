@@ -184,12 +184,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>The user must at least define the following arguments:</p>
 <ul>
 <li><code>FUN_MOD</code>: the name of the model function to run</li>
-<li><code>InputsModel</code>: the associated inputs data</li>
+<li><code>InputsModel</code>: the associated input data</li>
 <li><code>IndPeriod_Run</code>: the period on which the model is run</li>
 </ul>
 <p>To select a period for which the user wants to run the model, select the corresponding indexes for different time periods (not the POSIXt dates), as follows:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Ind_Run &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="kw">which</span>(<span class="kw">format</span>(BasinObs<span class="op">$</span>DatesR, <span class="dt">format =</span> <span class="st">&quot;%d/%m/%Y&quot;</span>)<span class="op">==</span><span class="st">&quot;01/01/1990&quot;</span>), 
-               <span class="kw">which</span>(<span class="kw">format</span>(BasinObs<span class="op">$</span>DatesR, <span class="dt">format =</span> <span class="st">&quot;%d/%m/%Y&quot;</span>)<span class="op">==</span><span class="st">&quot;31/12/1999&quot;</span>))
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Ind_Run &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="kw">which</span>(<span class="kw">format</span>(BasinObs<span class="op">$</span>DatesR, <span class="dt">format =</span> <span class="st">&quot;%Y-%m-%d&quot;</span>) <span class="op">==</span><span class="st"> &quot;1990-01-01&quot;</span>), 
+               <span class="kw">which</span>(<span class="kw">format</span>(BasinObs<span class="op">$</span>DatesR, <span class="dt">format =</span> <span class="st">&quot;%Y-%m-%d&quot;</span>) <span class="op">==</span><span class="st"> &quot;1999-12-31&quot;</span>))
 <span class="kw">str</span>(Ind_Run)</code></pre></div>
 <pre><code>##  int [1:3652] 2193 2194 2195 2196 2197 2198 2199 2200 2201 2202 ...</code></pre>
 <p>The initialization of hydrological models is of the utmost importance. Indeed, an inaccurate initialization causes poor quality discharge simulations during the earliest stages of the running period. For example, in the GR models, by default, the production and the routing store levels store level are respectively set to 30 % and 50 % of their capacity, which may be far from their ideal value. Two solutions are offered to accurately initialize the GR models in <strong>airGR</strong>: manually predefining the initial states (e.g. from a previous run) or running the models during a warm up period before the actual running period. It is generally advised to set up this warm up period to be equal or superior to one year.</p>
@@ -226,11 +226,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><code>FUN_CRIT</code>: the name of the error criterion function (the available functions are introduced later on)</li>
 <li><code>InputsModel</code>: the inputs of the hydrological model previously prepared by the <code>CreateInputsModel()</code> function</li>
 <li><code>RunOptions</code>: the options of the hydrological model previously prepared by the <code>CreateRunOptions()</code> function</li>
-<li><code>Obs</code>: the observed discharge expressed in <em>mm/time step</em></li>
+<li><code>VarObs</code>: the name of the considered variable (by default <code>&quot;Q&quot;</code> for the discharge)</li>
+<li><code>Obs</code>: the observed variable time serie (e.g. the discharge expressed in <em>mm/time step</em>)</li>
 </ul>
 <p>Missing values (<code>NA</code>) are <strong>allowed</strong> for observed discharge.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">InputsCrit &lt;-<span class="st"> </span><span class="kw">CreateInputsCrit</span>(<span class="dt">FUN_CRIT =</span> ErrorCrit_NSE, <span class="dt">InputsModel =</span> InputsModel, 
-                               <span class="dt">RunOptions =</span> RunOptions, <span class="dt">Obs =</span> BasinObs<span class="op">$</span>Qmm[Ind_Run])
+                               <span class="dt">RunOptions =</span> RunOptions, <span class="dt">VarObs =</span> <span class="st">&quot;Q&quot;</span>, <span class="dt">Obs =</span> BasinObs<span class="op">$</span>Qmm[Ind_Run])
 <span class="kw">str</span>(InputsCrit)</code></pre></div>
 <pre><code>## List of 8
 ##  $ FUN_CRIT: chr &quot;ErrorCrit_NSE&quot;
@@ -347,7 +348,7 @@ Param</code></pre></div>
 </div>
 <div id="results-preview" class="section level2">
 <h2>Results preview</h2>
-<p>Although it is possible for the user to design its own graphics from the outputs of the <code>RunModel*()</code> functions, the <strong>airGR</strong> package offers the possibility to make use of the <code>plot.OutputsModel()</code> function (or <code>plot()</code> with an <code>OutputsModel</code> object). This function returns a dashboard of results including various graphs (depending on the model used):</p>
+<p>Although it is possible for the user to design its own graphics from the outputs of the <code>RunModel*()</code> functions, the <strong>airGR</strong> package offers the possibility to make use of the <code>plot()</code> function. This function returns a dashboard of results including various graphs (depending on the model used):</p>
 <ul>
 <li>time series of total precipitation and simulated discharge (and observed discharge if provided)</li>
 <li>interannual average daily simulated discharge (and daily observed discharge if provided) and interannual average monthly precipitation</li>
@@ -362,11 +363,29 @@ Param</code></pre></div>
 <p>To evaluate the efficiency of the model, it is possible to use the same criterion as defined at the calibration step or to use another criterion.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OutputsCrit &lt;-<span class="st"> </span><span class="kw">ErrorCrit_NSE</span>(<span class="dt">InputsCrit =</span> InputsCrit, <span class="dt">OutputsModel =</span> OutputsModel)</code></pre></div>
 <pre><code>## Crit. NSE[Q] = 0.7988</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(OutputsCrit)</code></pre></div>
+<pre><code>## List of 5
+##  $ CritValue      : num 0.799
+##  $ CritName       : chr &quot;NSE[Q]&quot;
+##  $ CritBestValue  : num 1
+##  $ Multiplier     : num -1
+##  $ Ind_notcomputed: int [1:57] 2405 2406 2407 2408 2409 2410 2411 2412 2413 2414 ...
+##  - attr(*, &quot;class&quot;)= chr [1:2] &quot;NSE&quot; &quot;ErrorCrit&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OutputsCrit &lt;-<span class="st"> </span><span class="kw">ErrorCrit_KGE</span>(<span class="dt">InputsCrit =</span> InputsCrit, <span class="dt">OutputsModel =</span> OutputsModel)</code></pre></div>
 <pre><code>## Crit. KGE[Q] = 0.7854</code></pre>
 <pre><code>##  SubCrit. KGE[Q] cor(sim, obs, &quot;pearson&quot;) = 0.8985 
 ##  SubCrit. KGE[Q] sd(sim)/sd(obs)          = 0.8161 
 ##  SubCrit. KGE[Q] mean(sim)/mean(obs)      = 1.0437</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(OutputsCrit)</code></pre></div>
+<pre><code>## List of 7
+##  $ CritValue      : num 0.785
+##  $ CritName       : chr &quot;KGE[Q]&quot;
+##  $ SubCritValues  : num [1:3] 0.898 0.816 1.044
+##  $ SubCritNames   : chr [1:3] &quot;r&quot; &quot;alpha&quot; &quot;beta&quot;
+##  $ CritBestValue  : num 1
+##  $ Multiplier     : num -1
+##  $ Ind_notcomputed: int [1:57] 2405 2406 2407 2408 2409 2410 2411 2412 2413 2414 ...
+##  - attr(*, &quot;class&quot;)= chr [1:2] &quot;KGE&quot; &quot;ErrorCrit&quot;</code></pre>
 </div>
 </div>
 <div id="references" class="section level1 unnumbered">

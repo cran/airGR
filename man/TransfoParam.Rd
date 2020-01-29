@@ -17,6 +17,11 @@
 \title{Transformation of the parameters using the provided function}
 
 
+\description{
+Function which transforms model parameters using the provided function (from raw to transformed parameters and vice versa).
+}
+
+
 \usage{
 ## Generic function
 TransfoParam(ParamIn, Direction, FUN_TRANSFO)
@@ -43,11 +48,6 @@ TransfoParam_CemaNeigeHyst(ParamIn, Direction)
 }
 \value{
 \emph{ParamOut} [numeric] matrix of parameter sets (sets in line, parameter values in column)
-}
-
-
-\description{
-Function which transforms model parameters using the provided function (from raw to transformed parameters and vice versa).
 }
 
 

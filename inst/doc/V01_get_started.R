@@ -11,8 +11,8 @@ InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$Date
 str(InputsModel)
 
 ## -----------------------------------------------------------------------------
-Ind_Run <- seq(which(format(BasinObs$DatesR, format = "%d/%m/%Y")=="01/01/1990"), 
-               which(format(BasinObs$DatesR, format = "%d/%m/%Y")=="31/12/1999"))
+Ind_Run <- seq(which(format(BasinObs$DatesR, format = "%Y-%m-%d") == "1990-01-01"), 
+               which(format(BasinObs$DatesR, format = "%Y-%m-%d") == "1999-12-31"))
 str(Ind_Run)
 
 ## -----------------------------------------------------------------------------
@@ -23,7 +23,7 @@ str(RunOptions)
 
 ## -----------------------------------------------------------------------------
 InputsCrit <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
-                               RunOptions = RunOptions, Obs = BasinObs$Qmm[Ind_Run])
+                               RunOptions = RunOptions, VarObs = "Q", Obs = BasinObs$Qmm[Ind_Run])
 str(InputsCrit)
 
 ## -----------------------------------------------------------------------------
@@ -46,7 +46,9 @@ str(OutputsModel)
 
 ## -----------------------------------------------------------------------------
 OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
+str(OutputsCrit)
 
 ## -----------------------------------------------------------------------------
 OutputsCrit <- ErrorCrit_KGE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
+str(OutputsCrit)
 

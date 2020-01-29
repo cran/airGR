@@ -8,9 +8,18 @@
 \title{Conversion of time series to another time step (aggregation only)}
 
 
+\description{
+Conversion of time series to another time step (aggregation only). \cr
+Warning : on the aggregated outputs, the dates correspond to the beginning of the time step \cr
+(e.g. for daily time-series 2005-03-01 00:00 = value for period 2005-03-01 00:00 - 2005-03-01 23:59) \cr
+(e.g. for monthly time-series 2005-03-01 00:00 = value for period 2005-03-01 00:00 - 2005-03-31 23:59) \cr
+(e.g. for yearly time-series 2005-03-01 00:00 = value for period 2005-03-01 00:00 - 2006-02-28 23:59)
+}
+
+
 \usage{
 SeriesAggreg(TabSeries, TimeFormat, NewTimeFormat, ConvertFun,
-  YearFirstMonth = 1, TimeLag = 0, verbose = TRUE)
+             YearFirstMonth = 1, TimeLag = 0, verbose = TRUE)
 }
 
 
@@ -31,15 +40,6 @@ SeriesAggreg(TabSeries, TimeFormat, NewTimeFormat, ConvertFun,
 }
 \value{
 [POSIXct+numeric] data.frame containing a vector of aggregated dates (POSIXct) and time series values numeric)
-}
-
-
-\description{
-Conversion of time series to another time step (aggregation only). \cr
-Warning : on the aggregated outputs, the dates correspond to the beginning of the time step \cr
-(e.g. for daily time-series 2005-03-01 00:00 = value for period 2005-03-01 00:00 - 2005-03-01 23:59) \cr
-(e.g. for monthly time-series 2005-03-01 00:00 = value for period 2005-03-01 00:00 - 2005-03-31 23:59) \cr
-(e.g. for yearly time-series 2005-03-01 00:00 = value for period 2005-03-01 00:00 - 2006-02-28 23:59)
 }
 
 

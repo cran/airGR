@@ -8,12 +8,17 @@
 \title{Creation of the InputsCrit object required to the ErrorCrit functions}
 
 
+\description{
+Creation of the \code{InputsCrit} object required to the \code{ErrorCrit_*} functions. This function is used to define whether the user wants to calculate a single criterion, multiple criteria in the same time, or a composite criterion, which averages several criteria. 
+}
+
+
 \usage{
 CreateInputsCrit(FUN_CRIT, InputsModel, RunOptions,
-  Qobs, Obs, VarObs = "Q", BoolCrit = NULL,
-  transfo = "", Weights = NULL,
-  Ind_zeroes = NULL, epsilon = NULL,
-  warnings = TRUE, verbose = TRUE)
+                 Qobs, Obs, VarObs = "Q", BoolCrit = NULL,
+                 transfo = "", Weights = NULL,
+                 Ind_zeroes = NULL, epsilon = NULL,
+                 warnings = TRUE, verbose = TRUE)
 }
 
 
@@ -62,11 +67,6 @@ When \code{Weights = NULL}, \code{CreateInputsCrit} returns an object of class \
 When \code{Weights} contains at least one \code{NULL} value and \code{Obs} contains a list of observations, \code{CreateInputsCrit} returns an object of class \emph{Multi} that is a list of lists such as the one described above. The \code{\link{ErrorCrit}} function will then compute the different criteria prepared by \code{CreateInputsCrit}. \cr 
 When \code{Weights} is a list of at least 2 numerical values, \code{CreateInputsCrit} returns an object of class \emph{Compo} that is a list of lists such as the one described above. This object will be useful to compute composite criterion with the \code{\link{ErrorCrit}} function. \cr
 To calculate composite or multiple criteria, it is necessary to use the \code{ErrorCrit} function. The other \code{ErrorCrit_*} functions (e.g. \code{\link{ErrorCrit_RMSE}}, \code{\link{ErrorCrit_NSE}}) can only use objects of class \emph{Single} (and not \emph{Multi} or \emph{Compo}). \cr
-}
-
-
-\description{
-Creation of the \code{InputsCrit} object required to the \code{ErrorCrit_*} functions. This function is used to define whether the user wants to calculate a single criterion, multiple criteria in the same time, or a composite criterion, which averages several criteria. 
 }
 
 

@@ -8,9 +8,18 @@
 \title{Calibration algorithm that optimises the error criterion selected as objective function using the Irstea procedure described by C. Michel}
 
 
+\description{
+Calibration algorithm that optimises the error criterion selected as objective function. \cr
+\cr
+The algorithm combines a global and a local approach. 
+First, a screening is performed using either a rough predefined grid or a list of parameter sets.
+Then a steepest descent local search algorithm is performed, starting from the result of the screening procedure.
+}
+
+
 \usage{
 Calibration_Michel(InputsModel, RunOptions, InputsCrit, CalibOptions,
-  FUN_MOD, FUN_CRIT, FUN_TRANSFO = NULL, verbose = TRUE)
+                   FUN_MOD, FUN_CRIT, FUN_TRANSFO = NULL, verbose = TRUE)
 }
 
 
@@ -46,15 +55,6 @@ Calibration_Michel(InputsModel, RunOptions, InputsCrit, CalibOptions,
     \emph{$CritName     } \tab [character] name of the calibration criterion used as objective function                        \cr
     \emph{$CritBestValue} \tab [numeric] theoretical best criterion value                                                      \cr
   }
-}
-
-
-\description{
-Calibration algorithm that optimises the error criterion selected as objective function. \cr
-\cr
-The algorithm combines a global and a local approach. 
-First, a screening is performed using either a rough predefined grid or a list of parameter sets.
-Then a steepest descent local search algorithm is performed, starting from the result of the screening procedure.
 }
 
 

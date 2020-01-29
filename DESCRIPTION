@@ -2,8 +2,8 @@ Package: airGR
 Type: Package
 Title: Suite of GR Hydrological Models for Precipitation-Runoff
         Modelling
-Version: 1.4.3.52
-Date: 2020-01-21
+Version: 1.4.3.60
+Date: 2020-01-28
 Authors@R: c(
   person("Laurent", "Coron", role = c("aut", "trl"), comment = c(ORCID = "0000-0002-1503-6204")),
   person("Olivier", "Delaigue", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-7668-8468"), email = "airGR@inrae.fr"),
@@ -30,7 +30,7 @@ BugReports: https://gitlab.irstea.fr/HYCAR-Hydro/airgr/issues
 NeedsCompilation: yes
 Encoding: UTF-8
 VignetteBuilder: knitr
-Packaged: 2020-01-21 07:41:54 UTC; olivier.delaigue
+Packaged: 2020-01-29 08:11:36 UTC; olivier.delaigue
 Author: Laurent Coron [aut, trl] (<https://orcid.org/0000-0002-1503-6204>),
   Olivier Delaigue [aut, cre] (<https://orcid.org/0000-0002-7668-8468>),
   Guillaume Thirel [aut] (<https://orcid.org/0000-0002-1444-1830>),
@@ -48,4 +48,4 @@ Author: Laurent Coron [aut, trl] (<https://orcid.org/0000-0002-1503-6204>),
   Audrey Valéry [ctb]
 Maintainer: Olivier Delaigue <airGR@inrae.fr>
 Repository: CRAN
-Date/Publication: 2020-01-21 13:50:06 UTC
+Date/Publication: 2020-01-29 09:50:06 UTC

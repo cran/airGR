@@ -8,13 +8,18 @@
 \title{Creation of the IniStates object possibly required by the CreateRunOptions functions}
 
 
+\description{
+Creation of the \emph{IniStates} object possibly required by the \code{\link{CreateRunOptions}} function.
+}
+
+
 \usage{
 CreateIniStates(FUN_MOD, InputsModel, IsHyst = FALSE, IsIntStore = FALSE,
-  ProdStore = 350, RoutStore = 90, ExpStore = NULL, IntStore = NULL,
-  UH1 = NULL, UH2 = NULL,
-  GCemaNeigeLayers = NULL, eTGCemaNeigeLayers = NULL,
-  GthrCemaNeigeLayers = NULL, GlocmaxCemaNeigeLayers = NULL,
-  verbose = TRUE)
+                ProdStore = 350, RoutStore = 90, ExpStore = NULL, IntStore = NULL,
+                UH1 = NULL, UH2 = NULL,
+                GCemaNeigeLayers = NULL, eTGCemaNeigeLayers = NULL,
+                GthrCemaNeigeLayers = NULL, GlocmaxCemaNeigeLayers = NULL,
+                verbose = TRUE)
 }
 
 
@@ -61,10 +66,6 @@ CreateIniStates(FUN_MOD, InputsModel, IsHyst = FALSE, IsIntStore = FALSE,
   }
 }
 
-
-\description{
-Creation of the \emph{IniStates} object possibly required by the \code{\link{CreateRunOptions}} function.
-}
 
 \details{
 20 numeric values are required for UH1 and 40 numeric values are required for UH2 if GR4J, GR5J or GR6J are used (respectively 20*24 and 40*24 for the hourly models GR4H and GR5H). Please note that depending on the X4 parameter value that will be provided when running the model, not all the values may be used (only the first int(X4)+1 values are used for UH1 and the first 2*int(X4)+1 for UH2). \cr

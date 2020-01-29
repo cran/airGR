@@ -8,6 +8,11 @@
 \title{Error criterion based on the KGE formula}
 
 
+\description{
+Function which computes an error criterion based on the KGE formula proposed by Gupta et al. (2009).
+}
+
+
 \usage{
 ErrorCrit_KGE(InputsCrit, OutputsModel, warnings = TRUE, verbose = TRUE)
 }
@@ -35,11 +40,6 @@ ErrorCrit_KGE(InputsCrit, OutputsModel, warnings = TRUE, verbose = TRUE)
          \emph{$Multiplier     }   \tab   [numeric] integer indicating whether the criterion is indeed an error (+1) or an efficiency (-1) \cr
          \emph{$Ind_notcomputed}   \tab   [numeric] indices of the time steps where \emph{InputsCrit$BoolCrit} = \code{FALSE} or no data is available \cr
          }
-}
-
-
-\description{
-Function which computes an error criterion based on the KGE formula proposed by Gupta et al. (2009).
 }
 
 

@@ -8,10 +8,15 @@
 \title{Altitudinal extrapolation of precipitation and temperature series described by A. Valery}
 
 
+\description{
+Function which extrapolates the precipitation and air temperature series for different elevation layers (method from Valéry, 2010).
+}
+
+
 \usage{
 DataAltiExtrapolation_Valery(DatesR, Precip, PrecipScale = TRUE,
-  TempMean, TempMin = NULL, TempMax = NULL,
-  ZInputs, HypsoData, NLayers, verbose = TRUE)
+                             TempMean, TempMin = NULL, TempMax = NULL,
+                             ZInputs, HypsoData, NLayers, verbose = TRUE)
 }
 
 
@@ -46,11 +51,6 @@ list containing the extrapolated series of precip. and air temp. on each elevati
            \emph{$LayerFracSolidPrecip} \tab [list] list of time series of daily solid precip. fract. (layer average) [-]     \cr
            \emph{$ZLayers             } \tab [numeric] vector of median elevation for each layer                              \cr
          }
-}
-
-
-\description{
-Function which extrapolates the precipitation and air temperature series for different elevation layers (method from Valéry, 2010).
 }
 
 

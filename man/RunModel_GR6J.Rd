@@ -8,6 +8,11 @@
 \title{Run with the GR6J hydrological model}
 
 
+\description{
+Function which performs a single run for the GR6J daily lumped model over the test period.
+}
+
+
 \usage{
 RunModel_GR6J(InputsModel, RunOptions, Param)
 }
@@ -57,11 +62,6 @@ RunModel_GR6J(InputsModel, RunOptions, Param)
     \emph{$StateEnd} \tab [numeric] states at the end of the run (res. levels, UH1 levels, UH2 levels) [mm], \cr\tab see \code{\link{CreateIniStates}} for more details \cr
   }                                                                                                     
   (refer to the provided references or to the package source code for further details on these model outputs)
-}
-
-
-\description{
-Function which performs a single run for the GR6J daily lumped model over the test period.
 }
 
 

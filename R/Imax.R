@@ -1,7 +1,7 @@
 
 Imax <- function(InputsModel, 
                  IndPeriod_Run, 
-                 TestedValues = seq(from = 0.1, to = 3, seq = 0.1)) {
+                 TestedValues = seq(from = 0.1, to = 3, by = 0.1)) {
   
   ##_____Arguments_check_____________________________________________________________________
   if (!inherits(InputsModel, "InputsModel")) {

@@ -8,6 +8,11 @@
 \title{Run with the GR2M hydrological model}
 
 
+\description{
+Function which performs a single run for the GR2M monthly lumped model over the test period.
+}
+
+
 \usage{
 RunModel_GR2M(InputsModel, RunOptions, Param)
 }
@@ -43,11 +48,6 @@ GR2M X2 \tab groundwater exchange coefficient [-] \cr
     \emph{$StateEnd} \tab [numeric] states at the end of the run (production store level and routing store level) [mm], \cr\tab see \code{\link{CreateIniStates}} for more details \cr
   }                                                                                                     
   (refer to the provided references or to the package source code for further details on these model outputs)
-}
-
-
-\description{
-Function which performs a single run for the GR2M monthly lumped model over the test period.
 }
 
 

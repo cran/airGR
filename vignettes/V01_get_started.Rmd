@@ -105,14 +105,14 @@ The `CreateRunOptions()` function allows to prepare the options required to the 
 The user must at least define the following arguments:
 
   * `FUN_MOD`: the name of the model function to run
-  * `InputsModel`: the associated inputs data
+  * `InputsModel`: the associated input data
   * `IndPeriod_Run`: the period on which the model is run
   
 To select a period for which the user wants to run the model, select the corresponding indexes for different time periods (not the POSIXt dates), as follows:
 
 ```{r}
-Ind_Run <- seq(which(format(BasinObs$DatesR, format = "%d/%m/%Y")=="01/01/1990"), 
-               which(format(BasinObs$DatesR, format = "%d/%m/%Y")=="31/12/1999"))
+Ind_Run <- seq(which(format(BasinObs$DatesR, format = "%Y-%m-%d") == "1990-01-01"), 
+               which(format(BasinObs$DatesR, format = "%Y-%m-%d") == "1999-12-31"))
 str(Ind_Run)
 ```
 
@@ -145,13 +145,14 @@ The `CreateInputsCrit()` function allows to prepare the input in order to calcul
   * `FUN_CRIT`: the name of the error criterion function (the available functions are introduced later on)
   * `InputsModel`: the inputs of the hydrological model previously prepared by the `CreateInputsModel()` function
   * `RunOptions`: the options of the hydrological model previously prepared by the `CreateRunOptions()` function 
-  * `Obs`: the observed discharge expressed in *mm/time step*
+  * `VarObs`: the name of the considered variable (by default `"Q"` for the discharge)
+  * `Obs`: the observed variable time serie (e.g. the discharge expressed in *mm/time step*)
 
 Missing values (`NA`) are **allowed** for observed discharge.
 
 ```{r}
 InputsCrit <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
-                               RunOptions = RunOptions, Obs = BasinObs$Qmm[Ind_Run])
+                               RunOptions = RunOptions, VarObs = "Q", Obs = BasinObs$Qmm[Ind_Run])
 str(InputsCrit)
 ```
 
@@ -235,7 +236,7 @@ str(OutputsModel)
 
 ## Results preview
 
-Although it is possible for the user to design its own graphics from the outputs of the `RunModel*()` functions, the **airGR** package offers the possibility to make use of the `plot.OutputsModel()` function (or `plot()` with an `OutputsModel` object). This function returns a dashboard of results including various graphs (depending on the model used): 
+Although it is possible for the user to design its own graphics from the outputs of the `RunModel*()` functions, the **airGR** package offers the possibility to make use of the `plot()` function. This function returns a dashboard of results including various graphs (depending on the model used): 
 
   * time series of total precipitation and simulated discharge (and observed discharge if provided)
   * interannual average daily simulated discharge (and daily observed discharge if provided) and interannual average monthly precipitation 
@@ -255,9 +256,11 @@ To evaluate the efficiency of the model, it is possible to use the same criterio
 
 ```{r}
 OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
+str(OutputsCrit)
 ```
 ```{r}
 OutputsCrit <- ErrorCrit_KGE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
+str(OutputsCrit)
 ```
 
 

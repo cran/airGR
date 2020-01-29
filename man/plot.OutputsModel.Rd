@@ -1,7 +1,7 @@
 \encoding{UTF-8}
 
 
-\name{plot.OutputsModel}
+\name{plot}
 \alias{plot.OutputsModel}
 \alias{plot}
 \alias{exampleSimPlot}
@@ -12,14 +12,19 @@
 \title{Default preview of model outputs}
 
 
+\description{
+Function which creates a screen plot giving an overview of the model outputs.
+}
+
+
 \usage{
 \method{plot}{OutputsModel}(x, Qobs = NULL, IndPeriod_Plot = NULL,
-  BasinArea = NULL, which = "synth", log_scale = FALSE,
-  cex.axis = 1, cex.lab = 0.9, cex.leg = 0.9, lwd = 1,
-  LayoutMat = NULL,
-  LayoutWidths = rep.int(1, ncol(LayoutMat)),
-  LayoutHeights = rep.int(1, nrow(LayoutMat)),
-  verbose = TRUE, ...)
+     BasinArea = NULL, which = "synth", log_scale = FALSE,
+     cex.axis = 1, cex.lab = 0.9, cex.leg = 0.9, lwd = 1,
+     LayoutMat = NULL,
+     LayoutWidths = rep.int(1, ncol(LayoutMat)),
+     LayoutHeights = rep.int(1, nrow(LayoutMat)),
+     verbose = TRUE, ...)
 }
 
 
@@ -58,11 +63,6 @@
 
 \value{
 Screen plot window.
-}
-
-
-\description{
-Function which creates a screen plot giving an overview of the model outputs.
 }
 
 

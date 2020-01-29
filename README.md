@@ -2,7 +2,8 @@
 # airGR: Suite of GR Hydrological Models for Precipitation-Runoff Modelling
 
 ## Overview
-This package brings into R the hydrological modelling tools used at INRAE-Antony ([Catchment Hydrology research group](https://webgr.inrae.fr/en/) of the HYCAR Research Unit, France), including rainfall-runoff models (**GR4H**, **GR5H**, **GR4J**, **GR5J**, **GR6J**, **GR2M**, **GR1A**) and a snow accumulation and melt model (**CemaNeige**). Each model core is coded in FORTRAN to ensure low computational time. The other package functions (i.e. mainly the calibration algorithm and the computation of the efficiency criteria) are coded in R.
+
+This package brings into R the hydrological modelling tools developed at INRAE-Antony ([Catchment Hydrology research group](https://webgr.inrae.fr/en/) of the HYCAR Research Unit, France), including rainfall-runoff models (**GR4H**, **GR5H**, **GR4J**, **GR5J**, **GR6J**, **GR2M**, **GR1A**) and a snow accumulation and melt model (**CemaNeige**). Each model core is coded in Fortran to ensure low computational time. The other package functions (i.e. mainly the calibration algorithm and the computation of the efficiency criteria) are coded in R.
 
 
 ## Installation
@@ -31,12 +32,12 @@ Six hydrological models and one snow melt and accumulation model are implemented
 These models can be called within airGR using the following functions: 
 
   - `RunModel_GR4H`: four-parameter hourly lumped hydrological model (Mathevet, 2005)
-  - `RunModel_GR5H`: four-parameter hourly lumped hydrological model (Ficchi, 2017 ; Ficchi *et al.*, 2019)
+  - `RunModel_GR5H`: four-parameter hourly lumped hydrological model (Ficchi, 2017; Ficchi *et al.*, 2019)
   - `RunModel_GR4J`: four-parameter daily lumped hydrological model (Perrin *et al.*, 2003)
   - `RunModel_GR5J`: five-parameter daily lumped hydrological model (Le Moine, 2008)
   - `RunModel_GR6J`: six-parameter daily lumped hydrological model (Pushpalatha *et al.*, 2011)
-  - `RunModel_GR2M`: two-parameter monthly lumped hydrological model (Mouelhi, 2003 ; Mouelhi *et al.*, 2006a)
-  - `RunModel_GR1A`: one-parameter yearly lumped hydrological model (Mouelhi, 2003 ; Mouelhi *et al.*, 2006b)
+  - `RunModel_GR2M`: two-parameter monthly lumped hydrological model (Mouelhi, 2003; Mouelhi *et al.*, 2006a)
+  - `RunModel_GR1A`: one-parameter yearly lumped hydrological model (Mouelhi, 2003; Mouelhi *et al.*, 2006b)
   - `RunModel_CemaNeige`: two-parameter degree-day snow melt and accumulation daily model (Valéry *et al.*, 2014)
   - `RunModel_CemaNeigeGR4H`: combined use of GR4H and CemaNeige
   - `RunModel_CemaNeigeGR5H`: combined use of GR5H and CemaNeige  
@@ -55,7 +56,7 @@ To learn how to use the functions from the airGR package, it is recommended to f
   4. refer to the help for `ErrorCrit_NSE` and `CreateInputsCrit` to understand how the computation of an error criterion is prepared/made;
   5. refer to the help for `Calibration_Michel`, run the provided example and then refer to the help for `CreateCalibOptions` to understand how a model calibration is prepared/made.
 
-For more information and to get started with the package, you can refer to the vignette (`vignette("airGR")`) and go on the [airGR website](https://hydrogr.github.io/airGR).
+For more information and to get started with the package, you can refer to the vignette (vignette("V01_get_started")`) and go on the [airGR website](https://hydrogr.github.io/airGR).
 
 
 ## References

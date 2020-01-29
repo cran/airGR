@@ -8,6 +8,11 @@
 \title{Run with the CemaNeige snow module}
 
 
+\description{
+Function which performs a single run for the CemaNeige snow module at the daily or hourly time step.
+}
+
+
 \usage{
 RunModel_CemaNeige(InputsModel, RunOptions, Param)
 }
@@ -47,11 +52,6 @@ CemaNeige X4 \tab (optional) percentage (between 0 and 1) of annual snowfall def
          \emph{$StateEnd}                               \tab [numeric] states at the end of the run: CemaNeige states [mm & °C],  \cr\tab see \code{\link{CreateIniStates}} for more details \cr
          }                                                                                                     
          (refer to the provided references or to the package source code for further details on these model outputs)
-}
-
-
-\description{
-Function which performs a single run for the CemaNeige snow module at the daily or hourly time step.
 }
 
 

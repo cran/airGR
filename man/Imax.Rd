@@ -8,8 +8,14 @@
 \title{Computation of the maximum capacity of the GR5H interception store}
 
 
+\description{
+Function which calculates the maximal capacity of the GR5H interception store. This function compares the interception evapotranspiration from the GR5H interception store for different maximal capacity values with the interception evapotranspiration classically used in the daily GR models (e.g. GR4J). Among all the \code{TestedValues}, the value that gives the closest interception evapotranspiration flux over the whole period is kept. 
+}
+
+
 \usage{
-Imax(InputsModel, IndPeriod_Run, TestedValues)
+Imax(InputsModel, IndPeriod_Run,
+     TestedValues = seq(from = 0.1, to = 3, by = 0.1))
 }
 
 
@@ -24,11 +30,6 @@ Imax(InputsModel, IndPeriod_Run, TestedValues)
 
 \value{
 Optimal Imax value [mm].
-}
-
-
-\description{
-Function which calculates the maximal capacity of the GR5H interception store. This function compares the interception evapotranspiration from the GR5H interception store for different maximal capacity values with the interception evapotranspiration classically used in the daily GR models (e.g. GR4J). Among all the \code{TestedValues}, the value that gives the closest interception evapotranspiration flux over the whole period is kept. 
 }
 
 

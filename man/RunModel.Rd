@@ -3,7 +3,14 @@
 
 \name{RunModel}
 \alias{RunModel}
+
+
 \title{Run with the provided hydrological model function}
+
+
+\description{
+Function which performs a single model run with the provided function over the selected period.
+}
 
 
 \usage{
@@ -24,11 +31,6 @@ RunModel(InputsModel, RunOptions, Param, FUN_MOD)
 
 \value{
 [list] see \code{\link{RunModel_GR4J}} or \code{\link{RunModel_CemaNeigeGR4J}} for details
-}
-
-
-\description{
-Function which performs a single model run with the provided function over the selected period.
 }
 
 

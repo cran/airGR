@@ -8,6 +8,11 @@
 \title{Run with the CemaNeigeGR5J hydrological model}
 
 
+\description{
+Function which performs a single run for the CemaNeige-GR5J daily lumped model.
+}
+
+
 \usage{
 RunModel_CemaNeigeGR5J(InputsModel, RunOptions, Param)
 }
@@ -70,11 +75,6 @@ CemaNeige X4 \tab (optional) percentage (between 0 and 1) of annual snowfall def
     \emph{$StateEnd}                                \tab [numeric] states at the end of the run: \cr\tab store & unit hydrographs levels [mm], CemaNeige states [mm & °C], \cr\tab see \code{\link{CreateIniStates}} for more details                                 \cr
   }
   (refer to the provided references or to the package source code for further details on these model outputs)
-}
-
-
-\description{
-Function which performs a single run for the CemaNeige-GR5J daily lumped model.
 }
 
 

@@ -8,6 +8,11 @@
 \title{Run with the GR4H hydrological model}
 
 
+\description{
+Function which performs a single run for the GR4H hourly lumped model.
+}
+
+
 \usage{
 RunModel_GR4H(InputsModel, RunOptions, Param)
 }
@@ -53,11 +58,6 @@ RunModel_GR4H(InputsModel, RunOptions, Param)
     \emph{$StateEnd} \tab [numeric] states at the end of the run (res. levels, UH1 levels, UH2 levels) [mm], see \code{\link{CreateIniStates}} for more details \cr
   }                                                                                                     
   (refer to the provided references or to the package source code for further details on these model outputs)
-}
-
-
-\description{
-Function which performs a single run for the GR4H hourly lumped model.
 }
 
 

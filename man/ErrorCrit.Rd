@@ -8,6 +8,11 @@
 \title{Error criterion using the provided function}
 
 
+\description{
+Function which computes an error criterion with the provided function.
+}
+
+
 \usage{
 ErrorCrit(InputsCrit, OutputsModel, FUN_CRIT, warnings = TRUE, verbose = TRUE)
 }
@@ -25,10 +30,6 @@ ErrorCrit(InputsCrit, OutputsModel, FUN_CRIT, warnings = TRUE, verbose = TRUE)
 \item{verbose}{(optional) [boolean] boolean indicating if the function is run in verbose mode or not, default = \code{TRUE}}
 }
 
-
-\description{
-Function which computes an error criterion with the provided function.
-}
 
 \value{
 If \code{InputsCrit} is of class \emph{Single}:

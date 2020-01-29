@@ -29,12 +29,13 @@ bibentry(bibtype="Manual",
          journal = "R News",
          year = year,
          note = note,
+         doi = "10.15454/EX11NA",         
          url = "https://CRAN.R-project.org/package=airGR",
          textVersion = 
            paste0("Coron, L., Delaigue, O., Thirel, G., Perrin, C. and Michel, C. (",
                   year,
                   "). airGR: Suite of GR Hydrological Models for Precipitation-Runoff Modelling. ",
                   note,
-                  ". URL: https://CRAN.R-project.org/package=airGR."
+                  ". DOI: 10.15454/EX11NA. URL: https://CRAN.R-project.org/package=airGR."
                   )
 )

@@ -8,6 +8,11 @@
 \title{Run with the GR1A hydrological model}
 
 
+\description{
+Function which performs a single run for the GR1A annual lumped model over the test period.
+}
+
+
 \usage{
 RunModel_GR1A(InputsModel, RunOptions, Param)
 }
@@ -35,11 +40,6 @@ GR1A X1 \tab model parameter [-] \cr
     \emph{$StateEnd} \tab [numeric] states at the end of the run (NULL) [-]             \cr
   }
   (refer to the provided references or to the package source code for further details on these model outputs)
-}
-
-
-\description{
-Function which performs a single run for the GR1A annual lumped model over the test period.
 }
 
 

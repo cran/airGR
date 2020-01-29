@@ -2,7 +2,17 @@
 
 
 
-### 1.4.3.52 Release Notes (2020-01-20)
+### 1.4.3.60 Release Notes (2020-01-28)
+
+#### Bug fixes
+
+- A digital object identifier (DOI) now allows to identify the manual of the airGR package. When you use airGR in your work, please always cite both the article and the manual. The last one allows to know the version of the package that is used in order to enhance reproducible research. The references can be displayed with the <code>citation("airGR")</code> command.
+- Fixed bug in <code>Imax()</code>. The default value of the <code>TestedValues</code> argument was wrong due to a mistyped argument name in the <code>seq()</code> function.
+
+____________________________________________________________________________________
+
+
+### 1.4.3.52 Release Notes (2020-01-21)
 
 
 #### New features
