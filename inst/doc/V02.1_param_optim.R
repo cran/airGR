@@ -1,7 +1,7 @@
 ## ---- warning=FALSE, include=FALSE, fig.keep='none', results='hide'-----------
 library(airGR)
 library(DEoptim)
-library(hydroPSO)
+#library(hydroPSO)
 library(Rmalschains)
 # source("airGR.R")
 set.seed(321)

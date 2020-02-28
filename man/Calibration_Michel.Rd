@@ -127,7 +127,7 @@ OutputsCrit <- ErrorCrit_KGE(InputsCrit = InputsCrit, OutputsModel = OutputsMode
 
 
 \author{
-Laurent Coron, Claude Michel, Charles Parrin, Thibault Mathevet, Olivier Delaigue, Guillaume Thirel
+Laurent Coron, Claude Michel, Charles Perrin, Thibault Mathevet, Olivier Delaigue, Guillaume Thirel
 }
 
 

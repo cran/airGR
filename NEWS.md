@@ -2,11 +2,27 @@
 
 
 
-### 1.4.3.60 Release Notes (2020-01-28)
+
+
+### 1.4.3.65 Release Notes (2020-02-28)
+
+#### CRAN-compatibility updates
+
+- The run period is reduced in the example of the <code>Imax()<code> function in order to run faster.
+
+- The 'hydroPSO' package is no longer suggested (but the code linked to its use and is always present in the 'param_optim' vignette).
+
+____________________________________________________________________________________
+
+
+### 1.4.3.60 Release Notes (2020-01-29)
+
+#### New features
+
+- A digital object identifier (DOI) now allows to identify the manual of the 'airGR' package. When you use airGR in your work, please always cite both the article and the manual. The last one allows to know the version of the package that is used in order to enhance reproducible research. The references can be displayed with the <code>citation("airGR")</code> command.
 
 #### Bug fixes
 
-- A digital object identifier (DOI) now allows to identify the manual of the airGR package. When you use airGR in your work, please always cite both the article and the manual. The last one allows to know the version of the package that is used in order to enhance reproducible research. The references can be displayed with the <code>citation("airGR")</code> command.
 - Fixed bug in <code>Imax()</code>. The default value of the <code>TestedValues</code> argument was wrong due to a mistyped argument name in the <code>seq()</code> function.
 
 ____________________________________________________________________________________
@@ -115,17 +131,6 @@ ________________________________________________________________________________
 ### 1.2.13.16 Release Notes (2019-04-03)
 
 
-#### Deprecated and defunct
-
-- The <code>Qobs</code> argument is now deprecated in <code>CreateInputsCrit()</code> and has been renamed <code>Obs</code>.
-
-- The <code>FUN_CRIT</code> argument is now deprecated in <code>ErrorCrit()</code>. This function now gets this information from the <code>InputsCrit</code> argument.
-
-- The <code>FUN_CRIT</code> argument is now deprecated in <code>Calibration_Michel()</code>. This function now gets this information from the <code>InputsCrit</code> argument.
-
-- The <code>plot_OutputsModel()</code> had been deprecated in airGR 1.0.4 (it had been replaced by the use of <code>plot.OutputsModel()</code> or <code>plot()</code>) and is defunct now. 
-
-
 #### New features
 
 - <code>CreateInputsCrit()</code> now presents a <code>VarObs</code> argument in order to allow to prepare an <code>InputsCrit</code> object in order to run a criterion on other variables than observed discharges with the <code>ErrorCrit()</code> function (at the moment SCA and SWE).
@@ -148,7 +153,18 @@ ________________________________________________________________________________
 
 - Added the <code>X0310010</code> dataset to run the examples using the Linear Hysteresis with CemaNeige (it contains necessary SCA data).
 
-- Added the cemaneige_hysteresis vignette to explain how to manage the use of the Linear Hysteresis with CemaNeige.
+- Added the 'cemaneige_hysteresis' vignette to explain how to manage the use of the Linear Hysteresis with CemaNeige.
+
+
+#### Deprecated and defunct
+
+- The <code>Qobs</code> argument is now deprecated in <code>CreateInputsCrit()</code> and has been renamed <code>Obs</code>.
+
+- The <code>FUN_CRIT</code> argument is now deprecated in <code>ErrorCrit()</code>. This function now gets this information from the <code>InputsCrit</code> argument.
+
+- The <code>FUN_CRIT</code> argument is now deprecated in <code>Calibration_Michel()</code>. This function now gets this information from the <code>InputsCrit</code> argument.
+
+- The <code>plot_OutputsModel()</code> had been deprecated in airGR 1.0.4 (it had been replaced by the use of <code>plot.OutputsModel()</code> or <code>plot()</code>) and is defunct now. 
 
 
 #### Major user-visible changes
@@ -215,12 +231,18 @@ ________________________________________________________________________________
 
 #### CRAN-compatibility updates
 
-- The <code>vignetteParam&#42;.rda</code> datasets moved to the inst directory. It contains different objects needed for param_optim and param_mcmc vignettes.
+- The <code>vignetteParam&#42;.rda</code> datasets moved to the inst directory. It contains different objects needed for 'param_optim' and 'param_mcmc' vignettes.
 
 ____________________________________________________________________________________
 
 
 ### 1.0.14.1 Release Notes (2018-09-28)
+
+
+#### New features
+
+- <code>PEdaily_Oudin()</code> now presents a <code>LatUnit</code> argument which allows to choose the unit of the latitude (radians and degrees).
+
 
 
 #### Deprecated and defunct
@@ -229,10 +251,6 @@ ________________________________________________________________________________
 
 - The unused <code>Ind_zeroes</code> argument of the <code>CreateInputsCrit()</code> function is now deprecated.
 
-
-#### New features
-
-- <code>PEdaily_Oudin()</code> now presents a <code>LatUnit</code> argument which allows to choose the unit of the latitude (radians and degrees).
 
 
 #### Major user-visible changes
@@ -297,13 +315,18 @@ ________________________________________________________________________________
 
 #### New features
 
-- An article describing the airGR package has been published. Its reference has been added and will be displayed with <code>citation("airGR")</code>. 
+- An article describing the 'airGR' package has been published. Its reference has been added and will be displayed with <code>citation("airGR")</code>. 
 
 - Added <code>CreateIniStates()</code> function in order to help user to format the <code>IniStates</code> argument for <code>CreateRunOptions()</code>.
 
 - Added the <code>Param_Sets_GR4J</code> dataset. It contains generalist parameter sets for the GR4J model.
 
 - Three vignettes have been added. They are relative to different calibration methods (including the generalist parameters sets of the GR4J model).
+
+
+#### Deprecated and defunct
+
+- The <code>RunSnowModule</code> argument is now deprecated in <code>CreateRunOptions()</code>.
 
 
 #### Bug fixes
@@ -315,11 +338,6 @@ ________________________________________________________________________________
 - Fixed bug in <code>plot.OutputsModel()</code> when there is no common data to plot the cumulative frequency or the correlation QQ.
 
 - Fixed bug in <code>plot.OutputsModel()</code> for the y-axis labelling of flows time series when <code>log_scale = TRUE</code> and <code>BasinArea</code> is used.
-
-
-#### Deprecated and defunct
-
-- The <code>RunSnowModule</code> argument is now deprecated in <code>CreateRunOptions()</code>.
 
 
 #### Major user-visible changes
@@ -426,20 +444,20 @@ ________________________________________________________________________________
  
 - <code>plot_OutputsModel()</code> gains a <code>log_scale</code> argument in order to plot the flow with a log scale.
 
-- A tutorial is available online on the following link: from http://webgr.irstea.fr/airGR.
+- A tutorial is available online on the following link: https://hydrogr.github.io/airGR/.
  It can also be displayed with the <code>vignette("airGR")</code> command.
  
-
-#### Bug fixes
-
-- The value <code>sort</code> for the <code>transfo</code> argument of <code>CreateInputsCrit()</code> was not taken into account. It is now fixed. 
-
 
 #### Deprecated and defunct
 
 - <code>CreateCalibOptions()</code> loses the OptimParam argument that was redundant with the <code>FixedParam</code> argument. The <code>Calibration_Michel()</code> was modified to take into account this change by using directly <code>FixedParam</code>, but this is transparent to the user. 
 
 - <code>CreateCalibOptions()</code> loses the StartParam argument that was not used. 
+
+
+#### Bug fixes
+
+- The value <code>sort</code> for the <code>transfo</code> argument of <code>CreateInputsCrit()</code> was not taken into account. It is now fixed. 
 
  
 #### Major user-visible changes
@@ -560,16 +578,16 @@ ________________________________________________________________________________
 - New argument in many functions (<code>quiet = TRUE</code> or <code>FALSE</code>) to choose if the warnings should be suppressed or not.
 
 
+#### Deprecated and defunct
+
+- The <code>CalibrationAlgo_&#42;()</code> functions were renamed into <code>Calibration_&#42;()</code>.
+
+
 #### Bug fixes
 
 - Fixed bug in <code>CreateCalibOptions()</code> to handle models with only one parameter.
 
 - Fixed bug in <code>Calibration_HBAN()</code>. The function was not working properly with models having only one parameter.
-
-
-#### Deprecated and defunct
-
-- The <code>CalibrationAlgo_&#42;()</code> functions were renamed into <code>Calibration_&#42;()</code>.
 
 
 #### Major user-visible changes
@@ -610,10 +628,15 @@ ________________________________________________________________________________
 
 - Additional functions for results plotting (the <code>{zoo}</code> package is required for some of them).
 
-- Add multi-objective calibration using <code>nsga2()</code> (the <code>{mco}</code> package is required).
+- Add multi-objective calibration using <code>nsga2()</code> (the 'mco' package is required).
 
 - The field Multiplier has been added in the ErrorCrit() outputs, to indicate whether the criterion is an error (to minimise) or and efficiency (to maximise).
  This allows to provide real efficiency values in the outputs e.g. NSE[Q] instead of (-1) &times; NSE[Q].
+
+
+#### Deprecated and defunct
+
+- <code>EfficiencyCrit()</code> have been replaced by <code>ErrorCrit()</code> to avoid misunderstanding (by default, the algorithms minimise the error criterion).
 
 
 #### Bug fixes
@@ -633,11 +656,6 @@ ________________________________________________________________________________
 - RC5 differs from previous releases in the way the data are read and stored (in a list instead of individual vectors).
  The package is similar, only the examples of Main and the files in MyScriptBlocks have changed.
  All basin data are now stored inside a list named <code>BasinData</code>. This will greatly ease the future use of Rdata files (instead of txt files) as storage format for the time series of observation. 
-
-
-#### Deprecated and defunct
-
-- <code>EfficiencyCrit()</code> have been replaced by <code>ErrorCrit()</code> to avoid misunderstanding (by default, the algorithms minimise the error criterion).
 
 
 #### Major user-visible changes
