@@ -149,33 +149,29 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
   }
   
   if (BOOL_Dates) {
-    MyRollMean1 <- function(x, n) {
-      return(filter(x, rep(1 / n, n), sides = 2))
-    }
-    MyRollMean2 <- function(x, n) {
-      return(filter(c(tail(x, n %/% 2), x, x[1:(n %/% 2)]), rep(1 / n, n), sides = 2)[(n %/% 2 + 1):(length(x) + n %/% 2)])
-    }
+    # MyRollMean1 <- function(x, n) {
+    #   return(filter(x, rep(1 / n, n), sides = 2))
+    # }
+    # MyRollMean2 <- function(x, n) {
+    #   return(filter(c(tail(x, n %/% 2), x, x[1:(n %/% 2)]), rep(1 / n, n), sides = 2)[(n %/% 2 + 1):(length(x) + n %/% 2)])
+    # }
     MyRollMean3 <- function(x, n) {
       return(filter(x, filter = rep(1 / n, n), sides = 2, circular = TRUE))
     }    
     BOOL_TS  <- FALSE
-    TimeStep <- difftime(tail(OutputsModel$DatesR, 1), tail(OutputsModel$DatesR, 2), units = "secs")[[1]]
-    if (inherits(OutputsModel, "hourly") &
-        TimeStep %in% (60 * 60)) {
+    if (inherits(OutputsModel, "hourly")) {
       BOOL_TS <- TRUE
       NameTS <- "hour"
       plotunit <- "[mm/h]"
       formatAxis <- "%m/%Y"
     }
-    if (inherits(OutputsModel, "daily") &
-        TimeStep %in% (24 * 60 * 60)) {
+    if (inherits(OutputsModel, "daily")) {
       BOOL_TS <- TRUE
       NameTS <- "day"
       plotunit <- "[mm/d]"
       formatAxis <- "%m/%Y"
     }
-    if (inherits(OutputsModel, "monthly") &
-        TimeStep %in% (c(28, 29, 30, 31) * 24 * 60 * 60)) {
+    if (inherits(OutputsModel, "monthly")) {
       BOOL_TS <- TRUE
       NameTS <- "month"
       plotunit <- "[mm/month]"
@@ -184,16 +180,15 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
         OutputsModel$DatesR <- as.POSIXlt(format(OutputsModel$DatesR, format = "%Y-%m-01"), tz = "UTC", format = "%Y-%m-%d")
       }
     }
-    if (inherits(OutputsModel, "yearly") &
-        TimeStep %in% (c(365, 366) * 24 * 60 * 60)) {
+    if (inherits(OutputsModel, "yearly")) {
       BOOL_TS <- TRUE
       NameTS <- "year"
       plotunit <- "[mm/y]"
       formatAxis <- "%Y"
     }
-    if (!BOOL_TS) {
-      stop("the time step of the model inputs could not be found")
-    }
+    # if (!BOOL_TS) {
+    #   stop("the time step of the model inputs could not be found")
+    # }
   }
   if (length(IndPeriod_Plot) == 0) {
     IndPeriod_Plot <- 1:length(OutputsModel$DatesR)

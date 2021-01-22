@@ -4,72 +4,73 @@ CreateInputsModel <- function(FUN_MOD,
                               PotEvap = NULL,
                               TempMean = NULL, TempMin = NULL, TempMax = NULL,
                               ZInputs = NULL, HypsoData = NULL, NLayers = 5,
+                              Qupstream = NULL, LengthHydro = NULL, BasinAreas = NULL,
                               verbose = TRUE) {
-    
-    
+
+
     ObjectClass <- NULL
-    
+
     FUN_MOD <- match.fun(FUN_MOD)
-    
+
     ##check_FUN_MOD
     BOOL <- FALSE
     if (identical(FUN_MOD, RunModel_GR4H) | identical(FUN_MOD, RunModel_GR5H)) {
       ObjectClass <- c(ObjectClass, "hourly", "GR")
-      
+
       TimeStep <- as.integer(60 * 60)
-      
+
       BOOL <- TRUE
     }
     if (identical(FUN_MOD, RunModel_GR4J) |
         identical(FUN_MOD, RunModel_GR5J) |
         identical(FUN_MOD, RunModel_GR6J)) {
       ObjectClass <- c(ObjectClass, "daily", "GR")
-      
+
       TimeStep <- as.integer(24 * 60 * 60)
-      
+
       BOOL <- TRUE
     }
     if (identical(FUN_MOD, RunModel_GR2M)) {
       ObjectClass <- c(ObjectClass, "GR", "monthly")
-      
+
       TimeStep <- as.integer(c(28, 29, 30, 31) * 24 * 60 * 60)
-      
+
       BOOL <- TRUE
     }
     if (identical(FUN_MOD, RunModel_GR1A)) {
       ObjectClass <- c(ObjectClass, "GR", "yearly")
-      
+
       TimeStep <- as.integer(c(365, 366) * 24 * 60 * 60)
-      
+
       BOOL <- TRUE
     }
     if (identical(FUN_MOD, RunModel_CemaNeige)) {
       ObjectClass <- c(ObjectClass, "daily", "CemaNeige")
-      
+
       TimeStep <- as.integer(24 * 60 * 60)
-      
+
       BOOL <- TRUE
     }
     if (identical(FUN_MOD, RunModel_CemaNeigeGR4J) |
         identical(FUN_MOD, RunModel_CemaNeigeGR5J) |
         identical(FUN_MOD, RunModel_CemaNeigeGR6J)) {
       ObjectClass <- c(ObjectClass, "daily", "GR", "CemaNeige")
-      
+
       TimeStep <- as.integer(24 * 60 * 60)
-      
+
       BOOL <- TRUE
     }
     if (identical(FUN_MOD, RunModel_CemaNeigeGR4H) | identical(FUN_MOD, RunModel_CemaNeigeGR5H)) {
       ObjectClass <- c(ObjectClass, "hourly", "GR", "CemaNeige")
-      
+
       TimeStep <- as.integer(60 * 60)
-      
+
       BOOL <- TRUE
     }
     if (!BOOL) {
       stop("incorrect 'FUN_MOD' for use in 'CreateInputsModel'")
     }
-    
+
     ##check_arguments
     if ("GR" %in% ObjectClass | "CemaNeige" %in% ObjectClass) {
       if (is.null(DatesR)) {
@@ -166,7 +167,7 @@ CreateInputsModel <- function(FUN_MOD,
         HypsoData <- as.numeric(rep(NA, 101))
         ZInputs   <- as.numeric(NA)
         NLayers   <- as.integer(1)
-        
+
       }
       if (is.null(ZInputs)) {
         if (verbose & !identical(HypsoData, as.numeric(rep(NA, 101)))) {
@@ -182,11 +183,40 @@ CreateInputsModel <- function(FUN_MOD,
         NLayers <- as.integer(NLayers)
       }
     }
-    
-    
+
+    ## check semi-distributed mode
+    if (!is.null(Qupstream) & !is.null(LengthHydro) & !is.null(BasinAreas)) {
+      ObjectClass <- c(ObjectClass, "SD")
+    } else if (verbose & !all(c(is.null(Qupstream), is.null(LengthHydro), is.null(BasinAreas)))) {
+      warning("Missing argument: 'Qupstream', 'LengthHydro' and 'BasinAreas' must all be set to run in a semi-distributed mode. The lumped mode will be used")
+    }
+    if ("SD" %in% ObjectClass) {
+      if (!("daily" %in% ObjectClass) & !("hourly" %in% ObjectClass)) {
+        stop("Only daily and hourly time steps can be used in a semi-distributed mode")
+      }
+      if (!is.matrix(Qupstream) | !is.numeric(Qupstream)) {
+        stop("'Qupstream' must be a matrice of numeric values")
+      }
+      if (!is.vector(LengthHydro) | !is.vector(BasinAreas) | !is.numeric(LengthHydro) | !is.numeric(BasinAreas)) {
+        stop("'LengthHydro' and 'BasinAreas' must be vectors of numeric values")
+      }
+      if (ncol(Qupstream) != length(LengthHydro)) {
+        stop("'Qupstream' number of columns and 'LengthHydro' length must be equal")
+      }
+      if (length(LengthHydro) + 1 != length(BasinAreas)) {
+        stop("'BasinAreas' must have one more element than 'LengthHydro'")
+      }
+      if (nrow(Qupstream) != LLL) {
+        stop("'Qupstream' must have same number of rows as 'DatesR' length")
+      }
+      if(any(is.na(Qupstream))) {
+        stop("'Qupstream' cannot contain any NA value")
+      }
+    }
+
     ##check_NA_values
     BOOL_NA <- rep(FALSE, length(DatesR))
-    
+
     if ("GR" %in% ObjectClass) {
       BOOL_NA_TMP <- (Precip  < 0) | is.na(Precip)
       if (sum(BOOL_NA_TMP) != 0) {
@@ -238,9 +268,9 @@ CreateInputsModel <- function(FUN_MOD,
     if (sum(BOOL_NA) != 0) {
       WTxt <- NULL
       WTxt <- paste(WTxt, "\t Missing values are not allowed in 'InputsModel'", sep = "")
-      
+
       Select <- (max(which(BOOL_NA)) + 1):length(BOOL_NA)
-      
+
       if (Select[1L] > Select[2L]) {
         stop("time series could not be trunced since missing values were detected at the last time-step")
       }
@@ -256,18 +286,18 @@ CreateInputsModel <- function(FUN_MOD,
           TempMax <- TempMax[Select]
         }
       }
-      
+
       DatesR <- DatesR[Select]
-      
+
       WTxt <- paste0(WTxt, "\t -> data were trunced to keep the most recent available time-steps")
       WTxt <- paste0(WTxt, "\t -> ", length(Select), " time-steps were kept")
-      
+
       if (!is.null(WTxt) & verbose) {
         warning(WTxt)
       }
     }
-    
-    
+
+
     ##DataAltiExtrapolation_Valery
     if ("CemaNeige" %in% ObjectClass) {
       RESULT <- DataAltiExtrapolation_Valery(DatesR = DatesR,
@@ -283,8 +313,8 @@ CreateInputsModel <- function(FUN_MOD,
         }
       }
     }
-    
-    
+
+
     ##Create_InputsModel
     InputsModel <- list(DatesR = DatesR)
     if ("GR" %in% ObjectClass) {
@@ -296,11 +326,16 @@ CreateInputsModel <- function(FUN_MOD,
                                          LayerFracSolidPrecip = RESULT$LayerFracSolidPrecip,
                                          ZLayers              = RESULT$ZLayers))
     }
-    
+    if ("SD" %in% ObjectClass) {
+      InputsModel <- c(InputsModel, list(Qupstream = Qupstream,
+                                         LengthHydro   = LengthHydro,
+                                         BasinAreas = BasinAreas))
+    }
+
     class(InputsModel) <- c("InputsModel", ObjectClass)
-    
+
     return(InputsModel)
-    
-    
-    
+
+
+
 }

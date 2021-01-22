@@ -8,7 +8,7 @@ RunModel_CemaNeige <- function(InputsModel, RunOptions, Param) {
   FortranOutputsCemaNeige <- .FortranOutputs(GR = NULL, isCN = TRUE)$CN
   
   
-  ## Arguments_check
+  ## Arguments check
   if (!inherits(InputsModel, "InputsModel")) {
     stop("'InputsModel' must be of class 'InputsModel'")
   }
@@ -39,7 +39,7 @@ RunModel_CemaNeige <- function(InputsModel, RunOptions, Param) {
     time_mult <- 24
   }
 
-  ## Input_data_preparation
+  ## Input data preparation
   if (identical(RunOptions$IndPeriod_WarmUp, as.integer(0))) {
     RunOptions$IndPeriod_WarmUp <- NULL
   }
@@ -52,7 +52,7 @@ RunModel_CemaNeige <- function(InputsModel, RunOptions, Param) {
   
   
   
-  ## SNOW_MODULE________________________________________________________________________________
+  ## CemaNeige________________________________________________________________________________
   ParamCemaNeige <- Param
   NLayers        <- length(InputsModel$LayerPrecip)
   
@@ -71,7 +71,7 @@ RunModel_CemaNeige <- function(InputsModel, RunOptions, Param) {
   NameCemaNeigeLayers <- "CemaNeigeLayers"
   
   
-  ## Call_DLL_CemaNeige_________________________
+  ## Call CemaNeige Fortran_________________________
   for (iLayer in 1:NLayers) {
     
     if (!IsHyst) {
@@ -105,7 +105,7 @@ RunModel_CemaNeige <- function(InputsModel, RunOptions, Param) {
     
     
     
-    ## Data_storage
+    ## Data storage
     CemaNeigeLayers[[iLayer]] <- lapply(seq_len(RESULTS$NOutputs), function(i) RESULTS$Outputs[IndPeriod2, i])
     names(CemaNeigeLayers[[iLayer]]) <- FortranOutputsCemaNeige[IndOutputsCemaNeige]
     if (ExportStateEnd) {
@@ -113,7 +113,7 @@ RunModel_CemaNeige <- function(InputsModel, RunOptions, Param) {
     }
     rm(RESULTS)
     
-  } ### ENDFOR_iLayer
+  } ### ENDFOR iLayer
   
   names(CemaNeigeLayers) <- sprintf("Layer%02i", seq_len(NLayers))
   
@@ -129,7 +129,7 @@ RunModel_CemaNeige <- function(InputsModel, RunOptions, Param) {
                                          verbose = FALSE)
   }
   
-  ## Output_data_preparation
+  ## Output data preparation
   if (!ExportDatesR & !ExportStateEnd) {
     OutputsModel <- list(CemaNeigeLayers)
     names(OutputsModel) <- NameCemaNeigeLayers

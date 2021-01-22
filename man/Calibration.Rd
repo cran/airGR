@@ -73,7 +73,7 @@ CalibOptions <- CreateCalibOptions(FUN_MOD = RunModel_GR4J, FUN_CALIB = Calibrat
 
 ## calibration
 OutputsCalib <- Calibration(InputsModel = InputsModel, RunOptions = RunOptions,
-                            InputsCrit = InputsCrit,  CalibOptions = CalibOptions,
+                            InputsCrit = InputsCrit, CalibOptions = CalibOptions,
                             FUN_MOD = RunModel_GR4J, 
                             FUN_CALIB = Calibration_Michel)
 

@@ -16,44 +16,79 @@
 <title>Plugging in new calibration algorithms in airGR</title>
 
 
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css" data-origin="pandoc">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 
 </style>
 <script>
@@ -80,7 +115,188 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 
-<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
 
 
 
@@ -106,7 +322,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <!-- ```{r, warning=FALSE, fig.keep='none', results='hide', fig.height=10, fig.width=10, eval=TRUE, echo=FALSE, message=FALSE} -->
 <!-- example("Calibration_Michel", echo = FALSE, ask = FALSE) -->
 <!-- ``` -->
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">example</span>(<span class="st">&quot;Calibration_Michel&quot;</span>)</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">example</span>(<span class="st">&quot;Calibration_Michel&quot;</span>)</a></code></pre></div>
 <p>Regarding the different optimization strategies presented here, we refer to each package for in-depth information about the description of the methods used.</p>
 <p>Please note that this vignette is only for illustration purposes and does not provide any guidance about which optimization strategies is recommended for the family of the <strong>GR</strong> models.</p>
 </div>
@@ -114,49 +330,49 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h2>Definition of the necessary function</h2>
 <p>Parameter estimation can be performed by defining a function that takes a parameter set as input and returns the value of the performance criterion. There are two important steps: the transformation of parameters to real space and the computation of the value of the performance criterion. Here we choose to minimize the root mean square error.</p>
 <p>The change of the repository from the “real” parameter space to a “transformed” space ensures homogeneity of displacement in the different dimensions of the parameter space during the step-by-step procedure of the calibration algorithm of the model.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OptimGR4J &lt;-<span class="st"> </span><span class="cf">function</span>(ParamOptim) {
-  ## Transformation of the parameter set to real space
-  RawParamOptim &lt;-<span class="st"> </span>airGR<span class="op">::</span><span class="kw">TransfoParam_GR4J</span>(<span class="dt">ParamIn =</span> ParamOptim,
-                                            <span class="dt">Direction =</span> <span class="st">&quot;TR&quot;</span>)
-  ## Simulation given a parameter set
-  OutputsModel &lt;-<span class="st"> </span>airGR<span class="op">::</span><span class="kw">RunModel_GR4J</span>(<span class="dt">InputsModel =</span> InputsModel,
-                                       <span class="dt">RunOptions =</span> RunOptions,
-                                       <span class="dt">Param =</span> RawParamOptim)
-  ## Computation of the value of the performance criteria
-  OutputsCrit &lt;-<span class="st"> </span>airGR<span class="op">::</span><span class="kw">ErrorCrit_RMSE</span>(<span class="dt">InputsCrit =</span> InputsCrit,
-                                       <span class="dt">OutputsModel =</span> OutputsModel,
-                                       <span class="dt">verbose =</span> <span class="ot">FALSE</span>)
-  <span class="kw">return</span>(OutputsCrit<span class="op">$</span>CritValue)
-}</code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">OptimGR4J &lt;-<span class="st"> </span><span class="cf">function</span>(ParamOptim) {</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2">  <span class="co">## Transformation of the parameter set to real space</span></a>
+<a class="sourceLine" id="cb2-3" data-line-number="3">  RawParamOptim &lt;-<span class="st"> </span>airGR<span class="op">::</span><span class="kw">TransfoParam_GR4J</span>(<span class="dt">ParamIn =</span> ParamOptim,</a>
+<a class="sourceLine" id="cb2-4" data-line-number="4">                                            <span class="dt">Direction =</span> <span class="st">&quot;TR&quot;</span>)</a>
+<a class="sourceLine" id="cb2-5" data-line-number="5">  <span class="co">## Simulation given a parameter set</span></a>
+<a class="sourceLine" id="cb2-6" data-line-number="6">  OutputsModel &lt;-<span class="st"> </span>airGR<span class="op">::</span><span class="kw">RunModel_GR4J</span>(<span class="dt">InputsModel =</span> InputsModel,</a>
+<a class="sourceLine" id="cb2-7" data-line-number="7">                                       <span class="dt">RunOptions =</span> RunOptions,</a>
+<a class="sourceLine" id="cb2-8" data-line-number="8">                                       <span class="dt">Param =</span> RawParamOptim)</a>
+<a class="sourceLine" id="cb2-9" data-line-number="9">  <span class="co">## Computation of the value of the performance criteria</span></a>
+<a class="sourceLine" id="cb2-10" data-line-number="10">  OutputsCrit &lt;-<span class="st"> </span>airGR<span class="op">::</span><span class="kw">ErrorCrit_RMSE</span>(<span class="dt">InputsCrit =</span> InputsCrit,</a>
+<a class="sourceLine" id="cb2-11" data-line-number="11">                                       <span class="dt">OutputsModel =</span> OutputsModel,</a>
+<a class="sourceLine" id="cb2-12" data-line-number="12">                                       <span class="dt">verbose =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb2-13" data-line-number="13">  <span class="kw">return</span>(OutputsCrit<span class="op">$</span>CritValue)</a>
+<a class="sourceLine" id="cb2-14" data-line-number="14">}</a></code></pre></div>
 <p>In addition, we need to define the lower and upper bounds of the four <strong>GR4J</strong> parameters in the transformed parameter space:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">lowerGR4J &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="op">-</span><span class="fl">9.99</span>, <span class="dt">times =</span> <span class="dv">4</span>)
-upperGR4J &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="op">+</span><span class="fl">9.99</span>, <span class="dt">times =</span> <span class="dv">4</span>)</code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">lowerGR4J &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="op">-</span><span class="fl">9.99</span>, <span class="dt">times =</span> <span class="dv">4</span>)</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2">upperGR4J &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="op">+</span><span class="fl">9.99</span>, <span class="dt">times =</span> <span class="dv">4</span>)</a></code></pre></div>
 </div>
 </div>
 <div id="local-optimization" class="section level1">
 <h1>Local optimization</h1>
 <p>We start with a local optimization strategy by using the PORT routines (using the <code>nlminb()</code> of the <code>stats</code> package) and by setting a starting point in the transformed parameter space:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">startGR4J &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">4.1</span>, <span class="fl">3.9</span>, <span class="op">-</span><span class="fl">0.9</span>, <span class="op">-</span><span class="fl">8.7</span>)
-optPORT &lt;-<span class="st"> </span>stats<span class="op">::</span><span class="kw">nlminb</span>(<span class="dt">start =</span> startGR4J, 
-                         <span class="dt">objective =</span> OptimGR4J,
-                         <span class="dt">lower =</span> lowerGR4J, <span class="dt">upper =</span> upperGR4J,
-                         <span class="dt">control =</span> <span class="kw">list</span>(<span class="dt">trace =</span> <span class="dv">1</span>))</code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">startGR4J &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">4.1</span>, <span class="fl">3.9</span>, <span class="fl">-0.9</span>, <span class="fl">-8.7</span>)</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">optPORT &lt;-<span class="st"> </span>stats<span class="op">::</span><span class="kw">nlminb</span>(<span class="dt">start =</span> startGR4J,</a>
+<a class="sourceLine" id="cb4-3" data-line-number="3">                         <span class="dt">objective =</span> OptimGR4J,</a>
+<a class="sourceLine" id="cb4-4" data-line-number="4">                         <span class="dt">lower =</span> lowerGR4J, <span class="dt">upper =</span> upperGR4J,</a>
+<a class="sourceLine" id="cb4-5" data-line-number="5">                         <span class="dt">control =</span> <span class="kw">list</span>(<span class="dt">trace =</span> <span class="dv">1</span>))</a></code></pre></div>
 <p>The RMSE value reaches a local minimum value after 35 iterations.</p>
 <p>We can also try a multi-start approach to test the consistency of the local optimization. Here we use the same grid used for the filtering step of the Michel’s calibration strategy (<code>Calibration_Michel()</code> function). For each starting point, a local optimization is performed.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">startGR4J &lt;-<span class="st"> </span><span class="kw">expand.grid</span>(<span class="kw">data.frame</span>(CalibOptions<span class="op">$</span>StartParamDistrib))
-optPORT_ &lt;-<span class="st"> </span><span class="cf">function</span>(x) {
-  opt &lt;-<span class="st"> </span>stats<span class="op">::</span><span class="kw">nlminb</span>(<span class="dt">start =</span> x, 
-                       <span class="dt">objective =</span> OptimGR4J,
-                       <span class="dt">lower =</span> lowerGR4J, <span class="dt">upper =</span> upperGR4J,
-                       <span class="dt">control =</span> <span class="kw">list</span>(<span class="dt">trace =</span> <span class="dv">1</span>))
-}
-listOptPORT &lt;-<span class="st"> </span><span class="kw">apply</span>(startGR4J, <span class="dt">MARGIN =</span> <span class="dv">1</span>, <span class="dt">FUN =</span> optPORT_)</code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">startGR4J &lt;-<span class="st"> </span><span class="kw">expand.grid</span>(<span class="kw">data.frame</span>(CalibOptions<span class="op">$</span>StartParamDistrib))</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">optPORT_ &lt;-<span class="st"> </span><span class="cf">function</span>(x) {</a>
+<a class="sourceLine" id="cb5-3" data-line-number="3">  opt &lt;-<span class="st"> </span>stats<span class="op">::</span><span class="kw">nlminb</span>(<span class="dt">start =</span> x,</a>
+<a class="sourceLine" id="cb5-4" data-line-number="4">                       <span class="dt">objective =</span> OptimGR4J,</a>
+<a class="sourceLine" id="cb5-5" data-line-number="5">                       <span class="dt">lower =</span> lowerGR4J, <span class="dt">upper =</span> upperGR4J,</a>
+<a class="sourceLine" id="cb5-6" data-line-number="6">                       <span class="dt">control =</span> <span class="kw">list</span>(<span class="dt">trace =</span> <span class="dv">1</span>))</a>
+<a class="sourceLine" id="cb5-7" data-line-number="7">}</a>
+<a class="sourceLine" id="cb5-8" data-line-number="8">listOptPORT &lt;-<span class="st"> </span><span class="kw">apply</span>(startGR4J, <span class="dt">MARGIN =</span> <span class="dv">1</span>, <span class="dt">FUN =</span> optPORT_)</a></code></pre></div>
 <p>We can then extract the best parameter sets and the value of the performance criteria:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">parPORT &lt;-<span class="st"> </span><span class="kw">t</span>(<span class="kw">sapply</span>(listOptPORT, <span class="cf">function</span>(x) x<span class="op">$</span>par))
-objPORT &lt;-<span class="st"> </span><span class="kw">sapply</span>(listOptPORT, <span class="cf">function</span>(x) x<span class="op">$</span>objective)
-resPORT &lt;-<span class="st"> </span><span class="kw">data.frame</span>(parPORT, <span class="dt">RMSE =</span> objPORT)</code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">parPORT &lt;-<span class="st"> </span><span class="kw">t</span>(<span class="kw">sapply</span>(listOptPORT, <span class="cf">function</span>(x) x<span class="op">$</span>par))</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2">objPORT &lt;-<span class="st"> </span><span class="kw">sapply</span>(listOptPORT, <span class="cf">function</span>(x) x<span class="op">$</span>objective)</a>
+<a class="sourceLine" id="cb6-3" data-line-number="3">resPORT &lt;-<span class="st"> </span><span class="kw">data.frame</span>(parPORT, <span class="dt">RMSE =</span> objPORT)</a></code></pre></div>
 <p>As can be seen below, the optimum performance criterion values (column <em>objective</em>) can differ from the global optimum value in many cases, resulting in various parameter sets.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(resPORT)</code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">summary</span>(resPORT)</a></code></pre></div>
 <pre><code>##        X1              X2               X3                  X4           
 ##  Min.   :5.548   Min.   :0.1240   Min.   :-0.038062   Min.   :-8.242667  
 ##  1st Qu.:5.548   1st Qu.:0.1243   1st Qu.:-0.003741   1st Qu.:-8.242667  
@@ -183,21 +399,21 @@ resPORT &lt;-<span class="st"> </span><span class="kw">data.frame</span>(parPORT
 </ul>
 <div id="differential-evolution" class="section level2">
 <h2>Differential Evolution</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">optDE &lt;-<span class="st"> </span>DEoptim<span class="op">::</span><span class="kw">DEoptim</span>(<span class="dt">fn =</span> OptimGR4J,
-                          <span class="dt">lower =</span> lowerGR4J, <span class="dt">upper =</span> upperGR4J,
-                          <span class="dt">control =</span> DEoptim<span class="op">::</span><span class="kw">DEoptim.control</span>(<span class="dt">NP =</span> <span class="dv">40</span>, <span class="dt">trace =</span> <span class="dv">10</span>))</code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">optDE &lt;-<span class="st"> </span>DEoptim<span class="op">::</span><span class="kw">DEoptim</span>(<span class="dt">fn =</span> OptimGR4J,</a>
+<a class="sourceLine" id="cb9-2" data-line-number="2">                          <span class="dt">lower =</span> lowerGR4J, <span class="dt">upper =</span> upperGR4J,</a>
+<a class="sourceLine" id="cb9-3" data-line-number="3">                          <span class="dt">control =</span> DEoptim<span class="op">::</span><span class="kw">DEoptim.control</span>(<span class="dt">NP =</span> <span class="dv">40</span>, <span class="dt">trace =</span> <span class="dv">10</span>))</a></code></pre></div>
 </div>
 <div id="particle-swarm" class="section level2">
 <h2>Particle Swarm</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">optPSO &lt;-<span class="st"> </span>hydroPSO<span class="op">::</span><span class="kw">hydroPSO</span>(<span class="dt">fn =</span> OptimGR4J,
-                             <span class="dt">lower =</span> lowerGR4J, <span class="dt">upper =</span> upperGR4J,
-                             <span class="dt">control =</span> <span class="kw">list</span>(<span class="dt">write2disk =</span> <span class="ot">FALSE</span>, <span class="dt">verbose =</span> <span class="ot">FALSE</span>))</code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">optPSO &lt;-<span class="st"> </span>hydroPSO<span class="op">::</span><span class="kw">hydroPSO</span>(<span class="dt">fn =</span> OptimGR4J,</a>
+<a class="sourceLine" id="cb10-2" data-line-number="2">                             <span class="dt">lower =</span> lowerGR4J, <span class="dt">upper =</span> upperGR4J,</a>
+<a class="sourceLine" id="cb10-3" data-line-number="3">                             <span class="dt">control =</span> <span class="kw">list</span>(<span class="dt">write2disk =</span> <span class="ot">FALSE</span>, <span class="dt">verbose =</span> <span class="ot">FALSE</span>))</a></code></pre></div>
 </div>
 <div id="ma-ls-chains" class="section level2">
 <h2>MA-LS-Chains</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">optMALS &lt;-<span class="st"> </span>Rmalschains<span class="op">::</span><span class="kw">malschains</span>(<span class="dt">fn =</span> OptimGR4J,
-                                   <span class="dt">lower =</span> lowerGR4J, <span class="dt">upper =</span> upperGR4J, 
-                                   <span class="dt">maxEvals =</span> <span class="dv">2000</span>)</code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">optMALS &lt;-<span class="st"> </span>Rmalschains<span class="op">::</span><span class="kw">malschains</span>(<span class="dt">fn =</span> OptimGR4J,</a>
+<a class="sourceLine" id="cb11-2" data-line-number="2">                                   <span class="dt">lower =</span> lowerGR4J, <span class="dt">upper =</span> upperGR4J,</a>
+<a class="sourceLine" id="cb11-3" data-line-number="3">                                   <span class="dt">maxEvals =</span> <span class="dv">2000</span>)</a></code></pre></div>
 </div>
 </div>
 <div id="results" class="section level1">

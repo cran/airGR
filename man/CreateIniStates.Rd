@@ -19,7 +19,7 @@ CreateIniStates(FUN_MOD, InputsModel, IsHyst = FALSE, IsIntStore = FALSE,
                 UH1 = NULL, UH2 = NULL,
                 GCemaNeigeLayers = NULL, eTGCemaNeigeLayers = NULL,
                 GthrCemaNeigeLayers = NULL, GlocmaxCemaNeigeLayers = NULL,
-                verbose = TRUE)
+                SD = NULL, verbose = TRUE)
 }
 
 
@@ -51,6 +51,8 @@ CreateIniStates(FUN_MOD, InputsModel, IsHyst = FALSE, IsIntStore = FALSE,
 \item{GthrCemaNeigeLayers}{(optional) [numeric] melt threshold [mm], possibly used to create the CemaNeige model initial state in case the Linear Hysteresis version is used}
 
 \item{GlocmaxCemaNeigeLayers}{(optional) [numeric] local melt threshold for hysteresis [mm], possibly used to create the CemaNeige model initial state in case the Linear Hysteresis version is used}
+
+\item{SD}{(optional) [list] of [numeric] states of delayed upstream flows for semi-distributed models, the nature of the state and the unit depend on the model and the unit of the upstream flow}
 
 \item{verbose}{(optional) [boolean] boolean indicating if the function is run in verbose mode or not, default = \code{TRUE}}
 

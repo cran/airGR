@@ -6,17 +6,22 @@
 ! FILE    : frun_GR4H.f
 !------------------------------------------------------------------------------
 ! AUTHORS
-! Original code: C. Perrin
-! Cleaning and formatting for airGR: L. Coron
-! Further cleaning: G. Thirel
+! Original code: Perrin, C.
+! Cleaning and formatting for airGR: Coron, L.
+! Further cleaning: Thirel, G.
 !------------------------------------------------------------------------------
 ! Creation date: 2003
 ! Last modified: 25/11/2019
 !------------------------------------------------------------------------------
 ! REFERENCES
-! Perrin, C., C. Michel and V. Andréassian (2003). Improvement of a 
-! parsimonious model for streamflow simulation. Journal of Hydrology, 
-! 279(1-4), 275-289, doi:10.1016/S0022-1694(03)00225-7. 
+! Mathevet, T. (2005). Quels modèles pluie-débit globaux pour le pas de temps
+! horaire ? Développement empirique et comparaison de modèles sur un large
+! échantillon de bassins versants. PhD thesis (in French), ENGREF - Cemagref
+! Antony, Paris, France.
+!
+! Le Moine, N. (2008). Le bassin versant de surface vu par le souterrain : une
+! voie d'amélioration des performances et du réalisme des modèles pluie-débit ?
+! PhD thesis (in French), UPMC - Cemagref Antony, Paris, France.
 !------------------------------------------------------------------------------
 ! Quick description of public procedures:
 !         1. frun_gr4h
@@ -27,7 +32,7 @@
       SUBROUTINE frun_gr4h(LInputs,InputsPrecip,InputsPE,NParam,Param, &
                            NStates,StateStart,NOutputs,IndOutputs, &
                            Outputs,StateEnd)
-! Subroutine that initializes GR4H, get its parameters, performs the call 
+! Subroutine that initializes GR4H, get its parameters, performs the call
 ! to the MOD_GR4H subroutine at each time step, and stores the final states
 ! Inputs
 !       LInputs      ! Integer, length of input and output series
@@ -39,7 +44,7 @@
 !       StateStart   ! Vector of real, state variables used when the model run starts (store levels [mm] and Unit Hydrograph (UH) storages [mm])
 !       NOutputs     ! Integer, number of output series
 !       IndOutputs   ! Vector of integer, indices of output series
-! Outputs      
+! Outputs
 !       Outputs      ! Vector of real, output series
 !       StateEnd     ! Vector of real, state variables at the end of the model run (store levels [mm] and Unit Hydrograph (UH) storages [mm])
 
@@ -60,7 +65,7 @@
       ! out
       doubleprecision, dimension(NStates), intent(out) :: StateEnd
       doubleprecision, dimension(LInputs,NOutputs), intent(out) :: Outputs
-      
+
       !! locals
       integer :: I,K
       integer, parameter :: NH=480,NMISC=30
@@ -98,7 +103,7 @@
       !computation of UH ordinates
       OrdUH1 = 0.
       OrdUH2 = 0.
-      
+
       D=1.25
       CALL UH1_H(OrdUH1,Param(4),D)
       CALL UH2_H(OrdUH2,Param(4),D)
@@ -193,7 +198,7 @@
       ! out
       doubleprecision, intent(out) :: Q
       doubleprecision, dimension(NMISC), intent(out)  :: MISC
-      
+
       A=Param(1)
 
 
@@ -203,15 +208,15 @@
         PN=0.
         WS=EN/A
         IF(WS.GT.13.) WS=13.
-      
+
       ! speed-up
         expWS = exp(2.*WS)
         TWS = (expWS - 1.)/(expWS + 1.)
         Sr = St(1)/A
         ER=St(1)*(2.-Sr)*TWS/(1.+(1.-Sr)*TWS)
       ! ER=X(2)*(2.-X(2)/A)*tanHyp(WS)/(1.+(1.-X(2)/A)*tanHyp(WS))
-      ! end speed-up  
-      
+      ! end speed-up
+
         AE=ER+P1
         St(1)=St(1)-ER
         PR=0.
@@ -222,7 +227,7 @@
         PN=P1-E
         WS=PN/A
         IF(WS.GT.13.)WS=13.
-      
+
       ! speed-up
         expWS = exp(2.*WS)
         TWS = (expWS - 1.)/(expWS + 1.)
@@ -230,7 +235,7 @@
         PS=A*(1.-Sr*Sr)*TWS/(1.+Sr*TWS)
       ! PS=A*(1.-(X(2)/A)**2.)*tanHyp(WS)/(1.+X(2)/A*tanHyp(WS))
       ! end speed-up
-      
+
         PR=PN-PS
         St(1)=St(1)+PS
       ENDIF

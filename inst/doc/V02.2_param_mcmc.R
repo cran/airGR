@@ -11,10 +11,6 @@ load(system.file("vignettesData/vignetteParamMCMC.rda", package = "airGR"))
 ## ---- echo=TRUE, eval=FALSE, eval=FALSE---------------------------------------
 #  example("Calibration_Michel")
 
-## ---- echo=TRUE, eval=FALSE---------------------------------------------------
-#  Likelihood <- sum((ObsY - ModY)^2, na.rm = TRUE)^(-sum(!is.na(ObsY)) / 2)
-#  LogLike <- -2 * log(Likelihood)
-
 ## ---- results='hide', eval=FALSE----------------------------------------------
 #  LogLikeGR4J <- function(ParamOptim) {
 #    ## Transformation to real space
@@ -25,7 +21,7 @@ load(system.file("vignettesData/vignetteParamMCMC.rda", package = "airGR"))
 #                                         RunOptions = RunOptions,
 #                                         Param = RawParamOptim)
 #    ## Computation of the log-likelihood: N * log(SS)
-#    ObsY <- InputsCrit$Qobs
+#    ObsY <- InputsCrit$Obs
 #    ModY <- OutputsModel$Qsim
 #    LogLike <- sum(!is.na(ObsY)) * log(sum((ObsY - ModY)^2, na.rm = TRUE))
 #  }

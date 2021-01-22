@@ -8,7 +8,13 @@ useDynLib(airGR, .registration = TRUE)
 #####################################
 ##            S3 methods           ##
 #####################################
-S3method("plot", "OutputsModel")
+S3method('[', InputsModel)
+#S3method('[', OutputsModel) ### to add in version 2.0
+S3method(plot, OutputsModel)
+S3method(SeriesAggreg, data.frame)
+S3method(SeriesAggreg, list)
+S3method(SeriesAggreg, InputsModel)
+S3method(SeriesAggreg, OutputsModel)
 
 
 
@@ -31,6 +37,7 @@ export(ErrorCrit_RMSE)
 export(Imax)
 export(PE_Oudin)
 export(PEdaily_Oudin)
+export(plot.OutputsModel) ### to remove from version 2.0
 export(RunModel)
 export(RunModel_CemaNeige)
 export(RunModel_CemaNeigeGR4H)
@@ -45,6 +52,7 @@ export(RunModel_GR5H)
 export(RunModel_GR4J)
 export(RunModel_GR5J)
 export(RunModel_GR6J)
+export(RunModel_Lag)
 export(SeriesAggreg)
 export(TransfoParam)
 export(TransfoParam_CemaNeige)
@@ -56,10 +64,8 @@ export(TransfoParam_GR5H)
 export(TransfoParam_GR4J)
 export(TransfoParam_GR5J)
 export(TransfoParam_GR6J)
-export(plot.OutputsModel)
-exportPattern(".FortranOutputs")
-exportPattern(".ErrorCrit")
-
+export(TransfoParam_Lag)
+export(.ErrorCrit)
 
 
 #####################################

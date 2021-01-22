@@ -8,8 +8,8 @@
 !------------------------------------------------------------------------------
 ! AUTHORS
 ! Original code: Unknown soldier
-! Cleaning and formatting for airGR: L. Coron
-! Further cleaning: G. Thirel
+! Cleaning and formatting for airGR: Coron, L.
+! Further cleaning: Thirel, G.
 !------------------------------------------------------------------------------
 ! Creation date: 2000
 ! Last modified: 21/11/2019

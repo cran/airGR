@@ -1,7 +1,7 @@
 ## ---- warning=FALSE, include=FALSE, fig.keep='none', results='hide'-----------
 library(airGR)
 library(DEoptim)
-#library(hydroPSO)
+library(hydroPSO) # Needs R version >= 3.6 or latticeExtra <= 0.6-28 on R 3.5
 library(Rmalschains)
 # source("airGR.R")
 set.seed(321)

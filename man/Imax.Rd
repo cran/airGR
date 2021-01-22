@@ -9,7 +9,7 @@
 
 
 \description{
-Function which calculates the maximal capacity of the GR5H interception store. This function compares the interception evapotranspiration from the GR5H interception store for different maximal capacity values with the interception evapotranspiration classically used in the daily GR models (e.g. GR4J). Among all the \code{TestedValues}, the value that gives the closest interception evapotranspiration flux over the whole period is kept. 
+Function which calculates the maximal capacity of the GR5H interception store. This function compares the interception evapotranspiration from the GR5H interception store for different maximal capacity values with the interception evapotranspiration classically used in the daily GR models (e.g. GR4J). Among all the \code{TestedValues}, the value that gives the closest interception evapotranspiration flux over the whole period is kept.
 }
 
 
@@ -46,7 +46,7 @@ InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR5H, DatesR = BasinObs$Date
 ## run period selection
 Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d \%H:\%M")=="2006-01-01 00:00"),
                which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d \%H:\%M")=="2006-12-31 23:00"))
-               
+
 ## Imax computation
 Imax <- Imax(InputsModel = InputsModel, IndPeriod_Run = Ind_Run,
              TestedValues = seq(from = 0, to = 3, by = 0.2))
@@ -64,7 +64,7 @@ OutputsModel <- RunModel_GR5H(InputsModel = InputsModel,
 plot(OutputsModel, Qobs = BasinObs$Qmm[Ind_Run])
 
 ## efficiency criterion: Nash-Sutcliffe Efficiency
-InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
+InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel,
                                 RunOptions = RunOptions, Obs = BasinObs$Qmm[Ind_Run])
 OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
 }
@@ -79,11 +79,11 @@ Guillaume Thirel, Olivier Delaigue
 Ficchi, A. (2017).
   An adaptive hydrological model for multiple time-steps:
   Diagnostics and improvements based on fluxes consistency.
-  PhD thesis, Irstea (Antony), GRNE (Paris), France.
+  PhD thesis, UPMC - Irstea Antony, Paris, France.
 \cr\cr
-Ficchi, A., C. Perrin and V. Andréassian (2019).
+Ficchi, A., Perrin, C. and Andréassian, V. (2019).
   Hydrological modelling at multiple sub-daily time steps: model improvement via flux-matching.
-  Journal of Hydrology, 575, 1308-1327. doi: 10.1016/j.jhydrol.2019.05.084.
+  Journal of Hydrology, 575, 1308-1327, \doi{10.1016/j.jhydrol.2019.05.084}.
 }
 
 

@@ -43,7 +43,7 @@ DataAltiExtrapolation_Valery(DatesR, Precip, PrecipScale = TRUE,
 }
 \value{
 list containing the extrapolated series of precip. and air temp. on each elevation layer
-         \tabular{ll}{                                                                                                      
+         \tabular{ll}{
            \emph{$LayerPrecip         } \tab [list] list of time series of daily precipitation (layer average) [mm/time step] \cr
            \emph{$LayerTempMean       } \tab [list] list of time series of daily mean air temperature (layer average) [°C]    \cr
            \emph{$LayerTempMin        } \tab [list] list of time series of daily min air temperature (layer average) [°C]     \cr
@@ -55,7 +55,7 @@ list containing the extrapolated series of precip. and air temp. on each elevati
 
 
 \details{
-Elevation layers of equal surface are created the 101 elevation quantiles (\code{HypsoData}) 
+Elevation layers of equal surface are created the 101 elevation quantiles (\code{HypsoData})
 and the number requested elevation layers (\code{NLayers}). \cr
 Forcing data (precipitation and air temperature) are extrapolated using gradients from Valery (2010).
 (e.g. gradP = 0.0004 [m-1] for France and gradT = 0.434 [°C/100m] for January, 1st). \cr
@@ -69,16 +69,16 @@ Laurent Coron, Audrey Valéry, Olivier Delaigue, Pierre Brigode, Guillaume Thire
 
 
 \references{
-Turcotte, R., L.-G. Fortin, V. Fortin, J.-P. Fortin and J.-P. Villeneuve (2007). 
-  Operational analysis of the spatial distribution and the temporal evolution of the snowpack water equivalent in southern Quebec, Canada,
-  Nordic Hydrology, 38(3), 211. doi: 10.2166/nh.2007.009.
+Turcotte, R., Fortin, L.-G., Fortin, V., Fortin, J.-P. and Villeneuve, J.-P. (2007).
+  Operational analysis of the spatial distribution and the temporal evolution of the snowpack water equivalent in southern Quebec, Canada.
+  Nordic Hydrology, 38(3), 211, \doi{10.2166/nh.2007.009}.
 \cr\cr
 Valéry, A. (2010),
-  Modélisation précipitations-débit sous influence nivale ? : Elaboration d'un module neige et évaluation sur 380 bassins versants. 
-  PhD thesis (in french), AgroParisTech, Paris, France.
+  Modélisation précipitations-débit sous influence nivale ? : Elaboration d'un module neige et évaluation sur 380 bassins versants.
+  PhD thesis (in French), AgroParisTech - Cemagref Antony, Paris, France.
 \cr\cr
 USACE (1956),
-  Snow Hydrology, pp. 437. 
+  Snow Hydrology, pp. 437.
   U.S. Army Coprs of Engineers (USACE) North Pacific Division, Portland, Oregon, USA.
 }
 

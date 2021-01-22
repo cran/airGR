@@ -18,8 +18,7 @@ CreateRunOptions(FUN_MOD, InputsModel,
                  IndPeriod_WarmUp = NULL, IndPeriod_Run,
                  IniStates = NULL, IniResLevels = NULL, Imax = NULL,
                  Outputs_Cal = NULL, Outputs_Sim = "all",
-                 RunSnowModule, MeanAnSolidPrecip = NULL,
-                 IsHyst = FALSE,
+                 MeanAnSolidPrecip = NULL, IsHyst = FALSE,
                  warnings = TRUE, verbose = TRUE)
 }
 
@@ -29,24 +28,20 @@ CreateRunOptions(FUN_MOD, InputsModel,
 
 \item{InputsModel}{[object of class \emph{InputsModel}] see \code{\link{CreateInputsModel}} for details}
 
-\item{IndPeriod_WarmUp}{(optional) [numeric] index of period to be used for the model warm-up [-]}
+\item{IndPeriod_WarmUp}{(optional) [numeric] index of period to be used for the model warm-up [-]. See details}
 
-\item{IndPeriod_Run}{[numeric] index of period to be used for the model run [-]}
+\item{IndPeriod_Run}{[numeric] index of period to be used for the model run [-]. See details}
 
 \item{IniStates}{(optional) [numeric] object of class \code{IniStates} [mm and °C], see \code{\link{CreateIniStates}} for details}
 
-\item{IniResLevels}{(optional) [numeric] vector of initial fillings for the GR stores (2 or 3 values according to the model) [- and/or mm]; see details}
+\item{IniResLevels}{(optional) [numeric] vector of initial fillings for the GR stores (2 or 3 values according to the model) [- and/or mm]. See details}
 
 \item{Imax}{(optional) [numeric] an atomic vector of the maximum capacity of the GR5H interception store [mm]; see \code{\link{RunModel_GR5H}}}
-
 
 \item{Outputs_Cal}{(optional) [character] vector giving the outputs needed for the calibration \cr (e.g. c("Qsim")), the fewer outputs
  the faster the calibration}
 
 \item{Outputs_Sim}{(optional) [character] vector giving the requested outputs \cr (e.g. c(\code{"DatesR"}, \code{"Qsim"}, \code{"SnowPack"})), default = \code{"all"}}
-
-\item{RunSnowModule}{(deprecated) [boolean] option indicating whether CemaNeige should be activated. Please adapt \code{FUN_MOD} instead}
-
 	
 \item{MeanAnSolidPrecip}{(optional) [numeric] vector giving the annual mean of average solid precipitation for each layer (computed from InputsModel if not defined) [mm/y]}
 
@@ -76,6 +71,10 @@ CreateRunOptions(FUN_MOD, InputsModel,
 \details{
 Users wanting to use \code{FUN_MOD} functions that are not included in 
 the package must create their own \code{RunOptions} object accordingly.
+
+## ---- IndPeriod_WarmUp and IndPeriod_Run
+
+Since the hydrological models included in airGR are continuous models, meaning that internal states of the models are propagated to the next time step, \code{IndPeriod_WarmUp} and \code{IndPeriod_Run} must be continuous periods, represented by continuous indices values; no gaps are allowed. To calculate criteria or to calibrate a model over discontinuous periods, please see the \code{Bool_Crit} argument of the \code{\link{CreateInputsCrit}} function.
 
 ## ---- Initialisation options
 

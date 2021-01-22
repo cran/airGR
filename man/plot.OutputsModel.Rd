@@ -76,7 +76,7 @@ Different types of independent graphs are available (depending on the model, but
   \item \code{"SnowPack"}: time series of snow water equivalent (plotted only if CemaNeige is used)
   \item \code{"Flows"}: time series of simulated flows (and observed flows if provided)
   \item \code{"Error"}: time series of simulated flows minus observed flows (and observed flows if provided)
-  \item \code{"Regime"}: interannual median monthly simulated flow (and observed flows if provided)
+  \item \code{"Regime"}: centred 30-day rolling mean applied on interannual average of daily simulated flows (and observed flows if provided)
   \item \code{"CorQQ"}: correlation plot between simulated and observed flows (only if observed flows provided)
   \item \code{"CumFreq"}: cumulative frequency plot for simulated flows (and observed flows if provided)
 }

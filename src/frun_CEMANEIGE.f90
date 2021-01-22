@@ -7,27 +7,28 @@
 !------------------------------------------------------------------------------
 ! AUTHORS
 ! Original code: A. Valéry, P. Riboust
-! Cleaning and formatting for airGR: L. Coron
-! Further cleaning: G. Thirel
+! Cleaning and formatting for airGR: Coron, L.
+! Further cleaning: Thirel, G.
 !------------------------------------------------------------------------------
 ! Creation date: 2011
 ! Last modified: 22/11/2019
 !------------------------------------------------------------------------------
 ! REFERENCES
-! Riboust, P., G. Thirel, N. Le Moine and P. Ribstein (2019), Revisiting a 
-! simple degree-day model for integrating satellite data: implementation of 
-! SWE-SCA hystereses. Journal of Hydrology and Hydromechanics, 
-! doi:10.2478/johh-2018-0004, 67, 1, 70–81. 
+! Riboust, P., Thirel, G., Le Moine, N. and Ribstein, P. (2019). Revisiting a
+! simple degree-day model for integrating satellite data: Implementation of
+! SWE-SCA hystereses. Journal of Hydrology and Hydromechanics, 67(1), 70–81,
+! doi: 10.2478/johh-2018-0004.
 !
-! Valéry, A., V. Andréassian and C. Perrin (2014), "As simple as possible but 
-! not simpler": what is useful in a temperature-based snow-accounting routine? 
-! Part 1 - Comparison of six snow accounting routines on 380 catchments, 
-! Journal of Hydrology, doi:10.1016/j.jhydrol.2014.04.059. 
+! Valéry, A., Andréassian, V. and Perrin, C. (2014). "As simple as possible but
+! not simpler": What is useful in a temperature-based snow-accounting routine?
+! Part 1 - Comparison of six snow accounting routines on 380 catchments.
+! Journal of Hydrology, 517(0), 1166-1175, doi: 10.1016/j.jhydrol.2014.04.059.
 !
-! Valéry, A., V. Andréassian and C. Perrin (2014), "As simple as possible but 
-! not simpler": What is useful in a temperature-based snow-accounting routine? 
-! Part 2 - Sensitivity analysis of the Cemaneige snow accounting routine on 
-! 380 catchments, Journal of Hydrology, doi:10.1016/j.jhydrol.2014.04.058.
+! Valéry, A., Andréassian, V. and Perrin, C. (2014). "As simple as possible but
+! not simpler": What is useful in a temperature-based snow-accounting routine?
+! Part 2 - Sensitivity analysis of the Cemaneige snow accounting routine on
+! 380 catchments. Journal of Hydrology, 517(0), 1176-1187,
+! doi: 10.1016/j.jhydrol.2014.04.058.!
 !------------------------------------------------------------------------------
 ! Quick description of public procedures:
 !         1. frun_cemaneige
@@ -53,7 +54,7 @@
 !       IsHyst       ! integer, whether we should use the linear hysteresis [1] or not [0]
 !       NOutputs     ! Integer, number of output series
 !       IndOutputs   ! Vector of integer, indices of output series
-! Outputs      
+! Outputs
 !       Outputs      ! Vector of real, output series
 !       StateEnd     ! Vector of real, state variables at the end of the model run (store levels [mm] and [-] and thresholds [mm])
 
@@ -89,7 +90,7 @@
 
       IF (IsHyst .EQ. 1) IsHystBool = .TRUE.
       IF (IsHyst .EQ. 0) IsHystBool = .FALSE.
-      
+
 
       !--------------------------------------------------------------
       ! Initializations
@@ -142,7 +143,7 @@
         ! Snow pack volume before melt
         Ginit=G
         G=G+Psol
-        
+
 
         ! Snow pack thermal state before melt
         eTG=CTG*eTG + (1.-CTG)*InputsTemp(k)
@@ -156,7 +157,7 @@
           PotMelt=0.
         ENDIF
 
-        
+
         IF (IsHystBool) THEN
           IF (Potmelt.GT.0.) THEN
             IF (G.LT.Glocalmax.AND.Gratio.EQ.1.) Glocalmax=G ! Update in case of potential melt and G lower than Gseuil
@@ -178,7 +179,7 @@
         IF (IsHystBool) THEN
           dG=G-Ginit ! Melt in case of negative dG, accumulation otherwise
 
-        
+
           IF (dG.GT.0.) THEN
             Gratio = MIN(Gratio+(Psol-Melt)/Gacc,1.d0) !Psol - Melt = dG
             IF (Gratio.EQ.1.) Glocalmax = Gthreshold

@@ -1,13 +1,10 @@
-CreateRunOptions <- function(FUN_MOD, InputsModel, IndPeriod_WarmUp = NULL, IndPeriod_Run,
+CreateRunOptions <- function(FUN_MOD, InputsModel,
+                             IndPeriod_WarmUp = NULL, IndPeriod_Run,
                              IniStates = NULL, IniResLevels = NULL, Imax = NULL,
                              Outputs_Cal = NULL, Outputs_Sim = "all",
-                             RunSnowModule, MeanAnSolidPrecip = NULL,
-                             IsHyst = FALSE,
+                             MeanAnSolidPrecip = NULL, IsHyst = FALSE,
                              warnings = TRUE, verbose = TRUE) {
   
-  if (!missing(RunSnowModule)) {
-    warning("deprecated 'RunSnowModule' argument: please adapt 'FUN_MOD' instead.", call. = FALSE)
-  }
   if (!is.null(Imax)) {
     if (!is.numeric(Imax) | length(Imax) != 1L) {
       stop("'Imax' must be a non negative 'numeric' value of length 1")

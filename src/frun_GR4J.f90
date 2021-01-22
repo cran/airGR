@@ -6,17 +6,17 @@
 ! FILE    : frun_GR4J.f
 !------------------------------------------------------------------------------
 ! AUTHORS
-! Original code: C. Perrin
-! Cleaning and formatting for airGR: L. Coron
-! Further cleaning: G. Thirel
+! Original code: Perrin, C.
+! Cleaning and formatting for airGR: Coron, L.
+! Further cleaning: Thirel, G.
 !------------------------------------------------------------------------------
 ! Creation date: 2000
 ! Last modified: 25/11/2019
 !------------------------------------------------------------------------------
 ! REFERENCES
-! Perrin, C., C. Michel and V. Andréassian (2003). Improvement of a 
-! parsimonious model for streamflow simulation. Journal of Hydrology, 
-! 279(1-4), 275-289. doi:10.1016/S0022-1694(03)00225-7.
+! Perrin, C., Michel, C. and Andréassian, V. (2003). Improvement of a
+! parsimonious model for streamflow simulation. Journal of Hydrology,
+! 279(1-4), 275-289, doi: 10.1016/S0022-1694(03)00225-7.
 !------------------------------------------------------------------------------
 ! Quick description of public procedures:
 !         1. frun_gr4j
@@ -27,7 +27,7 @@
       SUBROUTINE frun_gr4j(LInputs,InputsPrecip,InputsPE,NParam,Param, &
                            NStates,StateStart,NOutputs,IndOutputs, &
                            Outputs,StateEnd)
-! Subroutine that initializes GR4J, get its parameters, performs the call 
+! Subroutine that initializes GR4J, get its parameters, performs the call
 ! to the MOD_GR4J subroutine at each time step, and stores the final states
 ! Inputs
 !       LInputs      ! Integer, length of input and output series
@@ -39,7 +39,7 @@
 !       StateStart   ! Vector of real, state variables used when the model run starts (store levels [mm] and Unit Hydrograph (UH) storages [mm])
 !       NOutputs     ! Integer, number of output series
 !       IndOutputs   ! Vector of integer, indices of output series
-! Outputs      
+! Outputs
 !       Outputs      ! Vector of real, output series
 !       StateEnd     ! Vector of real, state variables at the end of the model run (store levels [mm] and Unit Hydrograph (UH) storages [mm])
 
@@ -60,7 +60,7 @@
       ! out
       doubleprecision, dimension(NStates), intent(out) :: StateEnd
       doubleprecision, dimension(LInputs,NOutputs), intent(out) :: Outputs
-      
+
       !! locals
       integer :: I,K
       integer, parameter :: NH=20,NMISC=30
@@ -98,7 +98,7 @@
       ! computation of UH ordinates
       OrdUH1 = 0.
       OrdUH2 = 0.
-      
+
       D=2.5
       CALL UH1(OrdUH1,Param(4),D)
       CALL UH2(OrdUH2,Param(4),D)
@@ -209,7 +209,7 @@
         Sr = St(1)/A
         ER=St(1)*(2.-Sr)*TWS/(1.+(1.-Sr)*TWS)
         ! ER=X(2)*(2.-X(2)/A)*tanHyp(WS)/(1.+(1.-X(2)/A)*tanHyp(WS))
-        ! end speed-up  
+        ! end speed-up
         AE=ER+P1
         St(1)=St(1)-ER
         PS=0.

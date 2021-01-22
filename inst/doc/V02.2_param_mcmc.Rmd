@@ -48,8 +48,8 @@ Please note that this vignette is only for illustration purposes and does not pr
 We show how to use the DRAM algorithm for SLS Bayesian inference, with the `modMCMC()` function of the [FME](https://cran.r-project.org/package=FME) package.
 First, we need to define a function that returns twice the opposite of the log-likelihood for a given parameter set.
 
-Nota: in the `LogLikeGR4J()` function, the computation of the log-likelihood is simplified in order to ensure a good computing performance. It corresponds to a translation  of the two following lines. 
-```{r, echo=TRUE, eval=FALSE}
+Nota: in the `LogLikeGR4J()` function, the computation of the log-likelihood is simplified in order to ensure a good computing performance. It corresponds to a translation  of the two following lines.
+```{r, echo=TRUE, eval=FALSE, purl=FALSE}
 Likelihood <- sum((ObsY - ModY)^2, na.rm = TRUE)^(-sum(!is.na(ObsY)) / 2)
 LogLike <- -2 * log(Likelihood)
 ```
@@ -68,7 +68,7 @@ LogLikeGR4J <- function(ParamOptim) {
                                        RunOptions = RunOptions,
                                        Param = RawParamOptim)
   ## Computation of the log-likelihood: N * log(SS)
-  ObsY <- InputsCrit$Qobs
+  ObsY <- InputsCrit$Obs
   ModY <- OutputsModel$Qsim
   LogLike <- sum(!is.na(ObsY)) * log(sum((ObsY - ModY)^2, na.rm = TRUE))
 }
@@ -79,7 +79,7 @@ LogLikeGR4J <- function(ParamOptim) {
 ## Estimation of the best-fit parameters as a starting point
 We start by using the PORT optimization routine to estimate the best-fit parameters.
 ```{r, results='hide', eval=FALSE}
-optPORT <- stats::nlminb(start = c(4.1, 3.9, -0.9, -8.7), 
+optPORT <- stats::nlminb(start = c(4.1, 3.9, -0.9, -8.7),
                          objective = LogLikeGR4J,
                          lower = rep(-9.9, times = 4), upper = rep(9.9, times = 4),
                          control = list(trace = 1))

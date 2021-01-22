@@ -1,15 +1,19 @@
-PEdaily_Oudin <- function(JD, Temp, LatRad, Lat, LatUnit = c("rad", "deg")) {
-  
+PEdaily_Oudin <- function(JD,
+                          Temp,
+                          LatRad, # deprecated
+                          Lat,
+                          LatUnit = c("rad", "deg")) {
+
   ## ---------- deprecated function
-  
+
   .Deprecated(new = "PEdaily_Oudin", package = NULL,
-              
+
               msg = "deprecated function\nplease, use PE_Oudin() instead",
-              
+
               old = as.character(sys.call(sys.parent()))[1L])
-  
+
   ## ---------- check arguments
-  
+
   if (!missing(LatRad)) {
     warning("Deprecated \"LatRad\" argument. Please, use \"Lat\" instead.")
     if (missing(Lat)) {
@@ -46,47 +50,47 @@ PEdaily_Oudin <- function(JD, Temp, LatRad, Lat, LatUnit = c("rad", "deg")) {
   if (any(JD < 0) | any(JD > 366)) {
     stop("'JD' must only contain integers from 1 to 366")
   }
-  
-  
+
+
   ## ---------- Oudin's formula
-  
+
   PE_Oudin_D <- rep(NA, length(Temp))
   COSFI <- cos(FI)
-  AFI <- abs(FI / 42) 
-  
+  AFI <- abs(FI / 42)
+
   for (k in seq_along(Temp)) {
-    
+
     TETA <- 0.4093 * sin(JD[k] / 58.1 - 1.405)
     COSTETA <- cos(TETA)
     COSGZ <- max(0.001, cos(FI - TETA))
     GZ <- acos(COSGZ)
     COSOM <- 1 - COSGZ / COSFI / COSTETA
-    
+
     if (COSOM < -1) {
       COSOM <- -1
     }
     if (COSOM > 1) {
       COSOM <-  1
     }
-    
+
     COSOM2 <- COSOM * COSOM
-    
+
     if (COSOM2 >= 1) {
       SINOM <- 0
     } else {
       SINOM <- sqrt(1 - COSOM2)
     }
-    
+
     OM <- acos(COSOM)
     COSPZ <- COSGZ + COSFI * COSTETA * (SINOM/OM - 1)
-    
+
     if (COSPZ < 0.001) {
       COSPZ <- 0.001
     }
-    
+
     ETA <- 1 + cos(JD[k] / 58.1) / 30
     GE <- 446 * OM * COSPZ * ETA
-    
+
     if (is.na(Temp[k])) {
       PE_Oudin_D[k] <- NA
     } else {
@@ -96,9 +100,9 @@ PEdaily_Oudin <- function(JD, Temp, LatRad, Lat, LatUnit = c("rad", "deg")) {
       PE_Oudin_D[k] <- 0
     }
     }
-    
+
   }
-  
+
   if (any(is.na(Temp))) {
     if (any(is.na(PE_Oudin_D))) {
       warning("'Temp' time series, and therefore the returned 'PE' time series, contain missing value(s)")
@@ -109,7 +113,7 @@ PEdaily_Oudin <- function(JD, Temp, LatRad, Lat, LatUnit = c("rad", "deg")) {
   if (!any(is.na(Temp)) & any(is.na(PE_Oudin_D))) {
     warning("returned 'PE' time series contains missing value(s)")
   }
-  
+
   return(PE_Oudin_D)
-  
+
 }

@@ -12,6 +12,7 @@
 \alias{TransfoParam_GR5H}
 \alias{TransfoParam_CemaNeige}
 \alias{TransfoParam_CemaNeigeHyst}
+\alias{TransfoParam_Lag}
 
 
 \title{Transformation of the parameters using the provided function}

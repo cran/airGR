@@ -32,7 +32,7 @@ Imax <- function(InputsModel,
   TabSeries <- data.frame(DatesR = InputsModel$DatesR[IndPeriod_Run], 
                           Precip = InputsModel$Precip[IndPeriod_Run], 
                           PotEvap = InputsModel$PotEvap[IndPeriod_Run])
-  daily_data <- SeriesAggreg(TabSeries, "hourly", "daily", 
+  daily_data <- SeriesAggreg(TabSeries, Format = "%Y%m%d", 
                              ConvertFun = c("sum", "sum"))
   
   ##calculate total interception of daily GR models on the period

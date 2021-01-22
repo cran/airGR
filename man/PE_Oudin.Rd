@@ -10,8 +10,9 @@
 
 
 \usage{
-PE_Oudin(JD, Temp, Lat, LatUnit,
-         TimeStepIn = "daily", TimeStepOut = "daily")
+PE_Oudin(JD, Temp, Lat, LatUnit =  c("rad", "deg"),
+         TimeStepIn = "daily", TimeStepOut = "daily",
+         RunFortran = FALSE)
 
 ## deprectated function
 PEdaily_Oudin(JD, Temp, LatRad, Lat, LatUnit)
@@ -25,13 +26,15 @@ PEdaily_Oudin(JD, Temp, LatRad, Lat, LatUnit)
 
 \item{LatRad}{(deprecated)[numeric] latitude of measurement for the temperature series [radians]. Please use \code{Lat} instead}
 
-\item{Lat}{[numeric] latitude of measurement for the temperature series [radians or degrees]}
+\item{Lat}{[numeric] latitude of measurement for the temperature series [radians or degrees]. Atomic vector, except if \code{RunFortran = TRUE}, it can be a vector of the same length as \code{Temp}}
 
 \item{LatUnit}{[character] latitude unit (default = \code{"rad"} or \code{"deg"})}
 
 \item{TimeStepIn}{[character] time step of inputs (e.g. \code{"daily"} or \code{"hourly"}, default = \code{"daily"})}
 
 \item{TimeStepOut}{[character] time step of outputs (e.g. \code{"daily"} or \code{"hourly"}, default = \code{"daily"})}
+
+\item{RunFortran}{[boolean] to run the code in the Fortran mode or in the R mode (default)}
 }
 
 
@@ -41,11 +44,13 @@ PEdaily_Oudin(JD, Temp, LatRad, Lat, LatUnit)
 
 
 \description{
-Function which computes PE using the formula from Oudin et al. (2005). PE can be computed at the daily time step from hourly or daily temperature and at the hourly time step with hourly or daily temperature through a disaggregation of daily PE (see details). 
+Function which computes PE using the formula from Oudin et al. (2005). PE can be computed at the daily time step from hourly or daily temperature and at the hourly time step with hourly or daily temperature through a disaggregation of daily PE . See details.
 }
 
 \details{
-In the \code{JD} argument, the Julian day of the year of the 1st of January is equal to 1 and the 31st of December to 365 (366 in leap years)). If the Julian day of the year is computed on an object of the \code{POSIXlt} class, the user has to add 1 to the returned value (e.g. \code{as.POSIXlt("2016-12-31")$yday + 1}).
+To calculate basin-wide Oudin potential evapotranspiration, it is advised, when possible, to use either station temperature or gridded temperature data to calculate PE and then average these PE values at the basin scale.
+
+In the \code{JD} argument, the Julian day of the year of the 1st of January is equal to 1 and the 31st of December to 365 (366 in leap years). If the Julian day of the year is computed on an object of the \code{POSIXlt} class, the user has to add 1 to the returned value (e.g. \code{as.POSIXlt("2016-12-31")$yday + 1}).
 
 When hourly temperature is provided, all the values of the same day have to be set to the same Julian day of the year (e.g. \code{as.POSIXlt("2016-12-31 00:00:00")$yday + 1} and \code{as.POSIXlt("2016-12-31 00:01:00")$yday + 1}). Each single day must be provided 24 identical Julian day values (one for each hour).
 
@@ -70,18 +75,18 @@ PotEvap <- PE_Oudin(JD = as.POSIXlt(BasinObs$DatesR)$yday + 1,
 
 
 \author{
-Laurent Coron, Ludovic Oudin, Olivier Delaigue, Guillaume Thirel
+Laurent Coron, Ludovic Oudin, Olivier Delaigue, Guillaume Thirel, François Bourgin
 }
 
 
 \references{
-Oudin, L., F. Hervieu, C. Michel, C. Perrin, V. Andréassian, F. Anctil and C. Loumagne (2005). 
-  Which potential evapotranspiration input for a lumped rainfall-runoff model?: 
-  Part 2-Towards a simple and efficient potential evapotranspiration model for rainfall-runoff modelling. 
-  Journal of Hydrology, 303(1-4), 290-306. doi: 10.1016/j.jhydrol.2004.08.026.
+Oudin, L., Hervieu, F., Michel, C., Perrin, C., Andréassian, V., Anctil, F. and Loumagne, C. (2005).
+  Which potential evapotranspiration input for a lumped rainfall-runoff model?
+  Part 2 - Towards a simple and efficient potential evapotranspiration model for rainfall-runoff modelling.
+  Journal of Hydrology, 303(1-4), 290-306, \doi{10.1016/j.jhydrol.2004.08.026}.
 \cr\cr
 Lobligeois, F. (2014).
   Mieux connaitre la distribution spatiale des pluies améliore-t-il la modélisation des crues ? Diagnostic sur 181 bassins versants français.
-  PhD thesis (in French), AgroParisTech (Paris), IRSTEA (Antony), France.
+  PhD thesis (in French), AgroParisTech - Irstea Antony, Paris, France.
 }
 

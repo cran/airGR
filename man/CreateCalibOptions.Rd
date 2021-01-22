@@ -15,7 +15,7 @@ Creation of the \emph{CalibOptions} object required by the \code{Calibration*} f
 
 \usage{
 CreateCalibOptions(FUN_MOD, FUN_CALIB = Calibration_Michel,
-                   FUN_TRANSFO = NULL, IsHyst = FALSE, FixedParam = NULL,
+                   FUN_TRANSFO = NULL, IsHyst = FALSE, IsSD = FALSE, FixedParam = NULL,
                    SearchRanges = NULL, StartParamList = NULL,
                    StartParamDistrib = NULL)
 }
@@ -29,6 +29,8 @@ CreateCalibOptions(FUN_MOD, FUN_CALIB = Calibration_Michel,
 \item{FUN_TRANSFO}{(optional) [function] model parameters transformation function, if the \code{FUN_MOD} used is native in the package, \code{FUN_TRANSFO} is automatically defined}
 
 \item{IsHyst}{[boolean] boolean indicating if the hysteresis version of CemaNeige is used. See details}
+
+\item{IsSD}{[boolean] boolean indicating if the semi-distributed lag model is used. See details}
 
 \item{FixedParam}{(optional) [numeric] vector giving the values set for the non-optimised parameter values (NParam columns, 1 line)
 \cr Example:
@@ -75,13 +77,15 @@ CreateCalibOptions(FUN_MOD, FUN_CALIB = Calibration_Michel,
 
 
 \details{
-Users wanting to use \code{FUN_MOD}, \code{FUN_CALIB} or \code{FUN_TRANSFO} functions that are not included in 
+Users wanting to use \code{FUN_MOD}, \code{FUN_CALIB} or \code{FUN_TRANSFO} functions that are not included in
 the package must create their own \code{CalibOptions} object accordingly. \cr
 
 ## ---- CemaNeige version
 
 If \code{IsHyst = FALSE}, the original CemaNeige version from Valéry et al. (2014) is used. \cr
 If \code{IsHyst = TRUE}, the CemaNeige version from Riboust et al. (2019) is used. Compared to the original version, this version of CemaNeige needs two more parameters and it includes a representation of the hysteretic relationship between the Snow Cover Area (SCA) and the Snow Water Equivalent (SWE) in the catchment. The hysteresis included in airGR is the Modified Linear hysteresis (LH*); it is represented on panel b) of Fig. 3 in Riboust et al. (2019). Riboust et al. (2019) advise to use the LH* version of CemaNeige with parameters calibrated using an objective function combining 75 \% of KGE calculated on discharge simulated from a rainfall-runoff model compared to observed discharge and 5 \% of KGE calculated on SCA on 5 CemaNeige elevation bands compared to satellite (e.g. MODIS) SCA (see Eq. (18), Table 3 and Fig. 6). Riboust et al. (2019)'s tests were realized with GR4J as the chosen rainfall-runoff model. \cr
+
+If \code{InputsModel} parameter has been created for using a semi-distributed (SD) model (See \code{\link{CreateInputsModel}}), the parameter \code{isSD} should be set to \code{TRUE}.
 }
 
 
@@ -92,11 +96,11 @@ library(airGR)
 data(L0123001)
 
 ## preparation of InputsModel object
-InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$DatesR, 
+InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$DatesR,
                                  Precip = BasinObs$P, PotEvap = BasinObs$E)
 
 ## calibration period selection
-Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"), 
+Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"),
                which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1999-12-31"))
 
 ## preparation of RunOptions object
@@ -104,7 +108,7 @@ RunOptions <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
                                InputsModel = InputsModel, IndPeriod_Run = Ind_Run)
 
 ## calibration criterion: preparation of the InputsCrit object
-InputsCrit <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
+InputsCrit <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel,
                                RunOptions = RunOptions, Obs = BasinObs$Qmm[Ind_Run])
 
 ## preparation of CalibOptions object
@@ -113,31 +117,31 @@ CalibOptions <- CreateCalibOptions(FUN_MOD = RunModel_GR4J, FUN_CALIB = Calibrat
 ## calibration
 OutputsCalib <- Calibration(InputsModel = InputsModel, RunOptions = RunOptions,
                             InputsCrit = InputsCrit, CalibOptions = CalibOptions,
-                            FUN_MOD = RunModel_GR4J, 
+                            FUN_MOD = RunModel_GR4J,
                             FUN_CALIB = Calibration_Michel)
 
 ## simulation
 Param <- OutputsCalib$ParamFinalR
-OutputsModel <- RunModel(InputsModel = InputsModel, RunOptions = RunOptions, 
+OutputsModel <- RunModel(InputsModel = InputsModel, RunOptions = RunOptions,
                          Param = Param, FUN = RunModel_GR4J)
 
 ## results preview
 plot(OutputsModel, Qobs = BasinObs$Qmm[Ind_Run])
 
 ## efficiency criterion: Nash-Sutcliffe Efficiency
-InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
+InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel,
                                 RunOptions = RunOptions, Obs = BasinObs$Qmm[Ind_Run])
 OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
 
 ## efficiency criterion: Kling-Gupta Efficiency
-InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_KGE, InputsModel = InputsModel, 
+InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_KGE, InputsModel = InputsModel,
                                 RunOptions = RunOptions, Obs = BasinObs$Qmm[Ind_Run])
 OutputsCrit <- ErrorCrit_KGE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
 }
 
 
 \author{
-Laurent Coron, Olivier Delaigue, Guillaume Thirel
+Laurent Coron, Olivier Delaigue, Guillaume Thirel, David Dorchies
 }
 
 

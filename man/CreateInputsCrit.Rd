@@ -35,9 +35,9 @@ CreateInputsCrit(FUN_CRIT, InputsModel, RunOptions,
 
 \item{VarObs}{(optional) [character (atomic or list)] names of the observed variable (\code{"Q"} by default, or one of \code{"SCA"}, \code{"SWE"}])}
 
-\item{BoolCrit}{(optional) [boolean (atomic or list)] boolean (the same length as \code{Obs}) giving the time steps to consider in the computation (all time steps are considered by default)}
+\item{BoolCrit}{(optional) [boolean (atomic or list)] boolean (the same length as \code{Obs}) giving the time steps to consider in the computation (all time steps are considered by default. See details)}
 
-\item{transfo}{(optional) [character (atomic or list)] name of the transformation applied to the variables (e.g. \code{""}, \code{"sqrt"}, \code{"log"}, \code{"inv"}, \code{"sort"}, \code{"boxcox"} or a numeric value for power transformation (see details))}
+\item{transfo}{(optional) [character (atomic or list)] name of the transformation applied to the variables (e.g. \code{""}, \code{"sqrt"}, \code{"log"}, \code{"inv"}, \code{"sort"}, \code{"boxcox"} or a numeric value for power transformation . See details)}
 
 \item{Weights}{(optional) [numeric (atomic or list)] vector of weights necessary to calculate a composite criterion (the same length as \code{FUN_CRIT}) giving the weights to use for elements of \code{FUN_CRIT} [-]. See details}
 
@@ -72,6 +72,10 @@ To calculate composite or multiple criteria, it is necessary to use the \code{Er
 
 \details{
 Users wanting to use \code{FUN_CRIT} functions that are not included in the package must create their own InputsCrit object accordingly. \cr \cr
+
+## ---- Period of calculation
+
+Criteria can be calculated over discontinuous periods (i.e. only over winter periods, or when observed discharge is below a certain threshold). To do so, please indicate in \code{Bool_Crit} which indices must be used for calcullation. Discontinuous periods are allowed in the \code{Bool_Crit} argument.
 
 ## ---- Transformations
 
@@ -163,11 +167,11 @@ Olivier Delaigue, Laurent Coron, Guillaume Thirel
 \references{
 Pushpalatha, R., Perrin, C., Le Moine, N. and Andréassian, V. (2012). 
   A review of efficiency criteria suitable for evaluating low-flow simulations. 
-  Journal of Hydrology, 420-421: 171-182. doi: 10.1016/j.jhydrol.2011.11.055.
+  Journal of Hydrology, 420-421, 171-182, doi: 10.1016/j.jhydrol.2011.11.055.
 \cr\cr
 Santos, L., Thirel, G. and Perrin, C. (2018). 
   Technical note: Pitfalls in using log-transformed flows within the KGE criterion. 
-  Hydrol. Earth Syst. Sci., 22, 4583-4591. doi: 10.5194/hess-22-4583-2018.
+  Hydrol. Earth Syst. Sci., 22, 4583-4591, doi: 10.5194/hess-22-4583-2018.
 }
 
 

@@ -122,9 +122,12 @@ str(OutputsCrit_Val, max.level = 2)
 
 ## ---- warning=FALSE, eval=FALSE-----------------------------------------------
 #  ## calibration
-#  OutputsCalib_NoHyst <- Calibration(InputsModel = InputsModel, InputsCrit = InputsCrit_Cal_NoHyst,
-#                                     RunOptions = RunOptions_Cal_NoHyst, CalibOptions = CalibOptions_NoHyst,
-#                                     FUN_MOD = RunModel_CemaNeigeGR4J, FUN_CALIB = Calibration_Michel)
+#  OutputsCalib_NoHyst <- Calibration(InputsModel = InputsModel,
+#                                     InputsCrit = InputsCrit_Cal_NoHyst,
+#                                     RunOptions = RunOptions_Cal_NoHyst,
+#                                     CalibOptions = CalibOptions_NoHyst,
+#                                     FUN_MOD = RunModel_CemaNeigeGR4J,
+#                                     FUN_CALIB = Calibration_Michel)
 
 ## ---- warning=FALSE, eval=FALSE-----------------------------------------------
 #  OutputsModel_Cal_NoHyst <- RunModel_CemaNeigeGR4J(InputsModel = InputsModel,

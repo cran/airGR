@@ -15,6 +15,7 @@ extern void F77_NAME(frun_gr5h)(int *, double *, double *, int *, double *, int 
 extern void F77_NAME(frun_gr4j)(int *, double *, double *, int *, double *, int *, double *, int *, int *, double *, double *);
 extern void F77_NAME(frun_gr5j)(int *, double *, double *, int *, double *, int *, double *, int *, int *, double *, double *);
 extern void F77_NAME(frun_gr6j)(int *, double *, double *, int *, double *, int *, double *, int *, int *, double *, double *);
+extern void F77_NAME(frun_pe_oudin)(int *, double *, double *, double *, double *);
 
 static const R_FortranMethodDef FortranEntries[] = {
     {"frun_cemaneige", (DL_FUNC) &F77_NAME(frun_cemaneige), 14},
@@ -25,6 +26,7 @@ static const R_FortranMethodDef FortranEntries[] = {
     {"frun_gr4j",      (DL_FUNC) &F77_NAME(frun_gr4j),      11},
     {"frun_gr5j",      (DL_FUNC) &F77_NAME(frun_gr5j),      11},
     {"frun_gr6j",      (DL_FUNC) &F77_NAME(frun_gr6j),      11},
+    {"frun_pe_oudin", (DL_FUNC) &F77_NAME(frun_pe_oudin), 5},
     {NULL, NULL, 0}
 };
 

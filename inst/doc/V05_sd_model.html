@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="David Dorchies" />
+
+
+<title>Simulating a reservoir with semi-distributed GR4J model</title>
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Simulating a reservoir with semi-distributed GR4J model</h1>
+<h4 class="author">David Dorchies</h4>
+
+
+
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<div id="scope" class="section level2">
+<h2>Scope</h2>
+<p>The <strong>airGR</strong> package implements semi-distributed model capabilities using a lag model between subcatchments. It allows to chain together several lumped models as well as integrating anthropogenic influence such as reservoirs or withdrawals.</p>
+<p><code>RunModel_Lag</code> documentation gives an example of simulating the influence of a reservoir in a lumped model. Try <code>example(RunModel_Lag)</code> to get it.</p>
+<p>In this vignette, we show how to calibrate 2 sub-catchments in series with a semi-distributed model consisting of 2 GR4J models. For doing this we compare two strategies for calibrating the downstream subcatchment:</p>
+<ul>
+<li>using upstream observed flows</li>
+<li>using upstream simulated flows</li>
+</ul>
+<p>We finally compare these calibrations with a theoretical set of parameters.</p>
+</div>
+<div id="model-description" class="section level2">
+<h2>Model description</h2>
+<p>We use an example data set from the package that unfortunately contains data for only one catchment.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co">## loading catchment data</span></a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">data</span>(L0123001)</a></code></pre></div>
+<p>Let’s imagine that this catchment of 360 km² is divided into 2 subcatchments:</p>
+<ul>
+<li>An upstream subcatchment of 180 km²</li>
+<li>100 km downstream another subcatchment of 180 km²</li>
+</ul>
+<p>We consider that meteorological data are homogeneous on the whole catchment, so we use the same pluviometry <code>BasinObs$P</code> and the same evapotranspiration <code>BasinObs$E</code> for the 2 subcatchments.</p>
+<p>For the observed flow at the downstream outlet, we generate it with the assumption that the upstream flow arrives at downstream with a constant delay of 2 days.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">QObsDown &lt;-<span class="st"> </span>(BasinObs<span class="op">$</span>Qmm <span class="op">+</span><span class="st"> </span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, BasinObs<span class="op">$</span>Qmm[<span class="dv">1</span><span class="op">:</span>(<span class="kw">length</span>(BasinObs<span class="op">$</span>Qmm)<span class="op">-</span><span class="dv">2</span>)])) <span class="op">/</span><span class="st"> </span><span class="dv">2</span></a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw">summary</span>(<span class="kw">cbind</span>(<span class="dt">QObsUp =</span> BasinObs<span class="op">$</span>Qmm, QObsDown))</a></code></pre></div>
+<pre><code>##      QObsUp       QObsDown  
+##  Min.   : 0    Min.   : 0   
+##  1st Qu.: 0    1st Qu.: 0   
+##  Median : 1    Median : 1   
+##  Mean   : 1    Mean   : 1   
+##  3rd Qu.: 2    3rd Qu.: 2   
+##  Max.   :24    Max.   :20   
+##  NA's   :802   NA's   :820</code></pre>
+</div>
+</div>
+<div id="calibration-of-the-upstream-subcatchment" class="section level1">
+<h1>Calibration of the upstream subcatchment</h1>
+<p>The operations are exactly the same as the ones for a GR4J lumped model. So we do exactly the same operations as in the <a href="V01_get_started.html">Get Started</a> vignette.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">InputsModelUp &lt;-<span class="st"> </span><span class="kw">CreateInputsModel</span>(<span class="dt">FUN_MOD =</span> RunModel_GR4J, <span class="dt">DatesR =</span> BasinObs<span class="op">$</span>DatesR,</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">                                   <span class="dt">Precip =</span> BasinObs<span class="op">$</span>P, <span class="dt">PotEvap =</span> BasinObs<span class="op">$</span>E)</a>
+<a class="sourceLine" id="cb4-3" data-line-number="3">Ind_Run &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="kw">which</span>(<span class="kw">format</span>(BasinObs<span class="op">$</span>DatesR, <span class="dt">format =</span> <span class="st">&quot;%Y-%m-%d&quot;</span>) <span class="op">==</span><span class="st"> &quot;1990-01-01&quot;</span>),</a>
+<a class="sourceLine" id="cb4-4" data-line-number="4">               <span class="kw">which</span>(<span class="kw">format</span>(BasinObs<span class="op">$</span>DatesR, <span class="dt">format =</span> <span class="st">&quot;%Y-%m-%d&quot;</span>) <span class="op">==</span><span class="st"> &quot;1999-12-31&quot;</span>))</a>
+<a class="sourceLine" id="cb4-5" data-line-number="5">RunOptionsUp &lt;-<span class="st"> </span><span class="kw">CreateRunOptions</span>(<span class="dt">FUN_MOD =</span> RunModel_GR4J,</a>
+<a class="sourceLine" id="cb4-6" data-line-number="6">                                 <span class="dt">InputsModel =</span> InputsModelUp, <span class="dt">IndPeriod_Run =</span> Ind_Run,</a>
+<a class="sourceLine" id="cb4-7" data-line-number="7">                                 <span class="dt">IniStates =</span> <span class="ot">NULL</span>, <span class="dt">IniResLevels =</span> <span class="ot">NULL</span>, <span class="dt">IndPeriod_WarmUp =</span> <span class="ot">NULL</span>)</a></code></pre></div>
+<pre><code>## Warning in CreateRunOptions(FUN_MOD = RunModel_GR4J, InputsModel = InputsModelUp, : model warm up period not defined: default configuration used
+##   the year preceding the run period is used</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">InputsCritUp &lt;-<span class="st"> </span><span class="kw">CreateInputsCrit</span>(<span class="dt">FUN_CRIT =</span> ErrorCrit_NSE, <span class="dt">InputsModel =</span> InputsModelUp,</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2">                                 <span class="dt">RunOptions =</span> RunOptionsUp, <span class="dt">VarObs =</span> <span class="st">&quot;Q&quot;</span>, <span class="dt">Obs =</span> BasinObs<span class="op">$</span>Qmm[Ind_Run])</a>
+<a class="sourceLine" id="cb6-3" data-line-number="3">CalibOptionsUp &lt;-<span class="st"> </span><span class="kw">CreateCalibOptions</span>(<span class="dt">FUN_MOD =</span> RunModel_GR4J, <span class="dt">FUN_CALIB =</span> Calibration_Michel)</a>
+<a class="sourceLine" id="cb6-4" data-line-number="4">OutputsCalibUp &lt;-<span class="st"> </span><span class="kw">Calibration_Michel</span>(<span class="dt">InputsModel =</span> InputsModelUp, <span class="dt">RunOptions =</span> RunOptionsUp,</a>
+<a class="sourceLine" id="cb6-5" data-line-number="5">                                     <span class="dt">InputsCrit =</span> InputsCritUp, <span class="dt">CalibOptions =</span> CalibOptionsUp,</a>
+<a class="sourceLine" id="cb6-6" data-line-number="6">                                     <span class="dt">FUN_MOD =</span> RunModel_GR4J)</a></code></pre></div>
+<pre><code>## Grid-Screening in progress (0% 20% 40% 60% 80% 100%)
+##   Screening completed (81 runs)
+##       Param =  247.151,   -0.020,   83.096,    2.384
+##       Crit. NSE[Q]       = 0.7688
+## Steepest-descent local search in progress
+##   Calibration completed (21 iterations, 234 runs)
+##       Param =  257.238,    1.012,   88.235,    2.208
+##       Crit. NSE[Q]       = 0.7988</code></pre>
+<p>And see the result of the simulation:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">OutputsModelUp &lt;-<span class="st"> </span><span class="kw">RunModel_GR4J</span>(<span class="dt">InputsModel =</span> InputsModelUp, <span class="dt">RunOptions =</span> RunOptionsUp,</a>
+<a class="sourceLine" id="cb8-2" data-line-number="2">                                <span class="dt">Param =</span> OutputsCalibUp<span class="op">$</span>ParamFinalR)</a></code></pre></div>
+</div>
+<div id="calibration-of-the-downstream-subcatchment-with-upstream-flow-observations" class="section level1">
+<h1>Calibration of the downstream subcatchment with upstream flow observations</h1>
+<p>Observed flow data contain <code>NA</code> values and a complete time series is mandatory for running the Lag model. We propose to complete the observed upstream flow with linear interpolation:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">QObsUp &lt;-<span class="st"> </span>imputeTS<span class="op">::</span><span class="kw">na_interpolation</span>(BasinObs<span class="op">$</span>Qmm)</a></code></pre></div>
+<p>we need to create the <code>InputsModel</code> object completed with upstream information:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">InputsModelDown1 &lt;-<span class="st"> </span><span class="kw">CreateInputsModel</span>(</a>
+<a class="sourceLine" id="cb10-2" data-line-number="2">  <span class="dt">FUN_MOD =</span> RunModel_GR4J, <span class="dt">DatesR =</span> BasinObs<span class="op">$</span>DatesR,</a>
+<a class="sourceLine" id="cb10-3" data-line-number="3">  <span class="dt">Precip =</span> BasinObs<span class="op">$</span>P, <span class="dt">PotEvap =</span> BasinObs<span class="op">$</span>E,</a>
+<a class="sourceLine" id="cb10-4" data-line-number="4">  <span class="dt">Qupstream =</span> <span class="kw">matrix</span>(QObsUp, <span class="dt">ncol =</span> <span class="dv">1</span>), <span class="co"># Upstream observed flow</span></a>
+<a class="sourceLine" id="cb10-5" data-line-number="5">  <span class="dt">LengthHydro =</span> <span class="dv">100</span> <span class="op">*</span><span class="st"> </span><span class="dv">1000</span>, <span class="co"># Distance between upstream catchment outlet and the downstream one in m</span></a>
+<a class="sourceLine" id="cb10-6" data-line-number="6">  <span class="dt">BasinAreas =</span> <span class="kw">c</span>(<span class="dv">180</span>, <span class="dv">180</span>) <span class="co"># Upstream and downstream areas in km²</span></a>
+<a class="sourceLine" id="cb10-7" data-line-number="7">)</a></code></pre></div>
+<p>And then calibrate the combination of Lag model for upstream flow transfer and GR4J model for the runoff of the downstream subcatchment:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">RunOptionsDown &lt;-<span class="st"> </span><span class="kw">CreateRunOptions</span>(<span class="dt">FUN_MOD =</span> RunModel_GR4J,</a>
+<a class="sourceLine" id="cb11-2" data-line-number="2">                                   <span class="dt">InputsModel =</span> InputsModelDown1, <span class="dt">IndPeriod_Run =</span> Ind_Run,</a>
+<a class="sourceLine" id="cb11-3" data-line-number="3">                                   <span class="dt">IniStates =</span> <span class="ot">NULL</span>, <span class="dt">IniResLevels =</span> <span class="ot">NULL</span>, <span class="dt">IndPeriod_WarmUp =</span> <span class="ot">NULL</span>)</a></code></pre></div>
+<pre><code>## Warning in CreateRunOptions(FUN_MOD = RunModel_GR4J, InputsModel = InputsModelDown1, : model warm up period not defined: default configuration used
+##   the year preceding the run period is used</code></pre>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">InputsCritDown &lt;-<span class="st"> </span><span class="kw">CreateInputsCrit</span>(<span class="dt">FUN_CRIT =</span> ErrorCrit_NSE, <span class="dt">InputsModel =</span> InputsModelDown1,</a>
+<a class="sourceLine" id="cb13-2" data-line-number="2">                                   <span class="dt">RunOptions =</span> RunOptionsDown, <span class="dt">VarObs =</span> <span class="st">&quot;Q&quot;</span>, <span class="dt">Obs =</span> QObsDown[Ind_Run])</a>
+<a class="sourceLine" id="cb13-3" data-line-number="3">CalibOptionsDown &lt;-<span class="st"> </span><span class="kw">CreateCalibOptions</span>(<span class="dt">FUN_MOD =</span> RunModel_GR4J,</a>
+<a class="sourceLine" id="cb13-4" data-line-number="4">                                       <span class="dt">FUN_CALIB =</span> Calibration_Michel,</a>
+<a class="sourceLine" id="cb13-5" data-line-number="5">                                       <span class="dt">IsSD =</span> <span class="ot">TRUE</span>) <span class="co"># Don't forget to specify that it's an SD model here</span></a>
+<a class="sourceLine" id="cb13-6" data-line-number="6">OutputsCalibDown1 &lt;-<span class="st"> </span><span class="kw">Calibration_Michel</span>(<span class="dt">InputsModel =</span> InputsModelDown1, <span class="dt">RunOptions =</span> RunOptionsDown,</a>
+<a class="sourceLine" id="cb13-7" data-line-number="7">                                        <span class="dt">InputsCrit =</span> InputsCritDown, <span class="dt">CalibOptions =</span> CalibOptionsDown,</a>
+<a class="sourceLine" id="cb13-8" data-line-number="8">                                        <span class="dt">FUN_MOD =</span> RunModel_GR4J)</a></code></pre></div>
+<pre><code>## Grid-Screening in progress (0% 20% 40% 60% 80% 100%)
+##   Screening completed (243 runs)
+##       Param =   11.250,  247.151,   -0.020,   83.096,    2.384
+##       Crit. NSE[Q]       = 0.8861
+## Steepest-descent local search in progress
+##   Calibration completed (45 iterations, 675 runs)
+##       Param =    2.560,  265.072,    0.970,   83.931,    4.648
+##       Crit. NSE[Q]       = 0.9489</code></pre>
+<p>To run the complete model, we should substitute the observed upstream flow by the simulated one:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">InputsModelDown2 &lt;-<span class="st"> </span>InputsModelDown1</a>
+<a class="sourceLine" id="cb15-2" data-line-number="2">InputsModelDown2<span class="op">$</span>Qupstream[Ind_Run] &lt;-<span class="st"> </span>OutputsModelUp<span class="op">$</span>Qsim</a></code></pre></div>
+<p><code>RunModel</code> is run in order to automatically combine GR4J and Lag models.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1">OutputsModelDown1 &lt;-<span class="st"> </span><span class="kw">RunModel</span>(<span class="dt">InputsModel =</span> InputsModelDown2,</a>
+<a class="sourceLine" id="cb16-2" data-line-number="2">                              <span class="dt">RunOptions =</span> RunOptionsDown,</a>
+<a class="sourceLine" id="cb16-3" data-line-number="3">                              <span class="dt">Param =</span> OutputsCalibDown1<span class="op">$</span>ParamFinalR,</a>
+<a class="sourceLine" id="cb16-4" data-line-number="4">                              <span class="dt">FUN_MOD =</span> RunModel_GR4J)</a></code></pre></div>
+<p>Performance of the model validation is then:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">CritDown1 &lt;-<span class="st"> </span><span class="kw">ErrorCrit_NSE</span>(InputsCritDown, OutputsModelDown1)</a></code></pre></div>
+<pre><code>## Crit. NSE[Q] = 0.8170</code></pre>
+</div>
+<div id="calibration-of-the-downstream-subcatchment-with-upstream-simulated-flow" class="section level1">
+<h1>Calibration of the downstream subcatchment with upstream simulated flow</h1>
+<p>We calibrate the model with the <code>InputsModel</code> object previously created for substituting the observed upstream flow with the simulated one:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1">OutputsCalibDown2 &lt;-<span class="st"> </span><span class="kw">Calibration_Michel</span>(<span class="dt">InputsModel =</span> InputsModelDown2, <span class="dt">RunOptions =</span> RunOptionsDown,</a>
+<a class="sourceLine" id="cb19-2" data-line-number="2">                                        <span class="dt">InputsCrit =</span> InputsCritDown, <span class="dt">CalibOptions =</span> CalibOptionsDown,</a>
+<a class="sourceLine" id="cb19-3" data-line-number="3">                                        <span class="dt">FUN_MOD =</span> RunModel_GR4J)</a></code></pre></div>
+<pre><code>## Grid-Screening in progress (0% 20% 40% 60% 80% 100%)
+##   Screening completed (243 runs)
+##       Param =   11.250,  247.151,   -0.020,   83.096,    2.384
+##       Crit. NSE[Q]       = 0.7468
+## Steepest-descent local search in progress
+##   Calibration completed (39 iterations, 616 runs)
+##       Param =    1.970,  270.426,    0.822,   68.717,    5.214
+##       Crit. NSE[Q]       = 0.8185</code></pre>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1">ParamDown2 &lt;-<span class="st"> </span>OutputsCalibDown2<span class="op">$</span>ParamFinalR</a></code></pre></div>
+</div>
+<div id="discussion" class="section level1">
+<h1>Discussion</h1>
+<div id="identification-of-lag-parameter" class="section level2">
+<h2>Identification of Lag parameter</h2>
+<p>The theoretical LAG parameter should be equal to:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">Lag &lt;-<span class="st"> </span>InputsModelDown1<span class="op">$</span>LengthHydro <span class="op">/</span><span class="st"> </span>(<span class="dv">2</span> <span class="op">*</span><span class="st"> </span><span class="dv">86400</span>)</a>
+<a class="sourceLine" id="cb22-2" data-line-number="2"><span class="kw">paste</span>(<span class="kw">format</span>(Lag), <span class="st">&quot;m/s&quot;</span>)</a></code></pre></div>
+<pre><code>## [1] &quot;0.579 m/s&quot;</code></pre>
+<p>Both calibrations overestimate this parameter:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1">mLag &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">c</span>(Lag, OutputsCalibDown1<span class="op">$</span>ParamFinalR[<span class="dv">1</span>], OutputsCalibDown2<span class="op">$</span>ParamFinalR[<span class="dv">1</span>]), <span class="dt">ncol =</span> <span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb24-2" data-line-number="2"><span class="kw">rownames</span>(mLag) =<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;theoretical&quot;</span>, <span class="st">&quot;calibrated with observed upstream flow&quot;</span>,</a>
+<a class="sourceLine" id="cb24-3" data-line-number="3">                   <span class="st">&quot;calibrated with simulated  upstream flow&quot;</span>)</a>
+<a class="sourceLine" id="cb24-4" data-line-number="4"><span class="kw">colnames</span>(mLag) =<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Lag parameter&quot;</span>)</a>
+<a class="sourceLine" id="cb24-5" data-line-number="5">knitr<span class="op">::</span><span class="kw">kable</span>(mLag)</a></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">Lag parameter</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">theoretical</td>
+<td align="right">0.579</td>
+</tr>
+<tr class="even">
+<td align="left">calibrated with observed upstream flow</td>
+<td align="right">2.560</td>
+</tr>
+<tr class="odd">
+<td align="left">calibrated with simulated upstream flow</td>
+<td align="right">1.970</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="value-of-the-performance-criteria-with-theoretical-calibration" class="section level2">
+<h2>Value of the performance criteria with theoretical calibration</h2>
+<p>Theoretically, the parameters of the downstream GR4J model should be the same as the upstream one and we know the lag time. So this set of parameter should give a better performance criteria:</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1">ParamDownTheo &lt;-<span class="st"> </span><span class="kw">c</span>(Lag, OutputsCalibUp<span class="op">$</span>ParamFinalR)</a>
+<a class="sourceLine" id="cb25-2" data-line-number="2">OutputsModelDownTheo &lt;-<span class="st"> </span><span class="kw">RunModel</span>(<span class="dt">InputsModel =</span> InputsModelDown2,</a>
+<a class="sourceLine" id="cb25-3" data-line-number="3">                              <span class="dt">RunOptions =</span> RunOptionsDown,</a>
+<a class="sourceLine" id="cb25-4" data-line-number="4">                              <span class="dt">Param =</span> ParamDownTheo,</a>
+<a class="sourceLine" id="cb25-5" data-line-number="5">                              <span class="dt">FUN_MOD =</span> RunModel_GR4J)</a>
+<a class="sourceLine" id="cb25-6" data-line-number="6">CritDownTheo &lt;-<span class="st"> </span><span class="kw">ErrorCrit_NSE</span>(InputsCritDown, OutputsModelDownTheo)</a></code></pre></div>
+<pre><code>## Crit. NSE[Q] = 0.8159</code></pre>
+</div>
+<div id="parameters-and-performance-of-each-subcatchment-for-all-calibrations" class="section level2">
+<h2>Parameters and performance of each subcatchment for all calibrations</h2>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1">comp &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">0</span>, OutputsCalibUp<span class="op">$</span>ParamFinalR, <span class="kw">rep</span>(OutputsCalibDown1<span class="op">$</span>ParamFinalR, <span class="dv">2</span>),</a>
+<a class="sourceLine" id="cb27-2" data-line-number="2">                 OutputsCalibDown2<span class="op">$</span>ParamFinalR, ParamDownTheo), <span class="dt">ncol =</span> <span class="dv">5</span>, <span class="dt">byrow =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb27-3" data-line-number="3">comp &lt;-<span class="st"> </span><span class="kw">cbind</span>(comp, <span class="kw">c</span>(OutputsCalibUp<span class="op">$</span>CritFinal, OutputsCalibDown1<span class="op">$</span>CritFinal,</a>
+<a class="sourceLine" id="cb27-4" data-line-number="4">                      CritDown1<span class="op">$</span>CritValue,  OutputsCalibDown2<span class="op">$</span>CritFinal, CritDownTheo<span class="op">$</span>CritValue))</a>
+<a class="sourceLine" id="cb27-5" data-line-number="5"><span class="kw">colnames</span>(comp) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Lag&quot;</span>, <span class="kw">paste0</span>(<span class="st">&quot;x&quot;</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">4</span>), <span class="st">&quot;NSE&quot;</span>)</a>
+<a class="sourceLine" id="cb27-6" data-line-number="6"><span class="kw">rownames</span>(comp) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Calibration of the upstream subcatchment&quot;</span>,</a>
+<a class="sourceLine" id="cb27-7" data-line-number="7">                    <span class="st">&quot;Calibration 1 with observed upstream flow&quot;</span>,</a>
+<a class="sourceLine" id="cb27-8" data-line-number="8">                    <span class="st">&quot;Validation 1 with simulated upstream flow&quot;</span>,</a>
+<a class="sourceLine" id="cb27-9" data-line-number="9">                    <span class="st">&quot;Calibration 2 with simulated upstream flow&quot;</span>,</a>
+<a class="sourceLine" id="cb27-10" data-line-number="10">                    <span class="st">&quot;Validation theoretical set of parameters&quot;</span>)</a>
+<a class="sourceLine" id="cb27-11" data-line-number="11">knitr<span class="op">::</span><span class="kw">kable</span>(comp)</a></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">Lag</th>
+<th align="right">x1</th>
+<th align="right">x2</th>
+<th align="right">x3</th>
+<th align="right">x4</th>
+<th align="right">NSE</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Calibration of the upstream subcatchment</td>
+<td align="right">0.000</td>
+<td align="right">257</td>
+<td align="right">1.012</td>
+<td align="right">88.2</td>
+<td align="right">2.21</td>
+<td align="right">0.799</td>
+</tr>
+<tr class="even">
+<td align="left">Calibration 1 with observed upstream flow</td>
+<td align="right">2.560</td>
+<td align="right">265</td>
+<td align="right">0.970</td>
+<td align="right">83.9</td>
+<td align="right">4.65</td>
+<td align="right">0.949</td>
+</tr>
+<tr class="odd">
+<td align="left">Validation 1 with simulated upstream flow</td>
+<td align="right">2.560</td>
+<td align="right">265</td>
+<td align="right">0.970</td>
+<td align="right">83.9</td>
+<td align="right">4.65</td>
+<td align="right">0.817</td>
+</tr>
+<tr class="even">
+<td align="left">Calibration 2 with simulated upstream flow</td>
+<td align="right">1.970</td>
+<td align="right">270</td>
+<td align="right">0.822</td>
+<td align="right">68.7</td>
+<td align="right">5.21</td>
+<td align="right">0.818</td>
+</tr>
+<tr class="odd">
+<td align="left">Validation theoretical set of parameters</td>
+<td align="right">0.579</td>
+<td align="right">257</td>
+<td align="right">1.012</td>
+<td align="right">88.2</td>
+<td align="right">2.21</td>
+<td align="right">0.816</td>
+</tr>
+</tbody>
+</table>
+<p>Even if calibration with observed upstream flows gives an improved performance criteria, in validation using simulated upstream flows the result is quite similar as the performance obtained with the calibration with upstream simulated flows. The theoretical set of parameters give also an equivalent performance but still underperforming the calibration 2 one.</p>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

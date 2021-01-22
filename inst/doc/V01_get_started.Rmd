@@ -10,7 +10,7 @@ vignette: >
 
 # Introduction
 
-**airGR** is a package that brings into the [**R software**](https://cran.r-project.org/) the hydrological modelling tools used and developed at the [Catchment Hydrology Research Group](https://webgr.inrae.fr/en/) at [INRAE (France)](https://webgr.inrae.fr/en/), including the [**GR rainfall-runoff models**](https://webgr.inrae.fr/en/modeles/) and a snowmelt and accumulation model, [**CemaNeige**](https://webgr.inrae.fr/en/models/snow-model/). Each model core is coded in **Fortran** to ensure low computational time. The other package functions (i.e. mainly the calibration algorithm and the efficiency criteria calculation) are coded in **R**. 
+**airGR** is a package that brings into the [**R software**](https://cran.r-project.org/) the hydrological modelling tools used and developed at the [Catchment Hydrology Research Group](https://webgr.inrae.fr/en/home/) at [INRAE (France)](https://www.inrae.fr/en), including the [**GR rainfall-runoff models**](https://webgr.inrae.fr/en/models/) and a snowmelt and accumulation model, [**CemaNeige**](https://webgr.inrae.fr/en/models/snow-model/). Each model core is coded in **Fortran** to ensure low computational time. The other package functions (i.e. mainly the calibration algorithm and the efficiency criteria calculation) are coded in **R**. 
 
 
 The **airGR** package has been designed to fulfill two major requirements: to facilitate the use by non-expert users and to allow flexibility regarding the addition of external criteria, models or calibration algorithms. The names of the functions and their arguments were chosen to this end. **airGR** also contains basics plotting facilities. 
@@ -28,7 +28,7 @@ The models can be called within **airGR** using the following functions:
   * `RunModel_GR6J()`: six-parameter daily lumped hydrological model [@pushpalatha_downward_2011] 
   * `RunModel_GR2M()`: two-parameter monthly lumped hydrological model [@mouelhi_vers_2003; @mouelhi_stepwise_2006] 
   * `RunModel_GR1A()`: one-parameter yearly lumped hydrological model [@mouelhi_vers_2003; @mouelhi_linking_2006] 
-  * `RunModel_CemaNeige()`: two-parameter degree-day snowmelt and accumulation model [@valery_as_2014] 
+  * `RunModel_CemaNeige()`: two-parameter degree-day snowmelt and accumulation model [@valery_as_2014; @riboust_revisiting_2019] 
   * `RunModel_CemaNeigeGR4H()`: combined use of **GR4H** and **CemaNeige** 
   * `RunModel_CemaNeigeGR5H()`: combined use of **GR5H** and **CemaNeige** 
   * `RunModel_CemaNeigeGR4J()`: combined use of **GR4J** and **CemaNeige** 
@@ -85,7 +85,7 @@ To facilitate the use of the package, there are several functions dedicated to t
 To run a GR hydrological model or CemaNeige, the user has to prepare the input data with the `CreateInputsModel()` function.
 As arguments, this function needs the function name corresponding to the model the user wants to run, a vector of dates, a vector of precipitation and a vector of potential evapotranspiration.
 
-In the example below, we already have the potential evapotranspiration. If the user does not have these data, it is possible to compute it with the [Oudin's formula](http://dx.doi.org/10.1016/j.jhydrol.2004.08.026) with the `PEdaily_Oudin()` function (this function only needs Julian days, daily average air temperature and latitude).
+In the example below, we already have the potential evapotranspiration. If the user does not have these data, it is possible to compute it with the [Oudin's formula](http://dx.doi.org/10.1016/j.jhydrol.2004.08.026) with the `PE_Oudin()` function (this function only needs Julian days, daily average air temperature and latitude).
 
 Missing values (`NA`) of precipitation (or potential evapotranspiration) are **not allowed**.
 
@@ -149,6 +149,8 @@ The `CreateInputsCrit()` function allows to prepare the input in order to calcul
   * `Obs`: the observed variable time serie (e.g. the discharge expressed in *mm/time step*)
 
 Missing values (`NA`) are **allowed** for observed discharge.
+
+It is possible to compute a composite criterion (e.g. the average between NSE computed on discharge and NSE computed on log of discharge). In this case, users have to provide lists to the following arguments (some of the are optional): `FUN_CRIT`, `Obs`, `VarObs`, `BoolCrit`, `transfo`, `Weights.` 
 
 ```{r}
 InputsCrit <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 

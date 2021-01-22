@@ -6,22 +6,22 @@
 ! FILE    : frun_GR5J.f
 !------------------------------------------------------------------------------
 ! AUTHORS
-! Original code: N. Le Moine
-! Cleaning and formatting for airGR: L. Coron
-! Further cleaning: G. Thirel
+! Original code: Le Moine, N.
+! Cleaning and formatting for airGR: Coron, L.
+! Further cleaning: Thirel, G.
 !------------------------------------------------------------------------------
 ! Creation date: 2006
 ! Last modified: 25/11/2019
 !------------------------------------------------------------------------------
 ! REFERENCES
-! Le Moine, N. (2008). Le bassin versant de surface vu par le souterrain : une 
-! voie d'amélioration des performances et du réalisme des modèles 
-! pluie-débit ? PhD thesis (French), UPMC, Paris, France. 
+! Le Moine, N. (2008). Le bassin versant de surface vu par le souterrain : une
+! voie d'amélioration des performances et du réalisme des modèles pluie-débit ?
+! PhD thesis (in French), UPMC - Cemagref Antony, Paris, France.
 !
-! Pushpalatha, R., C. Perrin, N. Le Moine, T. Mathevet, and V. Andréassian 
-! (2011). A downward structural sensitivity analysis of hydrological models to 
-! improve low-flow simulation. Journal of Hydrology, 411(1-2), 66-76. 
-! doi:10.1016/j.jhydrol.2011.09.034.
+! Pushpalatha, R., Perrin, C., Le Moine, N., Mathevet, T. and Andréassian, V.
+! (2011). A downward structural sensitivity analysis of hydrological models to
+! improve low-flow simulation. Journal of Hydrology, 411(1-2), 66-76,
+! doi: 10.1016/j.jhydrol.2011.09.034.
 !------------------------------------------------------------------------------
 ! Quick description of public procedures:
 !         1. frun_gr5j
@@ -32,7 +32,7 @@
       SUBROUTINE frun_gr5j(LInputs,InputsPrecip,InputsPE,NParam,Param, &
                            NStates,StateStart,NOutputs,IndOutputs, &
                            Outputs,StateEnd)
-! Subroutine that initializes GR5J, get its parameters, performs the call 
+! Subroutine that initializes GR5J, get its parameters, performs the call
 ! to the MOD_GR5J subroutine at each time step, and stores the final states
 ! Inputs
 !       LInputs      ! Integer, length of input and output series
@@ -44,7 +44,7 @@
 !       StateStart   ! Vector of real, state variables used when the model run starts (store levels [mm] and Unit Hydrograph (UH) storages [mm])
 !       NOutputs     ! Integer, number of output series
 !       IndOutputs   ! Vector of integer, indices of output series
-! Outputs      
+! Outputs
 !       Outputs      ! Vector of real, output series
 !       StateEnd     ! Vector of real, state variables at the end of the model run (store levels [mm] and Unit Hydrograph (UH) storages [mm])
 
@@ -65,7 +65,7 @@
       ! out
       doubleprecision, dimension(NStates), intent(out) :: StateEnd
       doubleprecision, dimension(LInputs,NOutputs), intent(out) :: Outputs
-      
+
       !! locals
       integer :: I,K
       integer, parameter :: NH=20,NMISC=30
@@ -201,7 +201,7 @@
         Sr = St(1)/A
         ER=St(1)*(2.-Sr)*TWS/(1.+(1.-Sr)*TWS)
         ! ER=X(2)*(2.-X(2)/A)*tanHyp(WS)/(1.+(1.-X(2)/A)*tanHyp(WS))
-        ! end speed-up  
+        ! end speed-up
         AE=ER+P1
         St(1)=St(1)-ER
         PS=0.
@@ -219,7 +219,7 @@
         PS=A*(1.-Sr*Sr)*TWS/(1.+Sr*TWS)
         ! PS=A*(1.-(X(2)/A)**2.)*tanHyp(WS)/(1.+X(2)/A*tanHyp(WS))
         ! end speed-up
-        
+
         PR=PN-PS
         St(1)=St(1)+PS
       ENDIF

@@ -25,48 +25,48 @@ RunModel_GR6J(InputsModel, RunOptions, Param)
 
 \item{Param}{[numeric] vector of 6 parameters
   \tabular{ll}{
-    GR6J X1 \tab production store capacity [mm]                  \cr
-    GR6J X2 \tab intercatchment exchange coefficient [mm/d]      \cr
-    GR6J X3 \tab routing store capacity [mm]                     \cr
-    GR6J X4 \tab unit hydrograph time constant [d]               \cr
-    GR6J X5 \tab intercatchment exchange threshold [-]           \cr
-    GR6J X6 \tab coefficient for emptying exponential store [mm] \cr
+    GR6J X1 \tab production store capacity [mm]               \cr
+    GR6J X2 \tab intercatchment exchange coefficient [mm/d]   \cr
+    GR6J X3 \tab routing store capacity [mm]                  \cr
+    GR6J X4 \tab unit hydrograph time constant [d]            \cr
+    GR6J X5 \tab intercatchment exchange threshold [-]        \cr
+    GR6J X6 \tab exponential store depletion coefficient [mm] \cr
   }}
 }
 
 
 \value{
-[list] list containing the function outputs organised as follows:                                         
-  \tabular{ll}{                                                                                         
-    \emph{$DatesR  } \tab [POSIXlt] series of dates                                                  \cr
-    \emph{$PotEvap } \tab [numeric] series of input potential evapotranspiration [mm/d]              \cr
-    \emph{$Precip  } \tab [numeric] series of input total precipitation [mm/d]                       \cr
-    \emph{$Prod    } \tab [numeric] series of production store level [mm]                            \cr
-    \emph{$Pn      } \tab [numeric] series of net rainfall [mm/d]                                    \cr
-    \emph{$Ps      } \tab [numeric] series of the part of Pn filling the production store [mm/d]     \cr
-    \emph{$AE      } \tab [numeric] series of actual evapotranspiration [mm/d]                       \cr
-    \emph{$Perc    } \tab [numeric] series of percolation (PERC) [mm/d]                              \cr
-    \emph{$PR      } \tab [numeric] series of PR=Pn-Ps+Perc [mm/d]                                   \cr
-    \emph{$Q9      } \tab [numeric] series of UH1 outflow (Q9) [mm/d]                                \cr
-    \emph{$Q1      } \tab [numeric] series of UH2 outflow (Q1) [mm/d]                                \cr
-    \emph{$Rout    } \tab [numeric] series of routing store level [mm]                               \cr
-    \emph{$Exch    } \tab [numeric] series of potential semi-exchange between catchments [mm/d]      \cr
-    \emph{$AExch1  } \tab [numeric] series of actual exchange between catchments for branch 1 [mm/d] \cr
-    \emph{$AExch2  } \tab [numeric] series of actual exchange between catchments for branch 2 [mm/d] \cr
-    \emph{$AExch   } \tab [numeric] series of actual exchange between catchments (1+2) [mm/d]        \cr
-    \emph{$QR      } \tab [numeric] series of routing store outflow (QR) [mm/d]                      \cr
-    \emph{$QRExp   } \tab [numeric] series of exponential store outflow (QRExp) [mm/d]               \cr
-    \emph{$Exp     } \tab [numeric] series of exponential store level (negative) [mm]                \cr
-    \emph{$QD      } \tab [numeric] series of direct flow from UH2 after exchange (QD) [mm/d]        \cr
-    \emph{$Qsim    } \tab [numeric] series of Qsim [mm/d]                                            \cr
-    \emph{$StateEnd} \tab [numeric] states at the end of the run (res. levels, UH1 levels, UH2 levels) [mm], \cr\tab see \code{\link{CreateIniStates}} for more details \cr
-  }                                                                                                     
-  (refer to the provided references or to the package source code for further details on these model outputs)
+[list] containing the function outputs organised as follows:
+  \tabular{ll}{
+    \emph{$DatesR  } \tab [POSIXlt] series of dates                                                     \cr
+    \emph{$PotEvap } \tab [numeric] series of input potential evapotranspiration (E) [mm/d]             \cr
+    \emph{$Precip  } \tab [numeric] series of input total precipitation (P) [mm/d]                      \cr
+    \emph{$Prod    } \tab [numeric] series of production store level (S) [mm]                           \cr
+    \emph{$Pn      } \tab [numeric] series of net rainfall (Pn) [mm/d]                                  \cr
+    \emph{$Ps      } \tab [numeric] series of the part of Pn filling the production store (Ps) [mm/d]   \cr
+    \emph{$AE      } \tab [numeric] series of actual evapotranspiration [mm/d]                          \cr
+    \emph{$Perc    } \tab [numeric] series of percolation (Perc) [mm/d]                                 \cr
+    \emph{$PR      } \tab [numeric] series of Pr=Pn-Ps+Perc (Pr) [mm/d]                                 \cr
+    \emph{$Q9      } \tab [numeric] series of UH1 outflow (Q9) [mm/d]                                   \cr
+    \emph{$Q1      } \tab [numeric] series of UH2 outflow (Q1) [mm/d]                                   \cr
+    \emph{$Rout    } \tab [numeric] series of routing store level (R1) [mm]                             \cr
+    \emph{$Exch    } \tab [numeric] series of potential semi-exchange between catchments [mm/d]         \cr
+    \emph{$AExch1  } \tab [numeric] series of actual exchange between catchments for branch 1 [mm/d]    \cr
+    \emph{$AExch2  } \tab [numeric] series of actual exchange between catchments for branch 2 [mm/d]    \cr
+    \emph{$AExch   } \tab [numeric] series of actual exchange between catchments (AExch1+AExch2) [mm/d] \cr
+    \emph{$QR      } \tab [numeric] series of routing store outflow (Qr) [mm/d]                         \cr
+    \emph{$QRExp   } \tab [numeric] series of exponential store outflow (QrExp) [mm/d]                  \cr
+    \emph{$Exp     } \tab [numeric] series of exponential store level (negative) (R2) [mm]              \cr
+    \emph{$QD      } \tab [numeric] series of direct flow from UH2 after exchange (Qd) [mm/d]           \cr
+    \emph{$Qsim    } \tab [numeric] series of simulated discharge (Q) [mm/d]                            \cr
+    \emph{$StateEnd} \tab [numeric] states at the end of the run (res. levels, UH1 levels, UH2 levels) [mm]. See \code{\link{CreateIniStates}} for more details \cr
+  }
+Refer to the provided references or to the package source code for further details on these model outputs.
 }
 
 
 \details{
-For further details on the model, see the references section.
+For further details on the model, see the references section. \cr
 For further details on the argument structures and initialisation options, see \code{\link{CreateRunOptions}}.
 \cr
 \cr
@@ -82,11 +82,11 @@ library(airGR)
 data(L0123001)
 
 ## preparation of the InputsModel object
-InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR6J, DatesR = BasinObs$DatesR, 
+InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR6J, DatesR = BasinObs$DatesR,
                                  Precip = BasinObs$P, PotEvap = BasinObs$E)
 
 ## run period selection
-Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"), 
+Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"),
                which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1999-12-31"))
 
 ## preparation of the RunOptions object
@@ -102,7 +102,7 @@ OutputsModel <- RunModel_GR6J(InputsModel = InputsModel,
 plot(OutputsModel, Qobs = BasinObs$Qmm[Ind_Run])
 
 ## efficiency criterion: Nash-Sutcliffe Efficiency
-InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
+InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel,
                                 RunOptions = RunOptions, Obs = BasinObs$Qmm[Ind_Run])
 OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
 }
@@ -114,9 +114,9 @@ Laurent Coron, Claude Michel, Charles Perrin, Raji Pushpalatha, Nicolas Le Moine
 
 
 \references{
-Pushpalatha, R., C. Perrin, N. Le Moine, T. Mathevet and V. Andréassian (2011). 
-  A downward structural sensitivity analysis of hydrological models to improve low-flow simulation. 
-  Journal of Hydrology, 411(1-2), 66-76. doi: 10.1016/j.jhydrol.2011.09.034.
+Pushpalatha, R., Perrin, C., Le Moine, N., Mathevet, T. and Andréassian, V. (2011).
+  A downward structural sensitivity analysis of hydrological models to improve low-flow simulation.
+  Journal of Hydrology, 411(1-2), 66-76, \doi{10.1016/j.jhydrol.2011.09.034}.
 }
 
 

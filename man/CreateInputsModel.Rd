@@ -3,6 +3,7 @@
 
 \name{CreateInputsModel}
 \alias{CreateInputsModel}
+\alias{[.InputsModel}
 
 
 \title{Creation of the InputsModel object required to the RunModel functions}
@@ -16,7 +17,11 @@ Creation of the \emph{InputsModel} object required to the \code{RunModel*} funct
 \usage{
 CreateInputsModel(FUN_MOD, DatesR, Precip, PrecipScale = TRUE, PotEvap = NULL,
                   TempMean = NULL, TempMin = NULL, TempMax = NULL,
-                  ZInputs = NULL, HypsoData = NULL, NLayers = 5, verbose = TRUE)
+                  ZInputs = NULL, HypsoData = NULL, NLayers = 5,
+                  Qupstream = NULL, LengthHydro = NULL, BasinAreas = NULL,
+                  verbose = TRUE)
+
+\method{[}{InputsModel}(x, i)
 }
 
 
@@ -44,6 +49,16 @@ CreateInputsModel(FUN_MOD, DatesR, Precip, PrecipScale = TRUE, PotEvap = NULL,
 \item{NLayers}{(optional) [numeric] integer giving the number of elevation layers requested [-], required to create CemaNeige module inputs, default=5}
 
 \item{verbose}{(optional) [boolean] boolean indicating if the function is run in verbose mode or not, default = \code{TRUE}}
+
+\item{Qupstream}{(optional) [numerical matrix] time series of upstream flows (catchment average) [mm/time step or m3/time step, see details], required to create the SD model inputs . See details}
+
+\item{LengthHydro}{(optional) [numeric] real giving the distance between the downstream outlet and each upstream inlet of the sub-catchment [m], required to create the SD model inputs . See details}
+
+\item{BasinAreas}{(optional) [numeric] real giving the area of each upstream sub-catchment [km2] and the area of the downstream sub-catchment in the last item, required to create the SD model inputs . See details}
+
+\item{x}{[InputsModel] object of class InputsModel}
+
+\item{i}{[integer] of the indices to subset a time series or [character] names of the elements to extract}
 }
 
 
@@ -61,11 +76,15 @@ CreateInputsModel(FUN_MOD, DatesR, Precip, PrecipScale = TRUE, PotEvap = NULL,
 
 
 \details{
-Users wanting to use \code{FUN_MOD} functions that are not included in 
+Users wanting to use \code{FUN_MOD} functions that are not included in
 the package must create their own InputsModel object accordingly. \cr
 Please note that if CemaNeige is used, and \code{ZInputs} is different than \code{HypsoData}, then precipitation and temperature are interpolated with the \code{DataAltiExtrapolation_Valery} function.
-}
 
+Users wanting to use a semi-distributed (SD) lag model should provide valid \code{Qupstream}, \code{LengthHydro}, and \code{BasinAreas} parameters. Each upstream sub-catchment is described by an upstream flow time series (one column in \code{Qupstream} matrix), a distance between the downstream outlet and the upstream inlet (one item in \code{LengthHydro}) and an area (one item in \code{BasinAreas}).
+The order of the columns or of the items should be consistent for all these parameters. \code{BasinAreas} should contain one extra information (stored in the last item) which is the area of the downstream sub-catchment.
+Upstream flows that are not related to a sub-catchment such as a release or withdraw spot are identified by an area equal to \code{NA} and an upstream flow expressed in m3/time step instead of mm/time step.
+Please note that the use of SD lag model require to use the \code{\link{RunModel}} function instead of \code{\link{RunModel_GR4J}} or the other \code{RunModel_*} functions.
+}
 
 \examples{
 library(airGR)
@@ -74,11 +93,11 @@ library(airGR)
 data(L0123001)
 
 ## preparation of the InputsModel object
-InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$DatesR, 
+InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$DatesR,
                                  Precip = BasinObs$P, PotEvap = BasinObs$E)
 
 ## run period selection
-Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"), 
+Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"),
                which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1999-12-31"))
 
 ## preparation of the RunOptions object
@@ -87,14 +106,14 @@ RunOptions <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
 
 ## simulation
 Param <- c(X1 = 734.568, X2 = -0.840, X3 = 109.809, X4 = 1.971)
-OutputsModel <- RunModel(InputsModel = InputsModel, RunOptions = RunOptions, Param = Param, 
+OutputsModel <- RunModel(InputsModel = InputsModel, RunOptions = RunOptions, Param = Param,
                          FUN_MOD = RunModel_GR4J)
 
 ## results preview
 plot(OutputsModel, Qobs = BasinObs$Qmm[Ind_Run])
 
 ## efficiency criterion: Nash-Sutcliffe Efficiency
-InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
+InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel,
                                 RunOptions = RunOptions, Obs = BasinObs$Qmm[Ind_Run])
 OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
 }

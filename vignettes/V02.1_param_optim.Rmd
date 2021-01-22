@@ -13,7 +13,7 @@ vignette: >
 ```{r, warning=FALSE, include=FALSE, fig.keep='none', results='hide'}
 library(airGR)
 library(DEoptim)
-#library(hydroPSO)
+library(hydroPSO) # Needs R version >= 3.6 or latticeExtra <= 0.6-28 on R 3.5
 library(Rmalschains)
 # source("airGR.R")
 set.seed(321)
@@ -84,7 +84,7 @@ upperGR4J <- rep(+9.99, times = 4)
 We start with a local optimization strategy by using the PORT routines (using the `nlminb()` of the `stats` package) and by setting a starting point in the transformed parameter space:
 ```{r, warning=FALSE, results='hide', eval=FALSE}
 startGR4J <- c(4.1, 3.9, -0.9, -8.7)
-optPORT <- stats::nlminb(start = startGR4J, 
+optPORT <- stats::nlminb(start = startGR4J,
                          objective = OptimGR4J,
                          lower = lowerGR4J, upper = upperGR4J,
                          control = list(trace = 1))
@@ -97,7 +97,7 @@ For each starting point, a local optimization is performed.
 ```{r, warning=FALSE, results='hide', eval=FALSE}
 startGR4J <- expand.grid(data.frame(CalibOptions$StartParamDistrib))
 optPORT_ <- function(x) {
-  opt <- stats::nlminb(start = x, 
+  opt <- stats::nlminb(start = x,
                        objective = OptimGR4J,
                        lower = lowerGR4J, upper = upperGR4J,
                        control = list(trace = 1))
@@ -147,7 +147,7 @@ optPSO <- hydroPSO::hydroPSO(fn = OptimGR4J,
 ## MA-LS-Chains
 ```{r, warning=FALSE, results='hide', eval=FALSE}
 optMALS <- Rmalschains::malschains(fn = OptimGR4J,
-                                   lower = lowerGR4J, upper = upperGR4J, 
+                                   lower = lowerGR4J, upper = upperGR4J,
                                    maxEvals = 2000)
 ```
 
@@ -156,7 +156,7 @@ optMALS <- Rmalschains::malschains(fn = OptimGR4J,
 As it can be seen in the table below, the four additional optimization strategies tested lead to very close optima.
 
 ```{r, warning=FALSE, echo=FALSE, eval=FALSE}
-resGLOB <- data.frame(Algo = c("airGR", "PORT", "DE", "PSO", "MA-LS"), 
+resGLOB <- data.frame(Algo = c("airGR", "PORT", "DE", "PSO", "MA-LS"),
                       round(rbind(
                         OutputsCalib$ParamFinalR                          ,
                         airGR::TransfoParam_GR4J(ParamIn = optPORT$par                    , Direction = "TR"),

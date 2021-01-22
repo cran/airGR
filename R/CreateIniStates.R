@@ -3,17 +3,18 @@ CreateIniStates <- function(FUN_MOD, InputsModel, IsHyst = FALSE, IsIntStore = F
                             UH1 = NULL, UH2 = NULL,
                             GCemaNeigeLayers = NULL, eTGCemaNeigeLayers = NULL,
                             GthrCemaNeigeLayers = NULL, GlocmaxCemaNeigeLayers = NULL,
+                            SD = NULL,
                             verbose = TRUE) {
-  
-  
+
+
   ObjectClass <- NULL
-  
+
   UH1n <- 20L
   UH2n <- UH1n * 2L
- 
+
   nameFUN_MOD <- as.character(substitute(FUN_MOD))
   FUN_MOD <- match.fun(FUN_MOD)
-  
+
   ## check FUN_MOD
   BOOL <- FALSE
   if (identical(FUN_MOD, RunModel_GR4H) | identical(FUN_MOD, RunModel_GR5H)) {
@@ -56,7 +57,7 @@ CreateIniStates <- function(FUN_MOD, InputsModel, IsHyst = FALSE, IsIntStore = F
   if (!(identical(FUN_MOD, RunModel_GR5H) | identical(FUN_MOD, RunModel_CemaNeigeGR5H)) & IsIntStore) {
     stop("'IsIntStore' cannot be TRUE if GR5H is not used in 'FUN_MOD'")
   }
-  
+
   ## check InputsModel
   if (!inherits(InputsModel, "InputsModel")) {
     stop("'InputsModel' must be of class 'InputsModel'")
@@ -68,13 +69,13 @@ CreateIniStates <- function(FUN_MOD, InputsModel, IsHyst = FALSE, IsIntStore = F
       !inherits(InputsModel, "CemaNeige")) {
     stop("'InputsModel' must be of class 'CemaNeige'")
   }
-  
-  
+
+
   ## check states
   if (any(eTGCemaNeigeLayers > 0)) {
     stop("Positive values are not allowed for 'eTGCemaNeigeLayers'")
-  }  
-  
+  }
+
   if (identical(FUN_MOD, RunModel_GR6J) | identical(FUN_MOD, RunModel_CemaNeigeGR6J)) {
     if (is.null(ExpStore)) {
       stop("'RunModel_*GR6J' need an 'ExpStore' value")
@@ -85,7 +86,7 @@ CreateIniStates <- function(FUN_MOD, InputsModel, IsHyst = FALSE, IsIntStore = F
     }
     ExpStore <- Inf
   }
-  
+
   if (identical(FUN_MOD, RunModel_GR2M)) {
     if (!is.null(UH1)) {
       if (verbose) {
@@ -100,20 +101,20 @@ CreateIniStates <- function(FUN_MOD, InputsModel, IsHyst = FALSE, IsIntStore = F
       UH2 <- rep(Inf, UH2n)
     }
   }
-  
+
   if ((identical(FUN_MOD, RunModel_GR5J) | identical(FUN_MOD, RunModel_CemaNeigeGR5J)) & !is.null(UH1)) {
     if (verbose) {
       warning(sprintf("'%s' does not require 'UH1'. Values set to NA", nameFUN_MOD))
     }
     UH1 <- rep(Inf, UH1n)
-  }  
+  }
   if ((!identical(FUN_MOD, RunModel_GR5H) | identical(FUN_MOD, RunModel_CemaNeigeGR5H)) & !is.null(IntStore)) {
     if (verbose) {
       warning(sprintf("'%s' does not require 'IntStore'. Values set to NA", nameFUN_MOD))
     }
     IntStore <- Inf
   }
- 
+
   if ("CemaNeige" %in% ObjectClass & ! "GR" %in% ObjectClass) {
     if (!is.null(ProdStore)) {
       if (verbose) {
@@ -170,7 +171,7 @@ CreateIniStates <- function(FUN_MOD, InputsModel, IsHyst = FALSE, IsIntStore = F
       warning(sprintf("'%s' does not require 'GthrCemaNeigeLayers' and 'GlocmaxCemaNeigeLayers'. Values set to NA", nameFUN_MOD))
     }
     GthrCemaNeigeLayers    <- Inf
-    GlocmaxCemaNeigeLayers <- Inf 
+    GlocmaxCemaNeigeLayers <- Inf
   }
   if(!"CemaNeige" %in% ObjectClass &
      (!is.null(GCemaNeigeLayers) | !is.null(eTGCemaNeigeLayers) | !is.null(GthrCemaNeigeLayers) | !is.null(GlocmaxCemaNeigeLayers))) {
@@ -180,24 +181,24 @@ CreateIniStates <- function(FUN_MOD, InputsModel, IsHyst = FALSE, IsIntStore = F
     GCemaNeigeLayers       <- Inf
     eTGCemaNeigeLayers     <- Inf
     GthrCemaNeigeLayers    <- Inf
-    GlocmaxCemaNeigeLayers <- Inf    
+    GlocmaxCemaNeigeLayers <- Inf
   }
-  
-  
+
+
   ## set states
   if("CemaNeige" %in% ObjectClass) {
     NLayers <- length(InputsModel$LayerPrecip)
   } else {
     NLayers <- 1
   }
-  
-  
+
+
   ## manage NULL values
   if (is.null(ExpStore)) {
-    ExpStore <- Inf 
+    ExpStore <- Inf
   }
   if (is.null(IntStore)) {
-    IntStore <- Inf 
+    IntStore <- Inf
   }
   if (is.null(UH1)) {
     if ("hourly"  %in% ObjectClass) {
@@ -232,16 +233,16 @@ CreateIniStates <- function(FUN_MOD, InputsModel, IsHyst = FALSE, IsIntStore = F
   }
   if (any(is.infinite(GlocmaxCemaNeigeLayers))) {
     GlocmaxCemaNeigeLayers <- rep(Inf, NLayers)
-  }  
-  
+  }
+
   # check negative values
   if (any(ProdStore < 0) | any(RoutStore < 0) | any(IntStore < 0) |
       any(UH1 < 0) | any(UH2 < 0) |
       any(GCemaNeigeLayers < 0)) {
     stop("Negative values are not allowed for any of 'ProdStore', 'RoutStore', 'IntStore', 'UH1', 'UH2', 'GCemaNeigeLayers'")
   }
-  
-  
+
+
   ## check length
   if (!is.numeric(ProdStore) || length(ProdStore) != 1L) {
     stop("'ProdStore' must be numeric of length one")
@@ -281,7 +282,23 @@ CreateIniStates <- function(FUN_MOD, InputsModel, IsHyst = FALSE, IsIntStore = F
       stop(sprintf("'eTGCemaNeigeLayers' must be numeric of length %i", NLayers))
     }
   }
-  
+
+  # SD model state handling
+  if(!is.null(SD)) {
+    if(!inherits(InputsModel, "SD")) {
+      stop("'SD' argument provided and 'InputsModel' is not of class 'SD'")
+    }
+    if(!is.list(SD)) {
+      stop("'SD' argument must be a list")
+    }
+    lapply(SD, function(x) {
+      if(!is.numeric(x)) stop("Each item of 'SD' list argument must be numeric")
+    })
+    if(length(SD) != length(InputsModel$LengthHydro)) {
+      stop("Number of items of 'SD' list argument must be the same as the number of upstream connections",
+           sprintf(" (%i required, found %i)", length(InputsModel$LengthHydro), length(SD)))
+    }
+  }
 
   ## format output
   IniStates <- list(Store = list(Prod = ProdStore, Rout = RoutStore, Exp = ExpStore, Int = IntStore),
@@ -291,7 +308,11 @@ CreateIniStates <- function(FUN_MOD, InputsModel, IsHyst = FALSE, IsIntStore = F
   IniStatesNA <- unlist(IniStates)
   IniStatesNA[is.infinite(IniStatesNA)] <- NA
   IniStatesNA <- relist(IniStatesNA, skeleton = IniStates)
-  
+
+  if(!is.null(SD)) {
+    IniStatesNA$SD <- SD
+  }
+
   class(IniStatesNA) <- c("IniStates", ObjectClass)
   if(IsHyst) {
     class(IniStatesNA) <- c(class(IniStatesNA), "hysteresis")
@@ -299,8 +320,8 @@ CreateIniStates <- function(FUN_MOD, InputsModel, IsHyst = FALSE, IsIntStore = F
   if(IsIntStore) {
     class(IniStatesNA) <- c(class(IniStatesNA), "interception")
   }
-  
+
   return(IniStatesNA)
-  
-  
+
+
 }

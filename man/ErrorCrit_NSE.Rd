@@ -42,8 +42,8 @@ Function which computes an error criterion based on the NSE formula proposed by 
 
 
 \details{
-In addition to the criterion value, the function outputs include a multiplier (-1 or +1) which allows 
-the use of the function for model calibration: the product CritValue * Multiplier is the criterion to be minimised 
+In addition to the criterion value, the function outputs include a multiplier (-1 or +1) which allows
+the use of the function for model calibration: the product CritValue * Multiplier is the criterion to be minimised
 (Multiplier = -1 for NSE).
 }
 
@@ -55,11 +55,11 @@ library(airGR)
 data(L0123001)
 
 ## preparation of the InputsModel object
-InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$DatesR, 
+InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$DatesR,
                                  Precip = BasinObs$P, PotEvap = BasinObs$E)
 
 ## run period selection
-Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"), 
+Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"),
                which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1999-12-31"))
 
 ## preparation of the RunOptions object
@@ -68,24 +68,24 @@ RunOptions <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
 
 ## simulation
 Param <- c(X1 = 734.568, X2 = -0.840, X3 = 109.809, X4 = 1.971)
-OutputsModel <- RunModel(InputsModel = InputsModel, RunOptions = RunOptions, 
+OutputsModel <- RunModel(InputsModel = InputsModel, RunOptions = RunOptions,
                          Param = Param, FUN = RunModel_GR4J)
 
 ## efficiency criterion: Nash-Sutcliffe Efficiency
-InputsCrit <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
+InputsCrit <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel,
                                RunOptions = RunOptions, Obs = BasinObs$Qmm[Ind_Run])
 OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
 
 ## efficiency criterion: Nash-Sutcliffe Efficiency on log-transformed flows
 transfo <- "log"
-InputsCrit <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
+InputsCrit <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel,
                                RunOptions = RunOptions, Obs = BasinObs$Qmm[Ind_Run],
                                transfo = transfo)
 OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
 
 ## efficiency criterion: Kling-Gupta Efficiency above a threshold (quant. 75 \%)
 BoolCrit <- BasinObs$Qmm[Ind_Run] >= quantile(BasinObs$Qmm[Ind_Run], 0.75, na.rm = TRUE)
-InputsCrit <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
+InputsCrit <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel,
                                RunOptions = RunOptions, Obs = BasinObs$Qmm[Ind_Run],
                                BoolCrit = BoolCrit)
 OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
@@ -96,9 +96,10 @@ OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsMode
 Laurent Coron, Olivier Delaigue
 }
 \references{
-Nash, J.E. and Sutcliffe, J.V. (1970). 
-      River flow forecasting through conceptual models part 1. 
-      A discussion of principles, Journal of Hydrology, 10(3), 282-290. doi: 10.1016/0022-1694(70)90255-6. 
+Nash, J. E. and Sutcliffe, J. V. (1970).
+  River flow forecasting through conceptual models.
+  Part 1 - A discussion of principles.
+  Journal of Hydrology, 10(3), 282-290, \doi{10.1016/0022-1694(70)90255-6}.
 }
 
 

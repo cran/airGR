@@ -6,18 +6,18 @@
 ! FILE    : frun_GR6J.f
 !------------------------------------------------------------------------------
 ! AUTHORS
-! Original code: R. Pushpalatha
-! Cleaning and formatting for airGR: L. Coron
-! Further cleaning: G. Thirel
+! Original code: Pushpalatha, R.
+! Cleaning and formatting for airGR: Coron, L.
+! Further cleaning: Thirel, G.
 !------------------------------------------------------------------------------
 ! Creation date: 2010
 ! Last modified: 25/11/2019
 !------------------------------------------------------------------------------
 ! REFERENCES
-! Pushpalatha, R., C. Perrin, N. Le Moine, T. Mathevet and V. Andréassian! 
-! (2011). A downward structural sensitivity analysis of hydrological models to 
-! improve low-flow simulation. Journal of Hydrology, 411(1-2), 66-76. 
-! doi:10.1016/j.jhydrol.2011.09.034.
+! Pushpalatha, R., Perrin, C., Le Moine, N., Mathevet, T. and Andréassian, V.
+! (2011). A downward structural sensitivity analysis of hydrological models to
+! improve low-flow simulation. Journal of Hydrology, 411(1-2), 66-76,
+! doi: 10.1016/j.jhydrol.2011.09.034.
 !------------------------------------------------------------------------------
 ! Quick description of public procedures:
 !         1. frun_gr6j
@@ -28,7 +28,7 @@
       SUBROUTINE frun_gr6j(LInputs,InputsPrecip,InputsPE,NParam,Param, &
                            NStates,StateStart,NOutputs,IndOutputs, &
                            Outputs,StateEnd)
-! Subroutine that initializes GR6J, get its parameters, performs the call 
+! Subroutine that initializes GR6J, get its parameters, performs the call
 ! to the MOD_GR6J subroutine at each time step, and stores the final states
 ! Inputs
 !       LInputs      ! Integer, length of input and output series
@@ -40,7 +40,7 @@
 !       StateStart   ! Vector of real, state variables used when the model run starts (store levels [mm] and Unit Hydrograph (UH) storages [mm])
 !       NOutputs     ! Integer, number of output series
 !       IndOutputs   ! Vector of integer, indices of output series
-! Outputs      
+! Outputs
 !       Outputs      ! Vector of real, output series
 !       StateEnd     ! Vector of real, state variables at the end of the model run (store levels [mm] and Unit Hydrograph (UH) storages [mm])
 
@@ -61,7 +61,7 @@
       ! out
       doubleprecision, dimension(NStates), intent(out) :: StateEnd
       doubleprecision, dimension(LInputs,NOutputs), intent(out) :: Outputs
-      
+
       !! locals
       integer :: I,K
       integer, parameter :: NH=20,NMISC=30
@@ -102,11 +102,11 @@
       ! computation of HU ordinates
       OrdUH1 = 0.
       OrdUH2 = 0.
-      
+
       D=2.5
       CALL UH1(OrdUH1,Param(4),D)
       CALL UH2(OrdUH2,Param(4),D)
-      
+
       ! initialization of model outputs
       Q = -999.999
       MISC = -999.999
@@ -208,15 +208,15 @@
         PN=0.
         WS=EN/A
         IF(WS.GT.13) WS=13.
-        
+
         ! speed-up
         expWS = exp(2.*WS)
         TWS = (expWS - 1.)/(expWS + 1.)
         Sr = St(1)/A
         ER=St(1)*(2.-Sr)*TWS/(1.+(1.-Sr)*TWS)
         ! ER=X(2)*(2.-X(2)/A)*tanHyp(WS)/(1.+(1.-X(2)/A)*tanHyp(WS))
-        ! end speed-up  
-        
+        ! end speed-up
+
         AE=ER+P1
         St(1)=St(1)-ER
         PS=0.
@@ -227,15 +227,15 @@
         PN=P1-E
         WS=PN/A
         IF(WS.GT.13) WS=13.
-        
+
         ! speed-up
         expWS = exp(2.*WS)
         TWS = (expWS - 1.)/(expWS + 1.)
         Sr = St(1)/A
         PS=A*(1.-Sr*Sr)*TWS/(1.+Sr*TWS)
         ! PS=A*(1.-(X(2)/A)**2.)*tanHyp(WS)/(1.+X(2)/A*tanHyp(WS))
-        ! end speed-up  
-        
+        ! end speed-up
+
         PR=PN-PS
         St(1)=St(1)+PS
       ENDIF
@@ -249,7 +249,7 @@
       Sr = Sr * Sr
       PERC=St(1)*(1.-1./SQRT(SQRT(1.+Sr/stored_val)))
       ! PERC=X(2)*(1.-(1.+(X(2)/(9./4.*Param(1)))**4.)**(-0.25))
-      ! end speed-up  
+      ! end speed-up
 
       St(1)=St(1)-PERC
 
@@ -279,7 +279,7 @@
       IF((St(2)+(1-C)*StUH1(1)+EXCH).LT.0) AEXCH1=-St(2)-(1-C)*StUH1(1)
       St(2)=St(2)+(1-C)*StUH1(1)+EXCH
       IF(St(2).LT.0.) St(2)=0.
-      
+
       ! speed-up
       Rr = St(2)/Param(3)
       Rr = Rr * Rr
@@ -287,7 +287,7 @@
       QR=St(2)*(1.-1./SQRT(SQRT(1.+Rr)))
       ! QR=X(1)*(1.-(1.+(X(1)/Param(3))**4.)**(-1./4.))
       ! end speed-up
-      
+
       St(2)=St(2)-QR
 
 ! Update of exponential store
@@ -296,18 +296,13 @@
       IF(AR.GT.33.)  AR=33.
       IF(AR.LT.-33.) AR=-33.
 
-      IF(AR.GT.7.)THEN
+      IF(AR.GT.7.) THEN
         QRExp=St(3)+Param(6)/EXP(AR)
-      GOTO 3
-      ENDIF
-
-      IF(AR.LT.-7.)THEN
+      ELSEIF(AR.LT.-7.) THEN
         QRExp=Param(6)*EXP(AR)
-      GOTO 3
+      ELSE
+        QRExp=Param(6)*LOG(EXP(AR)+1.)
       ENDIF
-
-      QRExp=Param(6)*LOG(EXP(AR)+1.)
-    3 CONTINUE
 
       St(3)=St(3)-QRExp
 

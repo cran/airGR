@@ -6,17 +6,17 @@
 ! FILE    : frun_GR1A.f
 !------------------------------------------------------------------------------
 ! AUTHORS
-! Original code: S. Mouelhi
-! Cleaning and formatting for airGR: L. Coron
-! Further cleaning: G. Thirel
+! Original code: Mouelhi, S.
+! Cleaning and formatting for airGR: Coron, L.
+! Further cleaning: Thirel, G.
 !------------------------------------------------------------------------------
 ! Creation date: 2003
 ! Last modified: 25/11/2019
 !------------------------------------------------------------------------------
 ! REFERENCES
-! Mouelhi S. (2003). Vers une chaîne cohérente de modèles pluie-débit 
-! conceptuels globaux aux pas de temps pluriannuel, annuel, mensuel et 
-! journalier. PhD thesis (in French), ENGREF, Cemagref Antony, France.
+! Mouelhi S. (2003). Vers une chaîne cohérente de modèles pluie-débit
+! conceptuels globaux aux pas de temps pluriannuel, annuel, mensuel et
+! journalier. PhD thesis (in French), ENGREF - Cemagref Antony, France.
 !------------------------------------------------------------------------------
 ! Quick description of public procedures:
 !         1. frun_gr1a
@@ -27,7 +27,7 @@
       SUBROUTINE frun_gr1a(LInputs,InputsPrecip,InputsPE,NParam,Param, &
                            NStates,StateStart,NOutputs,IndOutputs, &
                            Outputs,StateEnd)
-! Subroutine that initializes GR1A, get its parameters, performs the call 
+! Subroutine that initializes GR1A, get its parameters, performs the call
 ! to the MOD_GR1A subroutine at each time step, and stores the final states
 ! Inputs
 !       LInputs      ! Integer, length of input and output series
@@ -39,7 +39,7 @@
 !       StateStart   ! Vector of real, state variables used when the model run starts (none here)
 !       NOutputs     ! Integer, number of output series
 !       IndOutputs   ! Vector of integer, indices of output series
-! Outputs      
+! Outputs
 !       Outputs      ! Vector of real, output series
 !       StateEnd     ! Vector of real, state variables at the end of the model run (none here)
 
@@ -60,7 +60,7 @@
       ! out
       doubleprecision, dimension(NStates), intent(out) :: StateEnd
       doubleprecision, dimension(LInputs,NOutputs), intent(out) :: Outputs
-      
+
       !! locals
       integer :: I,K
       integer, parameter :: NMISC=3
@@ -70,7 +70,7 @@
       !--------------------------------------------------------------
       ! Initializations
       !--------------------------------------------------------------
-            
+
       ! parameter values
       ! Param(1) : PE adjustment factor [-]
 
@@ -131,7 +131,7 @@
       integer, parameter :: NMISC=3
       integer, parameter :: NParam=1
       doubleprecision :: tt ! speed-up
-      
+
       !! dummies
       ! in
       doubleprecision, dimension(NParam), intent(in) :: Param
@@ -139,7 +139,7 @@
       ! out
       doubleprecision, dimension(NMISC), intent(out) :: MISC
       doubleprecision, intent(out) :: Q
-      
+
 
 ! Runoff
       ! speed-up

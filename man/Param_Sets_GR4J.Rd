@@ -31,9 +31,9 @@ As shown in Andréassian et al. (2014; figure 4), only using these parameters se
 
 
 \references{
-Andréassian, V., F. Bourgin, L. Oudin, T. Mathevet, C. Perrin, J. Lerat, L. Coron, L. Berthet (2014). 
-  Seeking genericity in the selection of parameter sets: impact on hydrological model efficiency. 
-  Water Resources Research, 50(10), 8356-8366. doi: 10.1002/2013WR014761.
+Andréassian, V., Bourgin, F., Oudin, L., Mathevet, T., Perrin, C., Lerat, J., Coron, L. and Berthet, L. (2014).
+  Seeking genericity in the selection of parameter sets: Impact on hydrological model efficiency.
+  Water Resources Research, 50(10), 8356-8366, \doi{10.1002/2013WR014761}.
 }
 
 
@@ -53,14 +53,14 @@ Param_Sets_GR4J$X4u <- NULL
 Param_Sets_GR4J <- as.matrix(Param_Sets_GR4J)
 
 ## preparation of the InputsModel object
-InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$DatesR, 
+InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$DatesR,
                                  Precip = BasinObs$P, PotEvap = BasinObs$E)
 
 ## ---- calibration step
 
 ## short calibration period selection (< 6 months)
-Ind_Cal <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"), 
-               which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-02-28"))               
+Ind_Cal <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"),
+               which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-02-28"))
 
 ## preparation of the RunOptions object for the calibration period
 RunOptions_Cal <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
@@ -72,7 +72,7 @@ OutputsCrit_Loop <- apply(Param_Sets_GR4J, 1, function(Param) {
   OutputsModel_Cal <- RunModel_GR4J(InputsModel = InputsModel,
                                     RunOptions = RunOptions_Cal,
                                     Param = Param)
-  InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
+  InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel,
                                   RunOptions = RunOptions_Cal, Obs = BasinObs$Qmm[Ind_Cal])
   OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsModel_Cal)
   return(OutputsCrit$CritValue)
@@ -85,8 +85,8 @@ Param_Best <- unlist(Param_Sets_GR4J[which.max(OutputsCrit_Loop), ])
 ## ---- validation step
 
 ## validation period selection
-Ind_Val <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-03-01"), 
-               which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1999-12-31"))              
+Ind_Val <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-03-01"),
+               which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1999-12-31"))
 
 ## preparation of the RunOptions object for the validation period
 RunOptions_Val <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
@@ -101,7 +101,7 @@ OutputsModel_Val <- RunModel_GR4J(InputsModel = InputsModel,
 plot(OutputsModel_Val, Qobs = BasinObs$Qmm[Ind_Val])
 
 ## efficiency criterion (Nash-Sutcliffe Efficiency) on the validation period
-InputsCrit_Val  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
+InputsCrit_Val  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel,
                                 RunOptions = RunOptions_Val, Obs = BasinObs$Qmm[Ind_Val])
 OutputsCrit_Val <- ErrorCrit_NSE(InputsCrit = InputsCrit_Val, OutputsModel = OutputsModel_Val)
 }

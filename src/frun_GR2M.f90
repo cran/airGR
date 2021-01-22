@@ -6,21 +6,21 @@
 ! FILE    : frun_GR2M.f
 !------------------------------------------------------------------------------
 ! AUTHORS
-! Original code: S. Mouelhi
-! Cleaning and formatting for airGR: L. Coron
-! Further cleaning: G. Thirel
+! Original code: Mouelhi, S.
+! Cleaning and formatting for airGR: Coron, L.
+! Further cleaning: Thirel, G.
 !------------------------------------------------------------------------------
 ! Creation date: 2003
-! Last modified: 25/11/2019
+! Last modified: 16/04/2020
 !------------------------------------------------------------------------------
 ! REFERENCES
-! Mouelhi S. (2003). Vers une chaîne cohérente de modèles pluie-débit 
-! conceptuels globaux aux pas de temps pluriannuel, annuel, mensuel et 
-! journalier. PhD thesis (in French), ENGREF, Cemagref Antony, France.
+! Mouelhi S. (2003). Vers une chaîne cohérente de modèles pluie-débit
+! conceptuels globaux aux pas de temps pluriannuel, annuel, mensuel et
+! journalier. PhD thesis (in French), ENGREF - Cemagref Antony, France.
 !
-! Mouelhi, S., C. Michel, C. Perrin and V. Andréassian (2006). Stepwise 
-! development of a two-parameter monthly water balance model. Journal of 
-! Hydrology, 318(1-4), 200-214. doi:10.1016/j.jhydrol.2005.06.014.
+! Mouelhi, S., Michel, C., Perrin, C. and Andréassian, V. (2006). Stepwise
+! development of a two-parameter monthly water balance model. Journal of
+! Hydrology, 318(1-4), 200-214, doi: 10.1016/j.jhydrol.2005.06.014.
 !------------------------------------------------------------------------------
 ! Quick description of public procedures:
 !         1. frun_gr2m
@@ -31,7 +31,7 @@
       SUBROUTINE frun_gr2m(LInputs,InputsPrecip,InputsPE,NParam,Param, &
                            NStates,StateStart,NOutputs,IndOutputs, &
                            Outputs,StateEnd)
-! Subroutine that initializes GR2M, get its parameters, performs the call 
+! Subroutine that initializes GR2M, get its parameters, performs the call
 ! to the MOD_GR2M subroutine at each time step, and stores the final states
 ! Inputs
 !       LInputs      ! Integer, length of input and output series
@@ -43,7 +43,7 @@
 !       StateStart   ! Vector of real, state variables used when the model run starts (store levels [mm])
 !       NOutputs     ! Integer, number of output series
 !       IndOutputs   ! Vector of integer, indices of output series
-! Outputs      
+! Outputs
 !       Outputs      ! Vector of real, output series
 !       StateEnd     ! Vector of real, state variables at the end of the model run (store levels [mm])
 
@@ -64,7 +64,7 @@
       ! out
       doubleprecision, dimension(NStates), intent(out) :: StateEnd
       doubleprecision, dimension(LInputs,NOutputs), intent(out) :: Outputs
-      
+
       !! locals
       integer :: I,K
       integer, parameter :: NMISC=30
@@ -145,7 +145,7 @@
       !! locals
       integer, parameter :: NParam=2,NMISC=30
       doubleprecision :: WS,S1,S2
-      doubleprecision :: P1,P2,P3,R1,R2,AE,EXCH
+      doubleprecision :: P1,P2,P3,R1,R2,AE,AEXCH,PS
       doubleprecision :: expWS, TWS, Sr ! speed-up
 
       !! dummies
@@ -157,39 +157,40 @@
       ! out
       doubleprecision, intent(out) :: Q
       doubleprecision, dimension(NMISC), intent(out) :: MISC
-      
+
 ! Production store
-      WS=P/Param(1)  
+      WS=P/Param(1)
       IF(WS.GT.13.) WS=13.
 
       ! speed-up
       expWS = exp(2.*WS)
       TWS = (expWS - 1.)/(expWS + 1.)
-      S1=(St(1)+Param(1)*TWS)/(1.+St(1)/Param(1)*TWS)                 
-      ! S1=(X(1)+Param(1)*tanHyp(WS))/(1.+X(1)/Param(1)*tanHyp(WS))                 
+      S1=(St(1)+Param(1)*TWS)/(1.+St(1)/Param(1)*TWS)
+      ! S1=(X(1)+Param(1)*tanHyp(WS))/(1.+X(1)/Param(1)*tanHyp(WS))
       ! end speed-up
 
-      P1=P+St(1)-S1                  
-      WS=E/Param(1)         
+      P1=P+St(1)-S1
+      PS = P - P1
+      WS=E/Param(1)
       IF(WS.GT.13.) WS=13.
 
       ! speed-up
       expWS = exp(2.*WS)
       TWS = (expWS - 1.)/(expWS + 1.)
-      S2=S1*(1.-TWS)/(1.+(1.-S1/Param(1))*TWS)  
-      ! S2=S1*(1.-tanHyp(WS))/(1.+(1.-S1/Param(1))*tanHyp(WS))  
+      S2=S1*(1.-TWS)/(1.+(1.-S1/Param(1))*TWS)
+      ! S2=S1*(1.-tanHyp(WS))/(1.+(1.-S1/Param(1))*tanHyp(WS))
       ! end speed-up
       AE = S1 - S2
-                
+
 ! Percolation
       ! speed-up
       Sr = S2/Param(1)
       Sr = Sr * Sr * Sr + 1.
       St(1)=S2/Sr**(1./3.)
-      ! X(1)=S2/(1+(S2/Param(1))**3.)**(1./3.)         
+      ! X(1)=S2/(1+(S2/Param(1))**3.)**(1./3.)
       ! end speed-up
 
-      P2=S2-St(1)  
+      P2=S2-St(1)
       P3=P1+P2
 
 ! QR calculation (routing store)
@@ -197,7 +198,7 @@
 
 ! Water exchange
       R2=Param(2)*R1
-      EXCH = R2 - R1
+      AEXCH = R2 - R1
 
 ! Total runoff
       Q=R2*R2/(R2+60.)
@@ -211,14 +212,14 @@
       MISC( 2)=P             ! Precip ! [numeric] observed total precipitation  [mm/month]
       MISC( 3)=St(1)         ! Prod   ! [numeric] production store level (St(1)) [mm]
       MISC( 4)=P1            ! Pn     ! [numeric] net rainfall (P1) [mm/month]
-      MISC( 5)=AE            ! AE     ! [numeric] actual evapotranspiration [mm/month]
-      MISC( 6)=P2            ! Perc   ! [numeric] percolation (P2) [mm/month]
-      MISC( 7)=P3            ! PR     ! [numeric] P3=P1+P2 [mm/month]
-      MISC( 8)=St(2)         ! Rout   ! [numeric] routing store level (St(2)) [mm]
-      MISC( 9)=EXCH          ! EXCH   ! [numeric] groundwater exchange (EXCH) [mm/month]
-      MISC(10)=Q             ! Qsim   ! [numeric] simulated outflow at catchment outlet [mm/month]
+      MISC( 5)=PS            ! Ps     ! [numeric] part of P filling the production store [mm/month]
+      MISC( 6)=AE            ! AE     ! [numeric] actual evapotranspiration [mm/month]
+      MISC( 7)=P2            ! Perc   ! [numeric] percolation (P2) [mm/month]
+      MISC( 8)=P3            ! PR     ! [numeric] P3=P1+P2 [mm/month]
+      MISC( 9)=St(2)         ! Rout   ! [numeric] routing store level (St(2)) [mm]
+      MISC(10)=AEXCH         ! AEXCH  ! [numeric] actual groundwater exchange (AEXCH) [mm/month]
+      MISC(11)=Q             ! Qsim   ! [numeric] simulated outflow at catchment outlet [mm/month]
 
 
       END SUBROUTINE
-
 

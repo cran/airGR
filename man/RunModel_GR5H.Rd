@@ -24,7 +24,7 @@ RunModel_GR5H(InputsModel, RunOptions, Param)
 \item{RunOptions}{[object of class \emph{RunOptions}] see \code{\link{CreateRunOptions}} for details}
 
 \item{Param}{[numeric] vector of 5 parameters
-  \tabular{ll}{                                                                      
+  \tabular{ll}{
     GR5H X1 \tab production store capacity [mm]             \cr
     GR5H X2 \tab intercatchment exchange coefficient [mm/h] \cr
     GR5H X3 \tab routing store capacity [mm]                \cr
@@ -35,33 +35,33 @@ RunModel_GR5H(InputsModel, RunOptions, Param)
 
 
 \value{
-[list] list containing the function outputs organised as follows:                                         
-  \tabular{ll}{                                                                                         
-    \emph{$DatesR  } \tab [POSIXlt] series of dates                                                                        \cr
-    \emph{$PotEvap } \tab [numeric] series of input potential evapotranspiration [mm/h]                                    \cr
-    \emph{$Precip  } \tab [numeric] series of input total precipitation [mm/h]                                             \cr
-    \emph{$Interc  } \tab [numeric] series of interception store level [mm]                                                \cr
-    \emph{$Prod    } \tab [numeric] series of production store level [mm]                                                  \cr
-    \emph{$Pn      } \tab [numeric] series of net rainfall [mm/h]                                                          \cr
-    \emph{$Ps      } \tab [numeric] series of the part of Pn filling the production store [mm/h]                           \cr
-    \emph{$AE      } \tab [numeric] series of actual evapotranspiration [mm/h]                                             \cr
-    \emph{$EI      } \tab [numeric] series of evapotranspiration from rainfall neutralisation or interception store [mm/h] \cr
-    \emph{$ES      } \tab [numeric] series of evapotranspiration from production store [mm/h]                              \cr
-    \emph{$Perc    } \tab [numeric] series of percolation (PERC) [mm/h]                                                    \cr
-    \emph{$PR      } \tab [numeric] series of PR=Pn-Ps+Perc [mm/h]                                                         \cr
-    \emph{$Q9      } \tab [numeric] series of UH1 outflow (Q9) [mm/h]                                                      \cr
-    \emph{$Q1      } \tab [numeric] series of UH2 outflow (Q1) [mm/h]                                                      \cr
-    \emph{$Rout    } \tab [numeric] series of routing store level [mm]                                                     \cr
-    \emph{$Exch    } \tab [numeric] series of potential semi-exchange between catchments [mm/h]                            \cr
-    \emph{$AExch1  } \tab [numeric] series of actual exchange between catchments for branch 1 [mm/h]                       \cr
-    \emph{$AExch2  } \tab [numeric] series of actual exchange between catchments for branch 2 [mm/h]                       \cr
-    \emph{$AExch   } \tab [numeric] series of actual exchange between catchments (1+2) [mm/h]                              \cr
-    \emph{$QR      } \tab [numeric] series of routing store outflow (QR) [mm/h]                                            \cr
-    \emph{$QD      } \tab [numeric] series of direct flow from UH2 after exchange (QD) [mm/h]                              \cr
-    \emph{$Qsim    } \tab [numeric] series of simulated discharge [mm/h]                                                   \cr
-    \emph{$StateEnd} \tab [numeric] states at the end of the run (res. levels, UH1 levels, UH2 levels) [mm], see \code{\link{CreateIniStates}} for more details \cr
-  }                                                                                                     
-  (refer to the provided references or to the package source code for further details on these model outputs)
+[list] containing the function outputs organised as follows:
+  \tabular{ll}{
+    \emph{$DatesR  } \tab [POSIXlt] series of dates                                                                             \cr
+    \emph{$PotEvap } \tab [numeric] series of input potential evapotranspiration (E) [mm/h]                                     \cr
+    \emph{$Precip  } \tab [numeric] series of input total precipitation (P) [mm/h]                                              \cr
+    \emph{$Interc  } \tab [numeric] series of interception store level (I) [mm]                                                 \cr
+    \emph{$Prod    } \tab [numeric] series of production store level (S) [mm]                                                   \cr
+    \emph{$Pn      } \tab [numeric] series of net rainfall (Pn) [mm/h]                                                          \cr
+    \emph{$Ps      } \tab [numeric] series of the part of Pn filling the production store (Ps) [mm/h]                           \cr
+    \emph{$AE      } \tab [numeric] series of actual evapotranspiration (Ei+Es) [mm/h]                                          \cr
+    \emph{$EI      } \tab [numeric] series of evapotranspiration from rainfall neutralisation or interception store (Ei) [mm/h] \cr
+    \emph{$ES      } \tab [numeric] series of evapotranspiration from production store (Es) [mm/h]                              \cr
+    \emph{$Perc    } \tab [numeric] series of percolation (Perc) [mm/h]                                                         \cr
+    \emph{$PR      } \tab [numeric] series of Pr=Pn-Ps+Perc (Pr) [mm/h]                                                         \cr
+    \emph{$Q9      } \tab [numeric] series of UH outflow going into branch 9 (Q9) [mm/h]                                        \cr
+    \emph{$Q1      } \tab [numeric] series of UH outflow going into branch 1 (Q1) [mm/h]                                        \cr
+    \emph{$Rout    } \tab [numeric] series of routing store level (R1) [mm]                                                     \cr
+    \emph{$Exch    } \tab [numeric] series of potential semi-exchange between catchments [mm/h]                                 \cr
+    \emph{$AExch1  } \tab [numeric] series of actual exchange between catchments for branch 1 [mm/h]                            \cr
+    \emph{$AExch2  } \tab [numeric] series of actual exchange between catchments for branch 2 [mm/h]                            \cr
+    \emph{$AExch   } \tab [numeric] series of actual exchange between catchments (AExch1+AExch2) [mm/h]                         \cr
+    \emph{$QR      } \tab [numeric] series of routing store outflow (Qr) [mm/h]                                                 \cr
+    \emph{$QD      } \tab [numeric] series of direct flow from UH after exchange (Qd) [mm/h]                                    \cr
+    \emph{$Qsim    } \tab [numeric] series of simulated discharge (Q) [mm/h]                                                    \cr
+    \emph{$StateEnd} \tab [numeric] states at the end of the run (res. levels, UH levels) [mm]. See \code{\link{CreateIniStates}} for more details \cr
+  }
+Refer to the provided references or to the package source code for further details on these model outputs.
 }
 
 
@@ -70,6 +70,13 @@ It is advised to run the GR5H model with an interception store (see Ficchi (2017
 
 For further details on the model, see the references section. \cr
 For further details on the argument structures and initialisation options, see \code{\link{CreateRunOptions}}.
+\cr
+\cr
+\if{html}{\figure{diagramGR5H-EN.png}{options: width="60\%" alt="Figure: diagramGR5H-EN.png"}}
+\if{latex}{\figure{diagramGR5H-EN.pdf}{options: width=6cm}}
+\cr
+\cr
+See \code{\link{RunModel_GR5J}} to look at the diagram of the hydrological model when no interception store is used.
 }
 
 
@@ -118,11 +125,11 @@ Laurent Coron, Guillaume Thirel, Olivier Delaigue
 Ficchi, A. (2017).
   An adaptive hydrological model for multiple time-steps:
   Diagnostics and improvements based on fluxes consistency.
-  PhD thesis, Irstea (Antony), GRNE (Paris), France.
+  PhD thesis, UPMC - Irstea Antony, Paris, France.
 \cr\cr
-Ficchi, A., C. Perrin and V. Andréassian (2019).
+Ficchi, A., Perrin, C. and Andréassian, V. (2019).
   Hydrological modelling at multiple sub-daily time steps: model improvement via flux-matching.
-  Journal of Hydrology, 575, 1308-1327. doi: 10.1016/j.jhydrol.2019.05.084.
+  Journal of Hydrology, 575, 1308-1327, \doi{10.1016/j.jhydrol.2019.05.084}.
 }
 
 

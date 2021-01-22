@@ -24,14 +24,14 @@ RunModel_GR1A(InputsModel, RunOptions, Param)
 \item{RunOptions}{[object of class \emph{RunOptions}] see \code{\link{CreateRunOptions}} for details}
 
 \item{Param}{[numeric] vector of 1 parameter
-\tabular{ll}{                                                                      
-GR1A X1 \tab model parameter [-] \cr
-}}
+  \tabular{ll}{
+    GR1A X1 \tab model parameter [-] \cr
+ }}
 }
 
 
 \value{
-[list] list containing the function outputs organised as follows:
+[list] containing the function outputs organised as follows:
   \tabular{ll}{
     \emph{$DatesR  } \tab [POSIXlt] series of dates                                     \cr
     \emph{$PotEvap } \tab [numeric] series of input potential evapotranspiration [mm/y] \cr
@@ -39,12 +39,12 @@ GR1A X1 \tab model parameter [-] \cr
     \emph{$Qsim    } \tab [numeric] series of simulated discharge [mm/y]                \cr
     \emph{$StateEnd} \tab [numeric] states at the end of the run (NULL) [-]             \cr
   }
-  (refer to the provided references or to the package source code for further details on these model outputs)
+Refer to the provided references or to the package source code for further details on these model outputs.
 }
 
 
 \details{
-For further details on the model, see the references section.
+For further details on the model, see the references section. \cr
 For further details on the argument structures and initialisation options, see \code{\link{CreateRunOptions}}.
 }
 
@@ -56,23 +56,21 @@ library(airGR)
 data(L0123001)
 
 ## conversion of example data from daily to yearly time step
-TabSeries       <- data.frame(BasinObs$DatesR, BasinObs$P, BasinObs$E, BasinObs$T, BasinObs$Qmm)
-TimeFormat      <- "daily"
-NewTimeFormat   <- "yearly"
-ConvertFun      <- c("sum", "sum", "mean", "sum")
-YearFirstMonth  <- 09;
-NewTabSeries    <- SeriesAggreg(TabSeries = TabSeries, TimeFormat = TimeFormat, 
-                                NewTimeFormat = NewTimeFormat, ConvertFun = ConvertFun, 
-                                YearFirstMonth = YearFirstMonth)
-BasinObs        <- NewTabSeries
-names(BasinObs) <- c("DatesR", "P", "E", "T", "Qmm")
+TabSeries <- data.frame(DatesR = BasinObs$DatesR,
+                        P = BasinObs$P,
+                        E = BasinObs$E,
+                        Qmm = BasinObs$Qmm)
+TabSeries <- TabSeries[TabSeries$DatesR < "2012-09-01", ]
+BasinObs <- SeriesAggreg(TabSeries, Format = "\%Y",
+                         YearFirstMonth = 09,
+                         ConvertFun = c("sum", "sum", "sum"))
 
 ## preparation of the InputsModel object
-InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR1A, DatesR = BasinObs$DatesR, 
+InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR1A, DatesR = BasinObs$DatesR,
                                  Precip = BasinObs$P, PotEvap = BasinObs$E)
 
 ## run period selection
-Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y")=="1990"), 
+Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y")=="1990"),
                which(format(BasinObs$DatesR, format = "\%Y")=="1999"))
 
 ## preparation of the RunOptions object
@@ -87,7 +85,7 @@ OutputsModel <- RunModel_GR1A(InputsModel = InputsModel, RunOptions = RunOptions
 plot(OutputsModel, Qobs = BasinObs$Qmm[Ind_Run])
 
 ## efficiency criterion: Nash-Sutcliffe Efficiency
-InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
+InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel,
                                 RunOptions = RunOptions, Obs = BasinObs$Qmm[Ind_Run])
 OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
 }
@@ -99,9 +97,9 @@ Laurent Coron, Claude Michel, Olivier Delaigue, Guillaume Thirel
 
 
 \references{
-Mouelhi S. (2003). 
-  Vers une chaîne cohérente de modèles pluie-débit conceptuels globaux aux pas de temps pluriannuel, annuel, mensuel et journalier. 
-  PhD thesis (in French), ENGREF, Cemagref Antony, France.
+Mouelhi S. (2003).
+  Vers une chaîne cohérente de modèles pluie-débit conceptuels globaux aux pas de temps pluriannuel, annuel, mensuel et journalier.
+  PhD thesis (in French), ENGREF - Cemagref Antony, France.
 }
 
 

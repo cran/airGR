@@ -1,29 +1,34 @@
-Calibration_Michel <- function(InputsModel, 
-                               RunOptions, 
-                               InputsCrit, 
+Calibration_Michel <- function(InputsModel,
+                               RunOptions,
+                               InputsCrit,
                                CalibOptions,
-                               FUN_MOD, 
+                               FUN_MOD,
                                FUN_CRIT,           # deprecated
-                               FUN_TRANSFO = NULL, 
+                               FUN_TRANSFO = NULL,
                                verbose = TRUE) {
-  
-  
+
+
   FUN_MOD  <- match.fun(FUN_MOD)
   if (!missing(FUN_CRIT)) {
     FUN_CRIT <- match.fun(FUN_CRIT)
   }
+
+  # Handling 'FUN_TRANSFO' from direct argument or provided by 'CaliOptions'
   if (!is.null(FUN_TRANSFO)) {
     FUN_TRANSFO <- match.fun(FUN_TRANSFO)
+  } else if(!is.null(CalibOptions$FUN_TRANSFO)) {
+    FUN_TRANSFO <- CalibOptions$FUN_TRANSFO
+  } else {
+    stop("'FUN_TRANSFO' is not provided neither as 'FUN_TRANSFO' argument or in 'CaliOptions' argument")
   }
-  
-  
+
   ##_____Arguments_check_____________________________________________________________________
   if (!inherits(InputsModel, "InputsModel")) {
     stop("'InputsModel' must be of class 'InputsModel'")
-  }  
+  }
   if (!inherits(RunOptions, "RunOptions")) {
     stop("'RunOptions' must be of class 'RunOptions'")
-  }  
+  }
   if (!inherits(InputsCrit, "InputsCrit")) {
     stop("'InputsCrit' must be of class 'InputsCrit'")
   }
@@ -46,106 +51,15 @@ Calibration_Michel <- function(InputsModel,
   }
   if (!inherits(CalibOptions, "CalibOptions")) {
     stop("'CalibOptions' must be of class 'CalibOptions'")
-  }  
+  }
   if (!inherits(CalibOptions, "HBAN")) {
     stop("'CalibOptions' must be of class 'HBAN' if 'Calibration_Michel' is used")
   }
   if (!missing(FUN_CRIT)) {
     warning("argument 'FUN_CRIT' is deprecated. The error criterion function is now automatically get from the 'InputsCrit' object")
-  }  
-  
-  
-  ##_check_FUN_TRANSFO
-  if (is.null(FUN_TRANSFO)) {
-    if (identical(FUN_MOD, RunModel_GR4H         )) {
-      FUN_TRANSFO <- TransfoParam_GR4H
-    }
-    if (identical(FUN_MOD, RunModel_GR5H         )) {
-      FUN_TRANSFO <- TransfoParam_GR5H
-    }
-    if (identical(FUN_MOD, RunModel_GR4J         )) {
-      FUN_TRANSFO <- TransfoParam_GR4J
-    }
-    if (identical(FUN_MOD, RunModel_GR5J         )) {
-      FUN_TRANSFO <- TransfoParam_GR5J
-    }
-    if (identical(FUN_MOD, RunModel_GR6J         )) {
-      FUN_TRANSFO <- TransfoParam_GR6J
-    }
-    if (identical(FUN_MOD, RunModel_GR2M         )) {
-      FUN_TRANSFO <- TransfoParam_GR2M
-    }
-    if (identical(FUN_MOD, RunModel_GR1A         )) {
-      FUN_TRANSFO <- TransfoParam_GR1A
-    }
-    if (identical(FUN_MOD, RunModel_CemaNeige    )) {
-      if (inherits(CalibOptions, "hysteresis")) {
-        FUN_TRANSFO <- TransfoParam_CemaNeigeHyst
-      } else {
-        FUN_TRANSFO <- TransfoParam_CemaNeige
-      }
-    }
-    if (identical(FUN_MOD, RunModel_CemaNeigeGR4H) | identical(FUN_MOD, RunModel_CemaNeigeGR5H) |
-        identical(FUN_MOD, RunModel_CemaNeigeGR4J) | identical(FUN_MOD, RunModel_CemaNeigeGR5J) | identical(FUN_MOD, RunModel_CemaNeigeGR6J)) {
-      if (identical(FUN_MOD, RunModel_CemaNeigeGR4H)) {
-        FUN1 <- TransfoParam_GR4H
-      }
-      if (identical(FUN_MOD, RunModel_CemaNeigeGR5H)) {
-        FUN1 <- TransfoParam_GR5H
-      }
-      if (identical(FUN_MOD, RunModel_CemaNeigeGR4J)) {
-        FUN1 <- TransfoParam_GR4J
-      }
-      if (identical(FUN_MOD, RunModel_CemaNeigeGR5J)) {
-        FUN1 <- TransfoParam_GR5J
-      }
-      if (identical(FUN_MOD, RunModel_CemaNeigeGR6J)) {
-        FUN1 <- TransfoParam_GR6J
-      }
-      if (inherits(CalibOptions, "hysteresis")) {
-        FUN2 <- TransfoParam_CemaNeigeHyst
-      } else {
-        FUN2 <- TransfoParam_CemaNeige
-      }
-      if (inherits(CalibOptions, "hysteresis")) {
-        FUN_TRANSFO <- function(ParamIn, Direction) {
-          Bool <- is.matrix(ParamIn)
-          if (!Bool) {
-            ParamIn <- rbind(ParamIn)
-          }
-          ParamOut <- NA * ParamIn
-          NParam   <- ncol(ParamIn)
-          ParamOut[,          1:(NParam-4)] <- FUN1(ParamIn[,          1:(NParam-4)], Direction)
-          ParamOut[, (NParam-3):NParam    ] <- FUN2(ParamIn[, (NParam-3):NParam    ], Direction)
-          if (!Bool) {
-            ParamOut <- ParamOut[1, ]
-          }
-          return(ParamOut)
-        }
-      } else {
-        FUN_TRANSFO <- function(ParamIn, Direction) {
-          Bool <- is.matrix(ParamIn)
-          if (!Bool) {
-            ParamIn <- rbind(ParamIn)
-          }
-          ParamOut <- NA * ParamIn
-          NParam   <- ncol(ParamIn)
-          ParamOut[,          1:(NParam-2)] <- FUN1(ParamIn[,          1:(NParam-2)], Direction)
-          ParamOut[, (NParam-1):NParam    ] <- FUN2(ParamIn[, (NParam-1):NParam    ], Direction)
-          if (!Bool) {
-            ParamOut <- ParamOut[1, ]
-          }
-          return(ParamOut)
-        }
-      }
-      
-    }
-    if (is.null(FUN_TRANSFO)) {
-      stop("'FUN_TRANSFO' was not found (in 'Calibration' function)")
-    }
   }
-  
-  ##_variables_initialisation 
+
+  ##_variables_initialisation
   ParamFinalR <- NULL
   ParamFinalT <- NULL
   CritFinal   <- NULL
@@ -174,20 +88,20 @@ Calibration_Michel <- function(InputsModel,
   CritOptim     <- +1e100
   ##_temporary_change_of_Outputs_Sim
   RunOptions$Outputs_Sim <- RunOptions$Outputs_Cal  ### this reduces the size of the matrix exchange with fortran and therefore speeds the calibration
-  
-  
-  
+
+
+
   ##_____Parameter_Grid_Screening____________________________________________________________
-  
-  
+
+
   ##Definition_of_the_function_creating_all_possible_parameter_sets_from_different_values_for_each_parameter
   ProposeCandidatesGrid <- function(DistribParam) {
     NewCandidates <- expand.grid(lapply(seq_len(ncol(DistribParamR)), function(x) DistribParam[, x]))
     NewCandidates <- unique(NewCandidates) # to avoid duplicates when a parameter is set
     Output <- list(NewCandidates = NewCandidates)
-  }    
-  
-  
+  }
+
+
   ##Creation_of_new_candidates_______________________________________________
   OptimParam <- is.na(CalibOptions$FixedParam)
   if (PrefilteringType == 1) {
@@ -208,7 +122,7 @@ Calibration_Michel <- function(InputsModel,
   } else {
     CandidatesParamR <- cbind(CandidatesParamR)
   }
-  
+
   ##Loop_to_test_the_various_candidates______________________________________
   iNewOptim <- 0
   Ncandidates <- nrow(CandidatesParamR)
@@ -227,12 +141,12 @@ Calibration_Michel <- function(InputsModel,
         if (iNew == round(k / 10 * Ncandidates)) {
           message(" ", 10 * k, "%", appendLF = FALSE)
         }
-      } 
+      }
     }
     ##Model_run
     Param <- CandidatesParamR[iNew, ]
-    OutputsModel <- FUN_MOD(InputsModel, RunOptions, Param)
-    
+    OutputsModel <- RunModel(InputsModel, RunOptions, Param, FUN_MOD = FUN_MOD)
+
     ##Calibration_criterion_computation
     OutputsCrit <- ErrorCrit(InputsCrit, OutputsModel, verbose = FALSE)
     if (!is.na(OutputsCrit$CritValue)) {
@@ -251,8 +165,8 @@ Calibration_Michel <- function(InputsModel,
   if (verbose & Ncandidates > 1) {
     message(" 100%)\n", appendLF = FALSE)
   }
-  
-  
+
+
   ##End_of_first_step_Parameter_Screening____________________________________
   ParamStartR <- CandidatesParamR[iNewOptim, ]
   if (!is.matrix(ParamStartR)) {
@@ -275,13 +189,13 @@ Calibration_Michel <- function(InputsModel,
   HistParamR[1, ] <- ParamStartR
   HistParamT[1, ] <- ParamStartT
   HistCrit[1, ]   <- CritStart
-  
-  
-  
-  
+
+
+
+
   ##_____Steepest_Descent_Local_Search_______________________________________________________
-  
-  
+
+
   ##Definition_of_the_function_creating_new_parameter_sets_through_a_step_by_step_progression_procedure
   ProposeCandidatesLoc <- function(NewParamOptimT, OldParamOptimT, RangesT, OptimParam, Pace) {
     ##Format_checking
@@ -332,11 +246,11 @@ Calibration_Michel <- function(InputsModel,
     Output$NewCandidatesT <- matrix(VECT, ncol = NParam, byrow = TRUE)
     return(Output)
   }
-  
-  
+
+
   ##Initialisation_of_variables
   if (verbose) {
-    message("Steepest-descent local search in progress") 
+    message("Steepest-descent local search in progress")
   }
   Pace <- 0.64
   PaceDiag <- rep(0, NParam)
@@ -348,18 +262,18 @@ Calibration_Michel <- function(InputsModel,
   RangesT <- FUN_TRANSFO(RangesR, "RT")
   NewParamOptimT <- ParamStartT
   OldParamOptimT <- ParamStartT
-  
-  
+
+
   ##START_LOOP_ITER_________________________________________________________
   for (ITER in 1:(100 * NParam)) {
-    
-    
+
+
     ##Exit_loop_when_Pace_becomes_too_small___________________________________
     if (Pace < 0.01) {
       break
     }
-    
-    
+
+
     ##Creation_of_new_candidates______________________________________________
     CandidatesParamT <- ProposeCandidatesLoc(NewParamOptimT, OldParamOptimT, RangesT, OptimParam, Pace)$NewCandidatesT
     CandidatesParamR <- FUN_TRANSFO(CandidatesParamT, "TR")
@@ -373,16 +287,16 @@ Calibration_Michel <- function(InputsModel,
     } else {
       CandidatesParamR <- cbind(CandidatesParamR)
     }
-    
-    
+
+
     ##Loop_to_test_the_various_candidates_____________________________________
     iNewOptim <- 0
     for (iNew in 1:nrow(CandidatesParamR)) {
       ##Model_run
       Param <- CandidatesParamR[iNew, ]
-      OutputsModel <- FUN_MOD(InputsModel, RunOptions, Param)
+      OutputsModel <- RunModel(InputsModel, RunOptions, Param, FUN_MOD = FUN_MOD)
       ##Calibration_criterion_computation
-      OutputsCrit <- ErrorCrit(InputsCrit, OutputsModel, verbose = FALSE)      
+      OutputsCrit <- ErrorCrit(InputsCrit, OutputsModel, verbose = FALSE)
       if (!is.na(OutputsCrit$CritValue)) {
         if (OutputsCrit$CritValue * OutputsCrit$Multiplier < CritOptim) {
           CritOptim <- OutputsCrit$CritValue * OutputsCrit$Multiplier
@@ -391,8 +305,8 @@ Calibration_Michel <- function(InputsModel,
       }
     }
     NRuns <- NRuns + nrow(CandidatesParamR)
-    
-    
+
+
     ##When_a_progress_has_been_achieved_______________________________________
     if (iNewOptim != 0) {
       ##We_store_the_optimal_set
@@ -407,7 +321,7 @@ Calibration_Michel <- function(InputsModel,
       ##We_update_PaceDiag
       VectPace <- NewParamOptimT-OldParamOptimT
       for (iC in 1:NParam) {
-        if (OptimParam[iC]) { 
+        if (OptimParam[iC]) {
           PaceDiag[iC] <- CLG * PaceDiag[iC] + (1-CLG) * VectPace[iC]
         }
       }
@@ -416,8 +330,8 @@ Calibration_Michel <- function(InputsModel,
       Pace <- Pace / 2
       Compt <- 0
     }
-    
-    
+
+
     ##Test_of_an_additional_candidate_using_diagonal_progress_________________
     if (ITER > 4 * NParam) {
       NRuns <- NRuns + 1
@@ -441,7 +355,7 @@ Calibration_Michel <- function(InputsModel,
       CandidatesParamR <- FUN_TRANSFO(CandidatesParamT, "TR")
       ##Model_run
       Param <- CandidatesParamR[iNew, ]
-      OutputsModel <- FUN_MOD(InputsModel, RunOptions, Param)
+      OutputsModel <- RunModel(InputsModel, RunOptions, Param, FUN_MOD = FUN_MOD)
       ##Calibration_criterion_computation
       OutputsCrit <- ErrorCrit(InputsCrit, OutputsModel, verbose = FALSE)
       if (OutputsCrit$CritValue * OutputsCrit$Multiplier < CritOptim) {
@@ -453,34 +367,34 @@ Calibration_Michel <- function(InputsModel,
         OldParamOptimT <- NewParamOptimT
         NewParamOptimT <- matrix(CandidatesParamT[iNewOptim, 1:NParam], nrow = 1)
       }
-      
+
     }
-    
-    
+
+
     ##Results_archiving_______________________________________________________
     NewParamOptimR       <- FUN_TRANSFO(NewParamOptimT, "TR")
     HistParamR[ITER+1, ] <- NewParamOptimR
     HistParamT[ITER+1, ] <- NewParamOptimT
     HistCrit[ITER+1, ]   <- CritOptim
     ### if (verbose) { cat(paste("\t     Iter ",formatC(ITER,format="d",width=3), "    Crit ",formatC(CritOptim,format="f",digits=4), "    Pace ",formatC(Pace,format="f",digits=4), "\n",sep=""))}
-    
-    
-    
+
+
+
   } ##END_LOOP_ITER_________________________________________________________
   ITER <- ITER - 1
-  
-  
+
+
   ##Case_when_the_starting_parameter_set_remains_the_best_solution__________
-  if (CritOptim == CritStart & verbose) { 
+  if (CritOptim == CritStart & verbose) {
     message("\t No progress achieved")
   }
-  
+
   ##End_of_Steepest_Descent_Local_Search____________________________________
   ParamFinalR <- NewParamOptimR
   ParamFinalT <- NewParamOptimT
   CritFinal   <- CritOptim
   NIter       <- 1 + ITER
-  if (verbose) { 
+  if (verbose) {
     message(sprintf("\t Calibration completed (%s iterations, %s runs)", NIter, NRuns))
     message("\t     Param = ", paste(sprintf("%8.3f", ParamFinalR), collapse = ", "))
     message(sprintf("\t     Crit. %-12s = %.4f", CritName, CritFinal * Multiplier))
@@ -502,13 +416,13 @@ Calibration_Michel <- function(InputsModel,
   colnames(HistParamT) <- paste0("Param", 1:NParam)
   HistCrit   <- cbind(HistCrit[1:NIter, ])
   ###colnames(HistCrit) <- paste("HistCrit")
-  
+
   BoolCrit_Actual <- InputsCrit$BoolCrit
   BoolCrit_Actual[OutputsCrit$Ind_notcomputed] <- FALSE
   MatBoolCrit <- cbind(InputsCrit$BoolCrit, BoolCrit_Actual)
   colnames(MatBoolCrit) <- c("BoolCrit_Requested", "BoolCrit_Actual")
-  
-  
+
+
   ##_____Output______________________________________________________________________________
   OutputsCalib <- list(ParamFinalR = as.double(ParamFinalR), CritFinal = CritFinal * Multiplier,
                        NIter = NIter, NRuns = NRuns,
@@ -517,8 +431,7 @@ Calibration_Michel <- function(InputsModel,
                        CritName = CritName, CritBestValue = CritBestValue)
   class(OutputsCalib) <- c("OutputsCalib", "HBAN")
   return(OutputsCalib)
-  
-  
-  
-}
 
+
+
+}
