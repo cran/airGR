@@ -50,8 +50,7 @@ RunModel_Lag <- function(InputsModel, RunOptions, Param) {
 
   NbUpBasins <- length(InputsModel$LengthHydro)
   LengthTs <- length(OutputsModel$QsimDown)
-  OutputsModel$Qsim <-
-    OutputsModel$QsimDown * InputsModel$BasinAreas[length(InputsModel$BasinAreas)] * 1e3
+  OutputsModel$Qsim <- OutputsModel$QsimDown * InputsModel$BasinAreas[length(InputsModel$BasinAreas)] * 1e3
 
   IniSD <- RunOptions$IniStates[grep("SD", names(RunOptions$IniStates))]
   if (length(IniSD) > 0) {
@@ -78,12 +77,10 @@ RunModel_Lag <- function(InputsModel, RunOptions, Param) {
   }
 
   for (upstream_basin in seq_len(NbUpBasins)) {
-    Qupstream <-
-      InputsModel$Qupstream[RunOptions$IndPeriod_Run, upstream_basin]
+    Qupstream <- InputsModel$Qupstream[RunOptions$IndPeriod_Run, upstream_basin]
     if (!is.na(InputsModel$BasinAreas[upstream_basin])) {
       # Upstream flow with area needs to be converted to m3 by time step
-      Qupstream <-
-        Qupstream * InputsModel$BasinAreas[upstream_basin] * 1e3
+      Qupstream <- Qupstream * InputsModel$BasinAreas[upstream_basin] * 1e3
     }
     OutputsModel$Qsim <- OutputsModel$Qsim +
       c(IniStates[[upstream_basin]][-length(IniStates[[upstream_basin]])],

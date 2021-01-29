@@ -1,6 +1,6 @@
 ---
 title: "Plugging in new calibration algorithms in airGR"
-author: "François Bourgin"
+author: "François Bourgin, Guillaume Thirel"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
@@ -15,9 +15,13 @@ library(airGR)
 library(DEoptim)
 library(hydroPSO) # Needs R version >= 3.6 or latticeExtra <= 0.6-28 on R 3.5
 library(Rmalschains)
+library(caRamel)
+library(ggplot2)
+library(GGally)
 # source("airGR.R")
 set.seed(321)
 load(system.file("vignettesData/vignetteParamOptim.rda", package = "airGR"))
+load(system.file("vignettesData/vignetteParamOptimCaramel.rda", package = "airGR"))
 ```
 
 
@@ -158,7 +162,7 @@ As it can be seen in the table below, the four additional optimization strategie
 ```{r, warning=FALSE, echo=FALSE, eval=FALSE}
 resGLOB <- data.frame(Algo = c("airGR", "PORT", "DE", "PSO", "MA-LS"),
                       round(rbind(
-                        OutputsCalib$ParamFinalR                          ,
+                        OutputsCalib$ParamFinalR,
                         airGR::TransfoParam_GR4J(ParamIn = optPORT$par                    , Direction = "TR"),
                         airGR::TransfoParam_GR4J(ParamIn = as.numeric(optDE$optim$bestmem), Direction = "TR"),
                         airGR::TransfoParam_GR4J(ParamIn = as.numeric(optPSO$par)         , Direction = "TR"),
@@ -170,6 +174,102 @@ resGLOB
 ```
 
 <!-- This is an expected result because the response surface for quadratic performance criteria of the **GR4J** model is generally sufficiently well defined in the transformed parameter space to allow using a local optimization strategy instead of a more time consuming global optimization strategy. -->
+
+
+# Multiobjective optimization
+
+Multiobjective optimization is used to explore possible trade-offs between different performances criteria.
+Here we use the following R implementation of an efficient strategy:
+* [caRamel: Automatic Calibration by Evolutionary Multi Objective Algorithm](https://cran.r-project.org/package=caRamel)
+
+Motivated by using the rainfall-runoff model for low flow simulation, we explore the trade-offs between the KGE values obtained without any data transformation and with the inverse transformation.
+
+First, the OptimGR4J function previously used is modified to return two values.
+
+```{r, warning=FALSE, results='hide', eval=FALSE}
+InputsCrit_inv <- InputsCrit
+InputsCrit_inv$transfo <- "inv"
+  
+MOptimGR4J <- function(i) {
+  if (algo == "caRamel") {
+    ParamOptim <- x[i, ]
+  }
+  ## Transformation of the parameter set to real space
+  RawParamOptim <- airGR::TransfoParam_GR4J(ParamIn = ParamOptim,
+                                            Direction = "TR")
+  ## Simulation given a parameter set
+  OutputsModel <- airGR::RunModel_GR4J(InputsModel = InputsModel,
+                                       RunOptions = RunOptions,
+                                       Param = RawParamOptim)
+  ## Computation of the value of the performance criteria
+  OutputsCrit1 <- airGR::ErrorCrit_KGE(InputsCrit = InputsCrit,
+                                       OutputsModel = OutputsModel,
+                                       verbose = FALSE)
+  ## Computation of the value of the performance criteria
+  OutputsCrit2 <- airGR::ErrorCrit_KGE(InputsCrit = InputsCrit_inv,
+                                       OutputsModel = OutputsModel,
+                                       verbose = FALSE)
+  return(c(OutputsCrit1$CritValue, OutputsCrit2$CritValue))
+}
+```
+
+## caRamel
+caRamel is a multiobjective evolutionary algorithm combining the MEAS algorithm and the NGSA-II algorithm.
+
+```{r, warning=FALSE, results='hide', eval=FALSE}
+algo <- "caRamel"
+optMO <- caRamel::caRamel(nobj = 2,
+                          nvar = 4,
+                          minmax = rep(TRUE, 2),
+                          bounds = matrix(c(lowerGR4J, upperGR4J), ncol = 2),
+                          func = MOptimGR4J,
+                          popsize = 100,
+                          archsize = 100,
+                          maxrun = 15000,
+                          prec = rep(1.e-3, 2),
+                          carallel = FALSE,
+                          graph = FALSE)
+```
+
+The algorithm returns parameter sets that describe the pareto front, illustrating the trade-off between overall good performance and good performance for low flow.
+
+```{r, fig.width=6, fig.height=6, warning=FALSE}
+ggplot() + 
+  geom_point(aes(optMO$objectives[, 1], optMO$objectives[, 2])) +
+  coord_equal(xlim = c(0.4, 0.9), ylim = c(0.4, 0.9)) + 
+  xlab("KGE") + ylab("KGE [1/Q]") +
+  theme_bw()
+```
+
+The pameter sets can be viewed in the parameter space, illustrating different populations.
+
+```{r fig.height=6, fig.width=6, message=FALSE, warning=FALSE}
+param_optMO <- apply(optMO$parameters, MARGIN = 1, FUN = function(x) {
+  airGR::TransfoParam_GR4J(x, Direction = "TR")
+  })
+GGally::ggpairs(data.frame(t(param_optMO)), diag = NULL) + theme_bw()
+```
+
+```{r fig.height=6, fig.width=12, message=FALSE, warning=FALSE}
+RunOptions$Outputs_Sim <- "Qsim"
+run_optMO <- apply(optMO$parameters, MARGIN = 1, FUN = function(x) {
+  airGR::RunModel_GR4J(InputsModel = InputsModel,
+                       RunOptions = RunOptions,
+                       Param = x)
+  }$Qsim)
+run_optMO <- data.frame(run_optMO)
+
+ggplot() +
+  geom_line(aes(x = as.POSIXct(InputsModel$DatesR[Ind_Run]),
+                y = run_optMO$X1)) +
+  geom_line(aes(x = as.POSIXct(InputsModel$DatesR[Ind_Run]),
+                y = run_optMO$X54),
+            colour = "darkred") +
+  scale_x_datetime(limits = c(as.POSIXct("1998-01-01"), NA)) +
+  ylab("Discharge [mm/d]") + xlab("Date") +
+  scale_y_sqrt() +
+  theme_bw()
+```
 
 
 

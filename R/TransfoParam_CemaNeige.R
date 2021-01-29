@@ -28,7 +28,7 @@ TransfoParam_CemaNeige <- function(ParamIn, Direction) {
   }
   if (Direction == "RT") {
     ParamOut <- ParamIn
-    ParamOut[, 1] <-  ParamIn[, 1] * 19.98 - 9.99  ### CemaNeige X1 (weighting coefficient for snow pack thermal state)
+    ParamOut[, 1] <- ParamIn[, 1] * 19.98 - 9.99  ### CemaNeige X1 (weighting coefficient for snow pack thermal state)
     ParamOut[, 2] <- log(ParamIn[, 2] * 200)       ### CemaNeige X2 (degree-day melt coefficient)
   }
   

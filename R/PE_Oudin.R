@@ -65,7 +65,7 @@ PE_Oudin <- function(JD, Temp,
     LInputs = as.integer(length(Temp))
 
     if (length(FI) == 1) {
-      FI <-  rep(FI, LInputs)
+      FI <- rep(FI, LInputs)
     }
 
     RESULTS <- .Fortran("frun_pe_oudin", PACKAGE = "airGR",
@@ -96,7 +96,7 @@ PE_Oudin <- function(JD, Temp,
         COSOM <- -1
       }
       if (COSOM > 1) {
-        COSOM <-  1
+        COSOM <- 1
       }
 
       COSOM2 <- COSOM * COSOM

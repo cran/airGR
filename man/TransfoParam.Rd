@@ -55,7 +55,7 @@ TransfoParam_CemaNeigeHyst(ParamIn, Direction)
 \examples{
 library(airGR)
 
-## ---- generic function
+## --- generic function
 
 ## transformation Raw -> Transformed for the GR4J model
 Xraw  <- matrix(c(+221.41, -3.63,  +30.00, +1.37,
@@ -72,7 +72,7 @@ Xtran <- matrix(c(+3.60, -2.00, +3.40, -9.10,
 Xraw  <- TransfoParam(ParamIn = Xtran, Direction = "TR", FUN_TRANSFO = TransfoParam_GR4J)
 
 
-## ---- specific function
+## --- specific function
 
 ## transformation Raw -> Transformed for the GR4J model
 Xraw  <- matrix(c(+221.41, -3.63,  +30.00, +1.37,

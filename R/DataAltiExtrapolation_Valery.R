@@ -3,549 +3,171 @@ DataAltiExtrapolation_Valery <- function(DatesR,
                                          TempMean, TempMin = NULL, TempMax = NULL,
                                          ZInputs,  HypsoData, NLayers,
                                          verbose = TRUE) {
-  
-    ##Altitudinal_gradient_functions_______________________________________________________________
-    ##unique_gradient_for_precipitation
-    GradP_Valery2010 <- function() {
-      return(0.00041)  ### value from Valery PhD thesis page 126
-    }
-    ##daily_gradients_for_mean_min_and_max_air_temperature
-    GradT_Valery2010 <- function() {
-      RESULT <- matrix(c(
-      01, 01, 0.434, 0.366, 0.498,
-      02, 01, 0.434, 0.366, 0.500,
-      03, 01, 0.435, 0.367, 0.501,
-      04, 01, 0.436, 0.367, 0.503,
-      05, 01, 0.437, 0.367, 0.504,
-      06, 01, 0.439, 0.367, 0.506,
-      07, 01, 0.440, 0.367, 0.508,
-      08, 01, 0.441, 0.368, 0.510,
-      09, 01, 0.442, 0.368, 0.512,
-      10, 01, 0.444, 0.368, 0.514,
-      11, 01, 0.445, 0.368, 0.517,
-      12, 01, 0.446, 0.368, 0.519,
-      13, 01, 0.448, 0.369, 0.522,
-      14, 01, 0.450, 0.369, 0.525,
-      15, 01, 0.451, 0.369, 0.527,
-      16, 01, 0.453, 0.370, 0.530,
-      17, 01, 0.455, 0.370, 0.533,
-      18, 01, 0.456, 0.370, 0.537,
-      19, 01, 0.458, 0.371, 0.540,
-      20, 01, 0.460, 0.371, 0.543,
-      21, 01, 0.462, 0.371, 0.547,
-      22, 01, 0.464, 0.372, 0.550,
-      23, 01, 0.466, 0.372, 0.554,
-      24, 01, 0.468, 0.373, 0.558,
-      25, 01, 0.470, 0.373, 0.561,
-      26, 01, 0.472, 0.374, 0.565,
-      27, 01, 0.474, 0.374, 0.569,
-      28, 01, 0.476, 0.375, 0.573,
-      29, 01, 0.478, 0.375, 0.577,
-      30, 01, 0.480, 0.376, 0.582,
-      31, 01, 0.483, 0.376, 0.586,
-      01, 02, 0.485, 0.377, 0.590,
-      02, 02, 0.487, 0.377, 0.594,
-      03, 02, 0.489, 0.378, 0.599,
-      04, 02, 0.492, 0.379, 0.603,
-      05, 02, 0.494, 0.379, 0.607,
-      06, 02, 0.496, 0.380, 0.612,
-      07, 02, 0.498, 0.381, 0.616,
-      08, 02, 0.501, 0.381, 0.621,
-      09, 02, 0.503, 0.382, 0.625,
-      10, 02, 0.505, 0.383, 0.630,
-      11, 02, 0.508, 0.384, 0.634,
-      12, 02, 0.510, 0.384, 0.639,
-      13, 02, 0.512, 0.385, 0.643,
-      14, 02, 0.515, 0.386, 0.648,
-      15, 02, 0.517, 0.387, 0.652,
-      16, 02, 0.519, 0.387, 0.657,
-      17, 02, 0.522, 0.388, 0.661,
-      18, 02, 0.524, 0.389, 0.666,
-      19, 02, 0.526, 0.390, 0.670,
-      20, 02, 0.528, 0.391, 0.674,
-      21, 02, 0.530, 0.392, 0.679,
-      22, 02, 0.533, 0.393, 0.683,
-      23, 02, 0.535, 0.393, 0.687,
-      24, 02, 0.537, 0.394, 0.691,
-      25, 02, 0.539, 0.395, 0.695,
-      26, 02, 0.541, 0.396, 0.699,
-      27, 02, 0.543, 0.397, 0.703,
-      28, 02, 0.545, 0.398, 0.707,
-      29, 02, 0.546, 0.399, 0.709,
-      01, 03, 0.547, 0.399, 0.711,
-      02, 03, 0.549, 0.400, 0.715,
-      03, 03, 0.551, 0.401, 0.718,
-      04, 03, 0.553, 0.402, 0.722,
-      05, 03, 0.555, 0.403, 0.726,
-      06, 03, 0.557, 0.404, 0.729,
-      07, 03, 0.559, 0.405, 0.732,
-      08, 03, 0.560, 0.406, 0.736,
-      09, 03, 0.562, 0.406, 0.739,
-      10, 03, 0.564, 0.407, 0.742,
-      11, 03, 0.566, 0.408, 0.745,
-      12, 03, 0.567, 0.409, 0.748,
-      13, 03, 0.569, 0.410, 0.750,
-      14, 03, 0.570, 0.411, 0.753,
-      15, 03, 0.572, 0.412, 0.756,
-      16, 03, 0.573, 0.413, 0.758,
-      17, 03, 0.575, 0.414, 0.761,
-      18, 03, 0.576, 0.415, 0.763,
-      19, 03, 0.577, 0.416, 0.765,
-      20, 03, 0.579, 0.417, 0.767,
-      21, 03, 0.580, 0.417, 0.769,
-      22, 03, 0.581, 0.418, 0.771,
-      23, 03, 0.582, 0.419, 0.773,
-      24, 03, 0.583, 0.420, 0.774,
-      25, 03, 0.584, 0.421, 0.776,
-      26, 03, 0.585, 0.422, 0.777,
-      27, 03, 0.586, 0.422, 0.779,
-      28, 03, 0.587, 0.423, 0.780,
-      29, 03, 0.588, 0.424, 0.781,
-      30, 03, 0.589, 0.425, 0.782,
-      31, 03, 0.590, 0.425, 0.783,
-      01, 04, 0.591, 0.426, 0.784,
-      02, 04, 0.591, 0.427, 0.785,
-      03, 04, 0.592, 0.427, 0.785,
-      04, 04, 0.593, 0.428, 0.786,
-      05, 04, 0.593, 0.429, 0.787,
-      06, 04, 0.594, 0.429, 0.787,
-      07, 04, 0.595, 0.430, 0.787,
-      08, 04, 0.595, 0.431, 0.788,
-      09, 04, 0.596, 0.431, 0.788,
-      10, 04, 0.596, 0.432, 0.788,
-      11, 04, 0.597, 0.432, 0.788,
-      12, 04, 0.597, 0.433, 0.788,
-      13, 04, 0.597, 0.433, 0.788,
-      14, 04, 0.598, 0.434, 0.788,
-      15, 04, 0.598, 0.434, 0.788,
-      16, 04, 0.598, 0.435, 0.787,
-      17, 04, 0.599, 0.435, 0.787,
-      18, 04, 0.599, 0.436, 0.787,
-      19, 04, 0.599, 0.436, 0.786,
-      20, 04, 0.599, 0.436, 0.786,
-      21, 04, 0.600, 0.437, 0.785,
-      22, 04, 0.600, 0.437, 0.785,
-      23, 04, 0.600, 0.437, 0.784,
-      24, 04, 0.600, 0.438, 0.784,
-      25, 04, 0.600, 0.438, 0.783,
-      26, 04, 0.601, 0.438, 0.783,
-      27, 04, 0.601, 0.438, 0.782,
-      28, 04, 0.601, 0.439, 0.781,
-      29, 04, 0.601, 0.439, 0.781,
-      30, 04, 0.601, 0.439, 0.780,
-      01, 05, 0.601, 0.439, 0.779,
-      02, 05, 0.601, 0.439, 0.778,
-      03, 05, 0.601, 0.439, 0.778,
-      04, 05, 0.601, 0.440, 0.777,
-      05, 05, 0.601, 0.440, 0.776,
-      06, 05, 0.601, 0.440, 0.775,
-      07, 05, 0.601, 0.440, 0.775,
-      08, 05, 0.601, 0.440, 0.774,
-      09, 05, 0.601, 0.440, 0.773,
-      10, 05, 0.602, 0.440, 0.772,
-      11, 05, 0.602, 0.440, 0.772,
-      12, 05, 0.602, 0.440, 0.771,
-      13, 05, 0.602, 0.440, 0.770,
-      14, 05, 0.602, 0.440, 0.770,
-      15, 05, 0.602, 0.440, 0.769,
-      16, 05, 0.602, 0.440, 0.768,
-      17, 05, 0.602, 0.440, 0.768,
-      18, 05, 0.602, 0.440, 0.767,
-      19, 05, 0.602, 0.440, 0.767,
-      20, 05, 0.602, 0.440, 0.766,
-      21, 05, 0.602, 0.440, 0.766,
-      22, 05, 0.602, 0.440, 0.765,
-      23, 05, 0.602, 0.440, 0.765,
-      24, 05, 0.602, 0.440, 0.764,
-      25, 05, 0.602, 0.440, 0.764,
-      26, 05, 0.602, 0.440, 0.764,
-      27, 05, 0.602, 0.439, 0.763,
-      28, 05, 0.602, 0.439, 0.763,
-      29, 05, 0.602, 0.439, 0.763,
-      30, 05, 0.602, 0.439, 0.762,
-      31, 05, 0.602, 0.439, 0.762,
-      01, 06, 0.602, 0.439, 0.762,
-      02, 06, 0.602, 0.439, 0.762,
-      03, 06, 0.602, 0.439, 0.762,
-      04, 06, 0.602, 0.439, 0.762,
-      05, 06, 0.602, 0.439, 0.762,
-      06, 06, 0.602, 0.438, 0.761,
-      07, 06, 0.602, 0.438, 0.761,
-      08, 06, 0.602, 0.438, 0.761,
-      09, 06, 0.602, 0.438, 0.761,
-      10, 06, 0.602, 0.438, 0.761,
-      11, 06, 0.602, 0.438, 0.762,
-      12, 06, 0.602, 0.438, 0.762,
-      13, 06, 0.602, 0.438, 0.762,
-      14, 06, 0.602, 0.438, 0.762,
-      15, 06, 0.602, 0.437, 0.762,
-      16, 06, 0.602, 0.437, 0.762,
-      17, 06, 0.602, 0.437, 0.762,
-      18, 06, 0.602, 0.437, 0.762,
-      19, 06, 0.602, 0.437, 0.763,
-      20, 06, 0.602, 0.437, 0.763,
-      21, 06, 0.602, 0.437, 0.763,
-      22, 06, 0.602, 0.436, 0.763,
-      23, 06, 0.602, 0.436, 0.763,
-      24, 06, 0.602, 0.436, 0.764,
-      25, 06, 0.602, 0.436, 0.764,
-      26, 06, 0.601, 0.436, 0.764,
-      27, 06, 0.601, 0.436, 0.764,
-      28, 06, 0.601, 0.436, 0.764,
-      29, 06, 0.601, 0.435, 0.765,
-      30, 06, 0.601, 0.435, 0.765,
-      01, 07, 0.601, 0.435, 0.765,
-      02, 07, 0.600, 0.435, 0.765,
-      03, 07, 0.600, 0.435, 0.765,
-      04, 07, 0.600, 0.434, 0.766,
-      05, 07, 0.600, 0.434, 0.766,
-      06, 07, 0.599, 0.434, 0.766,
-      07, 07, 0.599, 0.434, 0.766,
-      08, 07, 0.599, 0.434, 0.766,
-      09, 07, 0.598, 0.433, 0.766,
-      10, 07, 0.598, 0.433, 0.766,
-      11, 07, 0.598, 0.433, 0.766,
-      12, 07, 0.597, 0.433, 0.766,
-      13, 07, 0.597, 0.432, 0.767,
-      14, 07, 0.597, 0.432, 0.767,
-      15, 07, 0.596, 0.432, 0.767,
-      16, 07, 0.596, 0.432, 0.766,
-      17, 07, 0.595, 0.431, 0.766,
-      18, 07, 0.595, 0.431, 0.766,
-      19, 07, 0.594, 0.431, 0.766,
-      20, 07, 0.594, 0.430, 0.766,
-      21, 07, 0.593, 0.430, 0.766,
-      22, 07, 0.593, 0.430, 0.766,
-      23, 07, 0.592, 0.429, 0.765,
-      24, 07, 0.592, 0.429, 0.765,
-      25, 07, 0.591, 0.428, 0.765,
-      26, 07, 0.590, 0.428, 0.765,
-      27, 07, 0.590, 0.428, 0.764,
-      28, 07, 0.589, 0.427, 0.764,
-      29, 07, 0.588, 0.427, 0.764,
-      30, 07, 0.588, 0.426, 0.763,
-      31, 07, 0.587, 0.426, 0.763,
-      01, 08, 0.586, 0.425, 0.762,
-      02, 08, 0.586, 0.425, 0.762,
-      03, 08, 0.585, 0.424, 0.761,
-      04, 08, 0.584, 0.424, 0.761,
-      05, 08, 0.583, 0.423, 0.760,
-      06, 08, 0.583, 0.423, 0.760,
-      07, 08, 0.582, 0.422, 0.759,
-      08, 08, 0.581, 0.421, 0.758,
-      09, 08, 0.580, 0.421, 0.758,
-      10, 08, 0.579, 0.420, 0.757,
-      11, 08, 0.578, 0.420, 0.756,
-      12, 08, 0.578, 0.419, 0.755,
-      13, 08, 0.577, 0.418, 0.754,
-      14, 08, 0.576, 0.418, 0.754,
-      15, 08, 0.575, 0.417, 0.753,
-      16, 08, 0.574, 0.416, 0.752,
-      17, 08, 0.573, 0.415, 0.751,
-      18, 08, 0.572, 0.415, 0.750,
-      19, 08, 0.571, 0.414, 0.749,
-      20, 08, 0.570, 0.413, 0.748,
-      21, 08, 0.569, 0.413, 0.747,
-      22, 08, 0.569, 0.412, 0.746,
-      23, 08, 0.568, 0.411, 0.745,
-      24, 08, 0.567, 0.410, 0.744,
-      25, 08, 0.566, 0.409, 0.743,
-      26, 08, 0.565, 0.409, 0.742,
-      27, 08, 0.564, 0.408, 0.741,
-      28, 08, 0.563, 0.407, 0.740,
-      29, 08, 0.562, 0.406, 0.738,
-      30, 08, 0.561, 0.405, 0.737,
-      31, 08, 0.560, 0.405, 0.736,
-      01, 09, 0.558, 0.404, 0.735,
-      02, 09, 0.557, 0.403, 0.734,
-      03, 09, 0.556, 0.402, 0.732,
-      04, 09, 0.555, 0.401, 0.731,
-      05, 09, 0.554, 0.401, 0.730,
-      06, 09, 0.553, 0.400, 0.728,
-      07, 09, 0.552, 0.399, 0.727,
-      08, 09, 0.551, 0.398, 0.725,
-      09, 09, 0.550, 0.397, 0.724,
-      10, 09, 0.549, 0.396, 0.723,
-      11, 09, 0.548, 0.396, 0.721,
-      12, 09, 0.546, 0.395, 0.720,
-      13, 09, 0.545, 0.394, 0.718,
-      14, 09, 0.544, 0.393, 0.717,
-      15, 09, 0.543, 0.392, 0.715,
-      16, 09, 0.542, 0.391, 0.713,
-      17, 09, 0.541, 0.391, 0.712,
-      18, 09, 0.540, 0.390, 0.710,
-      19, 09, 0.538, 0.389, 0.709,
-      20, 09, 0.537, 0.388, 0.707,
-      21, 09, 0.536, 0.388, 0.705,
-      22, 09, 0.535, 0.387, 0.703,
-      23, 09, 0.533, 0.386, 0.702,
-      24, 09, 0.532, 0.385, 0.700,
-      25, 09, 0.531, 0.385, 0.698,
-      26, 09, 0.530, 0.384, 0.696,
-      27, 09, 0.528, 0.383, 0.694,
-      28, 09, 0.527, 0.383, 0.692,
-      29, 09, 0.526, 0.382, 0.690,
-      30, 09, 0.525, 0.381, 0.688,
-      01, 10, 0.523, 0.381, 0.686,
-      02, 10, 0.522, 0.380, 0.684,
-      03, 10, 0.521, 0.379, 0.682,
-      04, 10, 0.519, 0.379, 0.680,
-      05, 10, 0.518, 0.378, 0.678,
-      06, 10, 0.517, 0.377, 0.676,
-      07, 10, 0.515, 0.377, 0.674,
-      08, 10, 0.514, 0.376, 0.671,
-      09, 10, 0.512, 0.376, 0.669,
-      10, 10, 0.511, 0.375, 0.667,
-      11, 10, 0.510, 0.375, 0.664,
-      12, 10, 0.508, 0.374, 0.662,
-      13, 10, 0.507, 0.374, 0.659,
-      14, 10, 0.505, 0.373, 0.657,
-      15, 10, 0.504, 0.373, 0.654,
-      16, 10, 0.502, 0.372, 0.652,
-      17, 10, 0.501, 0.372, 0.649,
-      18, 10, 0.499, 0.372, 0.647,
-      19, 10, 0.498, 0.371, 0.644,
-      20, 10, 0.496, 0.371, 0.641,
-      21, 10, 0.495, 0.371, 0.639,
-      22, 10, 0.493, 0.370, 0.636,
-      23, 10, 0.492, 0.370, 0.633,
-      24, 10, 0.490, 0.370, 0.630,
-      25, 10, 0.489, 0.369, 0.628,
-      26, 10, 0.487, 0.369, 0.625,
-      27, 10, 0.485, 0.369, 0.622,
-      28, 10, 0.484, 0.368, 0.619,
-      29, 10, 0.482, 0.368, 0.616,
-      30, 10, 0.481, 0.368, 0.613,
-      31, 10, 0.479, 0.368, 0.610,
-      01, 11, 0.478, 0.368, 0.607,
-      02, 11, 0.476, 0.367, 0.604,
-      03, 11, 0.475, 0.367, 0.601,
-      04, 11, 0.473, 0.367, 0.598,
-      05, 11, 0.471, 0.367, 0.595,
-      06, 11, 0.470, 0.367, 0.592,
-      07, 11, 0.468, 0.367, 0.589,
-      08, 11, 0.467, 0.366, 0.586,
-      09, 11, 0.465, 0.366, 0.583,
-      10, 11, 0.464, 0.366, 0.580,
-      11, 11, 0.462, 0.366, 0.577,
-      12, 11, 0.461, 0.366, 0.574,
-      13, 11, 0.459, 0.366, 0.571,
-      14, 11, 0.458, 0.366, 0.568,
-      15, 11, 0.456, 0.366, 0.565,
-      16, 11, 0.455, 0.366, 0.562,
-      17, 11, 0.454, 0.366, 0.559,
-      18, 11, 0.452, 0.365, 0.556,
-      19, 11, 0.451, 0.365, 0.553,
-      20, 11, 0.450, 0.365, 0.550,
-      21, 11, 0.448, 0.365, 0.547,
-      22, 11, 0.447, 0.365, 0.544,
-      23, 11, 0.446, 0.365, 0.542,
-      24, 11, 0.445, 0.365, 0.539,
-      25, 11, 0.443, 0.365, 0.536,
-      26, 11, 0.442, 0.365, 0.533,
-      27, 11, 0.441, 0.365, 0.531,
-      28, 11, 0.440, 0.365, 0.528,
-      29, 11, 0.439, 0.365, 0.526,
-      30, 11, 0.438, 0.365, 0.523,
-      01, 12, 0.437, 0.365, 0.521,
-      02, 12, 0.436, 0.365, 0.519,
-      03, 12, 0.435, 0.365, 0.517,
-      04, 12, 0.434, 0.365, 0.515,
-      05, 12, 0.434, 0.365, 0.513,
-      06, 12, 0.433, 0.365, 0.511,
-      07, 12, 0.432, 0.365, 0.509,
-      08, 12, 0.431, 0.365, 0.507,
-      09, 12, 0.431, 0.365, 0.505,
-      10, 12, 0.430, 0.365, 0.504,
-      11, 12, 0.430, 0.365, 0.502,
-      12, 12, 0.429, 0.365, 0.501,
-      13, 12, 0.429, 0.365, 0.500,
-      14, 12, 0.429, 0.365, 0.498,
-      15, 12, 0.428, 0.365, 0.497,
-      16, 12, 0.428, 0.365, 0.496,
-      17, 12, 0.428, 0.365, 0.496,
-      18, 12, 0.428, 0.365, 0.495,
-      19, 12, 0.428, 0.365, 0.494,
-      20, 12, 0.428, 0.365, 0.494,
-      21, 12, 0.428, 0.365, 0.494,
-      22, 12, 0.428, 0.365, 0.493,
-      23, 12, 0.429, 0.365, 0.493,
-      24, 12, 0.429, 0.366, 0.493,
-      25, 12, 0.429, 0.366, 0.493,
-      26, 12, 0.430, 0.366, 0.494,
-      27, 12, 0.430, 0.366, 0.494,
-      28, 12, 0.431, 0.366, 0.495,
-      29, 12, 0.431, 0.366, 0.495,
-      30, 12, 0.432, 0.366, 0.496,
-      31, 12, 0.433, 0.366, 0.497), ncol = 5, byrow = TRUE)
-      
-      dimnames(RESULT) <- list(1:366, c("day", "month", "grad_Tmean", "grad_Tmin", "grad_Tmax"))
-      
-      return(RESULT)
-      
-    }
-  
-  
-  
+
+  ##Altitudinal_gradient_functions_______________________________________________________________
+  ##unique_gradient_for_precipitation
+  GradP_Valery2010 <- 0.00041  ### value from Valery PhD thesis page 126
+
+
+
   ##Format_______________________________________________________________________________________
-    HypsoData <- as.double(HypsoData)
-    ZInputs   <- as.double(ZInputs)
-    
-  
-  
+  HypsoData <- as.double(HypsoData)
+  ZInputs   <- as.double(ZInputs)
+
+
+
   ##ElevationLayers_Creation_____________________________________________________________________
-    ZLayers   <-  as.double(rep(NA, NLayers))
-    
-    if (!identical(HypsoData, as.double(rep(NA, 101)))) {
-      nmoy   <- 100 %/% NLayers
-      nreste <- 100 %% NLayers
-      ncont  <- 0
-      
-      for (iLayer in 1:NLayers) {
-        if (nreste > 0) {
-          nn <- nmoy + 1
-          nreste <- nreste - 1
-        } else {
-          nn <- nmoy
-        }
-        if (nn == 1) {
-          ZLayers[iLayer] <- HypsoData[ncont + 1]
-        }
-        if (nn == 2) {
-          ZLayers[iLayer] <- 0.5 * (HypsoData[ncont + 1] + HypsoData[ncont + 2])
-        }
-        if (nn > 2) {
-          ZLayers[iLayer] <- HypsoData[ncont + nn / 2]
-        }
-        ncont <- ncont + nn
+  ZLayers   <- as.double(rep(NA, NLayers))
+
+  if (!identical(HypsoData, as.double(rep(NA, 101)))) {
+    nmoy   <- 100 %/% NLayers
+    nreste <- 100 %% NLayers
+    ncont  <- 0
+
+    for (iLayer in 1:NLayers) {
+      if (nreste > 0) {
+        nn <- nmoy + 1
+        nreste <- nreste - 1
+      } else {
+        nn <- nmoy
       }
+      if (nn == 1) {
+        ZLayers[iLayer] <- HypsoData[ncont + 1]
+      }
+      if (nn == 2) {
+        ZLayers[iLayer] <- 0.5 * (HypsoData[ncont + 1] + HypsoData[ncont + 2])
+      }
+      if (nn > 2) {
+        ZLayers[iLayer] <- HypsoData[ncont + nn / 2]
+      }
+      ncont <- ncont + nn
     }
-  
-  
+  }
+
+
   ##Precipitation_extrapolation__________________________________________________________________
   ##Initialisation
-    if (identical(ZInputs, HypsoData[51]) & NLayers == 1) {
-      LayerPrecip <- list(as.double(Precip))
-    } else {
-      ##Elevation_gradients_for_daily_mean_precipitation
-      GradP    <- GradP_Valery2010() ### single value
-      TabGradP <- rep(GradP, length(Precip))
-      ##Extrapolation
-      ##Thresold_of_inputs_median_elevation
-      Zthreshold <- 4000
-      LayerPrecip_mat <- sapply(1:NLayers, function(iLayer) {
-        ##If_layer_elevation_smaller_than_Zthreshold
-        if (ZLayers[iLayer] <= Zthreshold) {
-          prcp <- as.double(Precip * exp(TabGradP * (ZLayers[iLayer] - ZInputs)))
-          ##If_layer_elevation_greater_than_Zthreshold
+  if (identical(ZInputs, HypsoData[51]) & NLayers == 1) {
+    LayerPrecip <- list(as.double(Precip))
+  } else {
+    ##Elevation_gradients_for_daily_mean_precipitation
+    GradP    <- GradP_Valery2010 ### single value
+    TabGradP <- rep(GradP, length(Precip))
+    ##Extrapolation
+    ##Thresold_of_inputs_median_elevation
+    Zthreshold <- 4000
+    LayerPrecip_mat <- sapply(1:NLayers, function(iLayer) {
+      ##If_layer_elevation_smaller_than_Zthreshold
+      if (ZLayers[iLayer] <= Zthreshold) {
+        prcp <- as.double(Precip * exp(TabGradP * (ZLayers[iLayer] - ZInputs)))
+        ##If_layer_elevation_greater_than_Zthreshold
+      } else {
+        ##If_inputs_median_elevation_smaller_than_Zthreshold
+        if (ZInputs <= Zthreshold) {
+          prcp <- as.double(Precip * exp(TabGradP * (Zthreshold - ZInputs)))
+          ##If_inputs_median_elevation_greater_then_Zthreshold
         } else {
-          ##If_inputs_median_elevation_smaller_than_Zthreshold
-          if (ZInputs <= Zthreshold) {
-            prcp <- as.double(Precip * exp(TabGradP * (Zthreshold - ZInputs)))
-            ##If_inputs_median_elevation_greater_then_Zthreshold
-          } else {
-            prcp <- as.double(Precip)
-          }
+          prcp <- as.double(Precip)
         }
-        return(prcp)
-      })
-      if (PrecipScale) {
-        LayerPrecip_mat <- LayerPrecip_mat / rowMeans(LayerPrecip_mat) * Precip
-        LayerPrecip_mat[is.nan(LayerPrecip_mat)] <- 0
       }
-      LayerPrecip <- as.list(as.data.frame(LayerPrecip_mat))
+      return(prcp)
+    })
+    if (PrecipScale) {
+      LayerPrecip_mat <- LayerPrecip_mat / rowMeans(LayerPrecip_mat) * Precip
+      LayerPrecip_mat[is.nan(LayerPrecip_mat)] <- 0
     }
-  
-  
-  
+    LayerPrecip <- as.list(as.data.frame(LayerPrecip_mat))
+  }
+
+
+
   ##Temperature_extrapolation____________________________________________________________________
   ##Initialisation
-    LayerTempMean <- list()
-    LayerTempMin <- list()
-    LayerTempMax <- list()
-    
-    if (identical(ZInputs, HypsoData[51]) & NLayers == 1) {
-      LayerTempMean[[1]] <- as.double(TempMean)
-      
-      if (!is.null(TempMin) & !is.null(TempMax)) {
-        LayerTempMin[[1]] <- as.double(TempMin)
-        LayerTempMax[[1]] <- as.double(TempMax)
-      }
-    } else {
-      ##Elevation_gradients_for_daily_mean_min_and_max_temperature
-      GradT <- as.data.frame(GradT_Valery2010())
-      iday <- match(format(DatesR, format = "%d%m"),
-                    sprintf("%02i%02i", GradT[, "day"], GradT[, "month"]))
-      TabGradT <-
-        GradT[iday, c("grad_Tmean", "grad_Tmin", "grad_Tmax")]
-      ##Extrapolation
-      ##On_each_elevation_layer...
-      for (iLayer in 1:NLayers) {
-        LayerTempMean[[iLayer]] <- as.double(TempMean + (ZInputs - ZLayers[iLayer]) * abs(TabGradT[, "grad_Tmean"]) /  100)
-        if (!is.null(TempMin) & !is.null(TempMax)) {
-          LayerTempMin[[iLayer]]  <- as.double(TempMin  + (ZInputs - ZLayers[iLayer]) * abs(TabGradT[, "grad_Tmin"]) /  100)
-          LayerTempMax[[iLayer]]  <- as.double(TempMax  + (ZInputs - ZLayers[iLayer]) * abs(TabGradT[, "grad_Tmax"]) /  100)
-        }
-      }
+  LayerTempMean <- list()
+  LayerTempMin <- list()
+  LayerTempMax <- list()
+
+  if (identical(ZInputs, HypsoData[51]) & NLayers == 1) {
+    LayerTempMean[[1]] <- as.double(TempMean)
+
+    if (!is.null(TempMin) & !is.null(TempMax)) {
+      LayerTempMin[[1]] <- as.double(TempMin)
+      LayerTempMax[[1]] <- as.double(TempMax)
     }
-    
-  
-  
-  ##Solid_Fraction_for_each_elevation_layer______________________________________________________
-    LayerFracSolidPrecip <- list()
-    
-    ##Thresold_of_inputs_median_elevation
-    Zthreshold <- 1500
-    
-    ##Option
-    Option <- "USACE"
-    if (!is.na(ZInputs)) {
-      if (ZInputs < Zthreshold & !is.null(TempMin) & !is.null(TempMax)) {
-        Option <- "Hydrotel"
-      }
-    }
-    
+  } else {
+    ##Elevation_gradients_for_daily_mean_min_and_max_temperature
+    GradT <- .GradT_Valery2010
+    iday <- match(format(DatesR, format = "%d%m"),
+                  sprintf("%02i%02i", GradT[, "day"], GradT[, "month"]))
+    TabGradT <- GradT[iday, c("grad_Tmean", "grad_Tmin", "grad_Tmax")]
+    ##Extrapolation
     ##On_each_elevation_layer...
     for (iLayer in 1:NLayers) {
-
-      ##Turcotte_formula_from_Hydrotel
-      if (Option == "Hydrotel") {
-        TempMin <- LayerTempMin[[iLayer]]
-        TempMax <- LayerTempMax[[iLayer]]
-        SolidFraction <- 1 - TempMax / (TempMax - TempMin)
-        SolidFraction[TempMin >= 0] <- 0
-        SolidFraction[TempMax <= 0] <- 1
+      LayerTempMean[[iLayer]] <- as.double(TempMean + (ZInputs - ZLayers[iLayer]) * abs(TabGradT[, "grad_Tmean"]) /  100)
+      if (!is.null(TempMin) & !is.null(TempMax)) {
+        LayerTempMin[[iLayer]]  <- as.double(TempMin  + (ZInputs - ZLayers[iLayer]) * abs(TabGradT[, "grad_Tmin"]) /  100)
+        LayerTempMax[[iLayer]]  <- as.double(TempMax  + (ZInputs - ZLayers[iLayer]) * abs(TabGradT[, "grad_Tmax"]) /  100)
       }
-      ##USACE_formula
-      if (Option == "USACE") {
-        USACE_Tmin <- -1.0
-        USACE_Tmax <-  3.0
-        TempMean <- LayerTempMean[[iLayer]]
-        SolidFraction <- 1 - (TempMean - USACE_Tmin) / (USACE_Tmax - USACE_Tmin)
-        SolidFraction[TempMean > USACE_Tmax] <- 0
-        SolidFraction[TempMean < USACE_Tmin] <- 1
-      }
-      LayerFracSolidPrecip[[iLayer]] <- as.double(SolidFraction)
     }
-   namesLayer <- sprintf("L%i", seq_along(LayerPrecip))
-   names(LayerPrecip)          <- namesLayer
-   names(LayerTempMean)        <- namesLayer
-   if (!is.null(TempMin) & !is.null(TempMax)) {
-     names(LayerTempMin)         <- namesLayer
-     names(LayerTempMax)         <- namesLayer
-   }
-   names(LayerFracSolidPrecip) <- namesLayer
-  
-  
-  
+  }
+
+
+
+  ##Solid_Fraction_for_each_elevation_layer______________________________________________________
+  LayerFracSolidPrecip <- list()
+
+  ##Thresold_of_inputs_median_elevation
+  Zthreshold <- 1500
+
+  ##Option
+  Option <- "USACE"
+  if (!is.na(ZInputs)) {
+    if (ZInputs < Zthreshold & !is.null(TempMin) & !is.null(TempMax)) {
+      Option <- "Hydrotel"
+    }
+  }
+
+  ##On_each_elevation_layer...
+  for (iLayer in 1:NLayers) {
+
+    ##Turcotte_formula_from_Hydrotel
+    if (Option == "Hydrotel") {
+      TempMin <- LayerTempMin[[iLayer]]
+      TempMax <- LayerTempMax[[iLayer]]
+      SolidFraction <- 1 - TempMax / (TempMax - TempMin)
+      SolidFraction[TempMin >= 0] <- 0
+      SolidFraction[TempMax <= 0] <- 1
+    }
+    ##USACE_formula
+    if (Option == "USACE") {
+      USACE_Tmin <- -1.0
+      USACE_Tmax <- 3.0
+      TempMean <- LayerTempMean[[iLayer]]
+      SolidFraction <- 1 - (TempMean - USACE_Tmin) / (USACE_Tmax - USACE_Tmin)
+      SolidFraction[TempMean > USACE_Tmax] <- 0
+      SolidFraction[TempMean < USACE_Tmin] <- 1
+    }
+    LayerFracSolidPrecip[[iLayer]] <- as.double(SolidFraction)
+  }
+  namesLayer <- sprintf("L%i", seq_along(LayerPrecip))
+  names(LayerPrecip)   <- namesLayer
+  names(LayerTempMean) <- namesLayer
+  if (!is.null(TempMin) & !is.null(TempMax)) {
+    names(LayerTempMin) <- namesLayer
+    names(LayerTempMax) <- namesLayer
+  }
+  names(LayerFracSolidPrecip) <- namesLayer
+
+
+
   ##END__________________________________________________________________________________________
-    return(list(LayerPrecip          = LayerPrecip,
-                LayerTempMean        = LayerTempMean,
-                LayerTempMin         = LayerTempMin,
-                LayerTempMax         = LayerTempMax,
-                LayerFracSolidPrecip = LayerFracSolidPrecip,
-                ZLayers              = ZLayers))
-    
-    
+  return(list(LayerPrecip          = LayerPrecip,
+              LayerTempMean        = LayerTempMean,
+              LayerTempMin         = LayerTempMin,
+              LayerTempMax         = LayerTempMax,
+              LayerFracSolidPrecip = LayerFracSolidPrecip,
+              ZLayers              = ZLayers))
+
+
 }
 

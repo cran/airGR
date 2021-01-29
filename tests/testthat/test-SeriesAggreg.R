@@ -61,9 +61,10 @@ test_that("Check SeriesAggreg output values on yearly aggregation", {
     E = BasinObs$E,
     Qmm = BasinObs$Qmm
   )
-  GoodValues <- apply(BasinObs[BasinObs$DatesR >= "1984-09-01" &
-                                 BasinObs$DatesR < "1985-09-01",
-                               c("P", "E", "Qmm")], 2, sum)
+  GoodValues <- apply(BasinObs[BasinObs$DatesR >= as.POSIXct("1984-09-01", tz = "UTC") &
+                                 BasinObs$DatesR < as.POSIXct("1985-09-01", tz = "UTC"),
+                               c("P", "E", "Qmm")],
+                      MARGIN = 2, FUN = sum)
   TestedValues <- unlist(SeriesAggreg(TabSeries,
                                       Format = "%Y",
                                       YearFirstMonth = 9,
@@ -229,7 +230,7 @@ test_that("SeriesAggreg should work with ConvertFun 'min', 'max' and 'median'", 
   Qls <- BasinObs[, c("DatesR", "Qls")]
   test_ConvertFunRegime <- function(x, ConvertFun, TimeFormat) {
     expect_equal(nrow(SeriesAggreg(x, TimeFormat, ConvertFun = ConvertFun)),
-                  length(unique(format(BasinObs$DatesR, "%Y"))))
+                 length(unique(format(BasinObs$DatesR, "%Y"))))
   }
   lapply(c("max", "min", "median"), function(x) {test_ConvertFunRegime(Qls, x, "%Y")})
 })

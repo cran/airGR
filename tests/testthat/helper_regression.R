@@ -1,5 +1,5 @@
 StoreStableExampleResults <- function(
-  package = "airGR", 
+  package = "airGR",
   path = file.path("tests/tmp", Sys.getenv("R_VERSION"), "stable"),
   ...) {
   install.packages(package, repos = "http://cran.r-project.org")
@@ -7,8 +7,8 @@ StoreStableExampleResults <- function(
 }
 
 StoreDevExampleResults <- function(
-  package = "airGR", 
-  path = file.path("tests/tmp", Sys.getenv("R_VERSION"), "dev"), 
+  package = "airGR",
+  path = file.path("tests/tmp", Sys.getenv("R_VERSION"), "dev"),
   ...) {
   StoreExampleResults(package = package, path = path, ...)
 }
@@ -75,7 +75,9 @@ StoreTopicResults <- function(topic, package, path, run.dontrun = TRUE, run.dont
 }
 
 CompareStableDev <- function() {
-  res = testthat::test_file("tests/testthat/regression.R")
-  dRes = as.data.frame(res)
-  if(any(dRes[,"failed"]>0) | any(dRes[,"error"])) quit(status = 1)
+  res <- testthat::test_file("tests/testthat/regression.R")
+  dRes <- as.data.frame(res)
+  if(any(dRes[, "failed"] > 0) | any(dRes[, "error"])) {
+    quit(status = 1)
+  }
 }

@@ -91,7 +91,7 @@
     VarSim[is.na(VarObs)] <- NA
     VarSim <- sort(VarSim, na.last = TRUE)
     VarObs <- sort(VarObs, na.last = TRUE)
-    InputsCrit$BoolCrit <-  sort(InputsCrit$BoolCrit, decreasing = TRUE)
+    InputsCrit$BoolCrit <- sort(InputsCrit$BoolCrit, decreasing = TRUE)
   }
   if (InputsCrit$transfo == "boxcox") {
     muTransfoVarObs <- (0.01 * mean(VarObs, na.rm = TRUE))^0.25

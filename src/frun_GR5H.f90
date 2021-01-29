@@ -76,8 +76,11 @@
       doubleprecision, dimension(NMISC) :: MISC
       doubleprecision :: D,P1,E,Q
 
-      IF (Imax .LT. 0.) IsIntStore = .FALSE.
-      IF (Imax .GE. 0.) IsIntStore = .TRUE.
+      IF (Imax .LT. 0.d0) THEN
+        IsIntStore = .FALSE.
+      ELSE
+        IsIntStore = .TRUE.
+      ENDIF
 
       !--------------------------------------------------------------
       ! Initializations

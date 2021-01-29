@@ -219,10 +219,10 @@ Calibration_Michel <- function(InputsModel,
           PotentialCandidateT[1, I] <- NewParamOptimT[I] + Sign * Pace
           ##If_we_exit_the_range_of_possible_values_we_go_back_on_the_boundary
           if (PotentialCandidateT[1, I] < RangesT[1, I] ) {
-            PotentialCandidateT[1,I] <- RangesT[1, I]
+            PotentialCandidateT[1, I] <- RangesT[1, I]
           }
           if (PotentialCandidateT[1, I] > RangesT[2, I]) {
-            PotentialCandidateT[1,I] <- RangesT[2,I]
+            PotentialCandidateT[1, I] <- RangesT[2, I]
           }
           ##We_check_the_set_is_not_outside_the_range_of_possible_values
           if (NewParamOptimT[I] == RangesT[1, I] & Sign < 0) {

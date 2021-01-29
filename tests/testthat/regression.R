@@ -35,7 +35,7 @@ if (dir.exists(file.path(tmp_path, "stable")) & dir.exists(file.path(tmp_path, "
     message("File ", file.path(getwd(), regIgnoreFile), " not found")
     regIgnore <- NULL
   }
-  lapply(X = refVarFiles, CompareWithStable, testDir = file.path(tmp_path, "dev"), regIgnore = regIgnore)
+  lapply(refVarFiles, FUN = CompareWithStable, testDir = file.path(tmp_path, "dev"), regIgnore = regIgnore)
 } else {
   stop("Regression tests compared to released version needs that you run the following instructions first:\n",
        "Rscript tests/testthat/regression_tests.R stable\n",

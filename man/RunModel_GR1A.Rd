@@ -60,7 +60,7 @@ TabSeries <- data.frame(DatesR = BasinObs$DatesR,
                         P = BasinObs$P,
                         E = BasinObs$E,
                         Qmm = BasinObs$Qmm)
-TabSeries <- TabSeries[TabSeries$DatesR < "2012-09-01", ]
+TabSeries <- TabSeries[TabSeries$DatesR < as.POSIXct("2012-09-01", tz = "UTC"), ]
 BasinObs <- SeriesAggreg(TabSeries, Format = "\%Y",
                          YearFirstMonth = 09,
                          ConvertFun = c("sum", "sum", "sum"))

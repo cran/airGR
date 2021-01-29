@@ -108,7 +108,7 @@ Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d \%H:\%M")=="2
                which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d \%H:\%M")=="2008-12-31 23:00"))
 
 
-## ---- original version of CemaNeige
+## --- original version of CemaNeige
 
 ## preparation of the RunOptions object
 RunOptions <- CreateRunOptions(FUN_MOD = RunModel_CemaNeigeGR4H, InputsModel = InputsModel,

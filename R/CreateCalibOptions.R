@@ -21,7 +21,7 @@ CreateCalibOptions <- function(FUN_MOD,
   if (!is.logical(IsSD) | length(IsSD) != 1L) {
     stop("'IsSD' must be a logical of length 1")
   }
-  ##check_FUN_MOD
+  ## check FUN_MOD
   BOOL <- FALSE
 
   if (identical(FUN_MOD, RunModel_GR4H)) {
@@ -87,7 +87,7 @@ CreateCalibOptions <- function(FUN_MOD,
     return(NULL)
   }
 
-  ##check_FUN_CALIB
+  ## check FUN_CALIB
   BOOL <- FALSE
 
   if (identical(FUN_CALIB, Calibration_Michel)) {
@@ -100,9 +100,9 @@ CreateCalibOptions <- function(FUN_MOD,
 
   }
 
-  ##check_FUN_TRANSFO
+  ## check FUN_TRANSFO
   if (is.null(FUN_TRANSFO)) {
-    ##_set_FUN1
+    ## set FUN1
     if (identical(FUN_MOD, RunModel_GR4H) |
         identical(FUN_MOD, RunModel_CemaNeigeGR4H)) {
       FUN_GR <- TransfoParam_GR4H
@@ -140,17 +140,17 @@ CreateCalibOptions <- function(FUN_MOD,
       stop("'FUN_GR' was not found")
       return(NULL)
     }
-    ##_set_FUN2
+    ## set FUN2
     if (IsHyst) {
       FUN_SNOW <- TransfoParam_CemaNeigeHyst
     } else {
       FUN_SNOW <- TransfoParam_CemaNeige
     }
-    ##_set_FUN_LAG
+    ## set FUN_LAG
     if (IsSD) {
       FUN_LAG <- TransfoParam_Lag
     }
-    ##_set_FUN_TRANSFO
+    ## set FUN_TRANSFO
     if (sum(ObjectClass %in% c("GR4H", "GR5H", "GR4J", "GR5J", "GR6J", "GR2M", "GR1A", "CemaNeige")) > 0) {
       if (!IsSD) {
         FUN_TRANSFO <- FUN_GR
@@ -179,7 +179,7 @@ CreateCalibOptions <- function(FUN_MOD,
           }
           ParamOut <- NA * ParamIn
           NParam   <- ncol(ParamIn)
-          ParamOut[, 1:(NParam - 4)     ] <- FUN_GR(ParamIn[, 1:(NParam - 4)     ], Direction)
+          ParamOut[, 1:(NParam - 4)     ] <- FUN_GR(ParamIn[, 1:(NParam - 4)], Direction)
           ParamOut[, (NParam - 3):NParam] <- FUN_SNOW(ParamIn[, (NParam - 3):NParam], Direction)
           if (!Bool) {
             ParamOut <- ParamOut[1, ]
@@ -198,7 +198,7 @@ CreateCalibOptions <- function(FUN_MOD,
           if (NParam <= 3) {
             ParamOut[, 1:(NParam - 2)] <- FUN_GR(cbind(ParamIn[, 1:(NParam - 2)]), Direction)
           } else {
-            ParamOut[, 1:(NParam - 2)] <- FUN_GR(      ParamIn[, 1:(NParam - 2)],  Direction)
+            ParamOut[, 1:(NParam - 2)] <- FUN_GR(ParamIn[, 1:(NParam - 2)], Direction)
           }
           ParamOut[, (NParam - 1):NParam] <- FUN_SNOW(ParamIn[, (NParam - 1):NParam], Direction)
           if (!Bool) {
@@ -215,9 +215,9 @@ CreateCalibOptions <- function(FUN_MOD,
           }
           ParamOut <- NA * ParamIn
           NParam   <- ncol(ParamIn)
-          ParamOut[, 2:(NParam - 4)     ] <- FUN_GR(   ParamIn[, 2:(NParam - 4)     ], Direction)
-          ParamOut[, (NParam - 3):NParam] <- FUN_SNOW(   ParamIn[, (NParam - 3):NParam], Direction)
-          ParamOut[, 1                  ] <- FUN_LAG(as.matrix(ParamIn[, 1       ]), Direction)
+          ParamOut[, 2:(NParam - 4)     ] <- FUN_GR(ParamIn[, 2:(NParam - 4)], Direction)
+          ParamOut[, (NParam - 3):NParam] <- FUN_SNOW(ParamIn[, (NParam - 3):NParam], Direction)
+          ParamOut[, 1                  ] <- FUN_LAG(as.matrix(ParamIn[, 1]), Direction)
           if (!Bool) {
             ParamOut <- ParamOut[1, ]
           }
@@ -235,9 +235,9 @@ CreateCalibOptions <- function(FUN_MOD,
           if (NParam <= 3) {
             ParamOut[, 2:(NParam - 2)] <- FUN_GR(cbind(ParamIn[, 2:(NParam - 2)]), Direction)
           } else {
-            ParamOut[, 2:(NParam - 2)] <- FUN_GR(      ParamIn[, 2:(NParam - 2)],  Direction)
+            ParamOut[, 2:(NParam - 2)] <- FUN_GR(ParamIn[, 2:(NParam - 2)],  Direction)
           }
-          ParamOut[, (NParam - 1):NParam] <- FUN_SNOW(   ParamIn[, (NParam - 1):NParam], Direction)
+          ParamOut[, (NParam - 1):NParam] <- FUN_SNOW(ParamIn[, (NParam - 1):NParam], Direction)
           ParamOut[, 1                  ] <- FUN_LAG(as.matrix(ParamIn[, 1]), Direction)
           if (!Bool) {
             ParamOut <- ParamOut[1, ]
@@ -252,7 +252,7 @@ CreateCalibOptions <- function(FUN_MOD,
     return(NULL)
   }
 
-  ##NParam
+  ## NParam
   if ("GR4H" %in% ObjectClass) {
     NParam <- 4
   }
@@ -299,7 +299,7 @@ CreateCalibOptions <- function(FUN_MOD,
     NParam <- NParam + 1
   }
 
-  ##check_FixedParam
+  ## check FixedParam
   if (is.null(FixedParam)) {
     FixedParam <- rep(NA, NParam)
   } else {
@@ -317,10 +317,10 @@ CreateCalibOptions <- function(FUN_MOD,
     }
   }
 
-  ##check_SearchRanges
+  ## check SearchRanges
   if (is.null(SearchRanges)) {
-    ParamT <-  matrix(c(rep(-9.99, NParam), rep(+9.99, NParam)),
-                      ncol = NParam, byrow = TRUE)
+    ParamT <- matrix(c(rep(-9.99, NParam), rep(+9.99, NParam)),
+                     ncol = NParam, byrow = TRUE)
     SearchRanges <- TransfoParam(ParamIn = ParamT, Direction = "TR", FUN_TRANSFO = FUN_TRANSFO)
 
   } else {
@@ -341,7 +341,7 @@ CreateCalibOptions <- function(FUN_MOD,
     }
   }
 
-  ##check_StartParamList_and_StartParamDistrib__default_values
+  ## check StartParamList and StartParamDistrib default values
   if (("HBAN"  %in% ObjectClass & is.null(StartParamList) & is.null(StartParamDistrib))) {
     if ("GR4H" %in% ObjectClass) {
       ParamT <- matrix(c(+5.12, -1.18, +4.34, -9.69,
@@ -351,12 +351,12 @@ CreateCalibOptions <- function(FUN_MOD,
     if (("GR5H" %in% ObjectClass) & ("interception" %in% ObjectClass)) {
       ParamT <- matrix(c(+3.46, -1.25, +4.04, -9.53, -9.34,
                          +3.74, -0.41, +4.78, -8.94, -3.33,
-                         +4.29, +0.16, +5.39, -7.39, +3.33), ncol=5, byrow = TRUE);
+                         +4.29, +0.16, +5.39, -7.39, +3.33), ncol = 5, byrow = TRUE)
     }
     if (("GR5H" %in% ObjectClass) & !("interception" %in% ObjectClass)) {
       ParamT <- matrix(c(+3.28, -0.39, +4.14, -9.54, -7.49,
                          +3.62, -0.19, +4.80, -9.00, -6.31,
-                         +4.01, -0.04, +5.43, -7.53, -5.33), ncol=5, byrow = TRUE);
+                         +4.01, -0.04, +5.43, -7.53, -5.33), ncol = 5, byrow = TRUE)
     }
     if ("GR4J" %in% ObjectClass) {
       ParamT <- matrix(c(+5.13, -1.60, +3.03, -9.05,
@@ -399,12 +399,12 @@ CreateCalibOptions <- function(FUN_MOD,
     if (("CemaNeigeGR5H" %in% ObjectClass) & ("interception" %in% ObjectClass)) {
       ParamT <- matrix(c(+3.46, -1.25, +4.04, -9.53, -9.34, -9.96, +6.63,
                          +3.74, -0.41, +4.78, -8.94, -3.33, -9.14, +6.90,
-                         +4.29, +0.16, +5.39, -7.39, +3.33, +4.10, +7.21), ncol = 7, byrow = TRUE);
+                         +4.29, +0.16, +5.39, -7.39, +3.33, +4.10, +7.21), ncol = 7, byrow = TRUE)
     }
     if (("CemaNeigeGR5H" %in% ObjectClass) & !("interception" %in% ObjectClass)) {
       ParamT <- matrix(c(+3.28, -0.39, +4.14, -9.54, -7.49, -9.96, +6.63,
                          +3.62, -0.19, +4.80, -9.00, -6.31, -9.14, +6.90,
-                         +4.01, -0.04, +5.43, -7.53, -5.33, +4.10, +7.21), ncol = 7, byrow = TRUE);
+                         +4.01, -0.04, +5.43, -7.53, -5.33, +4.10, +7.21), ncol = 7, byrow = TRUE)
     }
     if ("CemaNeigeGR4J" %in% ObjectClass) {
       ParamT <- matrix(c(+5.13, -1.60, +3.03, -9.05, -9.96, +6.63,
@@ -440,7 +440,7 @@ CreateCalibOptions <- function(FUN_MOD,
 
   }
 
-  ##check_StartParamList_and_StartParamDistrib__format
+  ## check StartParamList and StartParamDistrib format
   if ("HBAN" %in% ObjectClass & !is.null(StartParamList)) {
     if (!is.matrix(StartParamList)) {
       stop("'StartParamList' must be a matrix")

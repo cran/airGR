@@ -2,6 +2,30 @@
 
 
 
+### 1.6.10.4 Release Notes (2021-01-29)
+
+#### New features
+
+- Added a section 'param_optim' vignette to explain how to manage with multiobjective optimization using the 'CaRamel' package. ([#61](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/61))
+
+
+#### Major user-visible changes
+
+- `Imax()` now returns an error message when `IndPeriod_Run` doesn't select 24 hours by day, instead of `numeric(0)`. ([#92](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/92))
+
+
+#### Minor user-visible changes
+
+- Fixed warning returned by GCC Fortran when compiling `frun_GR5H.f90`. ([#93](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/93))
+
+
+#### CRAN-compatibility updates
+
+- Coerce `POSIXlt` dates into character in `RunModel_GR1A()` example and in `SeriesAggreg()` tests in order to avoid bad subsetting on time series due to mixing UTC and local time on macOS flavors. ([#94](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/94))
+
+____________________________________________________________________________________
+
+
 ### 1.6.9.27 Release Notes (2021-01-18)
 
 #### New features

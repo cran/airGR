@@ -25,7 +25,7 @@ TransfoParam_GR1A <- function(ParamIn, Direction) {
     ParamOut <- (ParamIn + 10.0) / 8
   }
   if (Direction == "RT") {
-    ParamOut <-  ParamIn * 8 - 10.0
+    ParamOut <- ParamIn * 8 - 10.0
   }
   
   

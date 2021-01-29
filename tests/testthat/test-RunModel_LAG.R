@@ -51,8 +51,8 @@ Ind_Run <- seq(which(format(BasinObs$DatesR, format = "%Y-%m-%d") == "1990-01-01
                which(format(BasinObs$DatesR, format = "%Y-%m-%d") == "1999-12-31"))
 
 RunOptions <- suppressWarnings(CreateRunOptions(FUN_MOD = RunModel_GR4J,
-                               InputsModel = InputsModel,
-                               IndPeriod_Run = Ind_Run))
+                                                InputsModel = InputsModel,
+                                                IndPeriod_Run = Ind_Run))
 
 test_that("InputsModel parameter should contain an OutputsModel key", {
   expect_error(
@@ -140,10 +140,8 @@ test_that("Params from calibration with simulated data should be similar to init
     InputsModel = InputsModel,
     RunOptions = RunOptions,
     VarObs = "Q",
-    Obs = (
-      c(0, Qupstream[Ind_Run[1:(length(Ind_Run) - 1)]]) * BasinAreas[1L] +
-        BasinObs$Qmm[Ind_Run] * BasinAreas[2L]
-    ) / sum(BasinAreas)
+    Obs = (c(0, Qupstream[Ind_Run[1:(length(Ind_Run) - 1)]]) * BasinAreas[1L] +
+             BasinObs$Qmm[Ind_Run] * BasinAreas[2L]) / sum(BasinAreas)
   )
   CalibOptions <- CreateCalibOptions(
     FUN_MOD = RunModel_GR4J,
@@ -193,14 +191,19 @@ Ind_Run2 <- seq(which(format(BasinObs$DatesR, format = "%Y-%m-%d")=="1991-01-01"
 
 # 1990
 RunOptions1 <- suppressWarnings(CreateRunOptions(FUN_MOD = RunModel_GR4J,
-                                                 InputsModel = IM, IndPeriod_Run = Ind_Run1))
+                                                 InputsModel = IM,
+                                                 IndPeriod_Run = Ind_Run1))
 OutputsModel1 <- RunModel(InputsModel = IM,
-                          RunOptions = RunOptions1, Param = PSDini, FUN_MOD = RunModel_GR4J)
+                          RunOptions = RunOptions1, Param = PSDini,
+                          FUN_MOD = RunModel_GR4J)
 # 1990-1991
 RunOptions <- suppressWarnings(CreateRunOptions(FUN_MOD = RunModel_GR4J,
-                                                InputsModel = IM, IndPeriod_Run = c(Ind_Run1, Ind_Run2)))
+                                                InputsModel = IM,
+                                                IndPeriod_Run = c(Ind_Run1, Ind_Run2)))
 OutputsModel <- RunModel(InputsModel = IM,
-                         RunOptions = RunOptions, Param = PSDini, FUN_MOD = RunModel_GR4J)
+                         RunOptions = RunOptions,
+                         Param = PSDini,
+                         FUN_MOD = RunModel_GR4J)
 
 test_that("Warm start should give same result as warmed model", {
   # Warm start 1991
@@ -209,7 +212,9 @@ test_that("Warm start should give same result as warmed model", {
                                   IndPeriod_WarmUp = 0L,
                                   IniStates = OutputsModel1$StateEnd)
   OutputsModel2 <- RunModel(InputsModel = IM,
-                                 RunOptions = RunOptions2, Param = PSDini, FUN_MOD = RunModel_GR4J)
+                            RunOptions = RunOptions2,
+                            Param = PSDini,
+                            FUN_MOD = RunModel_GR4J)
   # Compare 1991 Qsim from warm started and from 1990-1991
   names(OutputsModel2$Qsim) <- NULL
   expect_equal(OutputsModel2$Qsim, OutputsModel$Qsim[366:730])

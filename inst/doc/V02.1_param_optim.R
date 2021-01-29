@@ -3,9 +3,13 @@ library(airGR)
 library(DEoptim)
 library(hydroPSO) # Needs R version >= 3.6 or latticeExtra <= 0.6-28 on R 3.5
 library(Rmalschains)
+library(caRamel)
+library(ggplot2)
+library(GGally)
 # source("airGR.R")
 set.seed(321)
 load(system.file("vignettesData/vignetteParamOptim.rda", package = "airGR"))
+load(system.file("vignettesData/vignetteParamOptimCaramel.rda", package = "airGR"))
 
 ## ---- echo=TRUE, eval=FALSE---------------------------------------------------
 #  example("Calibration_Michel")
@@ -73,7 +77,7 @@ summary(resPORT)
 ## ---- warning=FALSE, echo=FALSE, eval=FALSE-----------------------------------
 #  resGLOB <- data.frame(Algo = c("airGR", "PORT", "DE", "PSO", "MA-LS"),
 #                        round(rbind(
-#                          OutputsCalib$ParamFinalR                          ,
+#                          OutputsCalib$ParamFinalR,
 #                          airGR::TransfoParam_GR4J(ParamIn = optPORT$par                    , Direction = "TR"),
 #                          airGR::TransfoParam_GR4J(ParamIn = as.numeric(optDE$optim$bestmem), Direction = "TR"),
 #                          airGR::TransfoParam_GR4J(ParamIn = as.numeric(optPSO$par)         , Direction = "TR"),
@@ -82,4 +86,77 @@ summary(resPORT)
 
 ## ---- warning=FALSE, echo=FALSE-----------------------------------------------
 resGLOB
+
+## ---- warning=FALSE, results='hide', eval=FALSE-------------------------------
+#  InputsCrit_inv <- InputsCrit
+#  InputsCrit_inv$transfo <- "inv"
+#  
+#  MOptimGR4J <- function(i) {
+#    if (algo == "caRamel") {
+#      ParamOptim <- x[i, ]
+#    }
+#    ## Transformation of the parameter set to real space
+#    RawParamOptim <- airGR::TransfoParam_GR4J(ParamIn = ParamOptim,
+#                                              Direction = "TR")
+#    ## Simulation given a parameter set
+#    OutputsModel <- airGR::RunModel_GR4J(InputsModel = InputsModel,
+#                                         RunOptions = RunOptions,
+#                                         Param = RawParamOptim)
+#    ## Computation of the value of the performance criteria
+#    OutputsCrit1 <- airGR::ErrorCrit_KGE(InputsCrit = InputsCrit,
+#                                         OutputsModel = OutputsModel,
+#                                         verbose = FALSE)
+#    ## Computation of the value of the performance criteria
+#    OutputsCrit2 <- airGR::ErrorCrit_KGE(InputsCrit = InputsCrit_inv,
+#                                         OutputsModel = OutputsModel,
+#                                         verbose = FALSE)
+#    return(c(OutputsCrit1$CritValue, OutputsCrit2$CritValue))
+#  }
+
+## ---- warning=FALSE, results='hide', eval=FALSE-------------------------------
+#  algo <- "caRamel"
+#  optMO <- caRamel::caRamel(nobj = 2,
+#                            nvar = 4,
+#                            minmax = rep(TRUE, 2),
+#                            bounds = matrix(c(lowerGR4J, upperGR4J), ncol = 2),
+#                            func = MOptimGR4J,
+#                            popsize = 100,
+#                            archsize = 100,
+#                            maxrun = 15000,
+#                            prec = rep(1.e-3, 2),
+#                            carallel = FALSE,
+#                            graph = FALSE)
+
+## ---- fig.width=6, fig.height=6, warning=FALSE--------------------------------
+ggplot() + 
+  geom_point(aes(optMO$objectives[, 1], optMO$objectives[, 2])) +
+  coord_equal(xlim = c(0.4, 0.9), ylim = c(0.4, 0.9)) + 
+  xlab("KGE") + ylab("KGE [1/Q]") +
+  theme_bw()
+
+## ----fig.height=6, fig.width=6, message=FALSE, warning=FALSE------------------
+param_optMO <- apply(optMO$parameters, MARGIN = 1, FUN = function(x) {
+  airGR::TransfoParam_GR4J(x, Direction = "TR")
+  })
+GGally::ggpairs(data.frame(t(param_optMO)), diag = NULL) + theme_bw()
+
+## ----fig.height=6, fig.width=12, message=FALSE, warning=FALSE-----------------
+RunOptions$Outputs_Sim <- "Qsim"
+run_optMO <- apply(optMO$parameters, MARGIN = 1, FUN = function(x) {
+  airGR::RunModel_GR4J(InputsModel = InputsModel,
+                       RunOptions = RunOptions,
+                       Param = x)
+  }$Qsim)
+run_optMO <- data.frame(run_optMO)
+
+ggplot() +
+  geom_line(aes(x = as.POSIXct(InputsModel$DatesR[Ind_Run]),
+                y = run_optMO$X1)) +
+  geom_line(aes(x = as.POSIXct(InputsModel$DatesR[Ind_Run]),
+                y = run_optMO$X54),
+            colour = "darkred") +
+  scale_x_datetime(limits = c(as.POSIXct("1998-01-01"), NA)) +
+  ylab("Discharge [mm/d]") + xlab("Date") +
+  scale_y_sqrt() +
+  theme_bw()
 

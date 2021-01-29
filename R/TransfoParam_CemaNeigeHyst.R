@@ -22,15 +22,15 @@ TransfoParam_CemaNeigeHyst <- function(ParamIn, Direction) {
   
   ## transformation
   if (Direction == "TR") {
-    ParamOut <-  ParamIn
+    ParamOut <- ParamIn
     ParamOut[, 1] <- (ParamIn[, 1] + 9.99) / 19.98 ### CemaNeige X1 (weighting coefficient for snow pack thermal state)
     ParamOut[, 2] <- exp(ParamIn[, 2]) / 200       ### CemaNeige X2 (degree-day melt coefficient)
     ParamOut[, 3] <- (ParamIn[, 3] * 5) + 50       ### Hyst Gaccum
     ParamOut[, 4] <- (ParamIn[, 4] / 19.98) + 0.5  ### Hyst CV
   }
   if (Direction == "RT") {
-    ParamOut <-  ParamIn
-    ParamOut[, 1] <-  ParamIn[, 1] * 19.98 - 9.99  ### CemaNeige X1 (weighting coefficient for snow pack thermal state)
+    ParamOut <- ParamIn
+    ParamOut[, 1] <- ParamIn[, 1] * 19.98 - 9.99  ### CemaNeige X1 (weighting coefficient for snow pack thermal state)
     ParamOut[, 2] <- log(ParamIn[, 2] * 200)       ### CemaNeige X2 (degree-day melt coefficient)
     ParamOut[, 3] <- (ParamIn[, 3] - 50) / 5       ### Hyst Gaccum
     ParamOut[, 4] <- (ParamIn[, 4] - 0.5) * 19.98  ### Hyst CV

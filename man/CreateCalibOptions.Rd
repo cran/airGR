@@ -80,7 +80,7 @@ CreateCalibOptions(FUN_MOD, FUN_CALIB = Calibration_Michel,
 Users wanting to use \code{FUN_MOD}, \code{FUN_CALIB} or \code{FUN_TRANSFO} functions that are not included in
 the package must create their own \code{CalibOptions} object accordingly. \cr
 
-## ---- CemaNeige version
+## --- CemaNeige version
 
 If \code{IsHyst = FALSE}, the original CemaNeige version from Valéry et al. (2014) is used. \cr
 If \code{IsHyst = TRUE}, the CemaNeige version from Riboust et al. (2019) is used. Compared to the original version, this version of CemaNeige needs two more parameters and it includes a representation of the hysteretic relationship between the Snow Cover Area (SCA) and the Snow Water Equivalent (SWE) in the catchment. The hysteresis included in airGR is the Modified Linear hysteresis (LH*); it is represented on panel b) of Fig. 3 in Riboust et al. (2019). Riboust et al. (2019) advise to use the LH* version of CemaNeige with parameters calibrated using an objective function combining 75 \% of KGE calculated on discharge simulated from a rainfall-runoff model compared to observed discharge and 5 \% of KGE calculated on SCA on 5 CemaNeige elevation bands compared to satellite (e.g. MODIS) SCA (see Eq. (18), Table 3 and Fig. 6). Riboust et al. (2019)'s tests were realized with GR4J as the chosen rainfall-runoff model. \cr

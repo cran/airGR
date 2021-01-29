@@ -70,7 +70,7 @@ PEdaily_Oudin <- function(JD,
       COSOM <- -1
     }
     if (COSOM > 1) {
-      COSOM <-  1
+      COSOM <- 1
     }
 
     COSOM2 <- COSOM * COSOM
@@ -94,11 +94,11 @@ PEdaily_Oudin <- function(JD,
     if (is.na(Temp[k])) {
       PE_Oudin_D[k] <- NA
     } else {
-    if (Temp[k] >= -5.0) {
-      PE_Oudin_D[k] <- GE * (Temp[k] + 5) / 100 / 28.5
-    } else {
-      PE_Oudin_D[k] <- 0
-    }
+      if (Temp[k] >= -5.0) {
+        PE_Oudin_D[k] <- GE * (Temp[k] + 5) / 100 / 28.5
+      } else {
+        PE_Oudin_D[k] <- 0
+      }
     }
 
   }

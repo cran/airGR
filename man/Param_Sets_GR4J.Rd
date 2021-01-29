@@ -56,7 +56,7 @@ Param_Sets_GR4J <- as.matrix(Param_Sets_GR4J)
 InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$DatesR,
                                  Precip = BasinObs$P, PotEvap = BasinObs$E)
 
-## ---- calibration step
+## --- calibration step
 
 ## short calibration period selection (< 6 months)
 Ind_Cal <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"),
@@ -82,7 +82,7 @@ OutputsCrit_Loop <- apply(Param_Sets_GR4J, 1, function(Param) {
 Param_Best <- unlist(Param_Sets_GR4J[which.max(OutputsCrit_Loop), ])
 
 
-## ---- validation step
+## --- validation step
 
 ## validation period selection
 Ind_Val <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-03-01"),

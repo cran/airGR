@@ -3,7 +3,7 @@ RunModel <- function(InputsModel, RunOptions, Param, FUN_MOD) {
   FUN_MOD <- match.fun(FUN_MOD)
   
   if (inherits(InputsModel, "SD")) {
-    # LAG Model take one parameter at the beginning of the vector
+    # Lag model take one parameter at the beginning of the vector
     iFirstParamRunOffModel <- 2
   } else {
     # All parameters

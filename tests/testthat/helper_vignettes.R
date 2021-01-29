@@ -3,12 +3,12 @@
 #' @param fileRmd Rmd file to
 #' @param tmpFolder Folder storing the script containing extracted chunks
 #' @param force.eval Force execution of chunks with parameter eval=FALSE
-RunRmdChunks <-  function(fileRmd,
-                          tmpFolder = "../tmp",
-                          force.eval = TRUE) {
+RunRmdChunks <- function(fileRmd,
+                         tmpFolder = "../tmp",
+                         force.eval = TRUE) {
   dir.create(tmpFolder, showWarnings = FALSE)
   output <- file.path(tmpFolder,
-                     gsub("\\.Rmd", "\\.R", basename(fileRmd), ignore.case = TRUE))
+                      gsub("\\.Rmd", "\\.R", basename(fileRmd), ignore.case = TRUE))
   knitr::purl(fileRmd, output = output, quiet = TRUE)
   sTxt <- readLines(output)
   if (force.eval) {
@@ -30,8 +30,8 @@ RunRmdChunks <-  function(fileRmd,
       for (i in 1:length(chunksEvalStart)) {
         # Remove comments on eval=F chunk lines
         sTxt[chunksEvalStart[i]:chunksEvalEnd[i]] <- gsub(pattern = "^## ",
-                                                         replace = "",
-                                                         x = sTxt[chunksEvalStart[i]:chunksEvalEnd[i]])
+                                                          replace = "",
+                                                          x = sTxt[chunksEvalStart[i]:chunksEvalEnd[i]])
       }
     }
 
@@ -70,12 +70,12 @@ RunRmdChunks <-  function(fileRmd,
 RunVignetteChunks <- function(vignette,
                               tmpFolder = "../tmp",
                               force.eval = TRUE) {
-  if(file.exists(file.path("../../vignettes/", paste0(vignette, ".Rmd")))) {
+  if(file.exists(sprintf("../../vignettes/%s.Rmd", vignette))) {
     # testthat context in development environnement
-    RunRmdChunks(file.path("../../vignettes/", paste0(vignette, ".Rmd")), tmpFolder, force.eval)
+    RunRmdChunks(sprintf("../../vignettes/%s.Rmd", vignette), tmpFolder, force.eval)
   } else {
     # R CMD check context in package environnement
-    RunRmdChunks(system.file(file.path("doc/", paste0(vignette, ".Rmd")), package = "airGR"), tmpFolder, force.eval)
+    RunRmdChunks(system.file(sprintf("doc/%s.Rmd", vignette), package = "airGR"), tmpFolder, force.eval)
   }
   return(TRUE)
 }

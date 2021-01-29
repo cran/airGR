@@ -1,5 +1,6 @@
 ---
 title: "Using satellite snow cover area data for calibrating and improving CemaNeige"
+author: "Guillaume Thirel, Olivier Delaigue"
 bibliography: V00_airgr_ref.bib
 output: rmarkdown::html_vignette
 vignette: >

@@ -16,7 +16,7 @@ TransfoParam_Lag <- function(ParamIn, Direction) {
     stop("'Direction' must be a character vector of length 1 equal to 'RT' or 'TR'")
   }
   if (ncol(ParamIn) != NParam) {
-    stop(sprintf("the LAG model requires %i parameters", NParam))
+    stop(sprintf("the Lag model requires %i parameters", NParam))
   }
   
   
@@ -25,7 +25,7 @@ TransfoParam_Lag <- function(ParamIn, Direction) {
     ParamOut <- 20 * (ParamIn + 10) / 20.0
   }
   if (Direction == "RT") {
-    ParamOut <-  ParamIn * 20.0 / 20 - 10 
+    ParamOut <- ParamIn * 20.0 / 20 - 10 
   }
   
   

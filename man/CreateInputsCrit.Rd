@@ -73,11 +73,11 @@ To calculate composite or multiple criteria, it is necessary to use the \code{Er
 \details{
 Users wanting to use \code{FUN_CRIT} functions that are not included in the package must create their own InputsCrit object accordingly. \cr \cr
 
-## ---- Period of calculation
+## --- Period of calculation
 
 Criteria can be calculated over discontinuous periods (i.e. only over winter periods, or when observed discharge is below a certain threshold). To do so, please indicate in \code{Bool_Crit} which indices must be used for calcullation. Discontinuous periods are allowed in the \code{Bool_Crit} argument.
 
-## ---- Transformations
+## --- Transformations
 
 Transformations are simple functions applied to the observed and simulated variables used in order to change their distribution. Transformations are often used in hydrology for modifying the weight put on errors made for high flows or low flows. The following transformations are available: \cr \cr
 \itemize{
@@ -93,11 +93,11 @@ We do not advise computing KGE or KGE' with log-transformation as it might be wr
 In order to make sure that KGE and KGE2 remain dimensionless and are not impacted by zero values, the Box-Cox transformation (\code{transfo = "boxcox"}) uses the formulation given in Equation 10 of Santos et al. (2018). Lambda is set to 0.25 accordingly. \cr \cr
 The syntax of the power transformation allows a numeric or a string of characters. For example for a squared transformation, the following can be used: \code{transfo = 2}, \code{transfo = "2"} or \code{transfo = "^2"}. Negative values are allowed. Fraction values are not allowed (e.g., \code{"-1/2"} must instead be written \code{"-0.5"}).\cr \cr
 
-## ---- The epsilon value
+## --- The epsilon value
 
 The epsilon value is useful when \code{"log"} or \code{"inv"} transformations are used (to avoid calculation of the inverse or of the logarithm of zero). If an epsilon value is provided, then it is added to the observed and simulated variable time series at each time step and before the application of a transformation. The epsilon value has no effect when the \code{"boxcox"} transformation is used. The impact of this value and a recommendation about the epsilon value to use (usually one hundredth of average observation) are discussed in Pushpalatha et al. (2012) for NSE and in Santos et al. (2018) for KGE and KGE'. \cr \cr
 
-## ---- Single, multiple or composite criteria calculation
+## --- Single, multiple or composite criteria calculation
 
 Users can set the following arguments as atomic or list: \code{FUN_CRIT}, \code{Obs}, \code{VarObs}, \code{BoolCrit}, \code{transfo}, \code{Weights}. If the list format is chosen, all the lists must have the same length. \cr
 Calculation of a single criterion (e.g. NSE computed on discharge) is prepared by providing to \code{CreateInputsCrit} arguments atomics only. \cr

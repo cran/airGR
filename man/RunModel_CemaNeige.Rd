@@ -79,7 +79,7 @@ Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-0
                which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1999-12-31"))
 
 
-## ---- original version of CemaNeige
+## --- original version of CemaNeige
 
 ## preparation of the RunOptions object
 RunOptions <- CreateRunOptions(FUN_MOD = RunModel_CemaNeige, InputsModel = InputsModel,
@@ -94,7 +94,7 @@ OutputsModel <- RunModel_CemaNeige(InputsModel = InputsModel,
 plot(OutputsModel)
 
 
-## ---- version of CemaNeige with the Linear Hysteresis
+## --- version of CemaNeige with the Linear Hysteresis
 
 ## preparation of the RunOptions object
 RunOptions <- CreateRunOptions(FUN_MOD = RunModel_CemaNeige, InputsModel = InputsModel,

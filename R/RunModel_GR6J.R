@@ -68,8 +68,8 @@ RunModel_GR6J <- function(InputsModel, RunOptions, Param) {
   
   ## Use of IniResLevels
   if (!is.null(RunOptions$IniResLevels)) {
-    RunOptions$IniStates[1] <- RunOptions$IniResLevels[1]*Param[1] ### production store level (mm)
-    RunOptions$IniStates[2] <- RunOptions$IniResLevels[2]*Param[3] ### routing store level (mm)
+    RunOptions$IniStates[1] <- RunOptions$IniResLevels[1] * Param[1] ### production store level (mm)
+    RunOptions$IniStates[2] <- RunOptions$IniResLevels[2] * Param[3] ### routing store level (mm)
     RunOptions$IniStates[3] <- RunOptions$IniResLevels[3]          ### exponential store level (mm)
   }
   

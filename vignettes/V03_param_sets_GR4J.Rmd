@@ -1,5 +1,6 @@
 ---
 title: "Generalist parameter sets for the GR4J model"
+author: "Olivier Delaigue, Guillaume Thirel"
 bibliography: V00_airgr_ref.bib
 output: rmarkdown::html_vignette
 vignette: >

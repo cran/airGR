@@ -1,5 +1,6 @@
 ---
 title: "Get Started with airGR"
+author: "Guillaume Thirel, Olivier Delaigue, Laurent Coron"
 bibliography: V00_airgr_ref.bib
 output: rmarkdown::html_vignette
 vignette: >
