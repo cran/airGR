@@ -57,7 +57,7 @@ Function which creates a screen plot giving an overview of the model outputs.
 
 \item{verbose}{(optional) [boolean] indicating if the function is run in verbose mode or not, default = \code{TRUE}}
 
-\item{...}{other parameters to be passed through to plotting functions}
+\item{...}{(optional) other parameters to be passed through to plotting functions}
 }
 
 
@@ -88,7 +88,7 @@ Different dashboards of results including various graphs are available:
   \item \code{"synth"}: corresponds to \code{"Precip"}, \code{"Temp"}, \code{"SnowPack"}, \code{"Flows"}, \code{"Regime"}, \code{"CumFreq"} and \code{"CorQQ"}
   \item \code{"all"}: corresponds to \code{"Precip"}, \code{"PotEvap"}, \code{"ActuEvap"}, \code{"Temp"}, \code{"SnowPack"}, \code{"Flows"}, \code{"Error"}, \code{"Regime"}, \code{"CumFreq"} and \code{"CorQQ"}
   }
-  
+
 If several dashboards are selected, or if an independent graph is called with a dashboard, the graphical device will include all the requested graphs without redundancy.
 }
 
@@ -131,8 +131,8 @@ plot(simGR4J$OutputsModel, Qobs = simGR4J$Qobs,
      LayoutMat = matrix(c(1, 2, 3, 1, 4, 4), ncol = 2),
      LayoutWidths  = c(1.5, 1),
      LayoutHeights = c(0.5, 1, 1))
-    
-    
+
+
 ### add a main title
 
 ## the whole list of settable par's

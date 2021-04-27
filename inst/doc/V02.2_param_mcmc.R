@@ -12,6 +12,11 @@ load(system.file("vignettesData/vignetteParamMCMC.rda", package = "airGR"))
 #  example("Calibration_Michel")
 
 ## ---- results='hide', eval=FALSE----------------------------------------------
+#  RunOptions <- airGR::CreateRunOptions(FUN_MOD = RunModel_GR4J, InputsModel = InputsModel,
+#                                        IndPeriod_Run = Ind_Run,
+#                                        Outputs_Sim = "Qsim")
+
+## ---- results='hide', eval=FALSE----------------------------------------------
 #  LogLikeGR4J <- function(ParamOptim) {
 #    ## Transformation to real space
 #    RawParamOptim <- airGR::TransfoParam_GR4J(ParamIn = ParamOptim,
@@ -34,8 +39,10 @@ load(system.file("vignettesData/vignetteParamMCMC.rda", package = "airGR"))
 #  iniParPORT <- optPORT$par
 
 ## ---- results='hide', eval=FALSE----------------------------------------------
-#  iniParPORT <- data.frame(Chain1 = iniParPORT, Chain2 = iniParPORT, Chain3 = iniParPORT,
-#                             row.names = paste0("X", 1:4))
+#  iniParPORT <- data.frame(Chain1 = iniParPORT,
+#                           Chain2 = iniParPORT,
+#                           Chain3 = iniParPORT,
+#                           row.names = paste0("X", 1:4))
 #  iniParPORT <- sweep(iniParPORT, MARGIN = 2, STATS = c(1, 0.9, 1.1), FUN = "*")
 #  iniParPORT[iniParPORT < -9.9] <- -9.9
 #  iniParPORT[iniParPORT > +9.9] <- +9.9
@@ -49,8 +56,8 @@ load(system.file("vignettesData/vignetteParamMCMC.rda", package = "airGR"))
 #                 jump         = 0.01,
 #                 outputlength = 2000,
 #                 burninlength = 0,
-#                 updatecov    = 100, ## Adaptative Metropolis
-#                 ntrydr       = 2)   ## Delayed Rejection
+#                 updatecov    = 100, ## adaptative Metropolis (AM)
+#                 ntrydr       = 2)   ## delayed rejection (RD)
 #  })
 
 ## ---- results='hide', eval=FALSE----------------------------------------------
@@ -63,7 +70,7 @@ load(system.file("vignettesData/vignetteParamMCMC.rda", package = "airGR"))
 gelRub
 
 ## ---- fig.width=6, fig.height=9, warning=FALSE--------------------------------
-parDRAM <- ggmcmc::ggs(multDRAM) ## to convert objet for using by all ggs_* graphical functions
+parDRAM <- ggmcmc::ggs(multDRAM) ## to convert object for using by all ggs_* graphical functions
 ggmcmc::ggs_traceplot(parDRAM)
 
 ## ---- fig.width=6, fig.height=9, warning=FALSE--------------------------------

@@ -40,18 +40,16 @@ RunModel_CemaNeige <- function(InputsModel, RunOptions, Param) {
   }
 
   ## Input data preparation
-  if (identical(RunOptions$IndPeriod_WarmUp, as.integer(0))) {
+  if (identical(RunOptions$IndPeriod_WarmUp, 0L)) {
     RunOptions$IndPeriod_WarmUp <- NULL
   }
   IndPeriod1     <- c(RunOptions$IndPeriod_WarmUp, RunOptions$IndPeriod_Run)
-  IndPeriod2     <- (length(RunOptions$IndPeriod_WarmUp) + 1):length(IndPeriod1)
+  IndPeriod2     <- (length(RunOptions$IndPeriod_WarmUp)+1):length(IndPeriod1)
+  ## Output data preparation
   ExportDatesR   <- "DatesR"   %in% RunOptions$Outputs_Sim
   ExportStateEnd <- "StateEnd" %in% RunOptions$Outputs_Sim
   
-  
-  
-  
-  
+    
   ## CemaNeige________________________________________________________________________________
   ParamCemaNeige <- Param
   NLayers        <- length(InputsModel$LayerPrecip)
@@ -65,9 +63,8 @@ RunModel_CemaNeige <- function(InputsModel, RunOptions, Param) {
   } else {
     IndOutputsCemaNeige <- which(FortranOutputsCemaNeige %in% RunOptions$Outputs_Sim)
   }
-  
-  CemaNeigeLayers     <- list()
-  CemaNeigeStateEnd   <- NULL
+  CemaNeigeLayers <- list()
+  CemaNeigeStateEnd <- NULL
   NameCemaNeigeLayers <- "CemaNeigeLayers"
   
   
@@ -88,22 +85,17 @@ RunModel_CemaNeige <- function(InputsModel, RunOptions, Param) {
                         MeanAnSolidPrecip = RunOptions$MeanAnSolidPrecip[iLayer],                       ### value of annual mean solid precip [mm/y]
                         NParam = as.integer(NParamCN),                                                  ### number of model parameters = 2 or 4
                         Param = as.double(ParamCemaNeige),                                              ### parameter set
-                        NStates = as.integer(NStates),                                                  ### number of state variables used for model initialisation = 4
+                        NStates = as.integer(NStates),                                                  ### number of state variables used for model initialising = 4
                         StateStart = StateStartCemaNeige,                                               ### state variables used when the model run starts
                         IsHyst = as.integer(IsHyst),                                                    ### use of hysteresis
                         NOutputs = as.integer(length(IndOutputsCemaNeige)),                             ### number of output series
                         IndOutputs = IndOutputsCemaNeige,                                               ### indices of output series
                         ## outputs
-                        Outputs = matrix(-999.999,                                                      ### output series [mm]
-                                         nrow = length(IndPeriod1),
-                                         ncol = length(IndOutputsCemaNeige)),
-                        StateEnd = rep(-999.999, NStates)                                               ### state variables at the end of the model run
+                        Outputs = matrix(as.double(-99e9), nrow = length(IndPeriod1), ncol = length(IndOutputsCemaNeige)), ### output series [mm, mm/time step or degC]
+                        StateEnd = rep(as.double(-99e9), NStates)                                                          ### state variables at the end of the model run
     )
-    RESULTS$Outputs[ round(RESULTS$Outputs , 3) == -999.999] <- NA
-    RESULTS$StateEnd[round(RESULTS$StateEnd, 3) == -999.999] <- NA
-    
-    
-    
+    RESULTS$Outputs[RESULTS$Outputs   <= -99e8] <- NA
+    RESULTS$StateEnd[RESULTS$StateEnd <= -99e8] <- NA
     
     ## Data storage
     CemaNeigeLayers[[iLayer]] <- lapply(seq_len(RESULTS$NOutputs), function(i) RESULTS$Outputs[IndPeriod2, i])
@@ -112,7 +104,6 @@ RunModel_CemaNeige <- function(InputsModel, RunOptions, Param) {
       CemaNeigeStateEnd <- c(CemaNeigeStateEnd, RESULTS$StateEnd)
     }
     rm(RESULTS)
-    
   } ### ENDFOR iLayer
   
   names(CemaNeigeLayers) <- sprintf("Layer%02i", seq_len(NLayers))
@@ -130,20 +121,24 @@ RunModel_CemaNeige <- function(InputsModel, RunOptions, Param) {
   }
   
   ## Output data preparation
+  ## OutputsModel only
   if (!ExportDatesR & !ExportStateEnd) {
     OutputsModel <- list(CemaNeigeLayers)
     names(OutputsModel) <- NameCemaNeigeLayers
   }
+  ## DatesR and OutputsModel only
   if (ExportDatesR & !ExportStateEnd) {
     OutputsModel <- c(list(InputsModel$DatesR[RunOptions$IndPeriod_Run]),
                       list(CemaNeigeLayers))
     names(OutputsModel) <- c("DatesR", NameCemaNeigeLayers)
   }
+  ## OutputsModel and StateEnd only
   if (!ExportDatesR & ExportStateEnd) {
     OutputsModel <- c(list(CemaNeigeLayers),
                       list(CemaNeigeStateEnd))
     names(OutputsModel) <- c(NameCemaNeigeLayers, "StateEnd")
   }
+  ## DatesR and OutputsModel and StateEnd
   if (ExportDatesR & ExportStateEnd) {
     OutputsModel <- c(list(InputsModel$DatesR[RunOptions$IndPeriod_Run]),
                       list(CemaNeigeLayers),
@@ -151,11 +146,11 @@ RunModel_CemaNeige <- function(InputsModel, RunOptions, Param) {
     names(OutputsModel) <- c("DatesR", NameCemaNeigeLayers, "StateEnd")
   }
   
-  
   ## End
   class(OutputsModel) <- c("OutputsModel", time_step, "CemaNeige")
   if(IsHyst) {
     class(OutputsModel) <- c(class(OutputsModel), "hysteresis")
   }
   return(OutputsModel)
+
 }

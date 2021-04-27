@@ -3,7 +3,7 @@
 
 ## Overview
 
-This package brings into R the hydrological modelling tools developed at INRAE-Antony ([Catchment Hydrology research group](https://webgr.inrae.fr/en/home/) of the HYCAR Research Unit, France), including rainfall-runoff models (**GR4H**, **GR5H**, **GR4J**, **GR5J**, **GR6J**, **GR2M**, **GR1A**) and a snow accumulation and melt model (**CemaNeige**). Each model core is coded in Fortran to ensure low computational time. The other package functions (i.e. mainly the calibration algorithm and the computation of the efficiency criteria) are coded in R.
+This package brings into R the hydrological modelling tools developed at INRAE-Antony ([Catchment Hydrology research group](https://webgr.inrae.fr/en/home/) of the HYCAR Research Unit, France), including rainfall-runoff models (**GR4H**, **GR5H**, **GR4J**, **GR5J**, **GR6J**, **GR2M**, **GR1A**) that can be applied either on a **lumped** or **semi-distributed** way. A snow accumulation and melt model (**CemaNeige**) and the associated functions for the calibration and evaluation of models are also included. Each model core is coded in Fortran to ensure low computational time. The other package functions (i.e. mainly the calibration algorithm and the computation of the efficiency criteria) are coded in R.
 
 
 ## Installation
@@ -28,7 +28,7 @@ In order to limit the risk of mis-use and increase the flexibility of these main
 
 ## Models
 
-Six hydrological models and one snow melt and accumulation model are implemented in airGR. The snow model can also be used alone or with the daily hydrological models, and each hydrological model can either be used alone or together with the snow model.
+Seven hydrological models and one snow melt and accumulation model are implemented in airGR. The hydrological models can be applied either on a lumped way or on a semi-distributed way (on sub-catchments). The snow model can either be used alone or with the daily or hourly hydrological models. Naturally each hydrological model can also be used alone.
 These models can be called within airGR using the following functions: 
 
   - `RunModel_GR4H`: four-parameter hourly lumped hydrological model (Mathevet, 2005)
@@ -56,7 +56,7 @@ To learn how to use the functions from the airGR package, it is recommended to f
   4. refer to the help for `ErrorCrit_NSE` and `CreateInputsCrit` to understand how the computation of an error criterion is prepared/made;
   5. refer to the help for `Calibration_Michel`, run the provided example and then refer to the help for `CreateCalibOptions` to understand how a model calibration is prepared/made.
 
-For more information and to get started with the package, you can refer to the vignette (`vignette("V01_get_started")`) and go on the [airGR website](https://hydrogr.github.io/airGR/).
+To get started with the package, you can refer to the 'get_started' vignette (`vignette("V01_get_started", package = "airGR")`). To know how to use the models on a semi-distributed way, you can refer to the 'sd_model' vignette (`vignette("V05_sd_model", package = "airGR")`). For more information, please visit the [airGR website](https://hydrogr.github.io/airGR/).
 
 
 ## References

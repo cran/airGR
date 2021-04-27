@@ -70,7 +70,6 @@ The calibration period has been defined from **1990-01-01** to **1990-02-28**, a
 As a consequence, in this example the calibration period is very short, less than 6 months.
 
 ```{r, warning=FALSE, include=TRUE}
-
 ## preparation of the InputsModel object
 InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$DatesR, 
                                  Precip = BasinObs$P, PotEvap = BasinObs$E)
@@ -142,7 +141,7 @@ Now we can compute the Nash-Sutcliffe Efficiency criterion on the validation per
 
 
 
-# Calibration of the GR4J model with the built-in `Calibration_Michel()` function
+# Calibration of the GR4J model with the built-in Calibration_Michel function
 
 As seen above, the Michel's calibration algorithm is based on a local search procedure.
 

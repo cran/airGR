@@ -18,7 +18,6 @@ Param_Sets_GR4J <- as.matrix(Param_Sets_GR4J)
 summary(Param_Sets_GR4J)
 
 ## ---- warning=FALSE, include=TRUE---------------------------------------------
-
 ## preparation of the InputsModel object
 InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$DatesR, 
                                  Precip = BasinObs$P, PotEvap = BasinObs$E)

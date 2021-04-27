@@ -1,0 +1,14 @@
+CodeMod;NameMod;NbParam;TimeUnit;Id;Class;Pkg
+GR1A;GR1A;1;yearly;NA;GR;airGR
+GR2M;GR2M;2;monthly;NA;GR;airGR
+GR4J;GR4J;4;daily;NA;GR;airGR
+GR5J;GR5J;5;daily;NA;GR;airGR
+GR6J;GR6J;6;daily;NA;GR;airGR
+GR4H;GR4H;4;hourly;NA;GR;airGR
+GR5H;GR5H;5;hourly;NA;GR;airGR
+CemaNeige;CemaNeige;2;NA;NA;NA;airGR
+CemaNeigeGR4J;CemaNeigeGR4J;6;daily;NA;GR;airGR
+CemaNeigeGR5J;CemaNeigeGR5J;7;daily;NA;GR;airGR
+CemaNeigeGR6J;CemaNeigeGR6J;8;daily;NA;GR;airGR
+CemaNeigeGR4H;CemaNeigeGR4H;6;hourly;NA;GR;airGR
+CemaNeigeGR5H;CemaNeigeGR5H;7;hourly;NA;GR;airGR

@@ -5,92 +5,36 @@ CreateInputsModel <- function(FUN_MOD,
                               TempMean = NULL, TempMin = NULL, TempMax = NULL,
                               ZInputs = NULL, HypsoData = NULL, NLayers = 5,
                               Qupstream = NULL, LengthHydro = NULL, BasinAreas = NULL,
+                              QupstrUnit = "mm",
                               verbose = TRUE) {
 
 
   ObjectClass <- NULL
 
+  ## check DatesR
+  if (is.null(DatesR)) {
+    stop("'DatesR' is missing")
+  }
+  if (!"POSIXlt" %in% class(DatesR) & !"POSIXct" %in% class(DatesR)) {
+    stop("'DatesR' must be defined as 'POSIXlt' or 'POSIXct'")
+  }
+  if (!"POSIXlt" %in% class(DatesR)) {
+    DatesR <- as.POSIXlt(DatesR)
+  }
+  if (any(duplicated(DatesR))) {
+    stop("'DatesR' must not include duplicated values")
+  }
+  LLL <- length(DatesR)
+
+  ## check FUN_MOD
   FUN_MOD <- match.fun(FUN_MOD)
+  FeatFUN_MOD <- .GetFeatModel(FUN_MOD = FUN_MOD, DatesR = DatesR)
+  ObjectClass <- FeatFUN_MOD$Class
+  TimeStep <- FeatFUN_MOD$TimeStep
 
-  ##check_FUN_MOD
-  BOOL <- FALSE
-  if (identical(FUN_MOD, RunModel_GR4H) | identical(FUN_MOD, RunModel_GR5H)) {
-    ObjectClass <- c(ObjectClass, "hourly", "GR")
-
-    TimeStep <- as.integer(60 * 60)
-
-    BOOL <- TRUE
-  }
-  if (identical(FUN_MOD, RunModel_GR4J) |
-      identical(FUN_MOD, RunModel_GR5J) |
-      identical(FUN_MOD, RunModel_GR6J)) {
-    ObjectClass <- c(ObjectClass, "daily", "GR")
-
-    TimeStep <- as.integer(24 * 60 * 60)
-
-    BOOL <- TRUE
-  }
-  if (identical(FUN_MOD, RunModel_GR2M)) {
-    ObjectClass <- c(ObjectClass, "GR", "monthly")
-
-    TimeStep <- as.integer(c(28, 29, 30, 31) * 24 * 60 * 60)
-
-    BOOL <- TRUE
-  }
-  if (identical(FUN_MOD, RunModel_GR1A)) {
-    ObjectClass <- c(ObjectClass, "GR", "yearly")
-
-    TimeStep <- as.integer(c(365, 366) * 24 * 60 * 60)
-
-    BOOL <- TRUE
-  }
-  if (identical(FUN_MOD, RunModel_CemaNeige)) {
-    ObjectClass <- c(ObjectClass, "daily", "CemaNeige")
-
-    TimeStep <- as.integer(24 * 60 * 60)
-
-    BOOL <- TRUE
-  }
-  if (identical(FUN_MOD, RunModel_CemaNeigeGR4J) |
-      identical(FUN_MOD, RunModel_CemaNeigeGR5J) |
-      identical(FUN_MOD, RunModel_CemaNeigeGR6J)) {
-    ObjectClass <- c(ObjectClass, "daily", "GR", "CemaNeige")
-
-    TimeStep <- as.integer(24 * 60 * 60)
-
-    BOOL <- TRUE
-  }
-  if (identical(FUN_MOD, RunModel_CemaNeigeGR4H) | identical(FUN_MOD, RunModel_CemaNeigeGR5H)) {
-    ObjectClass <- c(ObjectClass, "hourly", "GR", "CemaNeige")
-
-    TimeStep <- as.integer(60 * 60)
-
-    BOOL <- TRUE
-  }
-  if (!BOOL) {
-    stop("incorrect 'FUN_MOD' for use in 'CreateInputsModel'")
-  }
 
   ##check_arguments
-  if ("GR" %in% ObjectClass | "CemaNeige" %in% ObjectClass) {
-    if (is.null(DatesR)) {
-      stop("'DatesR' is missing")
-    }
-    if (!"POSIXlt" %in% class(DatesR) & !"POSIXct" %in% class(DatesR)) {
-      stop("'DatesR' must be defined as 'POSIXlt' or 'POSIXct'")
-    }
-    if (!"POSIXlt" %in% class(DatesR)) {
-      DatesR <- as.POSIXlt(DatesR)
-    }
-    if (!difftime(tail(DatesR, 1), tail(DatesR, 2), units = "secs")[[1]] %in% TimeStep) {
-      TimeStepName <- grep("hourly|daily|monthly|yearly", ObjectClass, value = TRUE)
-      stop(paste0("the time step of the model inputs must be ", TimeStepName, "\n"))
-    }
-    if (any(duplicated(DatesR))) {
-      stop("'DatesR' must not include duplicated values")
-    }
-    LLL <- length(DatesR)
-  }
+
   if ("GR" %in% ObjectClass) {
     if (is.null(Precip)) {
       stop("Precip is missing")
@@ -210,8 +154,13 @@ CreateInputsModel <- function(FUN_MOD,
       stop("'Qupstream' must have same number of rows as 'DatesR' length")
     }
     if(any(is.na(Qupstream))) {
-      stop("'Qupstream' cannot contain any NA value")
+      warning("'Qupstream' contains NA values: model outputs will contain NAs")
     }
+    if(any(LengthHydro > 1000)) {
+      warning("The unit of 'LengthHydro' has changed from m to km in airGR >= 1.6.12: values superior to 1000 km seem unrealistic")
+    }
+    QupstrUnit <- tolower(QupstrUnit)
+    QupstrUnit <- match.arg(arg = QupstrUnit, choices = c("mm", "m3", "m3/s", "l/s"))
   }
 
   ##check_NA_values
@@ -327,8 +276,18 @@ CreateInputsModel <- function(FUN_MOD,
                                        ZLayers              = RESULT$ZLayers))
   }
   if ("SD" %in% ObjectClass) {
+    # Qupstream is internally stored in m3/time step
+    if (QupstrUnit == "mm") {
+      iConvBasins <- which(!is.na(BasinAreas[seq.int(length(LengthHydro))]))
+      Qupstream[,iConvBasins] <-
+        Qupstream[,iConvBasins] * rep(BasinAreas[iConvBasins], each = LLL) * 1e3
+    } else if (QupstrUnit == "m3/s") {
+      Qupstream <- Qupstream * TimeStep
+    } else if (QupstrUnit == "l/s") {
+      Qupstream <- Qupstream * TimeStep / 1e3
+    }
     InputsModel <- c(InputsModel, list(Qupstream = Qupstream,
-                                       LengthHydro   = LengthHydro,
+                                       LengthHydro = LengthHydro,
                                        BasinAreas = BasinAreas))
   }
 

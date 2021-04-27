@@ -14,6 +14,70 @@
 
 
 ## =================================================================================
+## function to extract model features
+## =================================================================================
+
+## table of feature models
+.FeatModels <- function() {
+  path <- system.file("modelsFeatures/FeatModelsGR.csv", package = "airGR")
+  read.table(path, header = TRUE, sep = ";", stringsAsFactors = FALSE)
+}
+
+
+## function to extract model features
+.GetFeatModel <- function(FUN_MOD, DatesR = NULL) {
+  FeatMod <- .FeatModels()
+  NameFunMod <- ifelse(test = FeatMod$Pkg %in% "airGR",
+                       yes  = paste("RunModel", FeatMod$NameMod, sep = "_"),
+                       no   = FeatMod$NameMod)
+  FunMod <- lapply(NameFunMod, FUN = match.fun)
+  IdMod <- which(sapply(FunMod, FUN = function(x) identical(FUN_MOD, x)))
+  if (length(IdMod) < 1) {
+    stop("'FUN_MOD' must be one of ", paste(NameFunMod, collapse = ", "))
+  } else {
+    res <- as.list(FeatMod[IdMod, ])
+    res$NameFunMod <- NameFunMod[IdMod]
+    if (!is.null(DatesR)) {
+      DiffTimeStep <- as.numeric(difftime(DatesR[length(DatesR)],
+                                          DatesR[length(DatesR)-1],
+                                          units = "secs"))
+      if (is.na(res$TimeUnit)) {
+        if (any(DiffTimeStep %in% 3600:3601)) { # 3601: leap second
+          res$TimeUnit <- "hourly"
+        } else {
+          res$TimeUnit <- "daily"
+        }
+      }
+    }
+    res$TimeStep <- switch(res$TimeUnit,
+                           hourly  =       1,
+                           daily   =       1 * 24,
+                           monthly =   28:31 * 24,
+                           yearly  = 365:366 * 24)
+    res$TimeStepMean <- switch(res$TimeUnit,
+                               hourly  =           1,
+                               daily   =           1 * 24,
+                               monthly = 365.25 / 12 * 24,
+                               yearly  =      365.25 * 24)
+    res$TimeStep     <- res$TimeStep * 3600
+    res$TimeStepMean <- as.integer(res$TimeStepMean * 3600)
+    res$Class <- c(res$TimeUnit, res$Class)
+    if (grepl("CemaNeige", res$NameFunMod)) {
+      res$Class <- c(res$Class, "CemaNeige")
+    }
+    res$Class <- res$Class[!is.na(res$Class)]
+    if (!is.null(DatesR)) {
+      if (all(DiffTimeStep != res$TimeStep)) {
+        stop("the time step of the model inputs must be ", res$TimeUnit)
+      }
+    }
+    return(res)
+  }
+}
+
+
+
+## =================================================================================
 ## function to manage Fortran outputs
 ## =================================================================================
 

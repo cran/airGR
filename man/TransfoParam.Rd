@@ -47,6 +47,12 @@ TransfoParam_CemaNeigeHyst(ParamIn, Direction)
 
 \item{FUN_TRANSFO}{[function] model parameters transformation function (e.g. \code{TransfoParam_GR4J}, \code{TransfoParam_CemaNeige})}
 }
+
+
+\details{
+The transformation functions proposed in airGR for calibrating the GR models result from numerous testings at INRAE-Antony (HYCAR Research Unit, France). The proposed transformations were obtained with the Calibration_Michel algorithm and may differ for the same parameter of different models (e.g. X5 in GR5J and GR6J).
+}
+
 \value{
 \emph{ParamOut} [numeric] matrix of parameter sets (sets in line, parameter values in column)
 }

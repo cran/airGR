@@ -1,7 +1,6 @@
 ## ---- include=FALSE, fig.keep='none', results='hide'--------------------------
 library(airGR)
 options(digits = 3)
-library(imputeTS)
 
 ## ---- warning=FALSE, include=FALSE--------------------------------------------
 library(airGR)
@@ -13,7 +12,9 @@ data(L0123001)
 
 ## -----------------------------------------------------------------------------
 QObsDown <- (BasinObs$Qmm + c(0, 0, BasinObs$Qmm[1:(length(BasinObs$Qmm)-2)])) / 2
+options(digits = 5)
 summary(cbind(QObsUp = BasinObs$Qmm, QObsDown))
+options(digits = 3)
 
 ## -----------------------------------------------------------------------------
 InputsModelUp <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$DatesR,
@@ -21,8 +22,8 @@ InputsModelUp <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$Da
 Ind_Run <- seq(which(format(BasinObs$DatesR, format = "%Y-%m-%d") == "1990-01-01"),
                which(format(BasinObs$DatesR, format = "%Y-%m-%d") == "1999-12-31"))
 RunOptionsUp <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
-                                 InputsModel = InputsModelUp
-                                 , IndPeriod_WarmUp = NULL, IndPeriod_Run = Ind_Run,
+                                 InputsModel = InputsModelUp,
+                                 IndPeriod_WarmUp = NULL, IndPeriod_Run = Ind_Run,
                                  IniStates = NULL, IniResLevels = NULL)
 InputsCritUp <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModelUp,
                                  RunOptions = RunOptionsUp,
@@ -37,14 +38,11 @@ OutputsModelUp <- RunModel_GR4J(InputsModel = InputsModelUp, RunOptions = RunOpt
                                 Param = OutputsCalibUp$ParamFinalR)
 
 ## -----------------------------------------------------------------------------
-QObsUp <- imputeTS::na_interpolation(BasinObs$Qmm)
-
-## -----------------------------------------------------------------------------
 InputsModelDown1 <- CreateInputsModel(
   FUN_MOD = RunModel_GR4J, DatesR = BasinObs$DatesR,
   Precip = BasinObs$P, PotEvap = BasinObs$E,
-  Qupstream = matrix(QObsUp, ncol = 1), # upstream observed flow
-  LengthHydro = 1e2 * 1e3, # distance between upstream catchment outlet & the downstream one [m]
+  Qupstream = matrix(BasinObs$Qmm, ncol = 1), # upstream observed flow
+  LengthHydro = 100, # distance between upstream catchment outlet & the downstream one [km]
   BasinAreas = c(180, 180) # upstream and downstream areas [km²]
 )
 
@@ -87,26 +85,26 @@ OutputsCalibDown2 <- Calibration_Michel(InputsModel = InputsModelDown2,
 ParamDown2 <- OutputsCalibDown2$ParamFinalR
 
 ## -----------------------------------------------------------------------------
-Lag <- InputsModelDown1$LengthHydro / (2 * 86400)
-paste(format(Lag), "m/s")
+Velocity <- InputsModelDown1$LengthHydro * 1e3 / (2 * 86400)
+paste(format(Velocity), "m/s")
 
 ## -----------------------------------------------------------------------------
-mLag <- matrix(c(Lag,
-                 OutputsCalibDown1$ParamFinalR[1],
-                 OutputsCalibDown2$ParamFinalR[1]),
-               ncol = 1,
-               dimnames = list(c("theoretical",
-                                 "calibrated with observed upstream flow",
-                                 "calibrated with simulated  upstream flow"),
-                               c("Lag parameter")))
-knitr::kable(mLag)
+mVelocity <- matrix(c(Velocity,
+                      OutputsCalibDown1$ParamFinalR[1],
+                      OutputsCalibDown2$ParamFinalR[1]),
+                    ncol = 1,
+                    dimnames = list(c("theoretical",
+                                      "calibrated with observed upstream flow",
+                                      "calibrated with simulated  upstream flow"),
+                                    c("Velocity parameter")))
+knitr::kable(mVelocity)
 
 ## -----------------------------------------------------------------------------
-ParamDownTheo <- c(Lag, OutputsCalibUp$ParamFinalR)
+ParamDownTheo <- c(Velocity, OutputsCalibUp$ParamFinalR)
 OutputsModelDownTheo <- RunModel(InputsModel = InputsModelDown2,
-                              RunOptions = RunOptionsDown,
-                              Param = ParamDownTheo,
-                              FUN_MOD = RunModel_GR4J)
+                                 RunOptions = RunOptionsDown,
+                                 Param = ParamDownTheo,
+                                 FUN_MOD = RunModel_GR4J)
 CritDownTheo <- ErrorCrit_NSE(InputsCritDown, OutputsModelDownTheo)
 
 ## -----------------------------------------------------------------------------
@@ -120,7 +118,7 @@ comp <- cbind(comp, c(OutputsCalibUp$CritFinal,
                       CritDown1$CritValue,
                       OutputsCalibDown2$CritFinal,
                       CritDownTheo$CritValue))
-colnames(comp) <- c("Lag", paste0("X", 1:4), "NSE")
+colnames(comp) <- c("Velocity", paste0("X", 1:4), "NSE")
 rownames(comp) <- c("Calibration of the upstream subcatchment",
                     "Calibration 1 with observed upstream flow",
                     "Validation 1 with simulated upstream flow",

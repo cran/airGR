@@ -26,7 +26,7 @@ In order to limit the risk of mis-use and increase the flexibility of these main
 
 ## --- Models
 
-Seven hydrological models and one snow melt and accumulation model are implemented in airGR. The snow model can also be used alone or with the daily hydrological models, and each hydrological model can either be used alone or together with the snow model. \cr
+Seven hydrological models and one snow melt and accumulation model are implemented in airGR. The hydrological models can be applied either on a lumped way or on a semi-distributed way (on sub-catchments). The snow model can either be used alone or with the daily or hourly hydrological models. Naturally each hydrological model can also be used alone. \cr
 These models can be called within airGR using the following functions:
 \itemize{
   \item \code{\link{RunModel_GR4H}}: four-parameter hourly lumped hydrological model (Mathevet, 2005)
@@ -55,23 +55,23 @@ To learn how to use the functions from the airGR package, it is recommended to f
   \item refer to the help for \code{\link{Calibration_Michel}}, run the provided example and then refer to the help for \code{\link{CreateCalibOptions}} to understand how a model calibration is prepared/made.
 }
 
-For more information and to get started with the package, you can refer to the vignette (\code{vignette("V01_get_started")}) and go on the \href{https://hydrogr.github.io/airGR/}{airGR website}. \cr\cr
+To get started with the package, you can refer to the 'get_started' vignette (\code{vignette("V01_get_started", package = "airGR")}). To know how to use the models on a semi-distributed way, you can refer to the 'sd_model' vignette (\code{vignette("V05_sd_model", package = "airGR")}). For more information, please visit the \href{https://hydrogr.github.io/airGR/}{airGR website}. \cr\cr
 
 
 ## --- References
 
 \itemize{
-\item Ficchi, A. (2017). An adaptive hydrological model for multiple time-steps: Diagnostics and improvements based on fluxes consistency. PhD thesis, UPMC - Irstea Antony, Paris, France.
-\item Ficchi, A., Perrin, C. and Andréassian, V. (2019). Hydrological modelling at multiple sub-daily time steps: model improvement via flux-matching. Journal of Hydrology, 575, 1308-1327, \doi{10.1016/j.jhydrol.2019.05.084}.
-\item Le Moine, N. (2008). Le bassin versant de surface vu par le souterrain : une voie d'amélioration des performances et du réalisme des modèles pluie-débit ?, PhD thesis (in French), UPMC - Cemagref Antony, Paris, France, 324 pp.
-\item Mathevet, T. (2005). Quels modèles pluie-débit globaux pour le pas de temps horaire ? Développement empirique et comparaison de modèles sur un large échantillon de bassins versants, PhD thesis (in French), ENGREF - Cemagref Antony, Paris, France, 463 pp.
-\item Mouelhi, S. (2003). Vers une chaîne cohérente de modèles pluie-débit conceptuels globaux aux pas de temps pluriannuel, annuel, mensuel et journalier, PhD thesis (in French), ENGREF - Cemagref Antony, Paris, France, 323 pp.
-\item Mouelhi, S., Michel, C., Perrin, C. and Andréassian, V. (2006a). Stepwise development of a two-parameter monthly water balance model. Journal of Hydrology, 318(1-4), 200-214, \doi{10.1016/j.jhydrol.2005.06.014}.
-\item Mouelhi, S., Michel, C., Perrin, C. and Andréassian, V. (2006b). Linking stream flow to rainfall at the annual time step: the Manabe bucket model revisited. Journal of Hydrology, 328, 283-296, \doi{10.1016/j.jhydrol.2005.12.022}.
-\item Perrin, C., Michel, C. and Andréassian, V. (2003). Improvement of a parsimonious model for streamflow simulation. Journal of Hydrology, 279(1-4), 275-289, \doi{10.1016/S0022-1694(03)00225-7}.
-\item Pushpalatha, R., Perrin, C., Le Moine, N., Mathevet, T. and Andréassian, V. (2011). A downward structural sensitivity analysis of hydrological models to improve low-flow simulation. Journal of Hydrology, 411(1-2), 66-76, \doi{10.1016/j.jhydrol.2011.09.034}.
-\item Riboust, P., Thirel, G., Le Moine N. and Ribstein P. (2019). Revisiting a simple degree-day model for integrating satellite data: Implementation of SWE-SCA hystereses. Journal of Hydrology and Hydromechanics, 67(1), 70–81, \doi{10.1016/j.jhydrol.2014.04.058}.
-\item Valéry, A., Andréassian, V. and Perrin, C. (2014). "As simple as possible but not simpler": What is useful in a temperature-based snow-accounting routine? Part 2 - Sensitivity analysis of the Cemaneige snow accounting routine on 380 catchments. Journal of Hydrology, 517(0), 1176-1187, \doi{10.1016/j.jhydrol.2014.04.058}.
+  \item Ficchi, A. (2017). An adaptive hydrological model for multiple time-steps: Diagnostics and improvements based on fluxes consistency. PhD thesis, UPMC - Irstea Antony, Paris, France.
+  \item Ficchi, A., Perrin, C. and Andréassian, V. (2019). Hydrological modelling at multiple sub-daily time steps: model improvement via flux-matching. Journal of Hydrology, 575, 1308-1327, \doi{10.1016/j.jhydrol.2019.05.084}.
+  \item Le Moine, N. (2008). Le bassin versant de surface vu par le souterrain : une voie d'amélioration des performances et du réalisme des modèles pluie-débit ?, PhD thesis (in French), UPMC - Cemagref Antony, Paris, France, 324 pp.
+  \item Mathevet, T. (2005). Quels modèles pluie-débit globaux pour le pas de temps horaire ? Développement empirique et comparaison de modèles sur un large échantillon de bassins versants, PhD thesis (in French), ENGREF - Cemagref Antony, Paris, France, 463 pp.
+  \item Mouelhi, S. (2003). Vers une chaîne cohérente de modèles pluie-débit conceptuels globaux aux pas de temps pluriannuel, annuel, mensuel et journalier, PhD thesis (in French), ENGREF - Cemagref Antony, Paris, France, 323 pp.
+  \item Mouelhi, S., Michel, C., Perrin, C. and Andréassian, V. (2006a). Stepwise development of a two-parameter monthly water balance model. Journal of Hydrology, 318(1-4), 200-214, \doi{10.1016/j.jhydrol.2005.06.014}.
+  \item Mouelhi, S., Michel, C., Perrin, C. and Andréassian, V. (2006b). Linking stream flow to rainfall at the annual time step: the Manabe bucket model revisited. Journal of Hydrology, 328, 283-296, \doi{10.1016/j.jhydrol.2005.12.022}.
+  \item Perrin, C., Michel, C. and Andréassian, V. (2003). Improvement of a parsimonious model for streamflow simulation. Journal of Hydrology, 279(1-4), 275-289, \doi{10.1016/S0022-1694(03)00225-7}.
+  \item Pushpalatha, R., Perrin, C., Le Moine, N., Mathevet, T. and Andréassian, V. (2011). A downward structural sensitivity analysis of hydrological models to improve low-flow simulation. Journal of Hydrology, 411(1-2), 66-76, \doi{10.1016/j.jhydrol.2011.09.034}.
+  \item Riboust, P., Thirel, G., Le Moine N. and Ribstein P. (2019). Revisiting a simple degree-day model for integrating satellite data: Implementation of SWE-SCA hystereses. Journal of Hydrology and Hydromechanics, 67(1), 70–81, \doi{10.1016/j.jhydrol.2014.04.058}.
+  \item Valéry, A., Andréassian, V. and Perrin, C. (2014). "As simple as possible but not simpler": What is useful in a temperature-based snow-accounting routine? Part 2 - Sensitivity analysis of the Cemaneige snow accounting routine on 380 catchments. Journal of Hydrology, 517(0), 1176-1187, \doi{10.1016/j.jhydrol.2014.04.058}.
 }
 
 }

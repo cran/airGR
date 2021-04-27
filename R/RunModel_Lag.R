@@ -1,4 +1,4 @@
-RunModel_Lag <- function(InputsModel, RunOptions, Param) {
+RunModel_Lag <- function(InputsModel, RunOptions, Param, QcontribDown) {
   NParam <- 1
 
   ##Arguments_check
@@ -17,24 +17,22 @@ RunModel_Lag <- function(InputsModel, RunOptions, Param) {
   if (sum(!is.na(Param)) != NParam) {
     stop(paste("'Param' must be a vector of length", NParam, "and contain no NA"))
   }
-  if (is.null(InputsModel$OutputsModel)) {
-    stop(
-      "'InputsModel' should contain an 'OutputsModel' key containing the output of the runoff of the downstream subcatchment"
-    )
+  if (inherits(QcontribDown, "OutputsModel")) {
+    if (is.null(QcontribDown$Qsim)) {
+      stop("'QcontribDown' should contain a key 'Qsim' containing the output of the runoff of the downstream subcatchment")
+    }
+    OutputsModel <- QcontribDown
+    OutputsModel$QsimDown <- OutputsModel$Qsim
+  } else if (is.vector(QcontribDown) && is.numeric(QcontribDown)) {
+    OutputsModel <- list()
+    class(OutputsModel) <- c("OutputsModel", class(OutputsModel))
+    OutputsModel$QsimDown <- QcontribDown
+  } else {
+    stop("'QcontribDown' must be a numeric vector or a 'OutputsModel' object")
   }
-  if (is.null(InputsModel$OutputsModel$Qsim)) {
-    stop(
-      "'InputsModel$OutputsModel' should contain a key 'Qsim' containing the output of the runoff of the downstream subcatchment"
-    )
+  if (length(OutputsModel$QsimDown) != length(RunOptions$IndPeriod_Run)) {
+    stop("Time series in 'QcontribDown' should have the same lenght as 'RunOptions$IndPeriod_Run'")
   }
-  if (sum(!is.na(InputsModel$OutputsModel$Qsim)) != length(RunOptions$IndPeriod_Run)) {
-    stop(
-      "'InputsModel$OutputsModel$Qim' should have the same lenght as 'RunOptions$IndPeriod_Run' and contain no NA"
-    )
-  }
-
-  OutputsModel <- InputsModel$OutputsModel
-  OutputsModel$QsimDown <- OutputsModel$Qsim
 
   if (inherits(InputsModel, "hourly")) {
     TimeStep <- 60 * 60
@@ -45,12 +43,12 @@ RunModel_Lag <- function(InputsModel, RunOptions, Param) {
   }
 
   # propagation time from upstream meshes to outlet
-  PT <- InputsModel$LengthHydro / Param[1L] / TimeStep
+  PT <- InputsModel$LengthHydro * 1e3 / Param[1L] / TimeStep
   HUTRANS <- rbind(1 - (PT - floor(PT)), PT - floor(PT))
 
   NbUpBasins <- length(InputsModel$LengthHydro)
   LengthTs <- length(OutputsModel$QsimDown)
-  OutputsModel$Qsim <- OutputsModel$QsimDown * InputsModel$BasinAreas[length(InputsModel$BasinAreas)] * 1e3
+  OutputsModel$Qsim_m3 <- OutputsModel$QsimDown * InputsModel$BasinAreas[length(InputsModel$BasinAreas)] * 1e3
 
   IniSD <- RunOptions$IniStates[grep("SD", names(RunOptions$IniStates))]
   if (length(IniSD) > 0) {
@@ -75,33 +73,38 @@ RunModel_Lag <- function(InputsModel, RunOptions, Param) {
       rep(0, floor(PT[x] + 1))
     })
   }
+  # message("Initstates: ", paste(IniStates, collapse = ", "))
 
   for (upstream_basin in seq_len(NbUpBasins)) {
-    Qupstream <- InputsModel$Qupstream[RunOptions$IndPeriod_Run, upstream_basin]
-    if (!is.na(InputsModel$BasinAreas[upstream_basin])) {
-      # Upstream flow with area needs to be converted to m3 by time step
-      Qupstream <- Qupstream * InputsModel$BasinAreas[upstream_basin] * 1e3
-    }
-    OutputsModel$Qsim <- OutputsModel$Qsim +
-      c(IniStates[[upstream_basin]][-length(IniStates[[upstream_basin]])],
-        Qupstream[1:(LengthTs - floor(PT[upstream_basin]))]) *
-      HUTRANS[1, upstream_basin] +
-      c(IniStates[[upstream_basin]],
-        Qupstream[1:(LengthTs - floor(PT[upstream_basin]) - 1)]) *
-      HUTRANS[2, upstream_basin]
-  }
-  # Warning for negative flows
-  if (any(OutputsModel$Qsim < 0)) {
-    warning(length(which(OutputsModel$Qsim < 0)), " time steps with negative flow, set to zero.")
-    OutputsModel$Qsim[OutputsModel$Qsim < 0] <- 0
+    Qupstream <- c(IniStates[[upstream_basin]],
+                   InputsModel$Qupstream[RunOptions$IndPeriod_Run, upstream_basin])
+    # message("Qupstream[", upstream_basin, "]: ", paste(Qupstream, collapse = ", "))
+    OutputsModel$Qsim_m3 <- OutputsModel$Qsim_m3 +
+      Qupstream[2:(1 + LengthTs)] * HUTRANS[1, upstream_basin] +
+      Qupstream[1:LengthTs] * HUTRANS[2, upstream_basin]
   }
   # Convert back Qsim to mm
-  OutputsModel$Qsim <- OutputsModel$Qsim / sum(InputsModel$BasinAreas, na.rm = TRUE) / 1e3
+  OutputsModel$Qsim <- OutputsModel$Qsim_m3 / sum(InputsModel$BasinAreas, na.rm = TRUE) / 1e3
+  # message("Qsim: ", paste(OutputsModel$Qsim, collapse = ", "))
+
+  # Warning for negative flows or NAs only in extended outputs
+  if(length(RunOptions$Outputs_Sim) > 2) {
+    if (any(OutputsModel$Qsim[!is.na(OutputsModel$Qsim)] < 0)) {
+      warning(length(which(OutputsModel$Qsim < 0)), " time steps with negative flow, set to zero.")
+      OutputsModel$Qsim[OutputsModel$Qsim < 0] <- 0
+    }
+    # Warning for NAs
+    if (any(is.na(OutputsModel$Qsim))) {
+      warning(length(which(is.na(OutputsModel$Qsim))), " time steps with NA values")
+    }
+  }
 
   if ("StateEnd" %in% RunOptions$Outputs_Sim) {
     OutputsModel$StateEnd$SD <- lapply(seq(NbUpBasins), function(x) {
-      Qupstream[(LengthTs - floor(PT[x])):LengthTs]
+      lastTS <- RunOptions$IndPeriod_Run[length(RunOptions$IndPeriod_Run)]
+      InputsModel$Qupstream[(lastTS - floor(PT[x])):lastTS, x]
     })
+    # message("StateEnd: ", paste(OutputsModel$StateEnd$SD, collapse = ", "))
   }
 
   return(OutputsModel)

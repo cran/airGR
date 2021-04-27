@@ -2,11 +2,49 @@
 
 
 
+### 1.6.12 Release Notes (2021-04-27)
+
+#### New features
+
+- `CreateInputsModel()` gains a `QupstrUnit` argument in order to manage the unit of the flow in the `Qupstream` argument in case of the use of a semi-distributed version of a hydrological model. ([#110](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/110))
+- `RunModel_Lag()` gains a `QcontribDown` argument containing the time series of the runoff contribution of the downstream sub-basin in case of the use of a semi-distributed version of a hydrological model. ([#109](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/109))
+
+
+#### Bug fixes
+
+- Fixed bug in `RunModel`. The `RunModel_Lag()` can now be passed to the `FUN_MOD` argument. ([#108](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/108))
+- Fixed bug in `RunModel_Lag()`. The function no longer returns two values for a single time step run. ([#102](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/102))
+- Fixed bug in `RunModel_Lag()`. The `StateEnd` value is now correct when there are more than a single upstream basin. ([#103](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/103))
+- Fixed bug in `RunModel_Lag()`.  The `StateEnd` value is now correct when the upstream flow unit is mm/time step. ([#104](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/104))
+- Fixed bug in `RunModel_CemaNeigeGR5H()`. The solid precipitation are now taken into account in the GR5H model. ([#105](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/105))
+- Fixed bug in `RunModel_CemaNeige()` and `CreateInputsModel()`. `RunModel_CemaNeige()` now runs at the hourly time step. ([#106](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/106))
+- Fixed the 'param_optim' vignette. The starting points used for the multi-start approach are now in the transformed space.([#101](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/101))
+
+
+#### Major user-visible changes
+- `LengthHydro` must now be set in kilometers (not anymore in meters) in the `CreateInputsModel()` function. ([#112](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/112))
+- `TransfoParam_GR5H()` now use the same transformation as `TransfoParam_GR4H()` for the X1 parameter. The previous transformation set by Ficchì seems unnecessary as it provokes irrealistically high X1 values. ([#50](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/50))
+
+
+#### Minor user-visible changes
+
+- The `RunModel*()` functions now run faster. The computation times are significantly shorter for long times series with many time steps (e.g. hourly times series), due to a better management of the missing values in and out the Fortran codes. Only simulation computation times have been improved (it is largely invisible to the user for calibration computation times). ([#113](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/113))
+- The external calibration algorithms used in 'param_optim' and 'param_mcmc' vignettes now  run faster. The `RunModel_*()` functions used during the parameter estimation process now run faster because the outputs contain only the simulated flows (see the `Outputs_Sim` argument in the `CreateRunOptions()` help page).
+
+
+#### Version control and issue tracking
+
+- The CI pipelines now fail when the checks return a warning message (and not just an error message). ([#86](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/86))
+- The reverse dependencies packages (e.g. the 'airGRteaching' or the 'airGRdatassim') are now checked by the CI pipelines. ([#86](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/86))
+
+____________________________________________________________________________________
+
+
 ### 1.6.10.4 Release Notes (2021-01-29)
 
 #### New features
 
-- Added a section 'param_optim' vignette to explain how to manage with multiobjective optimization using the 'CaRamel' package. ([#61](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/61))
+- Added a section 'param_optim' vignette to explain how to manage with multiobjective optimization using the 'caRamel' package. ([#61](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/61))
 
 
 #### Major user-visible changes
@@ -21,7 +59,7 @@
 
 #### CRAN-compatibility updates
 
-- Coerce `POSIXlt` dates into character in `RunModel_GR1A()` example and in `SeriesAggreg()` tests in order to avoid bad subsetting on time series due to mixing UTC and local time on macOS flavors. ([#94](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/94))
+- Coerce `character` dates into `POSIXlt` in `RunModel_GR1A()` example and in `SeriesAggreg()` tests in order to avoid bad subsetting on time series due to mixing UTC and local time (error returned on macOS flavors). ([#94](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/94))
 
 ____________________________________________________________________________________
 
@@ -48,11 +86,10 @@ ________________________________________________________________________________
 
 #### Bug fixes
 
-- `TimeLag` of the `SeriesAggreg()` function now runs when `TimeLag >= 3600`.
+- Fixed bug in`SeriesAggreg()`. The function now runs when `TimeLag >= 3600`.
 ([#41](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/41))
-- `SeriesAggreg()` now runs when the time series contain some columns entirely filled with missing values. ([#43](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/43))
+- Fixed bug in`SeriesAggreg()`. The function now runs when the time series contain some columns entirely filled with missing values. ([#43](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/43))
 - Fixed bug in `RunModel_GR1A()`. Reversed PotEvap and Precip outputs are now reordered (in the previous versions PotEvap contained the precipitation values and Precip contained the evapotranspiration values, the Qsim values were already correct). ([#65](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/65))
-
 
 
 #### Major user-visible changes
@@ -73,6 +110,7 @@ ________________________________________________________________________________
 - Added the diagram of GR5H in the `RunModel_GR5H()` documentation. ([#49](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/49))
 - The `Exch` was renames `AExch` in the `RunModel_GR2M()` output. ([#87](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/87))
 - Added 'Es' and 'Ps' on the GR2M diagram available in the `RunModel_GR2M()` help page. ([#88](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/88))
+- The `plot.OutputsModel()` function does not check anymore the time step by comparing the calculation of the difference of the last two time steps because it is already checked by the class of the `OutputsModel` object, which is therefore assumed to be necessarily valid. ([#56](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/56))
 
 
 #### Version control and issue tracking

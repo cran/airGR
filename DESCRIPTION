@@ -2,12 +2,12 @@ Package: airGR
 Type: Package
 Title: Suite of GR Hydrological Models for Precipitation-Runoff
         Modelling
-Version: 1.6.10.4
-Date: 2021-01-29
+Version: 1.6.12
+Date: 2021-04-27
 Authors@R: c(
   person("Laurent", "Coron", role = c("aut", "trl"), comment = c(ORCID = "0000-0002-1503-6204")),
   person("Olivier", "Delaigue", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-7668-8468"), email = "airGR@inrae.fr"),
-  person("Guillaume", "Thirel", role = c("aut"), comment = c(ORCID = "0000-0002-1444-1830")),
+  person("Guillaume", "Thirel", role = c("aut", "ths"), comment = c(ORCID = "0000-0002-1444-1830")),
   person("David", "Dorchies", role = c("aut"), comment = c(ORCID = "0000-0002-6595-7984")),
   person("Charles", "Perrin", role = c("aut", "ths"), comment = c(ORCID = "0000-0001-8552-1881")),
   person("Claude", "Michel", role = c("aut", "ths")),
@@ -23,19 +23,20 @@ Authors@R: c(
   )
 Depends: R (>= 3.1.0)
 Imports: graphics, grDevices, stats, utils
-Suggests: knitr, rmarkdown, caRamel, coda, DEoptim, dplyr, FME, ggmcmc,
-        hydroPSO, imputeTS, Rmalschains, GGally, ggplot2, testthat
-Description: Hydrological modelling tools developed at INRAE-Antony (HYCAR Research Unit, France). The package includes several conceptual rainfall-runoff models (GR4H, GR5H, GR4J, GR5J, GR6J, GR2M, GR1A), a snow accumulation and melt model (CemaNeige) and the associated functions for their calibration and evaluation. Use help(airGR) for package description and references.
+Suggests: knitr, markdown, rmarkdown, caRamel, coda, DEoptim, dplyr,
+        FME, ggmcmc, hydroPSO, imputeTS, Rmalschains, GGally, ggplot2,
+        testthat
+Description: Hydrological modelling tools developed at INRAE-Antony (HYCAR Research Unit, France). The package includes several conceptual rainfall-runoff models (GR4H, GR5H, GR4J, GR5J, GR6J, GR2M, GR1A) that can be applied either on a lumped or semi-distributed way. A snow accumulation and melt model (CemaNeige) and the associated functions for the calibration and evaluation of models are also included. Use help(airGR) for package description and references.
 License: GPL-2
 URL: https://hydrogr.github.io/airGR/
 BugReports: https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues
 NeedsCompilation: yes
 Encoding: UTF-8
 VignetteBuilder: knitr
-Packaged: 2021-01-29 07:26:52 UTC; irstea
+Packaged: 2021-04-27 07:39:13 UTC; irstea
 Author: Laurent Coron [aut, trl] (<https://orcid.org/0000-0002-1503-6204>),
   Olivier Delaigue [aut, cre] (<https://orcid.org/0000-0002-7668-8468>),
-  Guillaume Thirel [aut] (<https://orcid.org/0000-0002-1444-1830>),
+  Guillaume Thirel [aut, ths] (<https://orcid.org/0000-0002-1444-1830>),
   David Dorchies [aut] (<https://orcid.org/0000-0002-6595-7984>),
   Charles Perrin [aut, ths] (<https://orcid.org/0000-0001-8552-1881>),
   Claude Michel [aut, ths],
@@ -50,4 +51,4 @@ Author: Laurent Coron [aut, trl] (<https://orcid.org/0000-0002-1503-6204>),
   Audrey Valéry [ctb]
 Maintainer: Olivier Delaigue <airGR@inrae.fr>
 Repository: CRAN
-Date/Publication: 2021-01-29 09:50:06 UTC
+Date/Publication: 2021-04-27 08:40:02 UTC

@@ -19,7 +19,7 @@ Then a steepest descent local search algorithm is performed, starting from the r
 
 \usage{
 Calibration_Michel(InputsModel, RunOptions, InputsCrit, CalibOptions,
-                   FUN_MOD, FUN_CRIT, FUN_TRANSFO = NULL, verbose = TRUE)
+                   FUN_MOD, FUN_CRIT, FUN_TRANSFO = NULL, verbose = TRUE, ...)
 }
 
 
@@ -39,6 +39,8 @@ Calibration_Michel(InputsModel, RunOptions, InputsCrit, CalibOptions,
 \item{FUN_TRANSFO}{(optional) [function] model parameters transformation function, if the \code{FUN_MOD} used is native in the package \code{FUN_TRANSFO} is automatically defined}
 
 \item{verbose}{(optional) [boolean] boolean indicating if the function is run in verbose mode or not, default = \code{TRUE}}
+
+\item{...}{(optional) arguments to pass to \code{\link{RunModel}}}
 }
 
 

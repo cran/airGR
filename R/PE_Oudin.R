@@ -75,7 +75,7 @@ PE_Oudin <- function(JD, Temp,
                         InputsTT = as.double(Temp),
                         InputsJJ = as.double(JD),
                         ##outputs
-                        PE_Oudin_D = rep(as.double(-999.999), LInputs)
+                        PE_Oudin_D = rep(as.double(-99e9), LInputs)
     )
     PE_Oudin_D = RESULTS$PE_Oudin_D
 

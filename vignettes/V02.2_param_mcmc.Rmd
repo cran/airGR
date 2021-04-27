@@ -38,6 +38,14 @@ We use the **GR4J** model and we assume that the R global environment contains d
 example("Calibration_Michel")
 ```
 
+In order for the `RunModel_*()` functions to run faster during the parameter estimation process, it is recommended that the outputs contain only the simulated flows (see the `Outputs_Sim` argument in the `CreateRunOptions()` help page).
+
+```{r, results='hide', eval=FALSE}
+RunOptions <- airGR::CreateRunOptions(FUN_MOD = RunModel_GR4J, InputsModel = InputsModel,
+                                      IndPeriod_Run = Ind_Run,
+                                      Outputs_Sim = "Qsim")
+```
+
 Please refer to the [2.1 Plugging in new calibration](V02.1_param_optim.html) vignette for explanations on how to plug in a parameter estimation algorithm to **airGR**.
 
 
@@ -49,6 +57,7 @@ We show how to use the DRAM algorithm for SLS Bayesian inference, with the `modM
 First, we need to define a function that returns twice the opposite of the log-likelihood for a given parameter set.
 
 Nota: in the `LogLikeGR4J()` function, the computation of the log-likelihood is simplified in order to ensure a good computing performance. It corresponds to a translation  of the two following lines.
+
 ```{r, echo=TRUE, eval=FALSE, purl=FALSE}
 Likelihood <- sum((ObsY - ModY)^2, na.rm = TRUE)^(-sum(!is.na(ObsY)) / 2)
 LogLike <- -2 * log(Likelihood)
@@ -96,8 +105,10 @@ Nota: in this example, there are relatively few iterations (2000), in order to l
 With the DRAM algorithm, the covariance of the proposal is updated every 100 runs and delayed rejection is applied.
 
 ```{r, results='hide', eval=FALSE}
-iniParPORT <- data.frame(Chain1 = iniParPORT, Chain2 = iniParPORT, Chain3 = iniParPORT,
-                           row.names = paste0("X", 1:4))
+iniParPORT <- data.frame(Chain1 = iniParPORT,
+                         Chain2 = iniParPORT,
+                         Chain3 = iniParPORT,
+                         row.names = paste0("X", 1:4))
 iniParPORT <- sweep(iniParPORT, MARGIN = 2, STATS = c(1, 0.9, 1.1), FUN = "*")
 iniParPORT[iniParPORT < -9.9] <- -9.9
 iniParPORT[iniParPORT > +9.9] <- +9.9
@@ -111,8 +122,8 @@ mcmcDRAM <- apply(iniParPORT, MARGIN = 2, FUN = function(iIniParPORT) {
                jump         = 0.01,
                outputlength = 2000,
                burninlength = 0,
-               updatecov    = 100, ## Adaptative Metropolis
-               ntrydr       = 2)   ## Delayed Rejection
+               updatecov    = 100, ## adaptative Metropolis (AM)
+               ntrydr       = 2)   ## delayed rejection (RD)
 })
 ```
 
@@ -143,7 +154,7 @@ In addition, graphical tools can be used, with for example the [ggmcmc](https://
 First, the evolution of the Markov chains can be seen with a traceplot:
 
 ```{r, fig.width=6, fig.height=9, warning=FALSE}
-parDRAM <- ggmcmc::ggs(multDRAM) ## to convert objet for using by all ggs_* graphical functions
+parDRAM <- ggmcmc::ggs(multDRAM) ## to convert object for using by all ggs_* graphical functions
 ggmcmc::ggs_traceplot(parDRAM)
 ```
 

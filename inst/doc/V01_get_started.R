@@ -3,7 +3,7 @@ library(airGR)
 
 ## -----------------------------------------------------------------------------
 data(L0123001)
-summary(BasinObs)
+summary(BasinObs, digits = 2)
 
 ## -----------------------------------------------------------------------------
 InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$DatesR,

@@ -76,6 +76,13 @@ CreateCalibOptions <- function(FUN_MOD,
     ObjectClass <- c(ObjectClass, "CemaNeigeGR6J")
     BOOL <- TRUE
   }
+  if (identical(FUN_MOD, RunModel_Lag)) {
+    ObjectClass <- c(ObjectClass, "Lag")
+    if (IsSD) {
+      stop("RunModel_Lag should not be used with 'isSD=TRUE'")
+    }
+    BOOL <- TRUE
+  }
   if (IsHyst) {
     ObjectClass <- c(ObjectClass, "hysteresis")
   }
@@ -136,6 +143,9 @@ CreateCalibOptions <- function(FUN_MOD,
         FUN_GR <- TransfoParam_CemaNeige
       }
     }
+    if (identical(FUN_MOD, RunModel_Lag)) {
+      FUN_GR <- TransfoParam_Lag
+    }
     if (is.null(FUN_GR)) {
       stop("'FUN_GR' was not found")
       return(NULL)
@@ -151,7 +161,7 @@ CreateCalibOptions <- function(FUN_MOD,
       FUN_LAG <- TransfoParam_Lag
     }
     ## set FUN_TRANSFO
-    if (sum(ObjectClass %in% c("GR4H", "GR5H", "GR4J", "GR5J", "GR6J", "GR2M", "GR1A", "CemaNeige")) > 0) {
+    if (sum(ObjectClass %in% c("GR4H", "GR5H", "GR4J", "GR5J", "GR6J", "GR2M", "GR1A", "CemaNeige", "Lag")) > 0) {
       if (!IsSD) {
         FUN_TRANSFO <- FUN_GR
       } else {
@@ -292,6 +302,10 @@ CreateCalibOptions <- function(FUN_MOD,
   if ("CemaNeigeGR6J" %in% ObjectClass) {
     NParam <- 8
   }
+  if ("Lag" %in% ObjectClass) {
+    NParam <- 1
+  }
+
   if (IsHyst) {
     NParam <- NParam + 2
   }

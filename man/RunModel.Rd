@@ -15,7 +15,7 @@ Function which performs a single model run with the provided function over the s
 
 
 \usage{
-RunModel(InputsModel, RunOptions, Param, FUN_MOD)
+RunModel(InputsModel, RunOptions, Param, FUN_MOD, ...)
 %
 %\method{[}{OutputsModel}(x, i)
 }
@@ -29,6 +29,8 @@ RunModel(InputsModel, RunOptions, Param, FUN_MOD)
 \item{Param}{[numeric] vector of model parameters (See details for SD lag model)}
 
 \item{FUN_MOD}{[function] hydrological model function (e.g. \code{\link{RunModel_GR4J}}, \code{\link{RunModel_CemaNeigeGR4J}})}
+
+\item{...}{(optional) arguments to pass to \code{FUN_MOD}}
 %
 %\item{x}{[InputsModel] object of class InputsModel}
 %

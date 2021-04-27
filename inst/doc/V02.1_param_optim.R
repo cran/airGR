@@ -14,6 +14,11 @@ load(system.file("vignettesData/vignetteParamOptimCaramel.rda", package = "airGR
 ## ---- echo=TRUE, eval=FALSE---------------------------------------------------
 #  example("Calibration_Michel")
 
+## ---- results='hide', eval=FALSE----------------------------------------------
+#  RunOptions <- airGR::CreateRunOptions(FUN_MOD = RunModel_GR4J, InputsModel = InputsModel,
+#                                        IndPeriod_Run = Ind_Run,
+#                                        Outputs_Sim = "Qsim")
+
 ## ---- warning=FALSE, results='hide', eval=FALSE-------------------------------
 #  OptimGR4J <- function(ParamOptim) {
 #    ## Transformation of the parameter set to real space
@@ -42,7 +47,9 @@ load(system.file("vignettesData/vignetteParamOptimCaramel.rda", package = "airGR
 #                           control = list(trace = 1))
 
 ## ---- warning=FALSE, results='hide', eval=FALSE-------------------------------
-#  startGR4J <- expand.grid(data.frame(CalibOptions$StartParamDistrib))
+#  startGR4JDistrib <- TransfoParam_GR4J(ParamIn = CalibOptions$StartParamDistrib,
+#                                        Direction = "RT")
+#  startGR4J <- expand.grid(data.frame(startGR4JDistrib))
 #  optPORT_ <- function(x) {
 #    opt <- stats::nlminb(start = x,
 #                         objective = OptimGR4J,

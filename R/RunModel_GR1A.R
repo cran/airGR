@@ -1,11 +1,11 @@
 RunModel_GR1A <- function(InputsModel, RunOptions, Param) {
-  
-  
+
+
   ## Initialization of variables
   NParam <- 1
   FortranOutputs <- .FortranOutputs(GR = "GR1A")$GR
-  
-  
+
+
   ## Arguments check
   if (!inherits(InputsModel, "InputsModel")) {
     stop("'InputsModel' must be of class 'InputsModel'")
@@ -29,8 +29,8 @@ RunModel_GR1A <- function(InputsModel, RunOptions, Param) {
     stop(paste("'Param' must be a vector of length", NParam, "and contain no NA"))
   }
   Param <- as.double(Param)
-  
-  
+
+
   ## Input data preparation
   if (identical(RunOptions$IndPeriod_WarmUp, 0L)) {
     RunOptions$IndPeriod_WarmUp <- NULL
@@ -42,16 +42,16 @@ RunModel_GR1A <- function(InputsModel, RunOptions, Param) {
   } else {
     IndOutputs <- which(FortranOutputs %in% RunOptions$Outputs_Sim)
   }
-  
-  
+
+
   ## Output data preparation
-  IndPeriod2     <- (length(RunOptions$IndPeriod_WarmUp) + 1):LInputSeries
+  IndPeriod2     <- (length(RunOptions$IndPeriod_WarmUp)+1):LInputSeries
   ExportDatesR   <- "DatesR"   %in% RunOptions$Outputs_Sim
   ExportStateEnd <- "StateEnd" %in% RunOptions$Outputs_Sim
-  
-  
+
+
   ## Call GR model Fortan
-  RESULTS <- .Fortran("frun_gr1a", PACKAGE = "airGR", 
+  RESULTS <- .Fortran("frun_gr1a", PACKAGE = "airGR",
                       ## inputs
                       LInputs = LInputSeries,                             ### length of input and output series
                       InputsPrecip = InputsModel$Precip[IndPeriod1],      ### input series of total precipitation [mm/y]
@@ -63,13 +63,12 @@ RunModel_GR1A <- function(InputsModel, RunOptions, Param) {
                       NOutputs = as.integer(length(IndOutputs)),          ### number of output series
                       IndOutputs = IndOutputs,                            ### indices of output series
                       ## outputs
-                      Outputs = matrix(as.double(-999.999), nrow = LInputSeries, ncol=length(IndOutputs)), ### output series [mm]
-                      StateEnd = rep(as.double(-999.999), length(RunOptions$IniStates))                   ### state variables at the end of the model run
+                      Outputs = matrix(as.double(-99e9), nrow = LInputSeries, ncol = length(IndOutputs)), ### output series [mm/y]
+                      StateEnd = rep(as.double(-99e9), length(RunOptions$IniStates))                      ### state variables at the end of the model run
   )
-  RESULTS$Outputs[ round(RESULTS$Outputs , 3) == -999.999] <- NA
-  RESULTS$StateEnd[round(RESULTS$StateEnd, 3) == -999.999] <- NA
-  
-  
+  RESULTS$Outputs[RESULTS$Outputs   <= -99e8] <- NA
+  RESULTS$StateEnd[RESULTS$StateEnd <= -99e8] <- NA
+
   ## Output data preparation
   ## OutputsModel only
   if (!ExportDatesR & !ExportStateEnd) {
@@ -78,28 +77,26 @@ RunModel_GR1A <- function(InputsModel, RunOptions, Param) {
   }
   ## DatesR and OutputsModel only
   if (ExportDatesR & !ExportStateEnd) {
-    OutputsModel <- c(list(InputsModel$DatesR[RunOptions$IndPeriod_Run]), 
+    OutputsModel <- c(list(InputsModel$DatesR[RunOptions$IndPeriod_Run]),
                       lapply(seq_len(RESULTS$NOutputs), function(i) RESULTS$Outputs[IndPeriod2, i]))
     names(OutputsModel) <- c("DatesR", FortranOutputs[IndOutputs])
   }
-  ## OutputsModel and SateEnd only
+  ## OutputsModel and StateEnd only
   if (!ExportDatesR & ExportStateEnd) {
-    OutputsModel <- c(lapply(seq_len(RESULTS$NOutputs), function(i) RESULTS$Outputs[IndPeriod2, i]), 
+    OutputsModel <- c(lapply(seq_len(RESULTS$NOutputs), function(i) RESULTS$Outputs[IndPeriod2, i]),
                       list(RESULTS$StateEnd))
     names(OutputsModel) <- c(FortranOutputs[IndOutputs], "StateEnd")
   }
-  ## DatesR and OutputsModel and SateEnd
+  ## DatesR and OutputsModel and StateEnd
   if ((ExportDatesR & ExportStateEnd) | "all" %in% RunOptions$Outputs_Sim) {
-    OutputsModel <- c(list(InputsModel$DatesR[RunOptions$IndPeriod_Run]), 
-                      lapply(seq_len(RESULTS$NOutputs), function(i) RESULTS$Outputs[IndPeriod2, i]), 
+    OutputsModel <- c(list(InputsModel$DatesR[RunOptions$IndPeriod_Run]),
+                      lapply(seq_len(RESULTS$NOutputs), function(i) RESULTS$Outputs[IndPeriod2, i]),
                       list(RESULTS$StateEnd))
     names(OutputsModel) <- c("DatesR", FortranOutputs[IndOutputs], "StateEnd")
   }
-  
-  
+
   ## End
   class(OutputsModel) <- c("OutputsModel", "yearly", "GR")
   return(OutputsModel)
-  
-}
 
+}
