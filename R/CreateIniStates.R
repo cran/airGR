@@ -12,45 +12,11 @@ CreateIniStates <- function(FUN_MOD, InputsModel, IsHyst = FALSE, IsIntStore = F
   UH1n <- 20L
   UH2n <- UH1n * 2L
 
-  nameFUN_MOD <- as.character(substitute(FUN_MOD))
   FUN_MOD <- match.fun(FUN_MOD)
 
-  ## check FUN_MOD
-  BOOL <- FALSE
-  if (identical(FUN_MOD, RunModel_GR4H) | identical(FUN_MOD, RunModel_GR5H)) {
-    ObjectClass <- c(ObjectClass, "GR", "hourly")
-    BOOL <- TRUE
-  }
-  if (identical(FUN_MOD, RunModel_GR4J) |
-      identical(FUN_MOD, RunModel_GR5J) |
-      identical(FUN_MOD, RunModel_GR6J)) {
-    ObjectClass <- c(ObjectClass, "GR", "daily")
-    BOOL <- TRUE
-  }
-  if (identical(FUN_MOD, RunModel_GR2M)) {
-    ObjectClass <- c(ObjectClass, "GR", "monthly")
-    BOOL <- TRUE
-  }
-  if (identical(FUN_MOD, RunModel_GR1A)) {
-    stop("'RunModel_GR1A' does not require 'IniStates' object")
-  }
-  if (identical(FUN_MOD, RunModel_CemaNeige)) {
-    ObjectClass <- c(ObjectClass, "CemaNeige", "daily")
-    BOOL <- TRUE
-  }
-  if (identical(FUN_MOD, RunModel_CemaNeigeGR4H) | identical(FUN_MOD, RunModel_CemaNeigeGR5H)) {
-    ObjectClass <- c(ObjectClass, "GR", "CemaNeige", "hourly")
-    BOOL <- TRUE
-  }
-  if (identical(FUN_MOD, RunModel_CemaNeigeGR4J) |
-      identical(FUN_MOD, RunModel_CemaNeigeGR5J) |
-      identical(FUN_MOD, RunModel_CemaNeigeGR6J)) {
-    ObjectClass <- c(ObjectClass, "GR", "CemaNeige", "daily")
-    BOOL <- TRUE
-  }
-  if (!BOOL) {
-    stop("incorrect 'FUN_MOD' for use in 'CreateIniStates'")
-  }
+  FeatFUN_MOD <- .GetFeatModel(FUN_MOD = FUN_MOD, DatesR = InputsModel$DatesR)
+  ObjectClass <- FeatFUN_MOD$Class
+
   if (!"CemaNeige" %in% ObjectClass & IsHyst) {
     stop("'IsHyst' cannot be TRUE if CemaNeige is not used in 'FUN_MOD'")
   }
@@ -82,7 +48,7 @@ CreateIniStates <- function(FUN_MOD, InputsModel, IsHyst = FALSE, IsIntStore = F
     }
   } else if (!is.null(ExpStore)) {
     if (verbose) {
-      warning(sprintf("'%s' does not require 'ExpStore'. Value set to NA", nameFUN_MOD))
+      warning(sprintf("'%s' does not require 'ExpStore'. Value set to NA", FeatFUN_MOD$NameFunMod))
     }
     ExpStore <- Inf
   }
@@ -90,13 +56,13 @@ CreateIniStates <- function(FUN_MOD, InputsModel, IsHyst = FALSE, IsIntStore = F
   if (identical(FUN_MOD, RunModel_GR2M)) {
     if (!is.null(UH1)) {
       if (verbose) {
-        warning(sprintf("'%s' does not require 'UH1'. Values set to NA", nameFUN_MOD))
+        warning(sprintf("'%s' does not require 'UH1'. Values set to NA", FeatFUN_MOD$NameFunMod))
       }
       UH1 <- rep(Inf, UH1n)
     }
     if (!is.null(UH2)) {
       if (verbose) {
-        warning(sprintf("'%s' does not require 'UH2'. Values set to NA", nameFUN_MOD))
+        warning(sprintf("'%s' does not require 'UH2'. Values set to NA", FeatFUN_MOD$NameFunMod))
       }
       UH2 <- rep(Inf, UH2n)
     }
@@ -104,13 +70,13 @@ CreateIniStates <- function(FUN_MOD, InputsModel, IsHyst = FALSE, IsIntStore = F
 
   if ((identical(FUN_MOD, RunModel_GR5J) | identical(FUN_MOD, RunModel_CemaNeigeGR5J)) & !is.null(UH1)) {
     if (verbose) {
-      warning(sprintf("'%s' does not require 'UH1'. Values set to NA", nameFUN_MOD))
+      warning(sprintf("'%s' does not require 'UH1'. Values set to NA", FeatFUN_MOD$NameFunMod))
     }
     UH1 <- rep(Inf, UH1n)
   }
-  if ((!identical(FUN_MOD, RunModel_GR5H) | identical(FUN_MOD, RunModel_CemaNeigeGR5H)) & !is.null(IntStore)) {
+  if (!(identical(FUN_MOD, RunModel_GR5H) | identical(FUN_MOD, RunModel_CemaNeigeGR5H)) & !is.null(IntStore)) {
     if (verbose) {
-      warning(sprintf("'%s' does not require 'IntStore'. Values set to NA", nameFUN_MOD))
+      warning(sprintf("'%s' does not require 'IntStore'. Values set to NA", FeatFUN_MOD$NameFunMod))
     }
     IntStore <- Inf
   }
@@ -118,65 +84,65 @@ CreateIniStates <- function(FUN_MOD, InputsModel, IsHyst = FALSE, IsIntStore = F
   if ("CemaNeige" %in% ObjectClass & ! "GR" %in% ObjectClass) {
     if (!is.null(ProdStore)) {
       if (verbose) {
-        warning(sprintf("'%s' does not require 'ProdStore'. Values set to NA", nameFUN_MOD))
+        warning(sprintf("'%s' does not require 'ProdStore'. Values set to NA", FeatFUN_MOD$NameFunMod))
       }
     }
     ProdStore <- Inf
     if (!is.null(RoutStore)) {
       if (verbose) {
-        warning(sprintf("'%s' does not require 'RoutStore'. Values set to NA", nameFUN_MOD))
+        warning(sprintf("'%s' does not require 'RoutStore'. Values set to NA", FeatFUN_MOD$NameFunMod))
       }
     }
     RoutStore <- Inf
     if (!is.null(ExpStore)) {
       if (verbose) {
-        warning(sprintf("'%s' does not require 'ExpStore'. Values set to NA", nameFUN_MOD))
+        warning(sprintf("'%s' does not require 'ExpStore'. Values set to NA", FeatFUN_MOD$NameFunMod))
       }
     }
     ExpStore <- Inf
     if (!is.null(IntStore)) {
       if (verbose) {
-        warning(sprintf("'%s' does not require 'IntStore'. Values set to NA", nameFUN_MOD))
+        warning(sprintf("'%s' does not require 'IntStore'. Values set to NA", FeatFUN_MOD$NameFunMod))
       }
     }
     IntStore <- Inf
     if (!is.null(UH1)) {
       if (verbose) {
-        warning(sprintf("'%s' does not require 'UH1'. Values set to NA", nameFUN_MOD))
+        warning(sprintf("'%s' does not require 'UH1'. Values set to NA", FeatFUN_MOD$NameFunMod))
       }
     }
     UH1 <- rep(Inf, UH1n)
     if (!is.null(UH2)) {
       if (verbose) {
-        warning(sprintf("'%s' does not require 'UH2'. Values set to NA", nameFUN_MOD))
+        warning(sprintf("'%s' does not require 'UH2'. Values set to NA", FeatFUN_MOD$NameFunMod))
       }
     }
     UH2 <- rep(Inf, UH2n)
   }
-  if(IsIntStore & is.null(IntStore)) {
-      stop(sprintf("'%s' need values for 'IntStore'", nameFUN_MOD))
+  if (IsIntStore & is.null(IntStore)) {
+      stop(sprintf("'%s' need values for 'IntStore'", FeatFUN_MOD$NameFunMod))
   }
-  if("CemaNeige" %in% ObjectClass & !IsHyst &
+  if ("CemaNeige" %in% ObjectClass & !IsHyst &
      (is.null(GCemaNeigeLayers) | is.null(eTGCemaNeigeLayers))) {
-      stop(sprintf("'%s' need values for 'GCemaNeigeLayers' and 'GCemaNeigeLayers'", nameFUN_MOD))
+      stop(sprintf("'%s' need values for 'GCemaNeigeLayers' and 'GCemaNeigeLayers'", FeatFUN_MOD$NameFunMod))
   }
-  if("CemaNeige" %in% ObjectClass & IsHyst &
+  if ("CemaNeige" %in% ObjectClass & IsHyst &
      (is.null(GCemaNeigeLayers) | is.null(eTGCemaNeigeLayers) |
       is.null(GthrCemaNeigeLayers) | is.null(GlocmaxCemaNeigeLayers))) {
-    stop(sprintf("'%s' need values for 'GCemaNeigeLayers', 'GCemaNeigeLayers', 'GthrCemaNeigeLayers' and 'GlocmaxCemaNeigeLayers'", nameFUN_MOD))
+    stop(sprintf("'%s' need values for 'GCemaNeigeLayers', 'GCemaNeigeLayers', 'GthrCemaNeigeLayers' and 'GlocmaxCemaNeigeLayers'", FeatFUN_MOD$NameFunMod))
   }
-  if("CemaNeige" %in% ObjectClass & !IsHyst &
+  if ("CemaNeige" %in% ObjectClass & !IsHyst &
      (!is.null(GthrCemaNeigeLayers) | !is.null(GlocmaxCemaNeigeLayers))) {
     if (verbose) {
-      warning(sprintf("'%s' does not require 'GthrCemaNeigeLayers' and 'GlocmaxCemaNeigeLayers'. Values set to NA", nameFUN_MOD))
+      warning(sprintf("'%s' does not require 'GthrCemaNeigeLayers' and 'GlocmaxCemaNeigeLayers'. Values set to NA", FeatFUN_MOD$NameFunMod))
     }
     GthrCemaNeigeLayers    <- Inf
     GlocmaxCemaNeigeLayers <- Inf
   }
-  if(!"CemaNeige" %in% ObjectClass &
+  if (!"CemaNeige" %in% ObjectClass &
      (!is.null(GCemaNeigeLayers) | !is.null(eTGCemaNeigeLayers) | !is.null(GthrCemaNeigeLayers) | !is.null(GlocmaxCemaNeigeLayers))) {
     if (verbose) {
-      warning(sprintf("'%s' does not require 'GCemaNeigeLayers' 'GCemaNeigeLayers', 'GthrCemaNeigeLayers' and 'GlocmaxCemaNeigeLayers'. Values set to NA", nameFUN_MOD))
+      warning(sprintf("'%s' does not require 'GCemaNeigeLayers' 'GCemaNeigeLayers', 'GthrCemaNeigeLayers' and 'GlocmaxCemaNeigeLayers'. Values set to NA", FeatFUN_MOD$NameFunMod))
     }
     GCemaNeigeLayers       <- Inf
     eTGCemaNeigeLayers     <- Inf
@@ -186,7 +152,7 @@ CreateIniStates <- function(FUN_MOD, InputsModel, IsHyst = FALSE, IsIntStore = F
 
 
   ## set states
-  if("CemaNeige" %in% ObjectClass) {
+  if ("CemaNeige" %in% ObjectClass) {
     NLayers <- length(InputsModel$LayerPrecip)
   } else {
     NLayers <- 1
@@ -284,17 +250,17 @@ CreateIniStates <- function(FUN_MOD, InputsModel, IsHyst = FALSE, IsIntStore = F
   }
 
   # SD model state handling
-  if(!is.null(SD)) {
-    if(!inherits(InputsModel, "SD")) {
+  if (!is.null(SD)) {
+    if (!inherits(InputsModel, "SD")) {
       stop("'SD' argument provided and 'InputsModel' is not of class 'SD'")
     }
-    if(!is.list(SD)) {
+    if (!is.list(SD)) {
       stop("'SD' argument must be a list")
     }
     lapply(SD, function(x) {
-      if(!is.numeric(x)) stop("Each item of 'SD' list argument must be numeric")
+      if (!is.numeric(x)) stop("Each item of 'SD' list argument must be numeric")
     })
-    if(length(SD) != length(InputsModel$LengthHydro)) {
+    if (length(SD) != length(InputsModel$LengthHydro)) {
       stop("Number of items of 'SD' list argument must be the same as the number of upstream connections",
            sprintf(" (%i required, found %i)", length(InputsModel$LengthHydro), length(SD)))
     }
@@ -309,15 +275,15 @@ CreateIniStates <- function(FUN_MOD, InputsModel, IsHyst = FALSE, IsIntStore = F
   IniStatesNA[is.infinite(IniStatesNA)] <- NA
   IniStatesNA <- relist(IniStatesNA, skeleton = IniStates)
 
-  if(!is.null(SD)) {
+  if (!is.null(SD)) {
     IniStatesNA$SD <- SD
   }
 
   class(IniStatesNA) <- c("IniStates", ObjectClass)
-  if(IsHyst) {
+  if (IsHyst) {
     class(IniStatesNA) <- c(class(IniStatesNA), "hysteresis")
   }
-  if(IsIntStore) {
+  if (IsIntStore) {
     class(IniStatesNA) <- c(class(IniStatesNA), "interception")
   }
 

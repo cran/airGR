@@ -38,7 +38,7 @@ CreateIniStates(FUN_MOD, InputsModel, IsHyst = FALSE, IsIntStore = FALSE,
 
 \item{ExpStore}{(optional) [numeric] series of exponential store level (negative) [mm] for the GR6J model}
 
-\item{IntStore}{(optional) [numeric] series rainfall neutralisation or interception store level [mm] for the GR5H model}
+\item{IntStore}{(optional) [numeric] series of rainfall neutralisation or interception store level [mm] for the GR5H model}
 
 \item{UH1}{(optional) [numeric] unit hydrograph 1 levels [mm]}
 
@@ -75,7 +75,7 @@ CreateIniStates(FUN_MOD, InputsModel, IsHyst = FALSE, IsIntStore = FALSE,
 The structure of the object of class \code{IniStates} returned is always exactly the same for all models (except for the unit hydrographs levels that contain more values with GR4H and GR5H), even if some states do not exist (e.g. \emph{$UH$UH1} for GR2M).  \cr
 If CemaNeige is not used, \emph{$CemaNeigeLayers$G}, \emph{$CemaNeigeLayers$eTG} \emph{$CemaNeigeLayers$GthrCemaNeigeLayers} and \emph{$CemaNeigeLayers$GlocmaxCemaNeigeLayers} are set to \code{NA}. \cr
 
-Nota: the \code{StateEnd} objects from the outputs of \code{RunModel*} functions already respect the format given by the \code{CreateIniStates} function. 
+Nota: the \code{StateEnd} objects from the outputs of \code{RunModel*} functions already respect the format given by the \code{CreateIniStates} function.
 }
 
 
@@ -86,11 +86,11 @@ library(airGR)
 data(L0123001)
 
 ## preparation of the InputsModel object
-InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$DatesR, 
+InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$DatesR,
                                  Precip = BasinObs$P, PotEvap = BasinObs$E)
 
 ## run period selection
-Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"), 
+Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"),
                which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1999-12-31"))
 
 
@@ -101,22 +101,22 @@ IniStates <- CreateIniStates(FUN_MOD = RunModel_GR4J, InputsModel = InputsModel,
                              UH2 = c(0.057, 0.042, 0.015, 0.005, rep(0, 36)),
                              GCemaNeigeLayers = NULL, eTGCemaNeigeLayers = NULL,
                              GthrCemaNeigeLayers = NULL, GlocmaxCemaNeigeLayers = NULL)
-str(IniStates)  
+str(IniStates)
 
 ## preparation of the RunOptions object
 RunOptions <- CreateRunOptions(FUN_MOD = RunModel_GR4J, InputsModel = InputsModel,
                                IndPeriod_WarmUp = 0L,
                                IndPeriod_Run = Ind_Run, IniStates = IniStates)
-                               
+
 ## simulation
 Param <- c(X1 = 257.238, X2 = 1.012, X3 = 88.235, X4 = 2.208)
 OutputsModel <- RunModel_GR4J(InputsModel = InputsModel,
                               RunOptions = RunOptions, Param = Param)
 
 ## results preview
-plot(OutputsModel, Qobs = BasinObs$Qmm[Ind_Run])                               
-  
-  
+plot(OutputsModel, Qobs = BasinObs$Qmm[Ind_Run])
+
+
 ### preparation of the IniStates object with high values of ProdStore and RoutStore
 IniStates <- CreateIniStates(FUN_MOD = RunModel_GR4J, InputsModel = InputsModel,
                              ProdStore = 450, RoutStore = 100, ExpStore = NULL,
@@ -124,20 +124,20 @@ IniStates <- CreateIniStates(FUN_MOD = RunModel_GR4J, InputsModel = InputsModel,
                              UH2 = c(0.057, 0.042, 0.015, 0.005, rep(0, 36)),
                              GCemaNeigeLayers = NULL, eTGCemaNeigeLayers = NULL,
                              GthrCemaNeigeLayers = NULL, GlocmaxCemaNeigeLayers = NULL)
-str(IniStates)  
+str(IniStates)
 
 ## preparation of the RunOptions object
 RunOptions <- CreateRunOptions(FUN_MOD = RunModel_GR4J, InputsModel = InputsModel,
                                IndPeriod_WarmUp = 0L,
                                IndPeriod_Run = Ind_Run, IniStates = IniStates)
-                               
+
 ## simulation
 Param <- c(X1 = 257.238, X2 = 1.012, X3 = 88.235, X4 = 2.208)
 OutputsModel <- RunModel_GR4J(InputsModel = InputsModel,
                               RunOptions = RunOptions, Param = Param)
 
 ## results preview
-plot(OutputsModel, Qobs = BasinObs$Qmm[Ind_Run]) 
+plot(OutputsModel, Qobs = BasinObs$Qmm[Ind_Run])
 }
 
 

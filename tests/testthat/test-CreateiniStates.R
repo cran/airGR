@@ -96,3 +96,9 @@ test_that("Error: Number of items not equal to number of upstream connections", 
            )
          })
 })
+
+test_that("FUN = RunModel_lag must work", {
+  IS <- CreateIniStates(RunModel_Lag, InputsModel, SD = list(rep(0, 10)))
+  expect_equal(IS$SD[[1]], rep(0, 10))
+  expect_s3_class(IS, "SD")
+})

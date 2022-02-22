@@ -3,7 +3,7 @@
 ## function to check
 ## =================================================================================
 
-# .onLoad <- function(libname, pkgname){
+# .onLoad <- function(libname, pkgname) {
 #   if (requireNamespace("airGRteaching", quietly = TRUE)) {
 #     if (packageVersion("airGRteaching") %in% package_version(c("0.2.0.9", "0.2.2.2", "0.2.3.2"))) {
 #       packageStartupMessage("In order to be compatible with the present version of 'airGR', please update your version of the 'airGRteaching' package.")
@@ -62,8 +62,10 @@
     res$TimeStep     <- res$TimeStep * 3600
     res$TimeStepMean <- as.integer(res$TimeStepMean * 3600)
     res$Class <- c(res$TimeUnit, res$Class)
+    res$CodeModHydro <- res$CodeMod
     if (grepl("CemaNeige", res$NameFunMod)) {
       res$Class <- c(res$Class, "CemaNeige")
+      res$CodeModHydro <- gsub("CemaNeige", "", res$CodeMod)
     }
     res$Class <- res$Class[!is.na(res$Class)]
     if (!is.null(DatesR)) {
@@ -211,6 +213,9 @@
     }
     return(res0)
   })
+  if (!is.null(x$RunOptions)) {
+    res$RunOptions <- x$RunOptions
+  }
   if (!is.null(x$StateEnd)) {
     res$StateEnd <- x$StateEnd
   }
@@ -218,16 +223,41 @@
   res
 }
 
-# '[.OutputsModel' <- function(x, i) {
-#   if (!inherits(x, "OutputsModel")) {
-#     stop("'x' must be of class 'OutputsModel'")
-#   }
-#   if (is.factor(i)) {
-#     i <- as.character(i)
-#   }
-#   if (is.numeric(i)) {
-#     .ExtractOutputsModel(x, i)
-#   } else {
-#     NextMethod()
-#   }
-# }
+.IndexOutputsModel <- function(x, i) {
+  # '[.OutputsModel' <- function(x, i) {
+  if (!inherits(x, "OutputsModel")) {
+    stop("'x' must be of class 'OutputsModel'")
+  }
+  if (is.factor(i)) {
+    i <- as.character(i)
+  }
+  if (is.numeric(i)) {
+    .ExtractOutputsModel(x, i)
+  } else {
+    NextMethod()
+  }
+}
+
+
+
+## =================================================================================
+## function to try to set local time in English
+## =================================================================================
+
+.TrySetLcTimeEN <- function() {
+  locale <- list("English_United Kingdom",
+                 "en_US",
+                 "en_US.UTF-8",
+                 "en_US.utf8",
+                 "en")
+  dateTest <- as.POSIXct("2000-02-15", tz = "UTC", format = "%Y-%m-%d")
+  monthTestTarget <- "February"
+  monthTest <- function() {
+    format(dateTest, format = "%B")
+  }
+  lapply(locale, function(x) {
+    if (monthTest() != monthTestTarget) {
+      Sys.setlocale(category = "LC_TIME", locale = x)
+    }
+  })
+}

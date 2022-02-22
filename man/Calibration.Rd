@@ -31,7 +31,7 @@ Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions,
 
 \item{FUN_MOD}{[function] hydrological model function (e.g. \code{\link{RunModel_GR4J}}, \code{\link{RunModel_CemaNeigeGR4J}})}
 
-\item{FUN_CRIT}{[function] error criterion function (e.g. \code{\link{ErrorCrit_RMSE}}, \code{\link{ErrorCrit_NSE}})}
+\item{FUN_CRIT}{(deprecated) [function] error criterion function (e.g. \code{\link{ErrorCrit_RMSE}}, \code{\link{ErrorCrit_NSE}})}
 
 \item{FUN_CALIB}{(deprecated) [function] calibration algorithm function (e.g. \code{\link{Calibration_Michel}}), \code{default = Calibration_Michel}}
 

@@ -41,11 +41,10 @@ PE_Oudin <- function(JD, Temp,
   TimeStepIn  <- match.arg(TimeStepIn , choices = TimeStep)
   TimeStepOut <- match.arg(TimeStepOut, choices = TimeStep)
   rleJD <- rle(JD)
+  msgDaliy <- "each day should have only one identical value of Julian days. The time series is not sorted, or contains duplicate or missing dates"
+  msgHourly <- "each day must have 24 identical values of Julian days (one for each hour). The time series is not sorted, or contains duplicate or missing dates"
   if (TimeStepIn == "daily" & any(rleJD$lengths != 1)) {
-    stop("each day must have only one identical value of julian days")
-  }
-  if (TimeStepIn == "hourly" & any(rleJD$lengths != 24)) {
-    stop("each day must have 24 identical values of julian days (one for each hour)")
+    warning(msgDaliy)
   }
 
 
@@ -54,7 +53,14 @@ PE_Oudin <- function(JD, Temp,
   if (TimeStepIn == "hourly") {
     JD <- rleJD$values
     idJD <- rep(seq_along(JD), each = rleJD$lengths[1L])
-    Temp <- as.vector(tapply(X = Temp, INDEX = idJD, FUN = mean))
+    if (length(Temp) != length(idJD)) {
+      stop(msgHourly)
+    } else {
+      Temp <- as.vector(tapply(X = Temp, INDEX = idJD, FUN = mean))
+    }
+  }
+  if (TimeStepIn == "hourly" & any(rleJD$lengths != 24)) {
+    warning(msgHourly)
   }
 
 

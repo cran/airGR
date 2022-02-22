@@ -37,6 +37,8 @@ RunModel_GR1A(InputsModel, RunOptions, Param)
     \emph{$PotEvap } \tab [numeric] series of input potential evapotranspiration [mm/y] \cr
     \emph{$Precip  } \tab [numeric] series of input total precipitation [mm/y]          \cr
     \emph{$Qsim    } \tab [numeric] series of simulated discharge [mm/y]                \cr
+    \emph{RunOptions$WarmUpQsim} \tab [numeric] series of simulated discharge (Q) on the warm-up period [mm/y] \cr
+    \emph{RunOptions$Param     } \tab [numeric] parameter set parameter set used by the model                  \cr
     \emph{$StateEnd} \tab [numeric] states at the end of the run (NULL) [-]             \cr
   }
 Refer to the provided references or to the package source code for further details on these model outputs.

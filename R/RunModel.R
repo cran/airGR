@@ -5,6 +5,7 @@ RunModel <- function(InputsModel, RunOptions, Param, FUN_MOD, ...) {
   if (inherits(InputsModel, "SD") && !identical(FUN_MOD, RunModel_Lag)) {
     # Lag model take one parameter at the beginning of the vector
     iFirstParamRunOffModel <- 2
+    RunOptions$FeatFUN_MOD$NbParam <- RunOptions$FeatFUN_MOD$NbParam - 1
   } else {
     # All parameters
     iFirstParamRunOffModel <- 1

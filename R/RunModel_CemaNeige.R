@@ -148,7 +148,7 @@ RunModel_CemaNeige <- function(InputsModel, RunOptions, Param) {
   
   ## End
   class(OutputsModel) <- c("OutputsModel", time_step, "CemaNeige")
-  if(IsHyst) {
+  if (IsHyst) {
     class(OutputsModel) <- c(class(OutputsModel), "hysteresis")
   }
   return(OutputsModel)

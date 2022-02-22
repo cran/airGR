@@ -36,25 +36,27 @@ RunModel_GR4J(InputsModel, RunOptions, Param)
 \value{
 [list] containing the function outputs organised as follows:
   \tabular{ll}{
-    \emph{$DatesR  } \tab [POSIXlt] series of dates                                                          \cr
-    \emph{$PotEvap } \tab [numeric] series of input potential evapotranspiration [mm/d] (E)                  \cr
-    \emph{$Precip  } \tab [numeric] series of input total precipitation (P) [mm/d]                           \cr
-    \emph{$Prod    } \tab [numeric] series of production store level (S) [mm]                                \cr
-    \emph{$Pn      } \tab [numeric] series of net rainfall (Pn) [mm/d]                                       \cr
-    \emph{$Ps      } \tab [numeric] series of the part of Pn filling the production store (Ps) [mm/d]        \cr
-    \emph{$AE      } \tab [numeric] series of actual evapotranspiration [mm/d]                               \cr
-    \emph{$Perc    } \tab [numeric] series of percolation (Perc) [mm/d]                                      \cr
-    \emph{$PR      } \tab [numeric] series of Pr=Pn-Ps+Perc (Pr) [mm/d]                                      \cr
-    \emph{$Q9      } \tab [numeric] series of UH1 outflow (Q9) [mm/d]                                        \cr
-    \emph{$Q1      } \tab [numeric] series of UH2 outflow (Q1) [mm/d]                                        \cr
-    \emph{$Rout    } \tab [numeric] series of routing store level (R1) [mm]                                  \cr
-    \emph{$Exch    } \tab [numeric] series of potential semi-exchange between catchments [mm/d]              \cr
-    \emph{$AExch1  } \tab [numeric] series of actual exchange between catchments for branch 1 [mm/d]         \cr
-    \emph{$AExch2  } \tab [numeric] series of actual exchange between catchments for branch 2 [mm/d]         \cr
-    \emph{$AExch   } \tab [numeric] series of actual exchange between catchments (1+2) [mm/d]                \cr
-    \emph{$QR      } \tab [numeric] series of routing store outflow (Qr) [mm/d]                              \cr
-    \emph{$QD      } \tab [numeric] series of direct flow from UH2 after exchange (Qd) [mm/d]                \cr
-    \emph{$Qsim    } \tab [numeric] series of simulated discharge (Q) [mm/d]                                 \cr
+    \emph{$DatesR  } \tab [POSIXlt] series of dates                                                   \cr
+    \emph{$PotEvap } \tab [numeric] series of input potential evapotranspiration [mm/d] (E)           \cr
+    \emph{$Precip  } \tab [numeric] series of input total precipitation (P) [mm/d]                    \cr
+    \emph{$Prod    } \tab [numeric] series of production store level (S) [mm]                         \cr
+    \emph{$Pn      } \tab [numeric] series of net rainfall (Pn) [mm/d]                                \cr
+    \emph{$Ps      } \tab [numeric] series of the part of Pn filling the production store (Ps) [mm/d] \cr
+    \emph{$AE      } \tab [numeric] series of actual evapotranspiration [mm/d]                        \cr
+    \emph{$Perc    } \tab [numeric] series of percolation (Perc) [mm/d]                               \cr
+    \emph{$PR      } \tab [numeric] series of Pr=Pn-Ps+Perc (Pr) [mm/d]                               \cr
+    \emph{$Q9      } \tab [numeric] series of UH1 outflow (Q9) [mm/d]                                 \cr
+    \emph{$Q1      } \tab [numeric] series of UH2 outflow (Q1) [mm/d]                                 \cr
+    \emph{$Rout    } \tab [numeric] series of routing store level (R1) [mm]                           \cr
+    \emph{$Exch    } \tab [numeric] series of potential semi-exchange between catchments [mm/d]       \cr
+    \emph{$AExch1  } \tab [numeric] series of actual exchange between catchments for branch 1 [mm/d]  \cr
+    \emph{$AExch2  } \tab [numeric] series of actual exchange between catchments for branch 2 [mm/d]  \cr
+    \emph{$AExch   } \tab [numeric] series of actual exchange between catchments (1+2) [mm/d]         \cr
+    \emph{$QR      } \tab [numeric] series of routing store outflow (Qr) [mm/d]                       \cr
+    \emph{$QD      } \tab [numeric] series of direct flow from UH2 after exchange (Qd) [mm/d]         \cr
+    \emph{$Qsim    } \tab [numeric] series of simulated discharge (Q) [mm/d]                          \cr
+    \emph{RunOptions$WarmUpQsim} \tab [numeric] series of simulated discharge (Q) on the warm-up period [mm/d] \cr
+    \emph{RunOptions$Param     } \tab [numeric] parameter set parameter set used by the model                  \cr
     \emph{$StateEnd} \tab [numeric] states at the end of the run (res. levels, UH1 levels, UH2 levels) [mm]. See \code{\link{CreateIniStates}} for more details \cr
   }
 Refer to the provided references or to the package source code for further details on these model outputs.

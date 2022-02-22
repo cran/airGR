@@ -5,7 +5,7 @@
 \alias{CreateCalibOptions}
 
 
-\title{Creation of the CalibOptions object required but the Calibration functions}
+\title{Creation of the CalibOptions object required but the Calibration* functions}
 
 
 \description{

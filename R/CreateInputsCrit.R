@@ -1,41 +1,19 @@
 CreateInputsCrit <- function(FUN_CRIT,
                              InputsModel,
                              RunOptions,
-                             Qobs,              # deprecated
                              Obs,
                              VarObs = "Q",
                              BoolCrit = NULL,
                              transfo = "",
                              Weights = NULL,
-                             Ind_zeroes = NULL, # deprecated
                              epsilon = NULL,
-                             warnings = TRUE,
-                             verbose = TRUE) {  # deprecated
+                             warnings = TRUE) {
 
 
   ObjectClass <- NULL
 
 
   ## ---------- check arguments
-
-  if (!missing(Qobs)) {
-    if (missing(Obs)) {
-      if (warnings) {
-        warning("argument 'Qobs' is deprecated. Please use 'Obs' and 'VarObs' instead")
-      }
-      Obs <- Qobs
-      # VarObs <- "Qobs"
-    } else {
-      warning("argument 'Qobs' is deprecated. The values set in 'Obs' will be used instead")
-    }
-  }
-  if (!missing(Ind_zeroes) & warnings) {
-    warning("deprecated 'Ind_zeroes' argument")
-  }
-  if (!missing(verbose)) {
-    warning("deprecated 'verbose' argument. Use 'warnings', instead")
-  }
-
 
   ## check 'InputsModel'
   if (!inherits(InputsModel, "InputsModel")) {
@@ -48,9 +26,22 @@ CreateInputsCrit <- function(FUN_CRIT,
 
 
   ## check 'Obs' and definition of idLayer
-  vecObs <- unlist(Obs)
-  if (length(vecObs) %% LLL != 0 | !is.numeric(vecObs)) {
-    stop(sprintf("'Obs' must be a (list of) vector(s) of numeric values of length %i", LLL), call. = FALSE)
+  if (!is.numeric(unlist(Obs))) {
+    stop("'Obs' must be a (list of) vector(s) of numeric values")
+  }
+  Obs2 <- Obs
+  if ("ParamT" %in% VarObs) {
+    if (is.list(Obs2)) {
+      Obs2[[which(VarObs == "ParamT")]] <- NULL
+    } else {
+      Obs2 <- NULL
+    }
+  }
+  if (!is.null(Obs2)) {
+    vecObs <- unlist(Obs2)
+    if (length(vecObs) %% LLL != 0) {
+      stop(sprintf("'Obs' must be a (list of) vector(s) of numeric values of length %i", LLL), call. = FALSE)
+    }
   }
   if (!is.list(Obs)) {
     idLayer <- list(1L)
@@ -154,7 +145,7 @@ CreateInputsCrit <- function(FUN_CRIT,
   listArgs2 <- lapply(seq_along(listArgs$FUN_CRIT), function(i) lapply(listArgs, "[[", i))
 
   ## preparation of warning messages
-  inVarObs  <- c("Q", "SCA", "SWE")
+  inVarObs  <- c("Q", "SCA", "SWE", "ParamT")
   msgVarObs <- "'VarObs' must be a (list of) character vector(s) and one of %s"
   msgVarObs <- sprintf(msgVarObs, paste(sapply(inVarObs, shQuote), collapse = ", "))
   inTransfo  <- c("", "sqrt", "log", "inv", "sort", "boxcox") # pow is not checked by inTransfo, but appears in the warning message and checkef after (see ## check 'transfo')
@@ -166,9 +157,11 @@ CreateInputsCrit <- function(FUN_CRIT,
 
   InputsCrit <- lapply(listArgs2, function(iListArgs2) {
 
+    ## define FUN_CRIT as a character string
+    iListArgs2$FUN_CRIT <- match.fun(iListArgs2$FUN_CRIT)
+
     ## check 'FUN_CRIT'
-    if (!(identical(iListArgs2$FUN_CRIT, ErrorCrit_NSE ) | identical(iListArgs2$FUN_CRIT, ErrorCrit_KGE ) |
-          identical(iListArgs2$FUN_CRIT, ErrorCrit_KGE2) | identical(iListArgs2$FUN_CRIT, ErrorCrit_RMSE))) {
+    if (!all(class(iListArgs2$FUN_CRIT) == c("FUN_CRIT", "function"))) {
       stop("incorrect 'FUN_CRIT' for use in 'CreateInputsCrit'", call. = FALSE)
     }
     if (identical(iListArgs2$FUN_CRIT, ErrorCrit_RMSE) & length(listArgs$Weights) > 1 & all(!is.null(unlist(listArgs$Weights)))) {
@@ -176,8 +169,15 @@ CreateInputsCrit <- function(FUN_CRIT,
     }
 
     ## check 'Obs'
-    if (!is.vector(iListArgs2$Obs) | length(iListArgs2$Obs) != LLL | !is.numeric(iListArgs2$Obs)) {
-      stop(sprintf("'Obs' must be a (list of) vector(s) of numeric values of length %i", LLL), call. = FALSE)
+    if (iListArgs2$VarObs == "ParamT") {
+      # Parameter for regularisation
+      L2 <- RunOptions$FeatFUN_MOD$NbParam
+    } else {
+      # Observation time series
+      L2 <- LLL
+    }
+    if (!is.vector(iListArgs2$Obs) | length(iListArgs2$Obs) != L2 | !is.numeric(iListArgs2$Obs)) {
+      stop(sprintf("'Obs' must be a (list of) vector(s) of numeric values of length %i", L2), call. = FALSE)
     }
 
     ## check 'BoolCrit'
@@ -187,7 +187,7 @@ CreateInputsCrit <- function(FUN_CRIT,
     if (!is.logical(iListArgs2$BoolCrit)) {
       stop("'BoolCrit' must be a (list of) vector(s) of boolean", call. = FALSE)
     }
-    if (length(iListArgs2$BoolCrit) != LLL) {
+    if (length(iListArgs2$BoolCrit) != L2) {
       stop("'BoolCrit' and the period defined in 'RunOptions' must have the same length", call. = FALSE)
     }
 
@@ -283,17 +283,10 @@ CreateInputsCrit <- function(FUN_CRIT,
   })
   names(InputsCrit) <- paste0("IC", seq_along(InputsCrit))
 
-  ## define FUN_CRIT as a characater string
-  listErrorCrit <- c("ErrorCrit_KGE", "ErrorCrit_KGE2", "ErrorCrit_NSE",  "ErrorCrit_RMSE")
-  InputsCrit <- lapply(InputsCrit, function(i) {
-    i$FUN_CRIT <- listErrorCrit[sapply(listErrorCrit, function(j) identical(i$FUN_CRIT, get(j)))]
-    i
-    })
-
   listVarObs <- sapply(InputsCrit, FUN = "[[", "VarObs")
   inCnVarObs <- c("SCA", "SWE")
   if (!"ZLayers" %in% names(InputsModel)) {
-    if(any(listVarObs %in% inCnVarObs)) {
+    if (any(listVarObs %in% inCnVarObs)) {
       stop(sprintf("'VarObs' can not be equal to %i if CemaNeige is not used",
                    paste(sapply(inCnVarObs, shQuote), collapse = " or ")))
     }
@@ -314,7 +307,7 @@ CreateInputsCrit <- function(FUN_CRIT,
 
   ## define idLayer as an index of the layer to use
   for (iInCnVarObs in unique(listVarObs)) {
-    if (iInCnVarObs == "Q") {
+    if (!iInCnVarObs %in% inCnVarObs) {
       for (i in which(listVarObs == iInCnVarObs)) {
         InputsCrit[[i]]$idLayer <- NA
       }
@@ -348,7 +341,7 @@ CreateInputsCrit <- function(FUN_CRIT,
     combInputsCrit <- combn(x = length(InputsCrit), m = 2)
     apply(combInputsCrit, MARGIN = 2, function(i) {
       equalInputsCrit <- identical(InputsCrit[[i[1]]], InputsCrit[[i[2]]])
-      if(equalInputsCrit) {
+      if (equalInputsCrit) {
         warning(sprintf("elements %i and %i of the criteria list are identical. This might not be necessary", i[1], i[2]), call. = FALSE)
       }
     })

@@ -153,10 +153,10 @@ CreateInputsModel <- function(FUN_MOD,
     if (nrow(Qupstream) != LLL) {
       stop("'Qupstream' must have same number of rows as 'DatesR' length")
     }
-    if(any(is.na(Qupstream))) {
+    if (any(is.na(Qupstream))) {
       warning("'Qupstream' contains NA values: model outputs will contain NAs")
     }
-    if(any(LengthHydro > 1000)) {
+    if (any(LengthHydro > 1000)) {
       warning("The unit of 'LengthHydro' has changed from m to km in airGR >= 1.6.12: values superior to 1000 km seem unrealistic")
     }
     QupstrUnit <- tolower(QupstrUnit)

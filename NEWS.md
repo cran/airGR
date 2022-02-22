@@ -2,6 +2,55 @@
 
 
 
+### 1.7.0 Release Notes (2022-02-21)
+
+#### New features
+
+- Semi-distributed modelling mode can now use the regularisation calibration proposed by [Lavenne et al. (2019)](https://doi.org/10.1029/2018WR024266). Added the `CreateInputsCrit_Lavenne()` to define a composite criterion based on the formula. Added the `CreateErrorCrit_GAPX()` function to compute an error criterion based on the GAPX formula. ([#111](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/111))
+- `OutputsModel`, returned by the `RunModel_*GR*()` function, gains a `RunOptions` element which is a list and contains 2 sub-elements: `WarmUpQsim` (vector series of simulated discharge on the warm-up period) and `Param` (vector of the model parameter values). ([#123](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/123))
+- `plot.OutputsModel()` gains a `AxisTS` argument in order to manage x-axis representing calendar dates and times. It avoids to display ugly x-axis. ([#122](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/122))
+
+
+#### Deprecated and defunct
+
+- The deprecated `LatRad` argument has been removed from the `PEdaily_Oudin()` function. ([#81](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/81))
+- The deprecated `Qobs` argument has been removed from the `CreateInputsCrit()` function. ([#81](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/81))
+- The deprecated `Ind_zeroes` argument has been removed from the `CreateInputsCrit()` function. ([#81](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/81))
+- The deprecated `verbose` argument has been removed from the `CreateInputsCrit()` function. ([#81](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/81))
+- The deprecated `FUN_CRIT` argument has been removed from the `ErrorCrit()` function. ([#81](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/81))
+
+
+#### Bug fixes
+
+- `SeriesAggreg()` now correctly reorders regime time series when the monthly regime is computed from a time series that does not start in January. It also keeps original `data.frame` column names. ([#133](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/133))
+- `DataAltiExtrapolation_Valery()` now correctly extract HypsoData values for each elevation layers. The selected indices were wrong (one less than expected) ([#144](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/144))
+- `CreateIniStates()` does not return anymore an error message when `IntStore` is set and `RunModel_GR5H` is used. ([#144](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/145))
+
+
+#### Major user-visible changes
+
+- `RunModel_Lag()` now handles warm-up period simulation (set in `CreateRunOptions()`). ([#132](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/132))
+
+
+#### Minor user-visible changes
+
+- `PE_Oudin()` can use inconsistent time series. It allows to mixing time series from different stations. ([#134](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/134))
+- Added the use of `.GetFeatModel()` in `CreateCalibOptions()` and `CreateIniStates()` functions in order to simplified their codes. ([#111](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/111))
+- Added the `.FunTransfo` in order to manage the parameter transformations and to simplified the code of the `CreateCalibOptions()` function ([#111](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/111))
+- Added the `.ArgumentsCheckGR()` function in order to check the arguments of the` RunModel_*()` functions and simplified their codes. ([#129](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/129))
+- Added the `.GetOutputsModelGR()` function in order to manage the outputs of the` RunModel_*()` functions and simplified their codes. ([#129](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/129))
+- The code of the `plot.OutputsModel()` function has been slightly simplified. ([#122](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/122), [#147](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/147))
+
+
+#### Version control and issue tracking
+
+- Added tests to check that the parameter sets returned by calibration algorithm do not change for any of the models. ([#120](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/120))
+- Added tests to detect Decreased performance of calibration execution time. ([#136](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/136))
+- Fixed the reverse package dependencies checked by the CI pipelines. ([#146](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/146))
+
+____________________________________________________________________________________
+
+
 ### 1.6.12 Release Notes (2021-04-27)
 
 #### New features
@@ -15,13 +64,14 @@
 - Fixed bug in `RunModel`. The `RunModel_Lag()` can now be passed to the `FUN_MOD` argument. ([#108](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/108))
 - Fixed bug in `RunModel_Lag()`. The function no longer returns two values for a single time step run. ([#102](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/102))
 - Fixed bug in `RunModel_Lag()`. The `StateEnd` value is now correct when there are more than a single upstream basin. ([#103](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/103))
-- Fixed bug in `RunModel_Lag()`.  The `StateEnd` value is now correct when the upstream flow unit is mm/time step. ([#104](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/104))
+- Fixed bug in `RunModel_Lag()`. The `StateEnd` value is now correct when the upstream flow unit is mm/time step. ([#104](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/104))
 - Fixed bug in `RunModel_CemaNeigeGR5H()`. The solid precipitation are now taken into account in the GR5H model. ([#105](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/105))
 - Fixed bug in `RunModel_CemaNeige()` and `CreateInputsModel()`. `RunModel_CemaNeige()` now runs at the hourly time step. ([#106](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/106))
 - Fixed the 'param_optim' vignette. The starting points used for the multi-start approach are now in the transformed space.([#101](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/101))
 
 
 #### Major user-visible changes
+
 - `LengthHydro` must now be set in kilometers (not anymore in meters) in the `CreateInputsModel()` function. ([#112](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/112))
 - `TransfoParam_GR5H()` now use the same transformation as `TransfoParam_GR4H()` for the X1 parameter. The previous transformation set by Ficchì seems unnecessary as it provokes irrealistically high X1 values. ([#50](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/50))
 
@@ -29,7 +79,8 @@
 #### Minor user-visible changes
 
 - The `RunModel*()` functions now run faster. The computation times are significantly shorter for long times series with many time steps (e.g. hourly times series), due to a better management of the missing values in and out the Fortran codes. Only simulation computation times have been improved (it is largely invisible to the user for calibration computation times). ([#113](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/113))
-- The external calibration algorithms used in 'param_optim' and 'param_mcmc' vignettes now  run faster. The `RunModel_*()` functions used during the parameter estimation process now run faster because the outputs contain only the simulated flows (see the `Outputs_Sim` argument in the `CreateRunOptions()` help page).
+- The external calibration algorithms used in 'param_optim' and 'param_mcmc' vignettes now run faster. The `RunModel_*()` functions used during the parameter estimation process now run faster because the outputs contain only the simulated flows (see the `Outputs_Sim` argument in the `CreateRunOptions()` help page).
+- Added `.FeatModels()` and `.GetFeatModel()` functions in order to repectively store and get model features (e.g. name, number of parameters, time unit). Therefore the codes of the `CreateInputsModel()` and the `CreateRunOptions()` functions have been simplified. ([#106](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/106))
 
 
 #### Version control and issue tracking
@@ -350,7 +401,7 @@ ________________________________________________________________________________
 #### Minor user-visible changes
 
 - Several functions of the package were cleaned up or slightly modified, with no effect on their outputs.
-- Dubious Qls and Qmm values set to NA values between 1997-01-05 and 1997-01-21 in the L0123001 dataset.
+- Dubious Qls and Qmm values set to NA values between 1997-01-05 and 1997-01-21 in the `L0123001` dataset.
 - ORCID numbers are now joined to the names of the authors of the package.
 
 

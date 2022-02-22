@@ -3,7 +3,6 @@
 
 \name{PE_Oudin}
 \alias{PE_Oudin}
-\alias{PEdaily_Oudin}
 
 
 \title{Computation of series of potential evapotranspiration at the daily or hourly time steps with Oudin's formula}
@@ -13,9 +12,6 @@
 PE_Oudin(JD, Temp, Lat, LatUnit =  c("rad", "deg"),
          TimeStepIn = "daily", TimeStepOut = "daily",
          RunFortran = FALSE)
-
-## deprectated function
-PEdaily_Oudin(JD, Temp, LatRad, Lat, LatUnit)
 }
 
 
@@ -23,8 +19,6 @@ PEdaily_Oudin(JD, Temp, LatRad, Lat, LatUnit)
 \item{JD}{[numeric] time series of Julian day of the year [-]; see details}
 
 \item{Temp}{[numeric] time series of daily (or hourly) mean air temperature [°C]}
-
-\item{LatRad}{(deprecated)[numeric] latitude of measurement for the temperature series [radians]. Please use \code{Lat} instead}
 
 \item{Lat}{[numeric] latitude of measurement for the temperature series [radians or degrees]. Atomic vector, except if \code{RunFortran = TRUE}, it can be a vector of the same length as \code{Temp}}
 

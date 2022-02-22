@@ -100,7 +100,8 @@ SeriesAggreg.list <- function(x,
 
     # Exploration of embedded lists and data.frames
     if (is.null(recursive) || recursive) {
-      listCols <- x[sapply(x, inherits, "list")]
+      listCols <- x[!names(x) %in% except]
+      listCols <- listCols[sapply(listCols, inherits, "list")]
       dfCols <- x[sapply(x, inherits, "data.frame")]
       dfCols <- c(dfCols, x[sapply(x, inherits, "matrix")])
       listCols <- listCols[setdiff(names(listCols), names(dfCols))]

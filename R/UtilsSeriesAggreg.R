@@ -53,7 +53,7 @@
     iRes <- AggregConvertFunTable$ConvertFun[AggregConvertFunTable$x == iX]
     iRes <- ifelse(test = any(is.na(iRes)), yes = NA, no = iRes) # R < 4.0 compatibility
   })
-  if(Format %in% c("%d", "%m")) {
+  if (Format %in% c("%d", "%m")) {
     res <- rep("mean", length(res))
   }
   return(res)

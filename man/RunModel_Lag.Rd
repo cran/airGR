@@ -51,6 +51,26 @@ The list value contains an extra item named \code{QsimDown} which is a copy of t
 library(airGR)
 data(L0123001)
 
+## ---- simulation of the hydrological catchment with GR4J
+
+InputsModelDown <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$DatesR,
+                                 Precip = BasinObs$P, PotEvap = BasinObs$E)
+
+## run period selection
+Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"),
+               which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1999-12-31"))
+
+## creation of the RunOptions object
+RunOptionsDown <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
+                               InputsModel = InputsModelDown, IndPeriod_Run = Ind_Run)
+
+## simulation of the runoff of the catchment with a GR4J model
+Param <- c(X1 = 257.238, X2 = 1.012, X3 = 88.235, X4 = 2.208)
+OutputsModelDown <- RunModel_GR4J(InputsModel = InputsModelDown,
+                                  RunOptions = RunOptionsDown, Param = Param)
+
+## ---- specifications of the reservoir
+
 ## the reservoir withdraws 1 m3/s when it's possible considering the flow observed in the basin
 Qupstream <- matrix(-sapply(BasinObs$Qls / 1000 - 1, function(x) {
   min(1, max(0, x, na.rm = TRUE))
@@ -67,32 +87,21 @@ BasinAreas <- c(NA, BasinInfo$BasinArea)
 ## delay time between the reservoir and the catchment outlet is 2 days and the distance is 150 km
 LengthHydro <- 150
 
-InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$DatesR,
+## ---- simulation of the basin with the reservoir influence
+
+InputsModelInf <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$DatesR,
                                  Precip = BasinObs$P, PotEvap = BasinObs$E,
                                  Qupstream = Qupstream, LengthHydro = LengthHydro,
                                  BasinAreas = BasinAreas)
-
-
-## ---- simulation of the basin with the reservoir influence
-
-## run period selection
-Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"),
-               which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1999-12-31"))
-
 ## creation of the RunOptions object
 RunOptions <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
-                               InputsModel = InputsModel, IndPeriod_Run = Ind_Run)
-
-## simulation of the runoff of the catchment with a GR4J model
-Param <- c(X1 = 257.238, X2 = 1.012, X3 = 88.235, X4 = 2.208)
-OutputsModelDown <- RunModel_GR4J(InputsModel = InputsModel,
-                                  RunOptions = RunOptions, Param = Param)
+                               InputsModel = InputsModelInf, IndPeriod_Run = Ind_Run)
 
 ## with a delay of 2 days for 150 km, the flow velocity is 75 km per day
 Velocity <- (LengthHydro * 1e3 / 2) / (24 * 60 * 60) ## Conversion km/day -> m/s
 
 ## run the lag model which routes precipitation-runoff model and upstream flows
-OutputsModel <- RunModel_Lag(InputsModel = InputsModel,
+OutputsModel <- RunModel_Lag(InputsModel = InputsModelInf,
                              RunOptions = RunOptions,
                              Param = Velocity,
                              QcontribDown = OutputsModelDown)

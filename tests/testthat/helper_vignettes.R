@@ -70,9 +70,12 @@ RunRmdChunks <- function(fileRmd,
 RunVignetteChunks <- function(vignette,
                               tmpFolder = "../tmp",
                               force.eval = TRUE) {
-  if(file.exists(sprintf("../../vignettes/%s.Rmd", vignette))) {
+  if (file.exists(sprintf("../../vignettes/%s.Rmd", vignette))) {
     # testthat context in development environnement
     RunRmdChunks(sprintf("../../vignettes/%s.Rmd", vignette), tmpFolder, force.eval)
+  } else if (file.exists(sprintf("vignettes/%s.Rmd", vignette))) {
+    # context in direct run in development environnement
+    RunRmdChunks(sprintf("vignettes/%s.Rmd", vignette), tmpFolder, force.eval)
   } else {
     # R CMD check context in package environnement
     RunRmdChunks(system.file(sprintf("doc/%s.Rmd", vignette), package = "airGR"), tmpFolder, force.eval)

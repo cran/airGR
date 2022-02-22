@@ -269,7 +269,7 @@ ggplot() +
   theme_bw()
 ```
 
-The pameter sets can be viewed in the parameter space, illustrating different populations.
+The parameter sets can be viewed in the parameter space, illustrating different populations.
 
 ```{r fig.height=6, fig.width=6, message=FALSE, warning=FALSE}
 param_optMO <- apply(optMO$parameters, MARGIN = 1, FUN = function(x) {

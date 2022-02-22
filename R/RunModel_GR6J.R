@@ -1,35 +1,9 @@
 RunModel_GR6J <- function(InputsModel, RunOptions, Param) {
-  
-  
-  ## Initialization of variables
-  NParam <- 6
-  FortranOutputs <- .FortranOutputs(GR = "GR6J")$GR
-  
-  
-  ## Arguments check
-  if (!inherits(InputsModel, "InputsModel")) {
-    stop("'InputsModel' must be of class 'InputsModel'")
-  }  
-  if (!inherits(InputsModel, "daily")) {
-    stop("'InputsModel' must be of class 'daily'")
-  }  
-  if (!inherits(InputsModel, "GR")) {
-    stop("'InputsModel' must be of class 'GR'")
-  }  
-  if (!inherits(RunOptions, "RunOptions")) {
-    stop("'RunOptions' must be of class 'RunOptions'")
-  }  
-  if (!inherits(RunOptions, "GR")) {
-    stop("'RunOptions' must be of class 'GR'")
-  }  
-  if (!is.vector(Param) | !is.numeric(Param)) {
-    stop("'Param' must be a numeric vector")
-  }
-  if (sum(!is.na(Param)) != NParam) {
-    stop(paste("'Param' must be a vector of length", NParam, "and contain no NA"))
-  }
+
+  .ArgumentsCheckGR(InputsModel, RunOptions, Param)
+
   Param <- as.double(Param)
-  
+
   Param_X1X3X6_threshold <- 1e-2
   Param_X4_threshold     <- 0.5
   if (Param[1L] < Param_X1X3X6_threshold) {
@@ -47,8 +21,8 @@ RunModel_GR6J <- function(InputsModel, RunOptions, Param) {
   if (Param[6L] < Param_X1X3X6_threshold) {
     warning(sprintf("Param[6] (X6: coefficient for emptying exponential store [mm]) < %.2f\n X6 set to %.2f", Param_X1X3X6_threshold, Param_X1X3X6_threshold))
     Param[6L] <- Param_X1X3X6_threshold
-  }      
-  
+  }
+
   ## Input data preparation
   if (identical(RunOptions$IndPeriod_WarmUp, 0L)) {
     RunOptions$IndPeriod_WarmUp <- NULL
@@ -56,25 +30,25 @@ RunModel_GR6J <- function(InputsModel, RunOptions, Param) {
   IndPeriod1   <- c(RunOptions$IndPeriod_WarmUp, RunOptions$IndPeriod_Run)
   LInputSeries <- as.integer(length(IndPeriod1))
   if ("all" %in% RunOptions$Outputs_Sim) {
-    IndOutputs <- as.integer(1:length(FortranOutputs)) 
+    IndOutputs <- as.integer(1:length(RunOptions$FortranOutputs$GR))
   } else {
-    IndOutputs <- which(FortranOutputs %in% RunOptions$Outputs_Sim)
+    IndOutputs <- which(RunOptions$FortranOutputs$GR %in% RunOptions$Outputs_Sim)
   }
-  
+
   ## Output data preparation
   IndPeriod2     <- (length(RunOptions$IndPeriod_WarmUp)+1):LInputSeries
   ExportDatesR   <- "DatesR"   %in% RunOptions$Outputs_Sim
   ExportStateEnd <- "StateEnd" %in% RunOptions$Outputs_Sim
-  
+
   ## Use of IniResLevels
   if (!is.null(RunOptions$IniResLevels)) {
     RunOptions$IniStates[1] <- RunOptions$IniResLevels[1] * Param[1] ### production store level (mm)
     RunOptions$IniStates[2] <- RunOptions$IniResLevels[2] * Param[3] ### routing store level (mm)
     RunOptions$IniStates[3] <- RunOptions$IniResLevels[3]          ### exponential store level (mm)
   }
-  
+
   ## Call GR model Fortan
-  RESULTS <- .Fortran("frun_gr6j", PACKAGE = "airGR", 
+  RESULTS <- .Fortran("frun_gr6j", PACKAGE = "airGR",
                       ## inputs
                       LInputs = LInputSeries,                             ### length of input and output series
                       InputsPrecip = InputsModel$Precip[IndPeriod1],      ### input series of total precipitation [mm/d]
@@ -93,43 +67,18 @@ RunModel_GR6J <- function(InputsModel, RunOptions, Param) {
   RESULTS$StateEnd[RESULTS$StateEnd <= -99e8] <- NA
   if (ExportStateEnd) {
     RESULTS$StateEnd[-3L] <- ifelse(RESULTS$StateEnd[-3L] < 0, 0, RESULTS$StateEnd[-3L]) ### remove negative values except for the ExpStore location
-    RESULTS$StateEnd <- CreateIniStates(FUN_MOD = RunModel_GR6J, InputsModel = InputsModel, 
-                                        ProdStore = RESULTS$StateEnd[1L], RoutStore = RESULTS$StateEnd[2L], ExpStore = RESULTS$StateEnd[3L], 
+    RESULTS$StateEnd <- CreateIniStates(FUN_MOD = RunModel_GR6J, InputsModel = InputsModel,
+                                        ProdStore = RESULTS$StateEnd[1L], RoutStore = RESULTS$StateEnd[2L], ExpStore = RESULTS$StateEnd[3L],
                                         UH1 = RESULTS$StateEnd[(1:20) + 7],
-                                        UH2 = RESULTS$StateEnd[(1:40) + (7+20)], 
-                                        GCemaNeigeLayers = NULL, eTGCemaNeigeLayers = NULL, 
+                                        UH2 = RESULTS$StateEnd[(1:40) + (7+20)],
+                                        GCemaNeigeLayers = NULL, eTGCemaNeigeLayers = NULL,
                                         verbose = FALSE)
   }
-  
-  ## Output data preparation
-  ## OutputsModel only
-  if (!ExportDatesR & !ExportStateEnd) {
-    OutputsModel <- lapply(seq_len(RESULTS$NOutputs), function(i) RESULTS$Outputs[IndPeriod2, i])
-    names(OutputsModel) <- FortranOutputs[IndOutputs]
-  }
-  ## DatesR and OutputsModel only
-  if (ExportDatesR & !ExportStateEnd) {
-    OutputsModel <- c(list(InputsModel$DatesR[RunOptions$IndPeriod_Run]), 
-                      lapply(seq_len(RESULTS$NOutputs), function(i) RESULTS$Outputs[IndPeriod2, i]))
-    names(OutputsModel) <- c("DatesR", FortranOutputs[IndOutputs])
-  }
-  ## OutputsModel and StateEnd only
-  if (!ExportDatesR & ExportStateEnd) {
-    OutputsModel <- c(lapply(seq_len(RESULTS$NOutputs), function(i) RESULTS$Outputs[IndPeriod2, i]), 
-                      list(RESULTS$StateEnd))
-    names(OutputsModel) <- c(FortranOutputs[IndOutputs], "StateEnd")
-  }
-  ## DatesR and OutputsModel and StateEnd
-  if ((ExportDatesR & ExportStateEnd) | "all" %in% RunOptions$Outputs_Sim) {
-    OutputsModel <- c(list(InputsModel$DatesR[RunOptions$IndPeriod_Run]), 
-                      lapply(seq_len(RESULTS$NOutputs), function(i) RESULTS$Outputs[IndPeriod2, i]), 
-                      list(RESULTS$StateEnd))
-    names(OutputsModel) <- c("DatesR", FortranOutputs[IndOutputs], "StateEnd")
-  }
-  
-  ## End
-  rm(RESULTS) 
-  class(OutputsModel) <- c("OutputsModel", "daily", "GR")
-  return(OutputsModel)
-  
+
+  ## OutputsModel generation
+  .GetOutputsModelGR(InputsModel,
+                     RunOptions,
+                     RESULTS,
+                     LInputSeries,
+                     Param)
 }

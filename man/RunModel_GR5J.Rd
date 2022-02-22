@@ -56,6 +56,8 @@ RunModel_GR5J(InputsModel, RunOptions, Param)
     \emph{$QR      } \tab [numeric] series of routing store outflow (Qr) [mm/d]                         \cr
     \emph{$QD      } \tab [numeric] series of direct flow from UH after exchange (Qd) [mm/d]            \cr
     \emph{$Qsim    } \tab [numeric] series of simulated discharge (Q) [mm/d]                            \cr
+    \emph{RunOptions$WarmUpQsim} \tab [numeric] series of simulated discharge (Q) on the warm-up period [mm/d] \cr
+    \emph{RunOptions$Param     } \tab [numeric] parameter set parameter set used by the model                  \cr
     \emph{$StateEnd} \tab [numeric] states at the end of the run (res. levels, UH levels) [mm]. See \code{\link{CreateIniStates}} for more details \cr
   }
 Refer to the provided references or to the package source code for further details on these model outputs.

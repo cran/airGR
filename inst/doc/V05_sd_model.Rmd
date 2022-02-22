@@ -1,11 +1,11 @@
 ---
-title: "Simulating a reservoir with semi-distributed GR4J model"
+title: "Simulated vs observed upstream flows in calibration of semi-distributed GR4J model"
 author: "David Dorchies"
 bibliography: V00_airgr_ref.bib
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{Simulating a reservoir with semi-distributed GR4J model}
+  %\VignetteIndexEntry{Simulated vs observed upstream flows in calibration of semi-distributed GR4J model}
   %\VignetteEncoding{UTF-8}
 ---
 
@@ -22,15 +22,17 @@ The **airGR** package implements semi-distributed model capabilities using a lag
 
 `RunModel_Lag` documentation gives an example of simulating the influence of a reservoir in a lumped model. Try `example(RunModel_Lag)` to get it.
 
-In this vignette, we show how to calibrate 2 sub-catchments in series with a semi-distributed model consisting of 2 GR4J models. For doing this we compare two strategies for calibrating the downstream subcatchment:
+In this vignette, we show how to calibrate 2 sub-catchments in series with a semi-distributed model consisting of 2 GR4J models.
+For doing this we compare 3 strategies for calibrating the downstream subcatchment:
 
 - using upstream observed flows
 - using upstream simulated flows
+- using upstream simulated flows and parameter regularisation [@delavenne_regularization_2019]
 
 We finally compare these calibrations with a theoretical set of parameters.
+This comparison is based on the Kling-Gupta Efficiency computed on the root-squared discharges as performance criterion.
 
 ## Model description
-
 
 ```{r, warning=FALSE, include=FALSE}
 library(airGR)
@@ -60,6 +62,13 @@ summary(cbind(QObsUp = BasinObs$Qmm, QObsDown))
 options(digits = 3)
 ```
 
+With a delay of 2 days between the 2 gauging stations, the theoretical Velocity parameter should be equal to:
+
+```{r}
+Velocity <- 100 * 1e3 / (2 * 86400)
+paste("Velocity: ", format(Velocity), "m/s")
+```
+
 # Calibration of the upstream subcatchment
 
 The operations are exactly the same as the ones for a GR4J lumped model. So we do exactly the same operations as in the [Get Started](V01_get_started.html) vignette.
@@ -73,9 +82,11 @@ RunOptionsUp <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
                                  InputsModel = InputsModelUp,
                                  IndPeriod_WarmUp = NULL, IndPeriod_Run = Ind_Run,
                                  IniStates = NULL, IniResLevels = NULL)
-InputsCritUp <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModelUp,
+# Error criterion is KGE computed on the root-squared discharges
+InputsCritUp <- CreateInputsCrit(FUN_CRIT = ErrorCrit_KGE, InputsModel = InputsModelUp,
                                  RunOptions = RunOptionsUp,
-                                 VarObs = "Q", Obs = BasinObs$Qmm[Ind_Run])
+                                 VarObs = "Q", Obs = BasinObs$Qmm[Ind_Run],
+                                 transfo = "sqrt")
 CalibOptionsUp <- CreateCalibOptions(FUN_MOD = RunModel_GR4J, FUN_CALIB = Calibration_Michel)
 OutputsCalibUp <- Calibration_Michel(InputsModel = InputsModelUp, RunOptions = RunOptionsUp,
                                      InputsCrit = InputsCritUp, CalibOptions = CalibOptionsUp,
@@ -90,9 +101,11 @@ OutputsModelUp <- RunModel_GR4J(InputsModel = InputsModelUp, RunOptions = RunOpt
 ```
 
 
-# Calibration of the downstream subcatchment with upstream flow observations
+# Calibration of the downstream subcatchment
 
-we need to create the `InputsModel` object completed with upstream information:
+## Creation of the InputsModel objects
+
+we need to create `InputsModel` objects completed with upstream information with upstream observed flow for the calibration of first case and upstream simulated flows for the other cases:
 
 ```{r}
 InputsModelDown1 <- CreateInputsModel(
@@ -104,16 +117,38 @@ InputsModelDown1 <- CreateInputsModel(
 )
 ```
 
-And then calibrate the combination of Lag model for upstream flow transfer and GR4J model for the runoff of the downstream subcatchment:
+For using upstream simulated flows, we should concatenate a vector with the simulated flows for the entire period of simulation (warm-up + run):
+
+```{r}
+Qsim_upstream <- rep(NA, length(BasinObs$DatesR))
+# Simulated flow during warm-up period (365 days before run period)
+Qsim_upstream[Ind_Run[seq_len(365)] - 365] <- OutputsModelUp$RunOptions$WarmUpQsim
+# Simulated flow during run period
+Qsim_upstream[Ind_Run] <- OutputsModelUp$Qsim
+
+InputsModelDown2 <- CreateInputsModel(
+  FUN_MOD = RunModel_GR4J, DatesR = BasinObs$DatesR,
+  Precip = BasinObs$P, PotEvap = BasinObs$E,
+  Qupstream = matrix(Qsim_upstream, ncol = 1), # upstream observed flow
+  LengthHydro = 100, # distance between upstream catchment outlet & the downstream one [km]
+  BasinAreas = c(180, 180) # upstream and downstream areas [km²]
+)
+```
+
+
+## Calibration with upstream flow observations
+
+We calibrate the combination of Lag model for upstream flow transfer and GR4J model for the runoff of the downstream subcatchment:
 
 ```{r}
 RunOptionsDown <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
                                    InputsModel = InputsModelDown1,
                                    IndPeriod_WarmUp = NULL, IndPeriod_Run = Ind_Run,
                                    IniStates = NULL, IniResLevels = NULL)
-InputsCritDown <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModelDown1,
+InputsCritDown <- CreateInputsCrit(FUN_CRIT = ErrorCrit_KGE, InputsModel = InputsModelDown1,
                                    RunOptions = RunOptionsDown,
-                                   VarObs = "Q", Obs = QObsDown[Ind_Run])
+                                   VarObs = "Q", Obs = QObsDown[Ind_Run],
+                                   transfo = "sqrt")
 CalibOptionsDown <- CreateCalibOptions(FUN_MOD = RunModel_GR4J,
                                        FUN_CALIB = Calibration_Michel,
                                        IsSD = TRUE) # specify that it's a SD model
@@ -122,13 +157,6 @@ OutputsCalibDown1 <- Calibration_Michel(InputsModel = InputsModelDown1,
                                         InputsCrit = InputsCritDown,
                                         CalibOptions = CalibOptionsDown,
                                         FUN_MOD = RunModel_GR4J)
-```
-
-To run the complete model, we should substitute the observed upstream flow by the simulated one:
-
-```{r}
-InputsModelDown2 <- InputsModelDown1
-InputsModelDown2$Qupstream[Ind_Run] <- OutputsModelUp$Qsim
 ```
 
 `RunModel` is run in order to automatically combine GR4J and Lag models.
@@ -143,11 +171,11 @@ OutputsModelDown1 <- RunModel(InputsModel = InputsModelDown2,
 Performance of the model validation is then:
 
 ```{r}
-CritDown1 <- ErrorCrit_NSE(InputsCritDown, OutputsModelDown1)
+KGE_down1 <- ErrorCrit_KGE(InputsCritDown, OutputsModelDown1)
 ```
 
 
-# Calibration of the downstream subcatchment with upstream simulated flow
+## Calibration with upstream simulated flow
 
 We calibrate the model with the `InputsModel` object previously created for substituting the observed upstream flow with the simulated one:
 
@@ -160,45 +188,78 @@ OutputsCalibDown2 <- Calibration_Michel(InputsModel = InputsModelDown2,
 ParamDown2 <- OutputsCalibDown2$ParamFinalR
 ```
 
+## Calibration with upstream simulated flow and parameter regularisation
+
+The regularisation follow the method proposed by @delavenne_regularization_2019.
+
+As a priori parameter set, we use the calibrated parameter set of the upstream catchment and the theoretical velocity:
+
+```{r}
+ParamDownTheo <- c(Velocity, OutputsCalibUp$ParamFinalR)
+```
+
+The Lavenne criterion is initialised with the a priori parameter set and the value of the KGE of the upstream basin.
+
+```{r}
+IC_Lavenne <- CreateInputsCrit_Lavenne(InputsModel = InputsModelDown2,
+                                    RunOptions = RunOptionsDown,
+                                    Obs = QObsDown[Ind_Run],
+                                    AprParamR = ParamDownTheo,
+                                    AprCrit = OutputsCalibUp$CritFinal)
+```
+
+The Lavenne criterion is used instead of the KGE for calibration with regularisation
+
+```{r}
+OutputsCalibDown3 <- Calibration_Michel(InputsModel = InputsModelDown2,
+                                        RunOptions = RunOptionsDown,
+                                        InputsCrit = IC_Lavenne,
+                                        CalibOptions = CalibOptionsDown,
+                                        FUN_MOD = RunModel_GR4J)
+```
+
+The KGE is then calculated for performance comparisons:
+
+```{r}
+OutputsModelDown3 <- RunModel(InputsModel = InputsModelDown2,
+                              RunOptions = RunOptionsDown,
+                              Param = OutputsCalibDown3$ParamFinalR,
+                              FUN_MOD = RunModel_GR4J)
+KGE_down3 <- ErrorCrit_KGE(InputsCritDown, OutputsModelDown3)
+```
+
 
 # Discussion
 
 ## Identification of Velocity parameter
-
-The theoretical Velocity parameter should be equal to:
-
-```{r}
-Velocity <- InputsModelDown1$LengthHydro * 1e3 / (2 * 86400)
-paste(format(Velocity), "m/s")
-```
 
 Both calibrations overestimate this parameter:
 
 ```{r}
 mVelocity <- matrix(c(Velocity,
                       OutputsCalibDown1$ParamFinalR[1],
-                      OutputsCalibDown2$ParamFinalR[1]),
+                      OutputsCalibDown2$ParamFinalR[1],
+                      OutputsCalibDown3$ParamFinalR[1]),
                     ncol = 1,
                     dimnames = list(c("theoretical",
                                       "calibrated with observed upstream flow",
-                                      "calibrated with simulated  upstream flow"),
+                                      "calibrated with simulated  upstream flow",
+                                      "calibrated with sim upstream flow and regularisation"),
                                     c("Velocity parameter")))
 knitr::kable(mVelocity)
 ```
 
 ## Value of the performance criteria with theoretical calibration
 
-Theoretically, the parameters of the downstream GR4J model should be the same as the upstream one and we know the lag time. So this set of parameter should give a better performance criteria:
+Theoretically, the parameters of the downstream GR4J model should be the same as the upstream one with the velocity as extra parameter:
 
 ```{r}
-ParamDownTheo <- c(Velocity, OutputsCalibUp$ParamFinalR)
 OutputsModelDownTheo <- RunModel(InputsModel = InputsModelDown2,
                                  RunOptions = RunOptionsDown,
                                  Param = ParamDownTheo,
                                  FUN_MOD = RunModel_GR4J)
-CritDownTheo <- ErrorCrit_NSE(InputsCritDown, OutputsModelDownTheo)
+KGE_downTheo <- ErrorCrit_KGE(InputsCritDown, OutputsModelDownTheo)
 ```
-
 
 
 ## Parameters and performance of each subcatchment for all calibrations
@@ -207,20 +268,25 @@ CritDownTheo <- ErrorCrit_NSE(InputsCritDown, OutputsModelDownTheo)
 comp <- matrix(c(0, OutputsCalibUp$ParamFinalR,
                  rep(OutputsCalibDown1$ParamFinalR, 2),
                  OutputsCalibDown2$ParamFinalR,
+                 OutputsCalibDown3$ParamFinalR,
                  ParamDownTheo),
                ncol = 5, byrow = TRUE)
 comp <- cbind(comp, c(OutputsCalibUp$CritFinal,
                       OutputsCalibDown1$CritFinal,
-                      CritDown1$CritValue,
+                      KGE_down1$CritValue,
                       OutputsCalibDown2$CritFinal,
-                      CritDownTheo$CritValue))
-colnames(comp) <- c("Velocity", paste0("X", 1:4), "NSE")
+                      KGE_down3$CritValue,
+                      KGE_downTheo$CritValue))
+colnames(comp) <- c("Velocity", paste0("X", 1:4), "KGE(√Q)")
 rownames(comp) <- c("Calibration of the upstream subcatchment",
                     "Calibration 1 with observed upstream flow",
                     "Validation 1 with simulated upstream flow",
                     "Calibration 2 with simulated upstream flow",
+                    "Calibration 3 with simulated upstream flow and regularisation",
                     "Validation theoretical set of parameters")
 knitr::kable(comp)
 ```
 
-Even if calibration with observed upstream flows gives an improved performance criteria, in validation using simulated upstream flows the result is quite similar as the performance obtained with the calibration with upstream simulated flows. The theoretical set of parameters give also an equivalent performance but still underperforming the calibration 2 one.
+Even if calibration with observed upstream flows gives an improved performance criteria, in validation using simulated upstream flows the result is quite similar as the performance obtained with the calibration with upstream simulated flows. The theoretical set of parameters give also an equivalent performance but still underperforming the calibration 2 one. Regularisation allows to get similar performance as the one for calibration with simulated flows but with the big advantage of having parameters closer to the theoretical ones (Especially for the velocity parameter).
+
+# References

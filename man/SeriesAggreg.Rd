@@ -30,6 +30,8 @@ Warning: on the aggregated outputs, the dates correspond to the beginning of the
   E.g. use "Q90" for calculating 90th percentile in the aggregation.
   The formula used is: \code{quantile(x, probs = perc / 100, type = 8, na.rm = TRUE)}.
 
+  As there are multiple ways to take into account missing values in aggregation functions, \code{NA}s are not supported by \code{SeriesAggreg} and it provides \code{NA} values when \code{NA}s are present in the \code{x} input.
+
 }
 
 

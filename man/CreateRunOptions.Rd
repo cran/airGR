@@ -34,7 +34,7 @@ CreateRunOptions(FUN_MOD, InputsModel,
 
 \item{IniStates}{(optional) [numeric] object of class \code{IniStates} [mm and °C], see \code{\link{CreateIniStates}} for details}
 
-\item{IniResLevels}{(optional) [numeric] vector of initial fillings for the GR stores (2 or 3 values according to the model) [- and/or mm]. See details}
+\item{IniResLevels}{(optional) [numeric] vector of initial fillings for the GR stores (4 values; use NA when not relevant for a given model) [- and/or mm]. See details}
 
 \item{Imax}{(optional) [numeric] an atomic vector of the maximum capacity of the GR5H interception store [mm]; see \code{\link{RunModel_GR5H}}}
 
@@ -42,7 +42,7 @@ CreateRunOptions(FUN_MOD, InputsModel,
  the faster the calibration}
 
 \item{Outputs_Sim}{(optional) [character] vector giving the requested outputs \cr (e.g. c(\code{"DatesR"}, \code{"Qsim"}, \code{"SnowPack"})), default = \code{"all"}}
-	
+
 \item{MeanAnSolidPrecip}{(optional) [numeric] vector giving the annual mean of average solid precipitation for each layer (computed from InputsModel if not defined) [mm/y]}
 
 \item{IsHyst}{[boolean] boolean indicating if the hysteresis version of CemaNeige is used. See details}
@@ -69,7 +69,7 @@ CreateRunOptions(FUN_MOD, InputsModel,
 
 
 \details{
-Users wanting to use \code{FUN_MOD} functions that are not included in 
+Users wanting to use \code{FUN_MOD} functions that are not included in
 the package must create their own \code{RunOptions} object accordingly.
 
 ## --- IndPeriod_WarmUp and IndPeriod_Run
@@ -86,7 +86,7 @@ A default configuration is used for initialisation if these vectors are not defi
 (1) Default initialisation options:
 
 \itemize{
-\item \code{IndPeriod_WarmUp} default setting ensures a one-year warm-up using the time steps preceding the \code{IndPeriod_Run}. 
+\item \code{IndPeriod_WarmUp} default setting ensures a one-year warm-up using the time steps preceding the \code{IndPeriod_Run}.
 The actual length of this warm-up might be shorter depending on data availability (no missing value of climate inputs being allowed in model input series).
 
 \item \code{IniStates} and \code{IniResLevels} are automatically set to initialise all the model states at 0, except for the production and routing stores levels which are respectively initialised at 30 \% and 50 \% of their capacity. In case GR5H is used with an interception store, the intercetion store level is initialised by default with 0 mm. In case GR6J is used, the exponential store level is initialised by default with 0 mm. This initialisation is made at the very beginning of the model call (i.e. at the beginning of \code{IndPeriod_WarmUp} or at the beginning of \code{IndPeriod_Run} if the warm-up period is disabled).
@@ -99,7 +99,7 @@ The actual length of this warm-up might be shorter depending on data availabilit
 \itemize{
 \item remark 1:	for most common cases, indices corresponding to one or several years preceding \code{IndPeriod_Run} are used (e.g. \code{IndPeriod_WarmUp = 1000:1365} and \code{IndPeriod_Run = 1366:5000)}. \cr
 However, it is also possible to perform a long-term initialisation if other indices than the warm-up ones are set in \code{IndPeriod_WarmUp} (e.g. \code{IndPeriod_WarmUp = c(1:5000, 1:5000, 1:5000, 1000:1365)}). \cr
-\item remark 2:	it is also possible to completely disable the warm-up period when using \code{IndPeriod_WarmUp = 0L}. This is necessary if you want \code{IniStates} and/or \code{IniResLevels} to be the actual initial values of the model variables from your simulation (e.g. to perform a forecast form a given initial state). 
+\item remark 2:	it is also possible to completely disable the warm-up period when using \code{IndPeriod_WarmUp = 0L}. This is necessary if you want \code{IniStates} and/or \code{IniResLevels} to be the actual initial values of the model variables from your simulation (e.g. to perform a forecast form a given initial state).
 }
 \item \code{IniStates} and \code{IniResLevels} can be used to specify the initial model states.
 \itemize{
@@ -125,11 +125,11 @@ library(airGR)
 data(L0123001)
 
 ## preparation of the InputsModel object
-InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$DatesR, 
+InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$DatesR,
                                  Precip = BasinObs$P, PotEvap = BasinObs$E)
 
 ## run period selection
-Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"), 
+Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"),
                which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1999-12-31"))
 
 ## preparation of the RunOptions object
@@ -139,14 +139,14 @@ RunOptions <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
 ## simulation
 Param <- c(X1 = 734.568, X2 = -0.840, X3 = 109.809, X4 = 1.971)
 OutputsModel <- RunModel(InputsModel = InputsModel,
-                         RunOptions = RunOptions, Param = Param, 
+                         RunOptions = RunOptions, Param = Param,
                          FUN_MOD = RunModel_GR4J)
 
 ## results preview
 plot(OutputsModel, Qobs = BasinObs$Qmm[Ind_Run])
 
 ## efficiency criterion: Nash-Sutcliffe Efficiency
-InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
+InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel,
                                 RunOptions = RunOptions,
                                 Obs = BasinObs$Qmm[Ind_Run])
 OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)

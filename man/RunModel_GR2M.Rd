@@ -46,6 +46,8 @@ RunModel_GR2M(InputsModel, RunOptions, Param)
     \emph{$Prod    } \tab [numeric] series of production store level (S) [mm]                   \cr
     \emph{$Rout    } \tab [numeric] series of routing store level (R1) [mm]                     \cr
     \emph{$Qsim    } \tab [numeric] series of simulated discharge [mm/month] (Q)                \cr
+    \emph{RunOptions$WarmUpQsim} \tab [numeric] series of simulated discharge (Q) on the warm-up period [mm/month] \cr
+    \emph{RunOptions$Param     } \tab [numeric] parameter set parameter set used by the model                      \cr
     \emph{$StateEnd} \tab [numeric] states at the end of the run (production store level and routing store level) [mm]. See \code{\link{CreateIniStates}} for more details \cr
   }
 Refer to the provided references or to the package source code for further details on these model outputs.

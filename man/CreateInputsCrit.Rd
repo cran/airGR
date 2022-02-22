@@ -9,16 +9,16 @@
 
 
 \description{
-Creation of the \code{InputsCrit} object required to the \code{ErrorCrit_*} functions. This function is used to define whether the user wants to calculate a single criterion, multiple criteria in the same time, or a composite criterion, which averages several criteria. 
+Creation of the \code{InputsCrit} object required to the \code{ErrorCrit_*} functions. This function is used to define whether the user wants to calculate a single criterion, multiple criteria in the same time, or a composite criterion, which averages several criteria.
 }
 
 
 \usage{
 CreateInputsCrit(FUN_CRIT, InputsModel, RunOptions,
-                 Qobs, Obs, VarObs = "Q", BoolCrit = NULL,
+                 Obs, VarObs = "Q", BoolCrit = NULL,
                  transfo = "", Weights = NULL,
-                 Ind_zeroes = NULL, epsilon = NULL,
-                 warnings = TRUE, verbose = TRUE)
+                 epsilon = NULL,
+                 warnings = TRUE)
 }
 
 
@@ -28,8 +28,6 @@ CreateInputsCrit(FUN_CRIT, InputsModel, RunOptions,
 \item{InputsModel}{[object of class \emph{InputsModel}] see \code{\link{CreateInputsModel}} for details}
 
 \item{RunOptions}{[object of class \emph{RunOptions}] see \code{\link{CreateRunOptions}} for details}
-
-\item{Qobs}{(deprecated) [numeric (atomic or list)] series of observed discharges [mm/time step]}
 
 \item{Obs}{[numeric (atomic or list)] series of observed variable ([mm/time step] for discharge or SWE, [-] for SCA)}
 
@@ -41,13 +39,9 @@ CreateInputsCrit(FUN_CRIT, InputsModel, RunOptions,
 
 \item{Weights}{(optional) [numeric (atomic or list)] vector of weights necessary to calculate a composite criterion (the same length as \code{FUN_CRIT}) giving the weights to use for elements of \code{FUN_CRIT} [-]. See details}
 
-\item{Ind_zeroes}{(deprecated) [numeric] indices of the time steps where zeroes are observed}
-
 \item{epsilon}{(optional) [numeric (atomic or list)] small value to add to all observations and simulations when \code{"log"} or \code{"inv"} transformations are used [same unit as \code{Obs}]. See details}
 
 \item{warnings}{(optional) [boolean] boolean indicating if the warning messages are shown, default = \code{TRUE}}
-
-\item{verbose}{(deprecated) [boolean] boolean indicating if the function is run in verbose mode or not, default = \code{TRUE}}
 }
 
 
@@ -62,9 +56,9 @@ CreateInputsCrit(FUN_CRIT, InputsModel, RunOptions,
     \emph{$epsilon   } \tab [numeric] small value to add to all observations and simulations when \code{"log"} or \code{"inv"} transformations are used [same unit as \code{Obs}] \cr
     \emph{$Weights   } \tab [numeric] vector (same length as \code{VarObs}) giving the weights to use for elements of \code{FUN_CRIT} [-] \cr
   }
-  
+
 When \code{Weights = NULL}, \code{CreateInputsCrit} returns an object of class \emph{Single} that is  a list such as the one described above. \cr
-When \code{Weights} contains at least one \code{NULL} value and \code{Obs} contains a list of observations, \code{CreateInputsCrit} returns an object of class \emph{Multi} that is a list of lists such as the one described above. The \code{\link{ErrorCrit}} function will then compute the different criteria prepared by \code{CreateInputsCrit}. \cr 
+When \code{Weights} contains at least one \code{NULL} value and \code{Obs} contains a list of observations, \code{CreateInputsCrit} returns an object of class \emph{Multi} that is a list of lists such as the one described above. The \code{\link{ErrorCrit}} function will then compute the different criteria prepared by \code{CreateInputsCrit}. \cr
 When \code{Weights} is a list of at least 2 numerical values, \code{CreateInputsCrit} returns an object of class \emph{Compo} that is a list of lists such as the one described above. This object will be useful to compute composite criterion with the \code{\link{ErrorCrit}} function. \cr
 To calculate composite or multiple criteria, it is necessary to use the \code{ErrorCrit} function. The other \code{ErrorCrit_*} functions (e.g. \code{\link{ErrorCrit_RMSE}}, \code{\link{ErrorCrit_NSE}}) can only use objects of class \emph{Single} (and not \emph{Multi} or \emph{Compo}). \cr
 }
@@ -84,7 +78,7 @@ Transformations are simple functions applied to the observed and simulated varia
   \item \code{""}: no transformation is used (default case)
   \item \code{"sqrt"}: squared root transformation
   \item \code{"log"}: logarithmic transformation (see below regarding the specific case of KGE or KGE2)
-  \item \code{"inv"}: inverse transformation 
+  \item \code{"inv"}: inverse transformation
   \item \code{"sort"}: sort transformation (the simulated and observed variables are sorted from lowest to highest)
   \item \code{"boxcox"}: Box-Cox transformation (see below for details)
   \item numeric: power transformation (see below for details)
@@ -114,15 +108,15 @@ library(airGR)
 data(L0123001)
 
 ## preparation of the InputsModel object
-InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$DatesR, 
+InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$DatesR,
                                  Precip = BasinObs$P, PotEvap = BasinObs$E)
 
 ## calibration period selection
-Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"), 
+Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"),
                which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1999-12-31"))
 
 ## preparation of RunOptions object
-RunOptions <- CreateRunOptions(FUN_MOD = RunModel_GR4J, InputsModel = InputsModel, 
+RunOptions <- CreateRunOptions(FUN_MOD = RunModel_GR4J, InputsModel = InputsModel,
                                IndPeriod_Run = Ind_Run)
 
 ## simulation
@@ -144,7 +138,7 @@ InputsCritMulti <- CreateInputsCrit(FUN_CRIT = list(ErrorCrit_RMSE, ErrorCrit_NS
                                     Obs = list(BasinObs$Qmm[Ind_Run], BasinObs$Qmm[Ind_Run]),
                                     VarObs = list("Q", "Q"), transfo = list("", "sqrt"),
                                     Weights = NULL)
-str(InputsCritMulti)                                         
+str(InputsCritMulti)
 invisible(ErrorCrit(InputsCrit = InputsCritMulti, OutputsModel = OutputsModel))
 
 ## efficiency composite criterion: Nash-Sutcliffe Efficiency mixing
@@ -154,7 +148,7 @@ InputsCritCompo <- CreateInputsCrit(FUN_CRIT = list(ErrorCrit_NSE, ErrorCrit_NSE
                                     Obs = list(BasinObs$Qmm[Ind_Run], BasinObs$Qmm[Ind_Run]),
                                     VarObs = list("Q", "Q"), transfo = list("", "log"),
                                     Weights = list(0.4, 0.6))
-str(InputsCritCompo)                                         
+str(InputsCritCompo)
 invisible(ErrorCrit(InputsCrit = InputsCritCompo, OutputsModel = OutputsModel))
 }
 
@@ -165,12 +159,12 @@ Olivier Delaigue, Laurent Coron, Guillaume Thirel
 
 
 \references{
-Pushpalatha, R., Perrin, C., Le Moine, N. and Andréassian, V. (2012). 
-  A review of efficiency criteria suitable for evaluating low-flow simulations. 
+Pushpalatha, R., Perrin, C., Le Moine, N. and Andréassian, V. (2012).
+  A review of efficiency criteria suitable for evaluating low-flow simulations.
   Journal of Hydrology, 420-421, 171-182, doi: 10.1016/j.jhydrol.2011.11.055.
 \cr\cr
-Santos, L., Thirel, G. and Perrin, C. (2018). 
-  Technical note: Pitfalls in using log-transformed flows within the KGE criterion. 
+Santos, L., Thirel, G. and Perrin, C. (2018).
+  Technical note: Pitfalls in using log-transformed flows within the KGE criterion.
   Hydrol. Earth Syst. Sci., 22, 4583-4591, doi: 10.5194/hess-22-4583-2018.
 }
 

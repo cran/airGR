@@ -74,6 +74,8 @@ RunModel_CemaNeigeGR5H(InputsModel, RunOptions, Param)
     \emph{$CemaNeigeLayers[[iLayer]]$Temp         } \tab [numeric] series of air temperature [°C]                               \cr
     \emph{$CemaNeigeLayers[[iLayer]]$Gthreshold   } \tab [numeric] series of melt threshold [mm]                                \cr
     \emph{$CemaNeigeLayers[[iLayer]]$Glocalmax    } \tab [numeric] series of local melt threshold for hysteresis [mm]           \cr
+    \emph{RunOptions$WarmUpQsim} \tab [numeric] series of simulated discharge (Q) on the warm-up period [mm/h] \cr
+    \emph{RunOptions$Param     } \tab [numeric] parameter set parameter set used by the model                  \cr
     \emph{$StateEnd} \tab [numeric] states at the end of the run: store & unit hydrographs levels [mm], CemaNeige states [mm & °C]. See \code{\link{CreateIniStates}} for more details \cr
   }
 Refer to the provided references or to the package source code for further details on these model outputs.

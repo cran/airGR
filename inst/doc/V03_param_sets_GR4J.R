@@ -30,7 +30,7 @@ Ind_Cal <- seq(which(format(BasinObs$DatesR, format = "%d/%m/%Y %H:%M")=="01/01/
 
 ## preparation of the RunOptions object for the calibration period
 RunOptions_Cal <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
-                               InputsModel = InputsModel, IndPeriod_Run = Ind_Cal)
+                                   InputsModel = InputsModel, IndPeriod_Run = Ind_Cal)
 
 ## efficiency criterion: Nash-Sutcliffe Efficiency
 InputsCrit_Cal  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
@@ -49,8 +49,7 @@ RunOptions_Val <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
 
 ## efficiency criterion (Nash-Sutcliffe Efficiency) on the validation period
 InputsCrit_Val  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
-                                RunOptions = RunOptions_Val, Obs = BasinObs$Qmm[Ind_Val])
-
+                                    RunOptions = RunOptions_Val, Obs = BasinObs$Qmm[Ind_Val])
 
 ## ---- warning=FALSE, message=FALSE--------------------------------------------
 OutputsCrit_Loop <- apply(Param_Sets_GR4J, 1, function(iParam) {
@@ -68,7 +67,8 @@ Param_Best <- unlist(Param_Sets_GR4J[which.max(OutputsCrit_Loop), ])
 Param_Best
 
 ## validation
-OutputsModel_Val <- RunModel_GR4J(InputsModel = InputsModel, RunOptions = RunOptions_Val, Param = Param_Best)
+OutputsModel_Val <- RunModel_GR4J(InputsModel = InputsModel, RunOptions = RunOptions_Val, 
+                                  Param = Param_Best)
 OutputsCrit_Val <- ErrorCrit_NSE(InputsCrit = InputsCrit_Val, OutputsModel = OutputsModel_Val)
 
 ## ---- warning=FALSE, message=FALSE--------------------------------------------
@@ -79,7 +79,7 @@ CalibOptions <- CreateCalibOptions(FUN_MOD = RunModel_GR4J, FUN_CALIB = Calibrat
 ## calibration
 OutputsCalib <- Calibration(InputsModel = InputsModel, RunOptions = RunOptions_Cal,
                             InputsCrit = InputsCrit_Cal, CalibOptions = CalibOptions,
-                            FUN_MOD = RunModel_GR4J, FUN_CRIT = ErrorCrit_NSE, 
+                            FUN_MOD = RunModel_GR4J,
                             FUN_CALIB = Calibration_Michel)
 OutputsModel_Cal <- RunModel(InputsModel = InputsModel, RunOptions = RunOptions_Cal, 
                              Param = OutputsCalib$ParamFinalR, FUN = RunModel_GR4J)
@@ -103,10 +103,10 @@ CalibOptions <- CreateCalibOptions(FUN_MOD = RunModel_GR4J, FUN_CALIB = Calibrat
 ## calibration
 OutputsCalib <- Calibration(InputsModel = InputsModel, RunOptions = RunOptions_Cal,
                             InputsCrit = InputsCrit_Cal, CalibOptions = CalibOptions,
-                            FUN_MOD = RunModel_GR4J, FUN_CRIT = ErrorCrit_NSE, 
+                            FUN_MOD = RunModel_GR4J,
                             FUN_CALIB = Calibration_Michel)
 OutputsModel_Cal <- RunModel(InputsModel = InputsModel, RunOptions = RunOptions_Cal, 
-                         Param = OutputsCalib$ParamFinalR, FUN = RunModel_GR4J)
+                             Param = OutputsCalib$ParamFinalR, FUN = RunModel_GR4J)
 OutputsCrit_Cal <- ErrorCrit_NSE(InputsCrit = InputsCrit_Cal, OutputsModel = OutputsModel_Cal)
 
 

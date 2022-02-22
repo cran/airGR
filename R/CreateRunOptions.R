@@ -24,12 +24,26 @@ CreateRunOptions <- function(FUN_MOD, InputsModel,
   ObjectClass <- FeatFUN_MOD$Class
   TimeStepMean <- FeatFUN_MOD$TimeStepMean
 
+  ## Model output variable list
+  FortranOutputs <- .FortranOutputs(GR = FeatFUN_MOD$CodeModHydro,
+                                    isCN = "CemaNeige" %in% FeatFUN_MOD$Class)
+
   ## manage class
   if (IsIntStore) {
     ObjectClass <- c(ObjectClass, "interception")
   }
-  if (IsHyst) {
-    ObjectClass <- c(ObjectClass, "hysteresis")
+  if ("CemaNeige" %in% FeatFUN_MOD$Class) {
+    FeatFUN_MOD$IsHyst <- IsHyst
+    if (IsHyst) {
+      ObjectClass <- c(ObjectClass, "hysteresis")
+      FeatFUN_MOD$NbParam <- FeatFUN_MOD$NbParam + 2
+    }
+  }
+
+  ## SD model
+  FeatFUN_MOD$IsSD <- inherits(InputsModel, "SD")
+  if (FeatFUN_MOD$IsSD) {
+    FeatFUN_MOD$NbParam <- FeatFUN_MOD$NbParam + 1
   }
 
   if (!"CemaNeige" %in% ObjectClass & "hysteresis" %in% ObjectClass) {
@@ -290,30 +304,9 @@ CreateRunOptions <- function(FUN_MOD, InputsModel,
   ##check_Outputs_Cal_and_Sim
 
   ##Outputs_all
-  Outputs_all <- NULL
-  if (identical(FUN_MOD, RunModel_GR4H) | identical(FUN_MOD, RunModel_CemaNeigeGR4H)) {
-    Outputs_all <- c(Outputs_all, .FortranOutputs(GR = "GR4H")$GR)
-  }
-  if (identical(FUN_MOD, RunModel_GR5H) | identical(FUN_MOD, RunModel_CemaNeigeGR5H)) {
-    Outputs_all <- c(Outputs_all, .FortranOutputs(GR = "GR5H")$GR)
-  }
-  if (identical(FUN_MOD, RunModel_GR4J) | identical(FUN_MOD, RunModel_CemaNeigeGR4J)) {
-    Outputs_all <- c(Outputs_all, .FortranOutputs(GR = "GR4J")$GR)
-  }
-  if (identical(FUN_MOD, RunModel_GR5J) | identical(FUN_MOD, RunModel_CemaNeigeGR5J)) {
-    Outputs_all <- c(Outputs_all, .FortranOutputs(GR = "GR5J")$GR)
-  }
-  if (identical(FUN_MOD, RunModel_GR6J) | identical(FUN_MOD, RunModel_CemaNeigeGR6J)) {
-    Outputs_all <- c(Outputs_all, .FortranOutputs(GR = "GR6J")$GR)
-  }
-  if (identical(FUN_MOD, RunModel_GR2M)) {
-    Outputs_all <- c(Outputs_all, .FortranOutputs(GR = "GR2M")$GR)
-  }
-  if (identical(FUN_MOD, RunModel_GR1A)) {
-    Outputs_all <- c(Outputs_all, .FortranOutputs(GR = "GR1A")$GR)
-  }
-  if ("CemaNeige" %in% ObjectClass) {
-    Outputs_all <- c(Outputs_all, .FortranOutputs(GR = NULL, isCN = TRUE)$CN)
+  Outputs_all <- c("DatesR", unlist(FortranOutputs), "WarmUpQsim", "StateEnd", "Param")
+  if (FeatFUN_MOD$IsSD) {
+    Outputs_all <- c(Outputs_all, "QsimDown", "Qsim_m3")
   }
 
   ##check_Outputs_Sim
@@ -327,9 +320,9 @@ CreateRunOptions <- function(FUN_MOD, InputsModel,
     stop("'Outputs_Sim' must not contain NA")
   }
   if ("all" %in% Outputs_Sim) {
-    Outputs_Sim <- c("DatesR", Outputs_all, "StateEnd")
+    Outputs_Sim <- Outputs_all
   }
-  Test <- which(!Outputs_Sim %in% c("DatesR", Outputs_all, "StateEnd"))
+  Test <- which(!Outputs_Sim %in% Outputs_all)
   if (length(Test) != 0) {
     stop(paste0( "'Outputs_Sim' is incorrectly defined: ",
                  paste(Outputs_Sim[Test], collapse = ", "), " not found"))
@@ -340,14 +333,12 @@ CreateRunOptions <- function(FUN_MOD, InputsModel,
   ##check_Outputs_Cal
   if (is.null(Outputs_Cal)) {
     if ("GR" %in% ObjectClass) {
-      Outputs_Cal <- c("Qsim")
-    }
-    if ("CemaNeige" %in% ObjectClass) {
+      Outputs_Cal <- c("Qsim", "Param")
+      if ("CemaNeige" %in% ObjectClass) {
+        Outputs_Cal <- c("PliqAndMelt", Outputs_Cal)
+      }
+    } else if ("CemaNeige" %in% ObjectClass) {
       Outputs_Cal <- c("all")
-    }
-    if ("GR" %in% ObjectClass &
-        "CemaNeige" %in% ObjectClass) {
-      Outputs_Cal <- c("PliqAndMelt", "Qsim")
     }
   } else {
     if (!is.vector(Outputs_Cal)) {
@@ -361,10 +352,9 @@ CreateRunOptions <- function(FUN_MOD, InputsModel,
     }
   }
   if ("all" %in% Outputs_Cal) {
-    Outputs_Cal <- c("DatesR", Outputs_all, "StateEnd")
-
+    Outputs_Cal <- Outputs_all
   }
-  Test <- which(!Outputs_Cal %in% c("DatesR", Outputs_all, "StateEnd"))
+  Test <- which(!Outputs_Cal %in% Outputs_all)
   if (length(Test) != 0) {
     stop(paste0("'Outputs_Cal' is incorrectly defined: ",
                 paste(Outputs_Cal[Test], collapse = ", "), " not found"))
@@ -473,7 +463,9 @@ CreateRunOptions <- function(FUN_MOD, InputsModel,
                      IniStates = IniStates,
                      IniResLevels = IniResLevels,
                      Outputs_Cal = Outputs_Cal,
-                     Outputs_Sim = Outputs_Sim)
+                     Outputs_Sim = Outputs_Sim,
+                     FortranOutputs = FortranOutputs,
+                     FeatFUN_MOD = FeatFUN_MOD)
 
   if ("CemaNeige" %in% ObjectClass) {
     RunOptions <- c(RunOptions, list(MeanAnSolidPrecip = MeanAnSolidPrecip))

@@ -59,6 +59,8 @@ RunModel_GR6J(InputsModel, RunOptions, Param)
     \emph{$Exp     } \tab [numeric] series of exponential store level (negative) (R2) [mm]              \cr
     \emph{$QD      } \tab [numeric] series of direct flow from UH2 after exchange (Qd) [mm/d]           \cr
     \emph{$Qsim    } \tab [numeric] series of simulated discharge (Q) [mm/d]                            \cr
+    \emph{RunOptions$WarmUpQsim} \tab [numeric] series of simulated discharge (Q) on the warm-up period [mm/d] \cr
+    \emph{RunOptions$Param     } \tab [numeric] parameter set parameter set used by the model                  \cr
     \emph{$StateEnd} \tab [numeric] states at the end of the run (res. levels, UH1 levels, UH2 levels) [mm]. See \code{\link{CreateIniStates}} for more details \cr
   }
 Refer to the provided references or to the package source code for further details on these model outputs.

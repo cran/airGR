@@ -57,8 +57,10 @@ test_that("QcontribDown parameter should be a numeric vector or an OutputModel o
 
 Param <- c(257.237556, 1.012237, 88.234673, 2.207958) #  From vignettes/V01_get_started
 
+RunOptionsGR4J <- RunOptions
+RunOptionsGR4J$FeatFUN_MOD$NbParam <- 4
 OutputsGR4JOnly <- RunModel_GR4J(InputsModel = InputsModel,
-                                 RunOptions = RunOptions,
+                                 RunOptions = RunOptionsGR4J,
                                  Param = Param)
 
 test_that("QcontribDown should contain a Qsim key", {
@@ -70,13 +72,21 @@ test_that("QcontribDown should contain a Qsim key", {
   )
 })
 
-test_that("'QcontribDown$Qim' should have the same lenght as 'RunOptions$IndPeriod_Run'", {
+test_that("'QcontribDown$Qim' should have the same length as 'RunOptions$IndPeriod_Run'", {
   QcontribDown <- OutputsGR4JOnly
   QcontribDown$Qsim <- c(QcontribDown$Qsim, 0)
   expect_error(
     RunModel_Lag(InputsModel = InputsModel, RunOptions = RunOptions, Param = 1, QcontribDown = QcontribDown),
-    regexp = "should have the same lenght as"
+    regexp = "should have the same length as"
   )
+})
+
+test_that("OutputsModel must have a item 'QsimDown' equal to GR4J Qsim contribution", {
+  expect_equal(OutputsGR4JOnly$Qsim,
+               RunModel_Lag(InputsModel = InputsModel,
+                            RunOptions = RunOptions,
+                            Param = 1,
+                            QcontribDown = OutputsGR4JOnly)$QsimDown)
 })
 
 test_that("RunModel(FUN=RunModel_Lag) should give same result as RunModel_Lag", {
@@ -165,7 +175,7 @@ Qm3GR4Only <- OutputsGR4JOnly$Qsim * InputsModel$BasinAreas[2L] * 1e3
 test_that("1 input with lag of 1 time step delay out gives an output delayed of one time step", {
   OutputsSD <- RunModel(InputsModel, RunOptions, Param = ParamSD, FUN_MOD = RunModel_GR4J)
   Qm3SdSim <- OutputsSD$Qsim_m3
-  Qm3UpstLagObs <- c(0, Qupstream[Ind_Run[1:(length(Ind_Run) - 1)]]) * InputsModel$BasinAreas[1] * 1e3
+  Qm3UpstLagObs <- Qupstream[Ind_Run - 1] * InputsModel$BasinAreas[1] * 1e3
   expect_equal(Qm3SdSim - Qm3GR4Only, Qm3UpstLagObs)
 })
 
@@ -174,14 +184,14 @@ test_that("1 input with lag of 0.5 time step delay out gives an output delayed o
                         Param = c(InputsModel$LengthHydro * 1e3 / (12 * 3600), Param),
                         FUN_MOD = RunModel_GR4J)
   Qm3SdSim <- OutputsSD$Qsim_m3
-  Qm3UpstLagObs <- (Qupstream[Ind_Run] + c(0, Qupstream[Ind_Run[1:(length(Ind_Run) - 1)]])) / 2 * InputsModel$BasinAreas[1] * 1e3
+  Qm3UpstLagObs <- (Qupstream[Ind_Run] + Qupstream[Ind_Run - 1]) / 2 * InputsModel$BasinAreas[1] * 1e3
   expect_equal(Qm3SdSim - Qm3GR4Only, Qm3UpstLagObs)
 })
 
 test_that("Qupstream in different units should return the same result", {
   OutputsSD_mm <- RunModel(InputsModel, RunOptions,
-                        Param = ParamSD,
-                        FUN_MOD = RunModel_GR4J)
+                           Param = ParamSD,
+                           FUN_MOD = RunModel_GR4J)
   InputsModel_m3 <- CreateInputsModel(
     FUN_MOD = RunModel_GR4J,
     DatesR = BasinObs$DatesR,
@@ -208,8 +218,8 @@ test_that("Qupstream in different units should return the same result", {
     QupstrUnit = "m3/s"
   )
   OutputsSD_m3s <- RunModel(InputsModel_m3s, RunOptions,
-                           Param = ParamSD,
-                           FUN_MOD = RunModel_GR4J)
+                            Param = ParamSD,
+                            FUN_MOD = RunModel_GR4J)
   expect_equal(OutputsSD_mm$Qsim, OutputsSD_m3s$Qsim)
 
   InputsModel_ls <- CreateInputsModel(
@@ -233,7 +243,7 @@ InputsCrit <- CreateInputsCrit(
   InputsModel = InputsModel,
   RunOptions = RunOptions,
   VarObs = "Q",
-  Obs = (c(0, Qupstream[Ind_Run[1:(length(Ind_Run) - 1)]]) * BasinAreas[1L] +
+  Obs = (Qupstream[Ind_Run - 1] * BasinAreas[1L] +
            BasinObs$Qmm[Ind_Run] * BasinAreas[2L]) / sum(BasinAreas)
 )
 
@@ -283,7 +293,7 @@ test_that("1 no area input with lag of 1 time step delay out gives an output del
   expect_false(any(is.na(OutputsSD$Qsim)))
 
   Qm3SdSim <- OutputsSD$Qsim_m3
-  Qm3UpstLagObs <- c(0, InputsModel$Qupstream[Ind_Run[1:(length(Ind_Run) - 1)]])
+  Qm3UpstLagObs <- InputsModel$Qupstream[Ind_Run - 1]
 
   expect_equal(Qm3SdSim - Qm3GR4Only, Qm3UpstLagObs)
 })
@@ -338,6 +348,21 @@ test_that("Error on Wrong length of iniState$SD", {
                                   InputsModel = IM, IndPeriod_Run = Ind_Run2,
                                   IndPeriod_WarmUp = 0L,
                                   IniStates = OutputsModel1$StateEnd)
-  expect_error(RunModel(InputsModel = IM, RunOptions = RunOptions2, Param = PSDini, FUN_MOD = RunModel_GR4J)
+  expect_error(
+    RunModel(InputsModel = IM, RunOptions = RunOptions2, Param = PSDini, FUN_MOD = RunModel_GR4J)
   )
+})
+
+test_that("First Qupstream time steps must be repeated if warm-up period is too short", {
+  IM2 <- IM[2558:3557]
+  IM2$BasinAreas[3] <- 0
+  IM2$Qupstream <- matrix(rep(1:1000, 2), ncol = 2)
+  RunOptions2 <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
+                                  InputsModel = IM2, IndPeriod_Run = seq_len(1000),
+                                  IndPeriod_WarmUp = 0L)
+  OM2 <- RunModel(InputsModel = IM2,
+                  RunOptions = RunOptions2,
+                  Param = PSDini,
+                  FUN_MOD = RunModel_GR4J)
+  expect_equal(OM2$Qsim_m3[1:3], rep(2,3))
 })

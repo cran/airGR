@@ -21,6 +21,7 @@ Function which creates a screen plot giving an overview of the model outputs.
 \method{plot}{OutputsModel}(x, Qobs = NULL, IndPeriod_Plot = NULL,
      BasinArea = NULL, which = "synth", log_scale = FALSE,
      cex.axis = 1, cex.lab = 0.9, cex.leg = 0.9, lwd = 1,
+     AxisTS = function(x) axis.POSIXct(side = 1, x = x$DatesR, ...),
      LayoutMat = NULL,
      LayoutWidths = rep.int(1, ncol(LayoutMat)),
      LayoutHeights = rep.int(1, nrow(LayoutMat)),
@@ -48,6 +49,8 @@ Function which creates a screen plot giving an overview of the model outputs.
 \item{cex.leg}{(optional) [numeric] the magnification to be used for the legend labels relative to the current setting of \code{cex}}
 
 \item{lwd}{(optional) [numeric] the line width (a positive number)}
+
+\item{AxisTS}{(optional) [function] to manage x-axis representing calendar dates and times on time series plots (see \code{\link{axis}} and \code{\link{axis.POSIXct}})}
 
 \item{LayoutMat}{(optional) [numeric] a matrix object specifying the location of the next N figures on the output device. Each value in the matrix must be 0 or a positive integer. If N is the largest positive integer in the matrix, then the integers {1, \dots, N-1} must also appear at least once in the matrix (see \code{\link{layout}})}
 
@@ -131,6 +134,15 @@ plot(simGR4J$OutputsModel, Qobs = simGR4J$Qobs,
      LayoutMat = matrix(c(1, 2, 3, 1, 4, 4), ncol = 2),
      LayoutWidths  = c(1.5, 1),
      LayoutHeights = c(0.5, 1, 1))
+
+
+### customize x-axis on time series plot
+FunAxisTS <- function(x) {
+  axis.POSIXct(side = 1, x = x$DatesR,
+  at = pretty(x$DatesR, n = 10),
+  format = "\%Y-\%m-\%d")
+}
+plot(simGR4J$OutputsModel, Qobs = simGR4J$Qobs, AxisTS = FunAxisTS)
 
 
 ### add a main title

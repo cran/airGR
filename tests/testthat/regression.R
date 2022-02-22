@@ -1,9 +1,9 @@
 context("Compare example outputs with CRAN")
 
 CompareWithStable <- function(refVarFile, testDir, regIgnore) {
-  v <- data.frame(topic = basename(dirname(refVarFile)),
+  v <- list(topic = basename(dirname(refVarFile)),
                   var = gsub("\\.rds$", "", basename(refVarFile)))
-  if (is.null(regIgnore) || all(apply(regIgnore, 1, function(x) !all(x == v)))) {
+  if (is.null(regIgnore) || !any(apply(regIgnore, 1, function(x) {v$var == x[2] && (x[1] == "*" || x[1] == v$topic)}))) {
     test_that(paste("Compare", v$topic, v$var), {
       testVarFile <- paste0(
         file.path(testDir, v$topic, v$var),
@@ -13,6 +13,17 @@ CompareWithStable <- function(refVarFile, testDir, regIgnore) {
       if (file.exists(testVarFile)) {
         testVar <- readRDS(testVarFile)
         refVar <- readRDS(refVarFile)
+        if (!is.null(regIgnore)) {
+          regIgnore$mainVar <- gsub("\\$.*$", "", regIgnore[,2])
+          varIgnore <- regIgnore[apply(regIgnore, 1, function(x) {v$var == x[3] && (x[1] == "*" || x[1] == v$topic)}), 2]
+          if (length(varIgnore) > 0) {
+            itemIgnore <- gsub("^.*\\$", "", varIgnore)
+            for(item in itemIgnore) {
+              testVar[[item]] <- NULL
+              refVar[[item]] <- NULL
+            }
+          }
+        }
         expect_equivalent(testVar, refVar)
       }
     })
@@ -22,7 +33,9 @@ CompareWithStable <- function(refVarFile, testDir, regIgnore) {
 tmp_path <- file.path("../tmp", Sys.getenv("R_VERSION"));
 
 if (dir.exists(file.path(tmp_path, "stable")) & dir.exists(file.path(tmp_path, "dev"))) {
-  refVarFiles <- list.files(file.path(tmp_path, "stable"), recursive = TRUE, full.names = TRUE)
+  refVarFiles <- list.files(path = file.path(tmp_path, "stable"),
+                            pattern = "\\.rds$",
+                            recursive = TRUE, full.names = TRUE)
   regIgnoreFile <- "../../.regressionignore"
   if (file.exists(regIgnoreFile)) {
     message("Using .regressionignore file. The following variables are going to be skipped:")

@@ -10,6 +10,7 @@ Calibration_Michel <- function(InputsModel,
 
 
   FUN_MOD  <- match.fun(FUN_MOD)
+
   if (!missing(FUN_CRIT)) {
     FUN_CRIT <- match.fun(FUN_CRIT)
   }
@@ -17,7 +18,7 @@ Calibration_Michel <- function(InputsModel,
   # Handling 'FUN_TRANSFO' from direct argument or provided by 'CaliOptions'
   if (!is.null(FUN_TRANSFO)) {
     FUN_TRANSFO <- match.fun(FUN_TRANSFO)
-  } else if(!is.null(CalibOptions$FUN_TRANSFO)) {
+  } else if (!is.null(CalibOptions$FUN_TRANSFO)) {
     FUN_TRANSFO <- CalibOptions$FUN_TRANSFO
   } else {
     stop("'FUN_TRANSFO' is not provided neither as 'FUN_TRANSFO' argument or in 'CaliOptions' argument")
@@ -59,6 +60,7 @@ Calibration_Michel <- function(InputsModel,
   if (!missing(FUN_CRIT)) {
     warning("argument 'FUN_CRIT' is deprecated. The error criterion function is now automatically get from the 'InputsCrit' object")
   }
+
 
   ##_variables_initialisation
   ParamFinalR <- NULL
@@ -404,7 +406,7 @@ Calibration_Michel <- function(InputsModel,
       listNameCrit <- OutputsCrit$CritCompo$MultiCritNames
       msgForm <- paste(sprintf("%.2f", listweights), listNameCrit, sep = " * ", collapse = ", ")
       msgForm <- unlist(strsplit(msgForm, split = ","))
-      msgFormSep <- rep(c(",", ",", ",\n\t\t    "), times = ceiling(length(msgForm)/3))[1: length(msgForm)]
+      msgFormSep <- rep(c(",", ",", ",\n\t\t    "), times = ceiling(length(msgForm)/3))[1:length(msgForm)]
       msgForm <- paste(msgForm, msgFormSep, sep = "", collapse = "")
       msgForm <- gsub("\\,\\\n\\\t\\\t    $|\\,$", "", msgForm)
       message("\tFormula: sum(", msgForm, ")")

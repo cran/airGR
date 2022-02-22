@@ -15,8 +15,6 @@ library(airGR)
 library(coda)
 library(FME)
 library(ggmcmc)
-library(dplyr)
-# source("airGR.R")
 set.seed(123)
 load(system.file("vignettesData/vignetteParamMCMC.rda", package = "airGR"))
 ```
@@ -160,7 +158,7 @@ ggmcmc::ggs_traceplot(parDRAM)
 
 The posterior density for each parameter can then be visualised:
 ```{r, fig.width=6, fig.height=9, warning=FALSE}
-burnParDRAM <- dplyr::filter(parDRAM, Iteration > 1000) # to keep only the second half of the series
+burnParDRAM <- parDRAM[parDRAM$Iteration > 1000, ] # to keep only the second half of the series
 ggmcmc::ggs_density(burnParDRAM)
 ```
 

@@ -55,6 +55,8 @@ RunModel_GR4H(InputsModel, RunOptions, Param)
     \emph{$QR      } \tab [numeric] series of routing store outflow (Qr) [mm/h]                         \cr
     \emph{$QD      } \tab [numeric] series of direct flow from UH2 after exchange (Qd) [mm/h]           \cr
     \emph{$Qsim    } \tab [numeric] series of simulated discharge (Q) [mm/h]                            \cr
+    \emph{RunOptions$WarmUpQsim} \tab [numeric] series of simulated discharge (Q) on the warm-up period [mm/h] \cr
+    \emph{RunOptions$Param     } \tab [numeric] parameter set parameter set used by the model                  \cr
     \emph{$StateEnd} \tab [numeric] states at the end of the run (res. levels, UH1 levels, UH2 levels) [mm]. See \code{\link{CreateIniStates}} for more details \cr
   }
 Refer to the provided references or to the package source code for further details on these model outputs.
@@ -81,7 +83,7 @@ InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4H, DatesR = BasinObs$Date
                                  Precip = BasinObs$P, PotEvap = BasinObs$E)
 
 ## run period selection
-Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d \%H:\%M")=="2004-03-01 00:00"),
+Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d \%H:\%M")=="2005-01-01 00:00"),
                which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d \%H:\%M")=="2008-12-31 23:00"))
 
 ## preparation of the RunOptions object
@@ -89,7 +91,7 @@ RunOptions <- CreateRunOptions(FUN_MOD = RunModel_GR4H,
                                InputsModel = InputsModel, IndPeriod_Run = Ind_Run)
 
 ## simulation
-Param <- c(X1 = 521.113, X2 = -2.918, X3 = 218.009, X4 = 4.124)
+Param <- c(X1 = 756.930, X2 = -0.773, X3 = 138.638, X4 = 5.247)
 OutputsModel <- RunModel_GR4H(InputsModel = InputsModel, RunOptions = RunOptions, Param = Param)
 
 ## results preview
@@ -121,7 +123,7 @@ Le Moine, N. (2008).
 
 
 \seealso{
-\code{\link{RunModel_GR4J}},
+\code{\link{RunModel_GR4J}}, \code{\link{RunModel_CemaNeigeGR4H}},
          \code{\link{CreateInputsModel}}, \code{\link{CreateRunOptions}}, \code{\link{CreateIniStates}}.
 }
 

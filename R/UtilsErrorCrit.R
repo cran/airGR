@@ -9,11 +9,7 @@
     stop("'InputsCrit' must be of class 'InputsCrit'", call. = FALSE)
   }
   if (inherits(InputsCrit, "Multi") | inherits(InputsCrit, "Compo")) {
-    if (Crit == "RMSE") {
-      stop("'InputsCrit' must be of class 'Single'. Use the 'ErrorCrit' function on objects of class 'Multi' with RMSE", call. = FALSE)
-    } else {
-      stop(paste0("'InputsCrit' must be of class 'Single'. Use the 'ErrorCrit' function on objects of class 'Multi' or 'Compo' with ", Crit), call. = FALSE)
-    }
+    stop(paste0("'InputsCrit' must be of class 'Single'. Use the 'ErrorCrit' function on objects of class 'Multi' or 'Compo' with ", Crit), call. = FALSE)
   }
 
 
@@ -39,7 +35,7 @@
     CritBestValue <- +1
     Multiplier    <- +1
   }
-  if (Crit %in% c("NSE", "KGE", "KGE2")) {
+  if (Crit %in% c("NSE", "KGE", "KGE2", "GAPX")) {
     CritBestValue <- +1
     Multiplier    <- -1
   }
@@ -48,15 +44,14 @@
   ## Data preparation
   VarObs <- InputsCrit$Obs
   VarObs[!InputsCrit$BoolCrit] <- NA
-  if (InputsCrit$VarObs == "Q") {
-    VarSim <- OutputsModel$Qsim
-  }
-  if (InputsCrit$VarObs == "SCA") {
-    VarSim <- rowMeans(sapply(OutputsModel$CemaNeigeLayers[InputsCrit$idLayer], FUN = "[[", "Gratio"))
-  }
-  if (InputsCrit$VarObs == "SWE") {
-    VarSim <- rowMeans(sapply(OutputsModel$CemaNeigeLayers[InputsCrit$idLayer], FUN = "[[", "SnowPack"))
-  }
+  VarSim <- switch(
+    InputsCrit$VarObs,
+    Q = OutputsModel$Qsim,
+    SCA = rowMeans(sapply(OutputsModel$CemaNeigeLayers[InputsCrit$idLayer], FUN = "[[", "Gratio")),
+    SWE = rowMeans(sapply(OutputsModel$CemaNeigeLayers[InputsCrit$idLayer], FUN = "[[", "SnowPack")),
+    ParamT = OutputsModel$RunOptions$ParamT
+  )
+
   VarSim[!InputsCrit$BoolCrit] <- NA
 
 
@@ -115,9 +110,16 @@
   } else {
     CritCompute <- TRUE
   }
-  WarningTS <- 10
-  if (sum(!TS_ignore) < WarningTS & warnings) {
-    warning("\t criterion computed on less than ", WarningTS, " time-steps", call. = FALSE)
+  if (Crit != "GAPX") {
+    WarningTS <- 10
+    if (sum(!TS_ignore) < WarningTS & warnings) {
+      warning("\t criterion computed on less than ", WarningTS, " time-steps", call. = FALSE)
+    }
+  } else {
+    WarningTS <- 4 # For at least daily time step models (GR4J)
+    if (sum(!TS_ignore) < WarningTS & warnings) {
+      warning("\t criterion GAPX computed on less than ", WarningTS, " parameters", call. = FALSE)
+    }
   }
 
 

@@ -1,4 +1,4 @@
-ErrorCrit <- function(InputsCrit, OutputsModel, FUN_CRIT, warnings = TRUE, verbose = TRUE) {
+ErrorCrit <- function(InputsCrit, OutputsModel, warnings = TRUE, verbose = TRUE) {
 
 
   ## ---------- Arguments check
@@ -9,10 +9,6 @@ ErrorCrit <- function(InputsCrit, OutputsModel, FUN_CRIT, warnings = TRUE, verbo
   if (!inherits(OutputsModel, "OutputsModel")) {
     stop("OutputsModel must be of class 'OutputsModel'")
   }
-  if (!missing(FUN_CRIT)) {
-    warning("deprecated 'FUN_CRIT' argument. The error criterion function is now automatically get from the 'InputsCrit' object", call. = FALSE)
-  }
-
 
 
   ## ---------- Criterion computation

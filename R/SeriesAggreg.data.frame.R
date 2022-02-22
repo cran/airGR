@@ -60,10 +60,10 @@ SeriesAggreg.data.frame <- function(x,
   lapply(ConvertFun, function(y) {
     if (!grepl("^q\\d+$", y, ignore.case = TRUE)) {
       TestOutput <- listConvertFun[[y]](1:10)
-      if(!is.numeric(TestOutput)) {
+      if (!is.numeric(TestOutput)) {
         stop(sprintf("Returned value of '%s' function should be numeric", y))
       }
-      if(length(TestOutput) != 1) {
+      if (length(TestOutput) != 1) {
         stop(sprintf("Returned value of '%s' function should be of length 1", y))
       }
     }
@@ -184,6 +184,8 @@ SeriesAggreg.data.frame <- function(x,
                     all.y = FALSE)
   tsAggreg <- tsAggreg[tsAggreg$Selec & tsAggreg$DatesRini, ]
   tsAggreg <- tsAggreg[, colnames(TabSeries0)]
+  tsAggreg <- tsAggreg[order(tsAggreg$DatesR), ] # reorder by date especially for regime time series
+  colnames(tsAggreg)[1L] <- colnames(x)[1L]      # keep original column names
   return(tsAggreg)
 
 }

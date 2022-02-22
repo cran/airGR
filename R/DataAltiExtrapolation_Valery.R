@@ -38,7 +38,7 @@ DataAltiExtrapolation_Valery <- function(DatesR,
         ZLayers[iLayer] <- 0.5 * (HypsoData[ncont + 1] + HypsoData[ncont + 2])
       }
       if (nn > 2) {
-        ZLayers[iLayer] <- HypsoData[ncont + nn / 2]
+        ZLayers[iLayer] <- HypsoData[ncont + nn / 2 + 1]
       }
       ncont <- ncont + nn
     }

@@ -31,8 +31,8 @@ R-object containing the code, station's name, area and hypsometric curve of the 
 
 
 \examples{
-   library(airGR)
-   data(L0123001)
-   str(BasinInfo)
+library(airGR)
+data(L0123001)
+str(BasinInfo)
 }
 

@@ -3,8 +3,6 @@ library(airGR)
 library(coda)
 library(FME)
 library(ggmcmc)
-library(dplyr)
-# source("airGR.R")
 set.seed(123)
 load(system.file("vignettesData/vignetteParamMCMC.rda", package = "airGR"))
 
@@ -74,7 +72,7 @@ parDRAM <- ggmcmc::ggs(multDRAM) ## to convert object for using by all ggs_* gra
 ggmcmc::ggs_traceplot(parDRAM)
 
 ## ---- fig.width=6, fig.height=9, warning=FALSE--------------------------------
-burnParDRAM <- dplyr::filter(parDRAM, Iteration > 1000) # to keep only the second half of the series
+burnParDRAM <- parDRAM[parDRAM$Iteration > 1000, ] # to keep only the second half of the series
 ggmcmc::ggs_density(burnParDRAM)
 
 ## ---- fig.width=6, fig.height=6, results='hide'-------------------------------
