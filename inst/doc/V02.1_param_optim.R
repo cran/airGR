@@ -2,7 +2,7 @@
 library(airGR)
 library(DEoptim)
 library(hydroPSO) # Needs R version >= 3.6 or latticeExtra <= 0.6-28 on R 3.5
-library(Rmalschains)
+# library(Rmalschains) # removed from CRAN since 2023-04-03
 library(caRamel)
 library(ggplot2)
 library(GGally)
@@ -75,6 +75,12 @@ summary(resPORT)
 #  optPSO <- hydroPSO::hydroPSO(fn = OptimGR4J,
 #                               lower = lowerGR4J, upper = upperGR4J,
 #                               control = list(write2disk = FALSE, verbose = FALSE))
+
+## ---- warning=FALSE, results='hide', message=FALSE, eval=FALSE----------------
+#  # to install the package temporary removde from CRAN
+#  # Rtools needed (windows : https://cran.r-project.org/bin/windows/Rtools/)
+#  install.packages("https://cran.r-project.org/src/contrib/Archive/Rmalschains/Rmalschains_0.2-8.tar.gz",
+#                   repos = NULL, type = "source", dependencies = TRUE)
 
 ## ---- warning=FALSE, results='hide', eval=FALSE-------------------------------
 #  optMALS <- Rmalschains::malschains(fn = OptimGR4J,

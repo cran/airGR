@@ -2,6 +2,17 @@
 
 
 
+### 1.7.4 Release Notes (2023-04-11)
+
+#### CRAN-compatibility updates
+
+- The 'Rmalschains' package is no longer suggested (but the code linked to its use and is always present in the 'param_optim' vignette). ([#172](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/172))
+
+- `.ErrorCrit()` and `.FeatModels` function are no more exported. ([#173](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/173))
+
+____________________________________________________________________________________
+
+
 ### 1.7.0 Release Notes (2022-02-21)
 
 #### New features

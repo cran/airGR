@@ -66,8 +66,8 @@ export(TransfoParam_GR4J)
 export(TransfoParam_GR5J)
 export(TransfoParam_GR6J)
 export(TransfoParam_Lag)
-export(.ErrorCrit)
-export(.FeatModels)
+#export(.ErrorCrit)
+#export(.FeatModels)
 
 
 #####################################

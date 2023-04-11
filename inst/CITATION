@@ -7,7 +7,7 @@ citHeader("To cite airGR in publications use these two references:")
 
 bibentry(bibtype     ="Article",
          title       = "The Suite of Lumped {GR} Hydrological Models in an {R} package",
-         author      = personList(as.person("L. Coron"), as.person("G. Thirel"), as.person("O. Delaigue"), as.person("C. Perrin"), as.person("V. Andréassian")),
+         author      = c(as.person("L. Coron"), as.person("G. Thirel"), as.person("O. Delaigue"), as.person("C. Perrin"), as.person("V. Andréassian")),
          journal     = "Environmental Modelling and Software",
          year        = "2017",
          pages       = {"166-171"},
@@ -25,7 +25,7 @@ bibentry(bibtype     ="Article",
 
 bibentry(bibtype     = "Manual",
          title       = "{airGR}: Suite of {GR} Hydrological Models for Precipitation-Runoff Modelling",
-         author      = personList(as.person("L. Coron"), as.person("O. Delaigue"), as.person("G. Thirel"), as.person("D. Dorchies"), as.person("C. Perrin"), as.person("C. Michel")),
+         author      = c(as.person("L. Coron"), as.person("O. Delaigue"), as.person("G. Thirel"), as.person("D. Dorchies"), as.person("C. Perrin"), as.person("C. Michel")),
          journal     = "R News",
          year        = year,
          note        = note,
