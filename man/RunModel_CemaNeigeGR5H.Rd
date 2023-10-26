@@ -63,6 +63,7 @@ RunModel_CemaNeigeGR5H(InputsModel, RunOptions, Param)
     \emph{$QR      } \tab [numeric] series of routing store outflow (Qr) [mm/h]                                                 \cr
     \emph{$QD      } \tab [numeric] series of direct flow from UH after exchange (Qd) [mm/h]                                    \cr
     \emph{$Qsim    } \tab [numeric] series of simulated discharge (Q) [mm/h]                                                    \cr
+    \emph{$CemaNeigeLayers} \tab [list] CemaNeige outputs (1 element per layer)                                                 \cr
     \emph{$CemaNeigeLayers[[iLayer]]$Pliq         } \tab [numeric] series of liquid precip. [mm/h]                              \cr
     \emph{$CemaNeigeLayers[[iLayer]]$Psol         } \tab [numeric] series of solid precip. [mm/h]                               \cr
     \emph{$CemaNeigeLayers[[iLayer]]$SnowPack     } \tab [numeric] series of snow pack (snow water equivalent) [mm]             \cr
@@ -107,8 +108,8 @@ InputsModel <- CreateInputsModel(FUN_MOD = RunModel_CemaNeigeGR5H, DatesR = Basi
                                  HypsoData = BasinInfo$HypsoData, NLayers = 5)
 
 ## run period selection
-Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d \%H:\%M")=="2004-03-01 00:00"),
-               which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d \%H:\%M")=="2008-12-31 23:00"))
+Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d \%H")=="2004-03-01 00"),
+               which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d \%H")=="2008-12-31 23"))
 
 
 ## --- original version of CemaNeige

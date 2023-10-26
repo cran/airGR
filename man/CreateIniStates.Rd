@@ -14,8 +14,10 @@ Creation of the \emph{IniStates} object possibly required by the \code{\link{Cre
 
 
 \usage{
-CreateIniStates(FUN_MOD, InputsModel, IsHyst = FALSE, IsIntStore = FALSE,
-                ProdStore = 350, RoutStore = 90, ExpStore = NULL, IntStore = NULL,
+CreateIniStates(FUN_MOD, InputsModel,
+                IsHyst = FALSE, IsIntStore = FALSE,
+                ProdStore = 350, RoutStore = 90,
+                ExpStore = NULL, IntStore = NULL,
                 UH1 = NULL, UH2 = NULL,
                 GCemaNeigeLayers = NULL, eTGCemaNeigeLayers = NULL,
                 GthrCemaNeigeLayers = NULL, GlocmaxCemaNeigeLayers = NULL,

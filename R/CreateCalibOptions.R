@@ -196,9 +196,9 @@ CreateCalibOptions <- function(FUN_MOD,
       ParamT <- cbind(ParamT, ParamTHyst)
     }
     if (IsSD) {
-      ParamTSD <- matrix(c(+1.25,
-                           +2.50,
-                           +5.00), ncol = 1, byrow = TRUE)
+      ParamTSD <- matrix(c(-8.75,
+                           -7.50,
+                           -5.00), ncol = 1, byrow = TRUE)
       ParamT <- cbind(ParamTSD, ParamT)
     }
 

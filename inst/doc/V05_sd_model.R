@@ -1,12 +1,12 @@
-## ---- include=FALSE, fig.keep='none', results='hide'--------------------------
+## ----include=FALSE, fig.keep='none', results='hide'---------------------------
 library(airGR)
 options(digits = 3)
 
-## ---- warning=FALSE, include=FALSE--------------------------------------------
+## ----warning=FALSE, include=FALSE---------------------------------------------
 library(airGR)
 options(digits = 3)
 
-## ---- warning=FALSE-----------------------------------------------------------
+## ----warning=FALSE------------------------------------------------------------
 ## loading catchment data
 data(L0123001)
 

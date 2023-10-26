@@ -1,23 +1,23 @@
-## ---- warning=FALSE, include=FALSE--------------------------------------------
+## ----warning=FALSE, include=FALSE---------------------------------------------
 library(airGR)
 options(digits = 3)
 
-## ---- warning=FALSE-----------------------------------------------------------
+## ----warning=FALSE------------------------------------------------------------
 ## loading catchment data
 data(L0123001)
 
 ## loading generalist parameter sets
 data(Param_Sets_GR4J)
 
-## ---- warning=FALSE-----------------------------------------------------------
+## ----warning=FALSE------------------------------------------------------------
 Param_Sets_GR4J$X4 <- Param_Sets_GR4J$X4u / 5.995 * BasinInfo$BasinArea^0.3
 Param_Sets_GR4J$X4u <- NULL
 Param_Sets_GR4J <- as.matrix(Param_Sets_GR4J)
 
-## ---- warning=FALSE, echo=FALSE-----------------------------------------------
+## ----warning=FALSE, echo=FALSE------------------------------------------------
 summary(Param_Sets_GR4J)
 
-## ---- warning=FALSE, include=TRUE---------------------------------------------
+## ----warning=FALSE, include=TRUE----------------------------------------------
 ## preparation of the InputsModel object
 InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$DatesR, 
                                  Precip = BasinObs$P, PotEvap = BasinObs$E)
@@ -51,7 +51,7 @@ RunOptions_Val <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
 InputsCrit_Val  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
                                     RunOptions = RunOptions_Val, Obs = BasinObs$Qmm[Ind_Val])
 
-## ---- warning=FALSE, message=FALSE--------------------------------------------
+## ----warning=FALSE, message=FALSE---------------------------------------------
 OutputsCrit_Loop <- apply(Param_Sets_GR4J, 1, function(iParam) {
   OutputsModel_Cal <- RunModel_GR4J(InputsModel = InputsModel, RunOptions = RunOptions_Cal,
                                     Param = iParam)
@@ -59,10 +59,10 @@ OutputsCrit_Loop <- apply(Param_Sets_GR4J, 1, function(iParam) {
   return(OutputsCrit$CritValue)
 })
 
-## ---- echo=FALSE--------------------------------------------------------------
+## ----echo=FALSE---------------------------------------------------------------
 OutputsCrit_Loop
 
-## ---- warning=FALSE, message=FALSE, echo=FALSE--------------------------------
+## ----warning=FALSE, message=FALSE, echo=FALSE---------------------------------
 Param_Best <- unlist(Param_Sets_GR4J[which.max(OutputsCrit_Loop), ])
 Param_Best
 
@@ -71,18 +71,17 @@ OutputsModel_Val <- RunModel_GR4J(InputsModel = InputsModel, RunOptions = RunOpt
                                   Param = Param_Best)
 OutputsCrit_Val <- ErrorCrit_NSE(InputsCrit = InputsCrit_Val, OutputsModel = OutputsModel_Val)
 
-## ---- warning=FALSE, message=FALSE--------------------------------------------
+## ----warning=FALSE, message=FALSE---------------------------------------------
 CalibOptions <- CreateCalibOptions(FUN_MOD = RunModel_GR4J, FUN_CALIB = Calibration_Michel)
 
-
-## ---- warning=FALSE, message=FALSE, include=FALSE-----------------------------
+## ----warning=FALSE, message=FALSE, include=FALSE------------------------------
 ## calibration
 OutputsCalib <- Calibration(InputsModel = InputsModel, RunOptions = RunOptions_Cal,
                             InputsCrit = InputsCrit_Cal, CalibOptions = CalibOptions,
                             FUN_MOD = RunModel_GR4J,
                             FUN_CALIB = Calibration_Michel)
 OutputsModel_Cal <- RunModel(InputsModel = InputsModel, RunOptions = RunOptions_Cal, 
-                             Param = OutputsCalib$ParamFinalR, FUN = RunModel_GR4J)
+                             Param = OutputsCalib$ParamFinalR, FUN_MOD = RunModel_GR4J)
 OutputsCrit_Cal <- ErrorCrit_NSE(InputsCrit = InputsCrit_Cal, OutputsModel = OutputsModel_Cal)
 
 
@@ -91,22 +90,22 @@ OutputsModel_Val <- RunModel_GR4J(InputsModel = InputsModel, RunOptions = RunOpt
                                   Param = OutputsCalib$ParamFinalR)
 OutputsCrit_Val <- ErrorCrit_NSE(InputsCrit = InputsCrit_Val, OutputsModel = OutputsModel_Val)
 
-## ---- warning=FALSE, message=FALSE, echo=FALSE--------------------------------
+## ----warning=FALSE, message=FALSE, echo=FALSE---------------------------------
 names(OutputsCalib$ParamFinalR) <- paste0("X", 1:4)
 OutputsCalib$ParamFinalR
 
-## ---- warning=FALSE, message=FALSE--------------------------------------------
+## ----warning=FALSE, message=FALSE---------------------------------------------
 CalibOptions <- CreateCalibOptions(FUN_MOD = RunModel_GR4J, FUN_CALIB = Calibration_Michel,
                                    StartParamList = Param_Sets_GR4J)
 
-## ---- warning=FALSE, message=FALSE, include=FALSE-----------------------------
+## ----warning=FALSE, message=FALSE, include=FALSE------------------------------
 ## calibration
 OutputsCalib <- Calibration(InputsModel = InputsModel, RunOptions = RunOptions_Cal,
                             InputsCrit = InputsCrit_Cal, CalibOptions = CalibOptions,
                             FUN_MOD = RunModel_GR4J,
                             FUN_CALIB = Calibration_Michel)
 OutputsModel_Cal <- RunModel(InputsModel = InputsModel, RunOptions = RunOptions_Cal, 
-                             Param = OutputsCalib$ParamFinalR, FUN = RunModel_GR4J)
+                             Param = OutputsCalib$ParamFinalR, FUN_MOD = RunModel_GR4J)
 OutputsCrit_Cal <- ErrorCrit_NSE(InputsCrit = InputsCrit_Cal, OutputsModel = OutputsModel_Cal)
 
 
@@ -114,7 +113,7 @@ OutputsCrit_Cal <- ErrorCrit_NSE(InputsCrit = InputsCrit_Cal, OutputsModel = Out
 OutputsModel_Val <- RunModel_GR4J(InputsModel = InputsModel, RunOptions = RunOptions_Val, Param = OutputsCalib$ParamFinalR)
 OutputsCrit_Val <- ErrorCrit_NSE(InputsCrit = InputsCrit_Val, OutputsModel = OutputsModel_Val)
 
-## ---- warning=FALSE, message=FALSE, echo=FALSE--------------------------------
+## ----warning=FALSE, message=FALSE, echo=FALSE---------------------------------
 names(OutputsCalib$ParamFinalR) <- paste0("X", 1:4)
 OutputsCalib$ParamFinalR
 

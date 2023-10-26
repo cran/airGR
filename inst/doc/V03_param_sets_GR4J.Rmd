@@ -155,7 +155,6 @@ By default, the predefined grid used by the `Calibration_Michel()` function cont
 
 ```{r, warning=FALSE, message=FALSE}
 CalibOptions <- CreateCalibOptions(FUN_MOD = RunModel_GR4J, FUN_CALIB = Calibration_Michel)
-
 ```
 
 ```{r, warning=FALSE, message=FALSE, include=FALSE}
@@ -165,7 +164,7 @@ OutputsCalib <- Calibration(InputsModel = InputsModel, RunOptions = RunOptions_C
                             FUN_MOD = RunModel_GR4J,
                             FUN_CALIB = Calibration_Michel)
 OutputsModel_Cal <- RunModel(InputsModel = InputsModel, RunOptions = RunOptions_Cal, 
-                             Param = OutputsCalib$ParamFinalR, FUN = RunModel_GR4J)
+                             Param = OutputsCalib$ParamFinalR, FUN_MOD = RunModel_GR4J)
 OutputsCrit_Cal <- ErrorCrit_NSE(InputsCrit = InputsCrit_Cal, OutputsModel = OutputsModel_Cal)
 
 
@@ -202,7 +201,7 @@ OutputsCalib <- Calibration(InputsModel = InputsModel, RunOptions = RunOptions_C
                             FUN_MOD = RunModel_GR4J,
                             FUN_CALIB = Calibration_Michel)
 OutputsModel_Cal <- RunModel(InputsModel = InputsModel, RunOptions = RunOptions_Cal, 
-                             Param = OutputsCalib$ParamFinalR, FUN = RunModel_GR4J)
+                             Param = OutputsCalib$ParamFinalR, FUN_MOD = RunModel_GR4J)
 OutputsCrit_Cal <- ErrorCrit_NSE(InputsCrit = InputsCrit_Cal, OutputsModel = OutputsModel_Cal)
 
 

@@ -98,10 +98,9 @@ Calibration_Michel <- function(InputsModel,
 
 
   ##Definition_of_the_function_creating_all_possible_parameter_sets_from_different_values_for_each_parameter
+  ## use unique() to avoid duplicated values when a parameter is set
   ProposeCandidatesGrid <- function(DistribParam) {
-    NewCandidates <- expand.grid(lapply(seq_len(ncol(DistribParamR)), function(x) DistribParam[, x]))
-    NewCandidates <- unique(NewCandidates) # to avoid duplicates when a parameter is set
-    Output <- list(NewCandidates = NewCandidates)
+    expand.grid(lapply(seq_len(ncol(DistribParam)), function(x) unique(DistribParam[, x])))
   }
 
 
@@ -113,7 +112,7 @@ Calibration_Michel <- function(InputsModel,
   if (PrefilteringType == 2) {
     DistribParamR <- CalibOptions$StartParamDistrib
     DistribParamR[, !OptimParam] <- NA
-    CandidatesParamR <- ProposeCandidatesGrid(DistribParamR)$NewCandidates
+    CandidatesParamR <- ProposeCandidatesGrid(DistribParamR)
   }
   ##Remplacement_of_non_optimised_values_____________________________________
   CandidatesParamR <- apply(CandidatesParamR, 1, function(x) {

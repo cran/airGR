@@ -49,7 +49,7 @@
 !       StateEnd     ! Vector of real, state variables at the end of the model run (store levels [mm] and Unit Hydrograph (UH) storages [mm])
 
 
-      !DEC$ ATTRIBUTES DLLEXPORT :: frun_gr5h
+      
 
 
       Implicit None
@@ -340,27 +340,27 @@
       IF(Q.LT.0.) Q=0.
 
 ! Variables storage
-      MISC( 1)=E             ! PE     ! observed potential evapotranspiration [mm/h]
-      MISC( 2)=P1            ! Precip ! observed total precipitation [mm/h]
-      MISC( 3)=St(3)         ! Interc ! interception store level (St(3)) [mm]
-      MISC( 4)=St(1)         ! Prod   ! production store level (St(1)) [mm]
-      MISC( 5)=PN            ! Pn     ! net rainfall [mm/h]
-      MISC( 6)=PS            ! Ps     ! part of Ps filling the production store [mm/h]
-      MISC( 7)=AE            ! AE     ! actual evapotranspiration [mm/h]
-      MISC( 8)=EI            ! EI     ! evapotranspiration from rainfall neutralisation or interception store [mm/h]
-      MISC( 9)=ES            ! ES     ! evapotranspiration from production store [mm/h]
-      MISC(10)=PERC          ! Perc   ! percolation (PERC) [mm/h]
-      MISC(11)=PR            ! PR     ! PR=PN-PS+PERC [mm/h]
-      MISC(12)=Q9            ! Q9     ! outflow from UH1 (Q9) [mm/h]
-      MISC(13)=Q1            ! Q1     ! outflow from UH2 (Q1) [mm/h]
-      MISC(14)=St(2)         ! Rout   ! routing store level (St(2)) [mm]
-      MISC(15)=EXCH          ! Exch   ! potential semi-exchange between catchments (EXCH) [mm/h]
-      MISC(16)=AEXCH1        ! AExch1 ! actual exchange between catchments from branch 1 (AEXCH1) [mm/h]
-      MISC(17)=AEXCH2        ! AExch2 ! actual exchange between catchments from branch 2 (AEXCH2) [mm/h]
-      MISC(18)=AEXCH1+AEXCH2 ! AExch  ! actual total exchange between catchments (AEXCH1+AEXCH2) [mm/h]
-      MISC(19)=QR            ! QR     ! outflow from routing store (QR) [mm/h]
-      MISC(20)=QD            ! QD     ! outflow from UH2 branch after exchange (QD) [mm/h]
-      MISC(21)=Q             ! Qsim   ! simulated outflow at catchment outlet [mm/h]
+      MISC( 1)=E             ! PE     ! [numeric] observed potential evapotranspiration [mm/h]
+      MISC( 2)=P1            ! Precip ! [numeric] observed total precipitation [mm/h]
+      MISC( 3)=St(3)         ! Interc ! [numeric] interception store level (St(3)) [mm]
+      MISC( 4)=St(1)         ! Prod   ! [numeric] production store level (St(1)) [mm]
+      MISC( 5)=PN            ! Pn     ! [numeric] net rainfall [mm/h]
+      MISC( 6)=PS            ! Ps     ! [numeric] part of Ps filling the production store [mm/h]
+      MISC( 7)=AE            ! AE     ! [numeric] actual evapotranspiration [mm/h]
+      MISC( 8)=EI            ! EI     ! [numeric] evapotranspiration from rainfall neutralisation or interception store [mm/h]
+      MISC( 9)=ES            ! ES     ! [numeric] evapotranspiration from production store [mm/h]
+      MISC(10)=PERC          ! Perc   ! [numeric] percolation (PERC) [mm/h]
+      MISC(11)=PR            ! PR     ! [numeric] PR=PN-PS+PERC [mm/h]
+      MISC(12)=Q9            ! Q9     ! [numeric] outflow from UH1 (Q9) [mm/h]
+      MISC(13)=Q1            ! Q1     ! [numeric] outflow from UH2 (Q1) [mm/h]
+      MISC(14)=St(2)         ! Rout   ! [numeric] routing store level (St(2)) [mm]
+      MISC(15)=EXCH          ! Exch   ! [numeric] potential semi-exchange between catchments (EXCH) [mm/h]
+      MISC(16)=AEXCH1        ! AExch1 ! [numeric] actual exchange between catchments from branch 1 (AEXCH1) [mm/h]
+      MISC(17)=AEXCH2        ! AExch2 ! [numeric] actual exchange between catchments from branch 2 (AEXCH2) [mm/h]
+      MISC(18)=AEXCH1+AEXCH2 ! AExch  ! [numeric] actual total exchange between catchments (AEXCH1+AEXCH2) [mm/h]
+      MISC(19)=QR            ! QR     ! [numeric] outflow from routing store (QR) [mm/h]
+      MISC(20)=QD            ! QD     ! [numeric] outflow from UH2 branch after exchange (QD) [mm/h]
+      MISC(21)=Q             ! Qsim   ! [numeric] simulated outflow at catchment outlet [mm/h]
 
 
       ENDSUBROUTINE

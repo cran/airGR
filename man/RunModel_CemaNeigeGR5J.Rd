@@ -60,7 +60,7 @@ RunModel_CemaNeigeGR5J(InputsModel, RunOptions, Param)
     \emph{$QR      } \tab [numeric] series of routing store outflow (Qr) [mm/d]                         \cr
     \emph{$QD      } \tab [numeric] series of direct flow from UH after exchange (Qd) [mm/d]            \cr
     \emph{$Qsim    } \tab [numeric] series of simulated discharge (Q) [mm/d]                            \cr
-    \emph{$CemaNeigeLayers} \tab [list] list of CemaNeige outputs (1 list per layer)                    \cr
+    \emph{$CemaNeigeLayers} \tab [list] CemaNeige outputs (1 element per layer)                         \cr
     \emph{$CemaNeigeLayers[[iLayer]]$Pliq        } \tab [numeric] series of liquid precip. [mm/d]                    \cr
     \emph{$CemaNeigeLayers[[iLayer]]$Psol        } \tab [numeric] series of solid precip. [mm/d]                     \cr
     \emph{$CemaNeigeLayers[[iLayer]]$SnowPack    } \tab [numeric] series of snow pack (snow water equivalent) [mm]   \cr

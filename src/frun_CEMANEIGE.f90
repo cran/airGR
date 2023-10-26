@@ -60,7 +60,7 @@
 
 
 
-      !DEC$ ATTRIBUTES DLLEXPORT :: frun_cemaneige
+
 
 
       Implicit None
@@ -183,8 +183,7 @@
           IF (dG.GT.0.) THEN
             Gratio = MIN(Gratio+(Psol-Melt)/Gacc,1.d0) !Psol - Melt = dG
             IF (Gratio.EQ.1.) Glocalmax = Gthreshold
-          ENDIF
-          IF (dG.LT.0.) THEN
+          ELSE
             Gratio=MIN(G/Glocalmax,1.d0)
           ENDIF
         ELSE
@@ -201,17 +200,17 @@
 
         ! Storage of outputs
         DO I=1,NOutputs
-          IF(IndOutputs(I).EQ.1)  Outputs(k,I)=Pliq          ! Pliq         ! observed liquid precipitation [mm/time step]
-          IF(IndOutputs(I).EQ.2)  Outputs(k,I)=Psol          ! Psol         ! observed solid precipitation [mm/time step]
-          IF(IndOutputs(I).EQ.3)  Outputs(k,I)=G             ! SnowPack     ! snow pack [mm]
-          IF(IndOutputs(I).EQ.4)  Outputs(k,I)=eTG           ! ThermalState ! thermal state [°C]
-          IF(IndOutputs(I).EQ.5)  Outputs(k,I)=Gratio        ! Gratio       ! Gratio [-]
-          IF(IndOutputs(I).EQ.6)  Outputs(k,I)=PotMelt       ! PotMelt      ! potential snow melt [mm/time step]
-          IF(IndOutputs(I).EQ.7)  Outputs(k,I)=Melt          ! Melt         ! melt [mm/time step]
-          IF(IndOutputs(I).EQ.8)  Outputs(k,I)=PliqAndMelt   ! PliqAndMelt  ! liquid precipitation + melt [mm/time step]
-          IF(IndOutputs(I).EQ.9)  Outputs(k,I)=InputsTemp(k) ! Temp         ! air temperature [°C]
-          IF(IndOutputs(I).EQ.10) Outputs(k,I)=Gthreshold    ! Gthreshold   ! melt threshold [mm]
-          IF(IndOutputs(I).EQ.11) Outputs(k,I)=Glocalmax     ! Glocalmax    ! local melt threshold for hysteresis [mm]
+          IF(IndOutputs(I).EQ.1)  Outputs(k,I)=Pliq          ! Pliq         ! [numeric] observed liquid precipitation [mm/time step]
+          IF(IndOutputs(I).EQ.2)  Outputs(k,I)=Psol          ! Psol         ! [numeric] observed solid precipitation [mm/time step]
+          IF(IndOutputs(I).EQ.3)  Outputs(k,I)=G             ! SnowPack     ! [numeric] snow pack [mm]
+          IF(IndOutputs(I).EQ.4)  Outputs(k,I)=eTG           ! ThermalState ! [numeric] thermal state [°C]
+          IF(IndOutputs(I).EQ.5)  Outputs(k,I)=Gratio        ! Gratio       ! [numeric] Gratio [-]
+          IF(IndOutputs(I).EQ.6)  Outputs(k,I)=PotMelt       ! PotMelt      ! [numeric] potential snow melt [mm/time step]
+          IF(IndOutputs(I).EQ.7)  Outputs(k,I)=Melt          ! Melt         ! [numeric] melt [mm/time step]
+          IF(IndOutputs(I).EQ.8)  Outputs(k,I)=PliqAndMelt   ! PliqAndMelt  ! [numeric] liquid precipitation + melt [mm/time step]
+          IF(IndOutputs(I).EQ.9)  Outputs(k,I)=InputsTemp(k) ! Temp         ! [numeric] air temperature [°C]
+          IF(IndOutputs(I).EQ.10) Outputs(k,I)=Gthreshold    ! Gthreshold   ! [numeric] melt threshold [mm]
+          IF(IndOutputs(I).EQ.11) Outputs(k,I)=Glocalmax     ! Glocalmax    ! [numeric] local melt threshold for hysteresis [mm]
         ENDDO
 
       ENDDO

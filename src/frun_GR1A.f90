@@ -44,7 +44,7 @@
 !       StateEnd     ! Vector of real, state variables at the end of the model run (none here)
 
 
-      !DEC$ ATTRIBUTES DLLEXPORT :: frun_gr1a
+      
 
 
       Implicit None

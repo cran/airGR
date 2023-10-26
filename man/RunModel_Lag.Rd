@@ -54,7 +54,7 @@ data(L0123001)
 ## ---- simulation of the hydrological catchment with GR4J
 
 InputsModelDown <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$DatesR,
-                                 Precip = BasinObs$P, PotEvap = BasinObs$E)
+                                     Precip = BasinObs$P, PotEvap = BasinObs$E)
 
 ## run period selection
 Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"),
@@ -62,7 +62,7 @@ Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-0
 
 ## creation of the RunOptions object
 RunOptionsDown <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
-                               InputsModel = InputsModelDown, IndPeriod_Run = Ind_Run)
+                                   InputsModel = InputsModelDown, IndPeriod_Run = Ind_Run)
 
 ## simulation of the runoff of the catchment with a GR4J model
 Param <- c(X1 = 257.238, X2 = 1.012, X3 = 88.235, X4 = 2.208)
@@ -90,9 +90,9 @@ LengthHydro <- 150
 ## ---- simulation of the basin with the reservoir influence
 
 InputsModelInf <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$DatesR,
-                                 Precip = BasinObs$P, PotEvap = BasinObs$E,
-                                 Qupstream = Qupstream, LengthHydro = LengthHydro,
-                                 BasinAreas = BasinAreas)
+                                    Precip = BasinObs$P, PotEvap = BasinObs$E,
+                                    Qupstream = Qupstream, LengthHydro = LengthHydro,
+                                    BasinAreas = BasinAreas)
 ## creation of the RunOptions object
 RunOptions <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
                                InputsModel = InputsModelInf, IndPeriod_Run = Ind_Run)

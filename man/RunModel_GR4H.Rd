@@ -39,7 +39,7 @@ RunModel_GR4H(InputsModel, RunOptions, Param)
     \emph{$DatesR  } \tab [POSIXlt] series of dates                                                     \cr
     \emph{$PotEvap } \tab [numeric] series of input potential evapotranspiration (E) [mm/h]             \cr
     \emph{$Precip  } \tab [numeric] series of input total precipitation (P) [mm/h]                      \cr
-    \emph{$Prod    } \tab [numeric] series of production store level [mm] (S)                           \cr
+    \emph{$Prod    } \tab [numeric] series of production store level (S) [mm]                           \cr
     \emph{$Pn      } \tab [numeric] series of net rainfall (Pn) [mm/h]                                  \cr
     \emph{$Ps      } \tab [numeric] series of the part of Pn filling the production store (Ps) [mm/h    \cr
     \emph{$AE      } \tab [numeric] series of actual evapotranspiration [mm/h]                          \cr
@@ -83,8 +83,8 @@ InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4H, DatesR = BasinObs$Date
                                  Precip = BasinObs$P, PotEvap = BasinObs$E)
 
 ## run period selection
-Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d \%H:\%M")=="2005-01-01 00:00"),
-               which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d \%H:\%M")=="2008-12-31 23:00"))
+Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d \%H")=="2005-01-01 00"),
+               which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d \%H")=="2008-12-31 23"))
 
 ## preparation of the RunOptions object
 RunOptions <- CreateRunOptions(FUN_MOD = RunModel_GR4H,

@@ -10,10 +10,6 @@ ErrorCrit_NSE <- function(InputsCrit, OutputsModel, warnings = TRUE, verbose = T
   CritValue <- NA
 
   if (EC$CritCompute) {
-    ## Other variables preparation
-    meanVarObs <- mean(EC$VarObs[!EC$TS_ignore])
-    meanVarSim <- mean(EC$VarSim[!EC$TS_ignore])
-
     ## ErrorCrit
     Emod <- sum((EC$VarSim[!EC$TS_ignore] - EC$VarObs[!EC$TS_ignore])^2)
     Eref <- sum((EC$VarObs[!EC$TS_ignore] - mean(EC$VarObs[!EC$TS_ignore]))^2)

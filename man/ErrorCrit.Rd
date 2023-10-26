@@ -89,7 +89,8 @@ str(ErrorCrit(InputsCrit = InputsCritSingle, OutputsModel = OutputsModel))
 ## 2 efficiency critera:  RMSE and the Nash-Sutcliffe Efficiency
 InputsCritMulti <- CreateInputsCrit(FUN_CRIT = list(ErrorCrit_RMSE, ErrorCrit_NSE),
                                     InputsModel = InputsModel, RunOptions = RunOptions,
-                                    Obs = list(BasinObs$Qmm[Ind_Run], BasinObs$Qmm[Ind_Run]),
+                                    Obs = list(BasinObs$Qmm[Ind_Run],
+                                               BasinObs$Qmm[Ind_Run]),
                                     VarObs = list("Q", "Q"), transfo = list("", "sqrt"),
                                     Weights = NULL)
 str(ErrorCrit(InputsCrit = InputsCritMulti, OutputsModel = OutputsModel))
@@ -98,7 +99,8 @@ str(ErrorCrit(InputsCrit = InputsCritMulti, OutputsModel = OutputsModel))
 ##                                 both raw and log-transformed flows
 InputsCritCompo <- CreateInputsCrit(FUN_CRIT = list(ErrorCrit_NSE, ErrorCrit_NSE),
                                     InputsModel = InputsModel, RunOptions = RunOptions,
-                                    Obs = list(BasinObs$Qmm[Ind_Run], BasinObs$Qmm[Ind_Run]),
+                                    Obs = list(BasinObs$Qmm[Ind_Run],
+                                               BasinObs$Qmm[Ind_Run]),
                                     VarObs = list("Q", "Q"), transfo = list("", "log"),
                                     Weights = list(0.4, 0.6))
 str(ErrorCrit(InputsCrit = InputsCritCompo, OutputsModel = OutputsModel))

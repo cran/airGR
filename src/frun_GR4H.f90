@@ -49,7 +49,7 @@
 !       StateEnd     ! Vector of real, state variables at the end of the model run (store levels [mm] and Unit Hydrograph (UH) storages [mm])
 
 
-      !DEC$ ATTRIBUTES DLLEXPORT :: frun_gr4h
+      
 
 
       Implicit None

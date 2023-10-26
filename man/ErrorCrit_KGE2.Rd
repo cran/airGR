@@ -45,7 +45,7 @@ ErrorCrit_KGE2(InputsCrit, OutputsModel, warnings = TRUE, verbose = TRUE)
 
 \details{
 In addition to the criterion value, the function outputs include a multiplier (-1 or +1) which allows
-the use of the function for model calibration: the product CritValue * Multiplier is the criterion to be minimised (Multiplier = -1 for KGE2).\cr\cr
+the use of the function for model calibration: the product \eqn{CritValue \times Multiplier} is the criterion to be minimised (Multiplier = -1 for KGE2).\cr\cr
 The KGE' formula is
 \deqn{KGE' = 1 - \sqrt{(r - 1)^2 + (\gamma - 1)^2 + (\beta - 1)^2}}{KGE' = 1 - sqrt((r - 1)² + (\gamma - 1)² + (\beta - 1)²)}
 with the following sub-criteria:

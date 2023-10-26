@@ -1,5 +1,6 @@
-\name{airGR}
+\name{airGR-package}
 \alias{airGR}
+\alias{airGR-package}
 \docType{package}
 \encoding{UTF-8}
 \title{\packageTitle{airGR}}

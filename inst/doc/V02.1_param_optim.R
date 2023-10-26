@@ -1,8 +1,8 @@
-## ---- warning=FALSE, include=FALSE, fig.keep='none', results='hide'-----------
+## ----setup, warning=FALSE, include=FALSE, fig.keep='none', results='hide'-----
 library(airGR)
 library(DEoptim)
-library(hydroPSO) # Needs R version >= 3.6 or latticeExtra <= 0.6-28 on R 3.5
-# library(Rmalschains) # removed from CRAN since 2023-04-03
+# library(hydroPSO) # Needs R version >= 3.6 or latticeExtra <= 0.6-28 on R 3.5. Archived on 2023-10-16 as requires archived packages 'hydroTSM' and 'hydroGOF'.
+library(Rmalschains)
 library(caRamel)
 library(ggplot2)
 library(GGally)
@@ -11,15 +11,15 @@ set.seed(321)
 load(system.file("vignettesData/vignetteParamOptim.rda", package = "airGR"))
 load(system.file("vignettesData/vignetteParamOptimCaramel.rda", package = "airGR"))
 
-## ---- echo=TRUE, eval=FALSE---------------------------------------------------
+## ----Calibration_Michel, echo=TRUE, eval=FALSE--------------------------------
 #  example("Calibration_Michel")
 
-## ---- results='hide', eval=FALSE----------------------------------------------
+## ----RunOptions, results='hide', eval=FALSE-----------------------------------
 #  RunOptions <- airGR::CreateRunOptions(FUN_MOD = RunModel_GR4J, InputsModel = InputsModel,
 #                                        IndPeriod_Run = Ind_Run,
 #                                        Outputs_Sim = "Qsim")
 
-## ---- warning=FALSE, results='hide', eval=FALSE-------------------------------
+## ----OptimGR4J, warning=FALSE, results='hide', eval=FALSE---------------------
 #  OptimGR4J <- function(ParamOptim) {
 #    ## Transformation of the parameter set to real space
 #    RawParamOptim <- airGR::TransfoParam_GR4J(ParamIn = ParamOptim,
@@ -35,18 +35,18 @@ load(system.file("vignettesData/vignetteParamOptimCaramel.rda", package = "airGR
 #    return(OutputsCrit$CritValue)
 #  }
 
-## ---- warning=FALSE, results='hide', eval=FALSE-------------------------------
+## ----boundsGR4J, warning=FALSE, results='hide', eval=FALSE--------------------
 #  lowerGR4J <- rep(-9.99, times = 4)
 #  upperGR4J <- rep(+9.99, times = 4)
 
-## ---- warning=FALSE, results='hide', eval=FALSE-------------------------------
+## ----local1, warning=FALSE, results='hide', eval=FALSE------------------------
 #  startGR4J <- c(4.1, 3.9, -0.9, -8.7)
 #  optPORT <- stats::nlminb(start = startGR4J,
 #                           objective = OptimGR4J,
 #                           lower = lowerGR4J, upper = upperGR4J,
 #                           control = list(trace = 1))
 
-## ---- warning=FALSE, results='hide', eval=FALSE-------------------------------
+## ----local2, warning=FALSE, results='hide', eval=FALSE------------------------
 #  startGR4JDistrib <- TransfoParam_GR4J(ParamIn = CalibOptions$StartParamDistrib,
 #                                        Direction = "RT")
 #  startGR4J <- expand.grid(data.frame(startGR4JDistrib))
@@ -58,36 +58,36 @@ load(system.file("vignettesData/vignetteParamOptimCaramel.rda", package = "airGR
 #  }
 #  listOptPORT <- apply(startGR4J, MARGIN = 1, FUN = optPORT_)
 
-## ---- warning=FALSE, results='hide', eval=FALSE-------------------------------
+## ----local3, warning=FALSE, results='hide', eval=FALSE------------------------
 #  parPORT <- t(sapply(listOptPORT, function(x) x$par))
 #  objPORT <- sapply(listOptPORT, function(x) x$objective)
 #  resPORT <- data.frame(parPORT, RMSE = objPORT)
 
-## ---- warning=FALSE-----------------------------------------------------------
+## ----local4, warning=FALSE----------------------------------------------------
 summary(resPORT)
 
-## ---- warning=FALSE, results='hide', eval=FALSE-------------------------------
+## ----optDE, warning=FALSE, results='hide', eval=FALSE-------------------------
 #  optDE <- DEoptim::DEoptim(fn = OptimGR4J,
 #                            lower = lowerGR4J, upper = upperGR4J,
 #                            control = DEoptim::DEoptim.control(NP = 40, trace = 10))
 
-## ---- warning=FALSE, results='hide', message=FALSE, eval=FALSE----------------
+## ----hydroPSO1, warning=FALSE, results='hide', message=FALSE, eval=FALSE------
+#  # to install the package temporary removed from CRAN
+#  # Rtools needed (windows : https://cran.r-project.org/bin/windows/Rtools/)
+#  # install.packages("https://cran.r-project.org/src/contrib/Archive/hydroPSO/hydroPSO_0.5-1.tar.gz",
+#  #                  repos = NULL, type = "source", dependencies = TRUE)
+
+## ----hydroPSO2, warning=FALSE, results='hide', message=FALSE, eval=FALSE------
 #  optPSO <- hydroPSO::hydroPSO(fn = OptimGR4J,
 #                               lower = lowerGR4J, upper = upperGR4J,
 #                               control = list(write2disk = FALSE, verbose = FALSE))
 
-## ---- warning=FALSE, results='hide', message=FALSE, eval=FALSE----------------
-#  # to install the package temporary removde from CRAN
-#  # Rtools needed (windows : https://cran.r-project.org/bin/windows/Rtools/)
-#  install.packages("https://cran.r-project.org/src/contrib/Archive/Rmalschains/Rmalschains_0.2-8.tar.gz",
-#                   repos = NULL, type = "source", dependencies = TRUE)
-
-## ---- warning=FALSE, results='hide', eval=FALSE-------------------------------
+## ----warning=FALSE, results='hide', eval=FALSE--------------------------------
 #  optMALS <- Rmalschains::malschains(fn = OptimGR4J,
 #                                     lower = lowerGR4J, upper = upperGR4J,
 #                                     maxEvals = 2000)
 
-## ---- warning=FALSE, echo=FALSE, eval=FALSE-----------------------------------
+## ----resGLOB, warning=FALSE, echo=FALSE, eval=FALSE---------------------------
 #  resGLOB <- data.frame(Algo = c("airGR", "PORT", "DE", "PSO", "MA-LS"),
 #                        round(rbind(
 #                          OutputsCalib$ParamFinalR,
@@ -97,10 +97,10 @@ summary(resPORT)
 #                          airGR::TransfoParam_GR4J(ParamIn = optMALS$sol                    , Direction = "TR")),
 #                          digits = 3))
 
-## ---- warning=FALSE, echo=FALSE-----------------------------------------------
+## ----warning=FALSE, echo=FALSE------------------------------------------------
 resGLOB
 
-## ---- warning=FALSE, results='hide', eval=FALSE-------------------------------
+## ----warning=FALSE, results='hide', eval=FALSE--------------------------------
 #  InputsCrit_inv <- InputsCrit
 #  InputsCrit_inv$transfo <- "inv"
 #  
@@ -126,7 +126,7 @@ resGLOB
 #    return(c(OutputsCrit1$CritValue, OutputsCrit2$CritValue))
 #  }
 
-## ---- warning=FALSE, results='hide', eval=FALSE-------------------------------
+## ----warning=FALSE, results='hide', eval=FALSE--------------------------------
 #  algo <- "caRamel"
 #  optMO <- caRamel::caRamel(nobj = 2,
 #                            nvar = 4,
@@ -140,10 +140,10 @@ resGLOB
 #                            carallel = FALSE,
 #                            graph = FALSE)
 
-## ---- fig.width=6, fig.height=6, warning=FALSE--------------------------------
-ggplot() + 
+## ----fig.width=6, fig.height=6, warning=FALSE---------------------------------
+ggplot() +
   geom_point(aes(optMO$objectives[, 1], optMO$objectives[, 2])) +
-  coord_equal(xlim = c(0.4, 0.9), ylim = c(0.4, 0.9)) + 
+  coord_equal(xlim = c(0.4, 0.9), ylim = c(0.4, 0.9)) +
   xlab("KGE") + ylab("KGE [1/Q]") +
   theme_bw()
 

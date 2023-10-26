@@ -15,7 +15,8 @@ Creation of the \emph{CalibOptions} object required by the \code{Calibration*} f
 
 \usage{
 CreateCalibOptions(FUN_MOD, FUN_CALIB = Calibration_Michel,
-                   FUN_TRANSFO = NULL, IsHyst = FALSE, IsSD = FALSE, FixedParam = NULL,
+                   FUN_TRANSFO = NULL, IsHyst = FALSE, IsSD = FALSE,
+                   FixedParam = NULL,
                    SearchRanges = NULL, StartParamList = NULL,
                    StartParamDistrib = NULL)
 }

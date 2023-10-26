@@ -43,7 +43,7 @@ RunModel_CemaNeigeGR4H(InputsModel, RunOptions, Param)
     \emph{$DatesR  } \tab [POSIXlt] series of dates                                                     \cr
     \emph{$PotEvap } \tab [numeric] series of input potential evapotranspiration (E) [mm/h]             \cr
     \emph{$Precip  } \tab [numeric] series of input total precipitation (P) [mm/h]                      \cr
-    \emph{$Prod    } \tab [numeric] series of production store level [mm] (S)                           \cr
+    \emph{$Prod    } \tab [numeric] series of production store level (S) [mm]                           \cr
     \emph{$Pn      } \tab [numeric] series of net rainfall (Pn) [mm/h]                                  \cr
     \emph{$Ps      } \tab [numeric] series of the part of Pn filling the production store (Ps) [mm/h]   \cr
     \emph{$AE      } \tab [numeric] series of actual evapotranspiration [mm/h]                          \cr
@@ -59,10 +59,10 @@ RunModel_CemaNeigeGR4H(InputsModel, RunOptions, Param)
     \emph{$QR      } \tab [numeric] series of routing store outflow (Qr) [mm/h]                         \cr
     \emph{$QD      } \tab [numeric] series of direct flow from UH2 after exchange (Qd) [mm/h]           \cr
     \emph{$Qsim    } \tab [numeric] series of simulated discharge (Q) [mm/h]                            \cr
-    \emph{$CemaNeigeLayers} \tab [list] list of CemaNeige outputs (1 list per layer)                    \cr
+    \emph{$CemaNeigeLayers} \tab [list] CemaNeige outputs (1 element per layer)                         \cr
     \emph{$CemaNeigeLayers[[iLayer]]$Pliq        } \tab [numeric] series of liquid precip. [mm/h]                    \cr
     \emph{$CemaNeigeLayers[[iLayer]]$Psol        } \tab [numeric] series of solid precip. [mm/h]                     \cr
-    \emph{$CemaNeigeLayers[[iLayer]]$SnowPack    } \tab [numeric] series of snow pack  (snow water equivalent)[mm]   \cr
+    \emph{$CemaNeigeLayers[[iLayer]]$SnowPack    } \tab [numeric] series of snow pack (snow water equivalent)[mm]    \cr
     \emph{$CemaNeigeLayers[[iLayer]]$ThermalState} \tab [numeric] series of snow pack thermal state [°C]             \cr
     \emph{$CemaNeigeLayers[[iLayer]]$Gratio      } \tab [numeric] series of Gratio [0-1]                             \cr
     \emph{$CemaNeigeLayers[[iLayer]]$PotMelt     } \tab [numeric] series of potential snow melt [mm/h]               \cr
@@ -106,8 +106,8 @@ InputsModel <- CreateInputsModel(FUN_MOD = RunModel_CemaNeigeGR4H, DatesR = Basi
                                  HypsoData = BasinInfo$HypsoData, NLayers = 5)
 
 ## run period selection
-Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d \%H:\%M")=="2004-03-01 00:00"),
-               which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d \%H:\%M")=="2008-12-31 23:00"))
+Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d \%H")=="2004-03-01 00"),
+               which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d \%H")=="2008-12-31 23"))
 
 
 ## --- original version of CemaNeige

@@ -3,7 +3,7 @@
 
 ## Overview
 
-This package brings into R the hydrological modelling tools developed at INRAE-Antony ([Catchment Hydrology research group](https://webgr.inrae.fr/en/home/) of the HYCAR Research Unit, France), including rainfall-runoff models (**GR4H**, **GR5H**, **GR4J**, **GR5J**, **GR6J**, **GR2M**, **GR1A**) that can be applied either on a **lumped** or **semi-distributed** way. A snow accumulation and melt model (**CemaNeige**) and the associated functions for the calibration and evaluation of models are also included. Each model core is coded in Fortran to ensure low computational time. The other package functions (i.e. mainly the calibration algorithm and the computation of the efficiency criteria) are coded in R.
+This package brings into R the hydrological modelling tools developed at INRAE-Antony ([Catchment Hydrology research group](https://webgr.inrae.fr/home/) of the HYCAR Research Unit, France), including rainfall-runoff models (**GR4H**, **GR5H**, **GR4J**, **GR5J**, **GR6J**, **GR2M**, **GR1A**) that can be applied either on a **lumped** or **semi-distributed** way. A snow accumulation and melt model (**CemaNeige**) and the associated functions for the calibration and evaluation of models are also included. Each model core is coded in Fortran to ensure low computational time. The other package functions (i.e. mainly the calibration algorithm and the computation of the efficiency criteria) are coded in R.
 
 
 ## Installation

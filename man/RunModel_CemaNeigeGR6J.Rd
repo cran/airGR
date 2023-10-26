@@ -63,7 +63,7 @@ RunModel_CemaNeigeGR6J(InputsModel, RunOptions, Param)
     \emph{$Exp     } \tab [numeric] series of exponential store level (negative) (R2) [mm]              \cr
     \emph{$QD      } \tab [numeric] series of direct flow from UH2 after exchange (Qd) [mm/d]           \cr
     \emph{$Qsim    } \tab [numeric] series of simulated discharge (Q) [mm/d]                            \cr
-    \emph{$CemaNeigeLayers} \tab [list] list of CemaNeige outputs (1 list per layer)                    \cr
+    \emph{$CemaNeigeLayers} \tab [list] CemaNeige outputs (1 element per layer)                         \cr
     \emph{$CemaNeigeLayers[[iLayer]]$Pliq        } \tab [numeric] series of liquid precip. [mm/d]                    \cr
     \emph{$CemaNeigeLayers[[iLayer]]$Psol        } \tab [numeric] series of solid precip. [mm/d]                     \cr
     \emph{$CemaNeigeLayers[[iLayer]]$SnowPack    } \tab [numeric] series of snow pack (snow water equivalent) [mm]   \cr

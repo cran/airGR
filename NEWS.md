@@ -2,12 +2,34 @@
 
 
 
+### 1.7.6 Release Notes (2023-10-25)
+
+#### Bug fixes
+
+- `CreateCalibOptions()` now uses parameter screening for `RunModel_Lag()` which are now expressed in the transformed space instead of the parameter space. ([#156](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/156))
+- `RunModel_CemaNeige*()` now takes into account the case when `dG = 0`. ([#178](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/178))
+
+
+#### Minor user-visible changes
+
+- `Calibration_Michel()` now runs faster as the `ProposeCandidatesGrid()` was improved to create the propose candidates grid. ([#157](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/157)) 
+- `TransfoParamGR5J()` now returns the correct  error message when the number of parameters is incorrect. ([#168](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/168)) 
+
+
+#### CRAN-compatibility updates
+
+- `frun_*` Fortran subroutine does not use anymore the 'DLLEXPORT' command. ([#180](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/180))
+- The 'Rmalschains' package is back on CRAN and it is again suggested (cf. the 'param_optim' vignette). ([#175](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/175))
+- The 'hydroPSO' package is no longer suggested (but the code linked to its use and is always present in the 'param_optim' vignette). ([#182](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/182))
+
+____________________________________________________________________________________
+
+
 ### 1.7.4 Release Notes (2023-04-11)
 
 #### CRAN-compatibility updates
 
 - The 'Rmalschains' package is no longer suggested (but the code linked to its use and is always present in the 'param_optim' vignette). ([#172](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/172))
-
 - `.ErrorCrit()` and `.FeatModels` function are no more exported. ([#173](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/173))
 
 ____________________________________________________________________________________

@@ -41,7 +41,7 @@
 
 
 
-      !DEC$ ATTRIBUTES DLLEXPORT :: frun_pe_oudin
+      
 
       Implicit None
 

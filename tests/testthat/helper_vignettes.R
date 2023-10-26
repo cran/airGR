@@ -5,7 +5,8 @@
 #' @param force.eval Force execution of chunks with parameter eval=FALSE
 RunRmdChunks <- function(fileRmd,
                          tmpFolder = "../tmp",
-                         force.eval = TRUE) {
+                         force.eval = TRUE,
+                         chunkIgnore = getChunkIgnore()) {
   dir.create(tmpFolder, showWarnings = FALSE)
   output <- file.path(tmpFolder,
                       gsub("\\.Rmd", "\\.R", basename(fileRmd), ignore.case = TRUE))
@@ -13,7 +14,13 @@ RunRmdChunks <- function(fileRmd,
   sTxt <- readLines(output)
   if (force.eval) {
     sectionLines <- grep("^## ----", sTxt)
-    chunksEvalStart <- grep("^## ----.*eval=F", sTxt)
+    chunkIgnore <- chunkIgnore[[basename(fileRmd)]]
+    if (!is.null(chunkIgnore)) {
+      regexChunk <- sprintf("(?!(%s))", paste(chunkIgnore, collapse = "|"))
+    } else {
+      regexChunk <- ""
+    }
+    chunksEvalStart <- grep(paste0("^## ----", regexChunk, ".*eval=F"), sTxt, ignore.case=TRUE, perl = TRUE)
     if (length(chunksEvalStart) > 0) {
       if (sectionLines[length(sectionLines)] == chunksEvalStart[length(chunksEvalStart)]) {
         lastEvalStart <- length(chunksEvalStart) - 1
@@ -72,13 +79,22 @@ RunVignetteChunks <- function(vignette,
                               force.eval = TRUE) {
   if (file.exists(sprintf("../../vignettes/%s.Rmd", vignette))) {
     # testthat context in development environnement
-    RunRmdChunks(sprintf("../../vignettes/%s.Rmd", vignette), tmpFolder, force.eval)
+    RunRmdChunks(sprintf("../../vignettes/%s.Rmd", vignette),
+                 tmpFolder = tmpFolder,
+                 force.eval =force.eval,
+                 chunkIgnore = getChunkIgnore("../../.vignettechunkignore"))
   } else if (file.exists(sprintf("vignettes/%s.Rmd", vignette))) {
     # context in direct run in development environnement
-    RunRmdChunks(sprintf("vignettes/%s.Rmd", vignette), tmpFolder, force.eval)
+    RunRmdChunks(sprintf("vignettes/%s.Rmd", vignette),
+                 tmpFolder = tmpFolder,
+                 force.eval =force.eval,
+                 chunkIgnore = getChunkIgnore(".vignettechunkignore"))
   } else {
     # R CMD check context in package environnement
-    RunRmdChunks(system.file(sprintf("doc/%s.Rmd", vignette), package = "airGR"), tmpFolder, force.eval)
+    RunRmdChunks(system.file(sprintf("doc/%s.Rmd", vignette), package = "airGR"),
+                 tmpFolder = tmpFolder,
+                 force.eval =force.eval,
+                 chunkIgnore = getChunkIgnore(".vignettechunkignore"))
   }
   return(TRUE)
 }
@@ -95,4 +111,27 @@ TestQmmQlsConversion <- function(BasinObs, BasinArea, tolerance = 1E-7) {
   Conversion <- Conversion / 86400 # Day -> seconds
   notNA <- which(!is.na(BasinObs$Qmm))
   expect_equal(BasinObs$Qmm[notNA] * Conversion, BasinObs$Qls[notNA], tolerance = tolerance)
+}
+
+#' Read vignettechunkignore file
+#'
+#' @param chunkIgnoreFile path to the file
+#'
+#' @return [list] with one item by vignette containing the chunk id to ignore
+#'
+getChunkIgnore <- function(chunkIgnoreFile = "../../.vignettechunkignore") {
+  if (file.exists(chunkIgnoreFile)) {
+    message(".vignettechunkignore file found")
+    chunkIgnore <- read.table(file = chunkIgnoreFile,
+                              sep = " ", header = FALSE,
+                              col.names = c("vignette", "chunk"),
+                              stringsAsFactors = FALSE)
+    chunkIgnore <- lapply(setNames(nm = unique(chunkIgnore$vignette)), function(x) {
+      chunkIgnore$chunk[chunkIgnore$vignette == x]
+    })
+  } else {
+    message("No .vignettechunkignore file found")
+    chunkIgnore <- list()
+  }
+  return(chunkIgnore)
 }

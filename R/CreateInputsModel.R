@@ -279,8 +279,7 @@ CreateInputsModel <- function(FUN_MOD,
     # Qupstream is internally stored in m3/time step
     if (QupstrUnit == "mm") {
       iConvBasins <- which(!is.na(BasinAreas[seq.int(length(LengthHydro))]))
-      Qupstream[,iConvBasins] <-
-        Qupstream[,iConvBasins] * rep(BasinAreas[iConvBasins], each = LLL) * 1e3
+      Qupstream[, iConvBasins] <- Qupstream[, iConvBasins] * rep(BasinAreas[iConvBasins], each = LLL) * 1e3
     } else if (QupstrUnit == "m3/s") {
       Qupstream <- Qupstream * TimeStep
     } else if (QupstrUnit == "l/s") {

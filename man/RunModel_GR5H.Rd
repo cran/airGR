@@ -93,8 +93,8 @@ InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR5H, DatesR = BasinObs$Date
                                  Precip = BasinObs$P, PotEvap = BasinObs$E)
 
 ## run period selection
-Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d \%H:\%M")=="2006-01-01 00:00"),
-               which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d \%H:\%M")=="2006-12-31 23:00"))
+Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d \%H")=="2006-01-01 00"),
+               which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d \%H")=="2006-12-31 23"))
 
 ## Imax computation
 Imax <- Imax(InputsModel = InputsModel, IndPeriod_Run = Ind_Run,

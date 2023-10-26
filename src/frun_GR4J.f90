@@ -44,7 +44,7 @@
 !       StateEnd     ! Vector of real, state variables at the end of the model run (store levels [mm] and Unit Hydrograph (UH) storages [mm])
 
 
-      !DEC$ ATTRIBUTES DLLEXPORT :: frun_gr4j
+      
 
 
       Implicit None
@@ -292,24 +292,24 @@
       IF(Q.LT.0.) Q=0.
 
 ! Variables storage
-      MISC( 1)=E             ! PE     ! observed potential evapotranspiration [mm/day]
-      MISC( 2)=P1            ! Precip ! observed total precipitation [mm/day]
-      MISC( 3)=St(1)         ! Prod   ! production store level (St(1)) [mm]
-      MISC( 4)=PN            ! Pn     ! net rainfall [mm/day]
-      MISC( 5)=PS            ! Ps     ! part of Ps filling the production store [mm/day]
-      MISC( 6)=AE            ! AE     ! actual evapotranspiration [mm/day]
-      MISC( 7)=PERC          ! Perc   ! percolation (PERC) [mm/day]
-      MISC( 8)=PR            ! PR     ! PR=PN-PS+PERC [mm/day]
-      MISC( 9)=StUH1(1)      ! Q9     ! outflow from UH1 (Q9) [mm/day]
-      MISC(10)=StUH2(1)      ! Q1     ! outflow from UH2 (Q1) [mm/day]
-      MISC(11)=St(2)         ! Rout   ! routing store level (St(2)) [mm]
-      MISC(12)=EXCH          ! Exch   ! potential semi-exchange between catchments (EXCH) [mm/day]
-      MISC(13)=AEXCH1        ! AExch1 ! actual exchange between catchments from branch 1 (AEXCH1) [mm/day]
-      MISC(14)=AEXCH2        ! AExch2 ! actual exchange between catchments from branch 2 (AEXCH2) [mm/day]
-      MISC(15)=AEXCH1+AEXCH2 ! AExch  ! actual total exchange between catchments (AEXCH1+AEXCH2) [mm/day]
-      MISC(16)=QR            ! QR     ! outflow from routing store (QR) [mm/day]
-      MISC(17)=QD            ! QD     ! outflow from UH2 branch after exchange (QD) [mm/day]
-      MISC(18)=Q             ! Qsim   ! simulated outflow at catchment outlet [mm/day]
+      MISC( 1)=E             ! PE     ! [numeric] observed potential evapotranspiration [mm/day]
+      MISC( 2)=P1            ! Precip ! [numeric] observed total precipitation [mm/day]
+      MISC( 3)=St(1)         ! Prod   ! [numeric] production store level (St(1)) [mm]
+      MISC( 4)=PN            ! Pn     ! [numeric] net rainfall [mm/day]
+      MISC( 5)=PS            ! Ps     ! [numeric] part of Ps filling the production store [mm/day]
+      MISC( 6)=AE            ! AE     ! [numeric] actual evapotranspiration [mm/day]
+      MISC( 7)=PERC          ! Perc   ! [numeric] percolation (PERC) [mm/day]
+      MISC( 8)=PR            ! PR     ! [numeric] PR=PN-PS+PERC [mm/day]
+      MISC( 9)=StUH1(1)      ! Q9     ! [numeric] outflow from UH1 (Q9) [mm/day]
+      MISC(10)=StUH2(1)      ! Q1     ! [numeric] outflow from UH2 (Q1) [mm/day]
+      MISC(11)=St(2)         ! Rout   ! [numeric] routing store level (St(2)) [mm]
+      MISC(12)=EXCH          ! Exch   ! [numeric] potential semi-exchange between catchments (EXCH) [mm/day]
+      MISC(13)=AEXCH1        ! AExch1 ! [numeric] actual exchange between catchments from branch 1 (AEXCH1) [mm/day]
+      MISC(14)=AEXCH2        ! AExch2 ! [numeric] actual exchange between catchments from branch 2 (AEXCH2) [mm/day]
+      MISC(15)=AEXCH1+AEXCH2 ! AExch  ! [numeric] actual total exchange between catchments (AEXCH1+AEXCH2) [mm/day]
+      MISC(16)=QR            ! QR     ! [numeric] outflow from routing store (QR) [mm/day]
+      MISC(17)=QD            ! QD     ! [numeric] outflow from UH2 branch after exchange (QD) [mm/day]
+      MISC(18)=Q             ! Qsim   ! [numeric] simulated outflow at catchment outlet [mm/day]
 
 
 

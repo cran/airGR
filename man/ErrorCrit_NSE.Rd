@@ -43,7 +43,7 @@ Function which computes an error criterion based on the NSE formula proposed by 
 
 \details{
 In addition to the criterion value, the function outputs include a multiplier (-1 or +1) which allows
-the use of the function for model calibration: the product CritValue * Multiplier is the criterion to be minimised
+the use of the function for model calibration: the product \eqn{CritValue \times Multiplier} is the criterion to be minimised
 (Multiplier = -1 for NSE).
 }
 

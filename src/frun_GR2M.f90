@@ -48,7 +48,7 @@
 !       StateEnd     ! Vector of real, state variables at the end of the model run (store levels [mm])
 
 
-      !DEC$ ATTRIBUTES DLLEXPORT :: frun_gr2m
+      
 
 
       Implicit None

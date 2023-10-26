@@ -31,7 +31,7 @@ CreateErrorCrit_GAPX(FUN_TRANSFO)
 
 \details{
 In addition to the criterion value, the function outputs include a multiplier (-1 or +1) that allows
-the use of the function for model calibration: the product \code{CritValue * Multiplier} is the criterion to be minimised
+the use of the function for model calibration: the product \eqn{CritValue \times Multiplier} is the criterion to be minimised
 (\code{Multiplier = -1} for NSE).
 }
 

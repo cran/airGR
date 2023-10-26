@@ -11,18 +11,19 @@
 
 \description{
 These parameter sets can be used as an alternative for the grid-screening calibration procedure (i.e. first step in \code{\link{Calibration_Michel}}).
-Please note that the given GR4J X4u variable does not correspond to the actual GR4J X4 parameter. As explained in Andréassian et al. (2014; section 2.1), the given GR4J X4u value has to be adjusted (rescaled) using catchment area (S) [km2] as follows: {X4 = X4u / 5.995 * S^0.3} (please note that the formula is erroneous in the publication). Please, see the example below. \cr
+Please note that the given GR4J X4u variable does not correspond to the actual GR4J X4 parameter. As explained in Andréassian et al. (2014; section 2.1), the given GR4J X4u value has to be adjusted (rescaled) using catchment area (S) [km2] as follows: \eqn{X4 = X4u / 5.995 \times S^{0.3}} (please note that the formula is erroneous in the publication). Please, see the example below. \cr
 As shown in Andréassian et al. (2014; figure 4), only using these parameters sets as the tested values for calibration is more efficient than a classical calibration when the amount of data is low (6 months or less).
 }
 
 
-\format{Data frame of parameters containing four numeric vectors
-\itemize{
-  \item {GR4J X1}  {production store capacity [mm]}
-  \item {GR4J X2}  {intercatchment exchange coefficient [mm/d]}
-  \item {GR4J X3}  {routing store capacity [mm]}
-  \item {GR4J X4u} {unajusted unit hydrograph time constant [d]}
-}}
+\format{Data frame of parameters containing four numeric vectors:
+  \tabular{ll}{
+    GR4J X1  \tab production store capacity [mm]             \cr
+    GR4J X2  \tab intercatchment exchange coefficient [mm/d] \cr
+    GR4J X3  \tab routing store capacity [mm]                \cr
+    GR4J X4u \tab unajusted unit hydrograph time constant [d]\cr
+  }
+}
 
 
 \seealso{
@@ -64,7 +65,7 @@ Ind_Cal <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-0
 
 ## preparation of the RunOptions object for the calibration period
 RunOptions_Cal <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
-                               InputsModel = InputsModel, IndPeriod_Run = Ind_Cal)
+                                   InputsModel = InputsModel, IndPeriod_Run = Ind_Cal)
 
 ## simulation and efficiency criterion (Nash-Sutcliffe Efficiency)
 ## with all generalist parameter sets on the calibration period

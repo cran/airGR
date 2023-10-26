@@ -10,11 +10,11 @@ vignette: >
 
 
 
-```{r, warning=FALSE, include=FALSE, fig.keep='none', results='hide'}
+```{r setup, warning=FALSE, include=FALSE, fig.keep='none', results='hide'}
 library(airGR)
 library(DEoptim)
-library(hydroPSO) # Needs R version >= 3.6 or latticeExtra <= 0.6-28 on R 3.5
-# library(Rmalschains) # removed from CRAN since 2023-04-03
+# library(hydroPSO) # Needs R version >= 3.6 or latticeExtra <= 0.6-28 on R 3.5. Archived on 2023-10-16 as requires archived packages 'hydroTSM' and 'hydroGOF'.
+library(Rmalschains)
 library(caRamel)
 library(ggplot2)
 library(GGally)
@@ -41,13 +41,13 @@ Please note that the calibration period is defined in the `CreateRunOptions()` f
 <!-- example("Calibration_Michel", echo = FALSE, ask = FALSE) -->
 <!-- ``` -->
 
-```{r, echo=TRUE, eval=FALSE}
+```{r Calibration_Michel, echo=TRUE, eval=FALSE}
 example("Calibration_Michel")
 ```
 
 In order for the `RunModel_*()` functions to run faster during the parameter estimation process, it is recommended that the outputs contain only the simulated flows (see the `Outputs_Sim` argument in the `CreateRunOptions()` help page).
 
-```{r, results='hide', eval=FALSE}
+```{r RunOptions, results='hide', eval=FALSE}
 RunOptions <- airGR::CreateRunOptions(FUN_MOD = RunModel_GR4J, InputsModel = InputsModel,
                                       IndPeriod_Run = Ind_Run,
                                       Outputs_Sim = "Qsim")
@@ -66,7 +66,7 @@ Here we choose to minimize the root mean square error.
 
 The change of the repository from the "real" parameter space to a "transformed" space ensures homogeneity of displacement in the different dimensions of the parameter space during the step-by-step procedure of the calibration algorithm of the model.
 
-```{r, warning=FALSE, results='hide', eval=FALSE}
+```{r OptimGR4J, warning=FALSE, results='hide', eval=FALSE}
 OptimGR4J <- function(ParamOptim) {
   ## Transformation of the parameter set to real space
   RawParamOptim <- airGR::TransfoParam_GR4J(ParamIn = ParamOptim,
@@ -86,7 +86,7 @@ OptimGR4J <- function(ParamOptim) {
 
 In addition, we need to define the lower and upper bounds of the four **GR4J** parameters in the transformed parameter space:
 
-```{r, warning=FALSE, results='hide', eval=FALSE}
+```{r boundsGR4J, warning=FALSE, results='hide', eval=FALSE}
 lowerGR4J <- rep(-9.99, times = 4)
 upperGR4J <- rep(+9.99, times = 4)
 ```
@@ -97,7 +97,7 @@ upperGR4J <- rep(+9.99, times = 4)
 
 We start with a local optimization strategy by using the PORT routines (using the `nlminb()` of the `stats` package) and by setting a starting point in the transformed parameter space:
 
-```{r, warning=FALSE, results='hide', eval=FALSE}
+```{r local1, warning=FALSE, results='hide', eval=FALSE}
 startGR4J <- c(4.1, 3.9, -0.9, -8.7)
 optPORT <- stats::nlminb(start = startGR4J,
                          objective = OptimGR4J,
@@ -111,7 +111,7 @@ We can also try a multi-start approach to test the consistency of the local opti
 Here we use the same grid used for the filtering step of the Michel's calibration strategy (`Calibration_Michel()` function).
 For each starting point, a local optimization is performed.
 
-```{r, warning=FALSE, results='hide', eval=FALSE}
+```{r local2, warning=FALSE, results='hide', eval=FALSE}
 startGR4JDistrib <- TransfoParam_GR4J(ParamIn = CalibOptions$StartParamDistrib,
                                       Direction = "RT")
 startGR4J <- expand.grid(data.frame(startGR4JDistrib))
@@ -126,7 +126,7 @@ listOptPORT <- apply(startGR4J, MARGIN = 1, FUN = optPORT_)
 
 We can then extract the best parameter sets and the value of the performance criteria:
 
-```{r, warning=FALSE, results='hide', eval=FALSE}
+```{r local3, warning=FALSE, results='hide', eval=FALSE}
 parPORT <- t(sapply(listOptPORT, function(x) x$par))
 objPORT <- sapply(listOptPORT, function(x) x$objective)
 resPORT <- data.frame(parPORT, RMSE = objPORT)
@@ -134,7 +134,7 @@ resPORT <- data.frame(parPORT, RMSE = objPORT)
 
 As can be seen below, the optimum performance criterion values (column *objective*) can differ from the global optimum value in many cases, resulting in various parameter sets.
 
-```{r, warning=FALSE}
+```{r local4, warning=FALSE}
 summary(resPORT)
 ```
 
@@ -154,7 +154,7 @@ Here we use the following R implementation of some popular strategies:
 
 ## Differential Evolution
 
-```{r, warning=FALSE, results='hide', eval=FALSE}
+```{r optDE, warning=FALSE, results='hide', eval=FALSE}
 optDE <- DEoptim::DEoptim(fn = OptimGR4J,
                           lower = lowerGR4J, upper = upperGR4J,
                           control = DEoptim::DEoptim.control(NP = 40, trace = 10))
@@ -163,7 +163,15 @@ optDE <- DEoptim::DEoptim(fn = OptimGR4J,
 
 ## Particle Swarm
 
-```{r, warning=FALSE, results='hide', message=FALSE, eval=FALSE}
+```{r hydroPSO1, warning=FALSE, results='hide', message=FALSE, eval=FALSE}
+# to install the package temporary removed from CRAN
+# Rtools needed (windows : https://cran.r-project.org/bin/windows/Rtools/)
+# install.packages("https://cran.r-project.org/src/contrib/Archive/hydroPSO/hydroPSO_0.5-1.tar.gz",
+#                  repos = NULL, type = "source", dependencies = TRUE)
+```
+
+
+```{r hydroPSO2, warning=FALSE, results='hide', message=FALSE, eval=FALSE}
 optPSO <- hydroPSO::hydroPSO(fn = OptimGR4J,
                              lower = lowerGR4J, upper = upperGR4J,
                              control = list(write2disk = FALSE, verbose = FALSE))
@@ -172,12 +180,6 @@ optPSO <- hydroPSO::hydroPSO(fn = OptimGR4J,
 
 ## MA-LS-Chains
 
-```{r, warning=FALSE, results='hide', message=FALSE, eval=FALSE}
-# to install the package temporary removde from CRAN
-# Rtools needed (windows : https://cran.r-project.org/bin/windows/Rtools/)
-install.packages("https://cran.r-project.org/src/contrib/Archive/Rmalschains/Rmalschains_0.2-8.tar.gz", 
-                 repos = NULL, type = "source", dependencies = TRUE)
-```
 ```{r, warning=FALSE, results='hide', eval=FALSE}
 optMALS <- Rmalschains::malschains(fn = OptimGR4J,
                                    lower = lowerGR4J, upper = upperGR4J,
@@ -190,7 +192,7 @@ optMALS <- Rmalschains::malschains(fn = OptimGR4J,
 
 As it can be seen in the table below, the four additional optimization strategies tested lead to very close optima.
 
-```{r, warning=FALSE, echo=FALSE, eval=FALSE}
+```{r resGLOB, warning=FALSE, echo=FALSE, eval=FALSE}
 resGLOB <- data.frame(Algo = c("airGR", "PORT", "DE", "PSO", "MA-LS"),
                       round(rbind(
                         OutputsCalib$ParamFinalR,
@@ -216,12 +218,12 @@ Here we use the following R implementation of an efficient strategy:
 
 Motivated by using the rainfall-runoff model for low flow simulation, we explore the trade-offs between the KGE values obtained without any data transformation and with the inverse transformation.
 
-First, the OptimGR4J function previously used is modified to return two values.
+First, the `OptimGR4J()` function previously used is modified to return two values.
 
 ```{r, warning=FALSE, results='hide', eval=FALSE}
 InputsCrit_inv <- InputsCrit
 InputsCrit_inv$transfo <- "inv"
-  
+
 MOptimGR4J <- function(i) {
   if (algo == "caRamel") {
     ParamOptim <- x[i, ]
@@ -268,9 +270,9 @@ optMO <- caRamel::caRamel(nobj = 2,
 The algorithm returns parameter sets that describe the pareto front, illustrating the trade-off between overall good performance and good performance for low flow.
 
 ```{r, fig.width=6, fig.height=6, warning=FALSE}
-ggplot() + 
+ggplot() +
   geom_point(aes(optMO$objectives[, 1], optMO$objectives[, 2])) +
-  coord_equal(xlim = c(0.4, 0.9), ylim = c(0.4, 0.9)) + 
+  coord_equal(xlim = c(0.4, 0.9), ylim = c(0.4, 0.9)) +
   xlab("KGE") + ylab("KGE [1/Q]") +
   theme_bw()
 ```

@@ -52,7 +52,7 @@ Function which creates a screen plot giving an overview of the model outputs.
 
 \item{AxisTS}{(optional) [function] to manage x-axis representing calendar dates and times on time series plots (see \code{\link{axis}} and \code{\link{axis.POSIXct}})}
 
-\item{LayoutMat}{(optional) [numeric] a matrix object specifying the location of the next N figures on the output device. Each value in the matrix must be 0 or a positive integer. If N is the largest positive integer in the matrix, then the integers {1, \dots, N-1} must also appear at least once in the matrix (see \code{\link{layout}})}
+\item{LayoutMat}{(optional) [numeric] a matrix object specifying the location of the next N figures on the output device. Each value in the matrix must be 0 or a positive integer. If N is the largest positive integer in the matrix, then the integers \eqn{1, \dots, N-1} must also appear at least once in the matrix (see \code{\link{layout}})}
 
 \item{LayoutWidths}{(optional) [numeric] a vector of values for the widths of columns on the device (see \code{\link{layout}})}
 
@@ -74,7 +74,7 @@ Different types of independent graphs are available (depending on the model, but
 \itemize{
   \item \code{"Precip"}: time series of total precipitation
   \item \code{"PotEvap"}: time series of potential evapotranspiration
-  \item \code{"ActEvap"}: time series of simulated actual evapotranspiration (overlaid to \code{"PotEvap"} if already drawn)
+  \item \code{"ActuEvap"}: time series of simulated actual evapotranspiration (overlaid to \code{"PotEvap"} if already drawn)
   \item \code{"Temp"}: time series of temperature (plotted only if CemaNeige is used)
   \item \code{"SnowPack"}: time series of snow water equivalent (plotted only if CemaNeige is used)
   \item \code{"Flows"}: time series of simulated flows (and observed flows if provided)

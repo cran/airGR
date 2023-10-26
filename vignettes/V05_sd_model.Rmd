@@ -20,6 +20,8 @@ options(digits = 3)
 
 The **airGR** package implements semi-distributed model capabilities using a lag model between subcatchments. It allows to chain together several lumped models as well as integrating anthropogenic influence such as reservoirs or withdrawals.
 
+Here we explain how to implement the semi-distribution with **airGR**. For everyday use, however, it is easier to use the [**airGRiwrm**](https://cran.r-project.org/package=airGRiwrm) package.
+
 `RunModel_Lag` documentation gives an example of simulating the influence of a reservoir in a lumped model. Try `example(RunModel_Lag)` to get it.
 
 In this vignette, we show how to calibrate 2 sub-catchments in series with a semi-distributed model consisting of 2 GR4J models.
@@ -105,7 +107,7 @@ OutputsModelUp <- RunModel_GR4J(InputsModel = InputsModelUp, RunOptions = RunOpt
 
 ## Creation of the InputsModel objects
 
-we need to create `InputsModel` objects completed with upstream information with upstream observed flow for the calibration of first case and upstream simulated flows for the other cases:
+We need to create `InputsModel` objects completed with upstream information with upstream observed flow for the calibration of first case and upstream simulated flows for the other cases:
 
 ```{r}
 InputsModelDown1 <- CreateInputsModel(
