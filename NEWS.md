@@ -2,6 +2,47 @@
 
 
 
+### 1.7.8 Release Notes (2025-12-12)
+
+#### Bug fixes
+
+- `RunModel_CemaNeige()` now run alone without GR models at the hourly time step. ([#179](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/179))
+- `SeriesAggreg()` now correctly handles time series provided with diverse input time steps (e.g., 15-minute data aggregated to monthly values). ([#149](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/149))
+- `SeriesAggreg()` now correctly compute `LayerFracSolidPrecip`. This variable, representing a fraction, was previously aggregated using a sum, which was incorrect. It is now recalculated from the aggregated liquid and solid precipitation values to ensure physically consistent results. ([#160](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/160))
+- `SeriesAggreg()` now correctly handles inputs provided as `tibble` format. ([#187](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/187))
+- Restored the missing `IsIntStore` argument in `CreateCalibOptions()`, which had been unintentionally since version 1.4.1.18. Without it, the GR5H model with interception storage was using the parameter transformations of the version without interception, leading to suboptimal calibration results. ([#165](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/165))
+- `CreateRunOptions()` now run when used with `RunModel_Lag()`, preventing the error and ensuring compatibility with RunModel_Lag() and potential future non-GR models. ([#167](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/167))
+- `CreateRunOptions()` and `RunModel_GR5H*()` now properly handle cases where the Imax argument is set to `NULL`. Previously, no error was raised and a default warm-up configuration was silently applied, which could lead to incorrect simulations. ([#181](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/181))
+- `ErrorCrit_RMSE()` now correctly ignores missing values in either the observed or the simulated time series due to inv" or "log" transformations producing additional `NA` values in simulated flows.
+
+
+#### Major user-visible changes
+
+- `RunModel_*()` and `Calibration_Michel()` now run faster thanks to multiple optimizations: 
+`.GetFeatModel()` now preloads `.FeatModels` from an RDA file instead of a CSV file, model features are stored as an attribute of InputsModel (eliminating redundant calls in `CreateIniStates()`), and unnecessary sentinel-to-NA conversions have been removed. ([#176](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/176))
+
+
+#### Minor user-visible changes
+
+- `RunModel_CemaNeigeGR4J()` example and the 'cemaneige_hysteresis' vignette now reflect the correct use of the CemaNeige hysteresis formulation as described in Riboust et al. (2019).
+The `MeanAnSolidPrecip` argument of `CreateRunOptions()` must now be specified with distinct values for each elevation zone when hysteresis is activated. ([#141](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/141))
+- Added the features diagram to the 'Get Started' vignette to provide a visual summary of the main airGR functions and their relationships. ([#186](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/186))
+- Refactored the handling of criterion logic to decentralize the definition of CritBestValue and Multiplier across the individual `ErrorCrit_*()` functions. ([#199](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/199))
+- `citation("airGR")` now returns the digital object identifier (DOI) provided by the CRAN ([#189](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/189))
+
+
+#### Version control and issue tracking
+
+- Removed embedded functions from regression test lists to avoid false positives in test comparisons. ([#202](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/202))
+
+
+#### CRAN-compatibility updates
+
+- Now depends on R >= 3.6.0. ([#176](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/176))
+
+____________________________________________________________________________________
+
+
 ### 1.7.6 Release Notes (2023-10-25)
 
 #### Bug fixes
@@ -13,7 +54,7 @@
 #### Minor user-visible changes
 
 - `Calibration_Michel()` now runs faster as the `ProposeCandidatesGrid()` was improved to create the propose candidates grid. ([#157](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/157)) 
-- `TransfoParamGR5J()` now returns the correct  error message when the number of parameters is incorrect. ([#168](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/168)) 
+- `TransfoParamGR5J()` now returns the correct error message when the number of parameters is incorrect. ([#168](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/168)) 
 
 
 #### CRAN-compatibility updates

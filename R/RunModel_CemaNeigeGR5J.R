@@ -32,7 +32,7 @@ RunModel_CemaNeigeGR5J <- function(InputsModel, RunOptions, Param) {
     RunOptions$IndPeriod_WarmUp <- NULL
   }
   IndPeriod1     <- c(RunOptions$IndPeriod_WarmUp, RunOptions$IndPeriod_Run)
-  LInputSeries   <- as.integer(length(IndPeriod1))
+  LInputSeries   <- length(IndPeriod1)
   IndPeriod2     <- (length(RunOptions$IndPeriod_WarmUp)+1):LInputSeries
   ParamCemaNeige <- Param[(length(Param) - 1 - 2 * as.integer(IsHyst)):length(Param)]
   NParamMod      <- as.integer(length(Param) - (2 + 2 * as.integer(IsHyst)))
@@ -56,7 +56,9 @@ RunModel_CemaNeigeGR5J <- function(InputsModel, RunOptions, Param) {
 
 
     ## Call CemaNeige Fortran_________________________
-    for (iLayer in 1:NLayers) {
+    OutputsIni  <- matrix(-99e9, nrow = LInputSeries, ncol = length(IndOutputsCemaNeige))
+    StateEndIni <- rep(-99e9, NStates)
+    for (iLayer in seq_len(NLayers)) {
       if (!IsHyst) {
         StateStartCemaNeige <- RunOptions$IniStates[(7 + 20 + 40) + c(iLayer, iLayer+NLayers)]
       } else {
@@ -71,17 +73,15 @@ RunModel_CemaNeigeGR5J <- function(InputsModel, RunOptions, Param) {
                           MeanAnSolidPrecip = RunOptions$MeanAnSolidPrecip[iLayer],                       ### value of annual mean solid precip [mm/y]
                           NParam = as.integer(NParamCN),                                                  ### number of model parameters = 2 or 4
                           Param = as.double(ParamCemaNeige),                                              ### parameter set
-                          NStates = as.integer(NStates),                                                  ### number of state variables used for model initialising = 4
+                          NStates = NStates,                                                              ### number of state variables used for model initialising = 4
                           StateStart = StateStartCemaNeige,                                               ### state variables used when the model run starts
                           IsHyst = as.integer(IsHyst),                                                    ### use of hysteresis
-                          NOutputs = as.integer(length(IndOutputsCemaNeige)),                             ### number of output series
+                          NOutputs = length(IndOutputsCemaNeige),                                         ### number of output series
                           IndOutputs = IndOutputsCemaNeige,                                               ### indices of output series
                           ## outputs
-                          Outputs = matrix(as.double(-99e9), nrow = LInputSeries, ncol = length(IndOutputsCemaNeige)), ### output series [mm, mm/d or degC]
-                          StateEnd = rep(as.double(-99e9), as.integer(NStates))                                        ### state variables at the end of the model run
+                          Outputs = OutputsIni,                                                           ### output series [mm, mm/d or degC]
+                          StateEnd = StateEndIni                                                          ### state variables at the end of the model run
       )
-      RESULTS$Outputs[RESULTS$Outputs   <= -99e8] <- NA
-      RESULTS$StateEnd[RESULTS$StateEnd <= -99e8] <- NA
 
       ## Data storage
       CemaNeigeLayers[[iLayer]] <- lapply(seq_len(RESULTS$NOutputs), function(i) RESULTS$Outputs[IndPeriod2, i])
@@ -135,8 +135,8 @@ RunModel_CemaNeigeGR5J <- function(InputsModel, RunOptions, Param) {
                       NOutputs = as.integer(length(IndOutputsMod)),    ### number of output series
                       IndOutputs = IndOutputsMod,                      ### indices of output series
                       ## outputs
-                      Outputs = matrix(as.double(-99e9), nrow = LInputSeries, ncol = length(IndOutputsMod)), ### output series [mm or mm/d]
-                      StateEnd = rep(as.double(-99e9), NStatesMod)                                           ### state variables at the end of the model run
+                      Outputs = matrix(-99e9, nrow = LInputSeries, ncol = length(IndOutputsMod)), ### output series [mm or mm/d]
+                      StateEnd = rep(-99e9, NStatesMod)                                           ### state variables at the end of the model run
   )
   RESULTS$Outputs[RESULTS$Outputs   <= -99e8] <- NA
   RESULTS$StateEnd[RESULTS$StateEnd <= -99e8] <- NA

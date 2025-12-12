@@ -129,9 +129,20 @@ OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsMode
 
 ## --- version of CemaNeige with the Linear Hysteresis
 
+## Annual mean of average solid precipitation for each layer
+SolidPrecip <- sapply(seq_along(InputsModel$LayerFracSolidPrecip), FUN = function(iLayer) {
+  iLayerFracSolidPrecip <- InputsModel$LayerFracSolidPrecip[[iLayer]][Ind_Run]
+  iLayerPrecip <- InputsModel$LayerPrecip[[iLayer]][Ind_Run]
+  mean(iLayerFracSolidPrecip * iLayerPrecip)
+})
+Freqs <- c(hourly = 365.25*24, daily = 365.25, monthly = 12, yearly = 1)
+Freq <- intersect(class(InputsModel), names(Freqs))
+SolidPrecip <- SolidPrecip * Freqs[Freq]
+
 ## preparation of the RunOptions object
 RunOptions <- CreateRunOptions(FUN_MOD = RunModel_CemaNeigeGR4J, InputsModel = InputsModel,
-                               IndPeriod_Run = Ind_Run, IsHyst = TRUE)
+                               IndPeriod_Run = Ind_Run, IsHyst = TRUE,
+                               MeanAnSolidPrecip = SolidPrecip)
 
 ## simulation
 Param <- c(X1 = 408.774, X2 = 2.646, X3 = 131.264, X4 = 1.174,

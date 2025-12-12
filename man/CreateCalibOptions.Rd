@@ -15,7 +15,8 @@ Creation of the \emph{CalibOptions} object required by the \code{Calibration*} f
 
 \usage{
 CreateCalibOptions(FUN_MOD, FUN_CALIB = Calibration_Michel,
-                   FUN_TRANSFO = NULL, IsHyst = FALSE, IsSD = FALSE,
+                   FUN_TRANSFO = NULL,
+                   IsHyst = FALSE, IsIntStore = FALSE, IsSD = FALSE,
                    FixedParam = NULL,
                    SearchRanges = NULL, StartParamList = NULL,
                    StartParamDistrib = NULL)
@@ -31,15 +32,17 @@ CreateCalibOptions(FUN_MOD, FUN_CALIB = Calibration_Michel,
 
 \item{IsHyst}{[boolean] boolean indicating if the hysteresis version of CemaNeige is used. See details}
 
+\item{IsIntStore}{[boolean] boolean indicating if the interception store is used with GR5H. See \code{\link{RunModel_GR5H}}}
+
 \item{IsSD}{[boolean] boolean indicating if the semi-distributed lag model is used. See details}
 
-\item{FixedParam}{(optional) [numeric] vector giving the values set for the non-optimised parameter values (NParam columns, 1 line)
+\item{FixedParam}{(optional) [numeric] vector giving the values set for the non-optimised parameter values (n values, one per parameter)
 \cr Example:
 \tabular{llllll}{
               \tab   NA   \tab   NA   \tab 3.34   \tab  ...    \tab   NA \cr
 }}
 
-\item{SearchRanges}{(optional) [numeric] matrix giving the ranges of real parameters (NParam columns, 2 lines)
+\item{SearchRanges}{((optional) [numeric] matrix giving the maximal ranges of real parameters (dimensions: one column per parameter; 2 rows, 1st row = minima, 2nd row = maxima)
 \cr Example:
 \tabular{llllll}{
               \tab [X1]   \tab [X2]   \tab [X3]   \tab [...]   \tab [Xi] \cr
@@ -47,7 +50,7 @@ CreateCalibOptions(FUN_MOD, FUN_CALIB = Calibration_Michel,
      [2,]     \tab 3000   \tab   +1   \tab  100   \tab  ...    \tab  3.0 \cr
 }}
 
-\item{StartParamList}{(optional) [numeric] matrix of parameter sets used for grid-screening calibration procedure (values in columns, sets in line)
+\item{StartParamList}{(optional) [numeric] matrix of parameter sets used for grid-screening calibration procedure (dimensions: one column per parameter; number of rows = number of parameter sets to be tested). Each parameter set, i.e. each row, will be tested
 \cr Example:
 \tabular{llllll}{
               \tab [X1]   \tab [X2]   \tab [X3]   \tab [...]   \tab [Xi] \cr
@@ -57,7 +60,7 @@ CreateCalibOptions(FUN_MOD, FUN_CALIB = Calibration_Michel,
      [set n]  \tab  200   \tab -0.3   \tab   17   \tab  ...    \tab  1.0 \cr
 }}
 
-\item{StartParamDistrib}{(optional) [numeric] matrix of parameter values used for grid-screening calibration procedure (values in columns, percentiles in line)
+\item{StartParamDistrib}{(optional) [numeric] matrix of parameter values used for grid-screening calibration procedure (dimensions: one column per parameter; number of rows corresponding to the number of parameter values you want to test). Each combination of values will be tested
 \cr Example:
 \tabular{llllll}{
               \tab [X1]   \tab [X2]   \tab [X3]   \tab [...]   \tab [Xi] \cr
@@ -86,7 +89,9 @@ the package must create their own \code{CalibOptions} object accordingly. \cr
 If \code{IsHyst = FALSE}, the original CemaNeige version from Valéry et al. (2014) is used. \cr
 If \code{IsHyst = TRUE}, the CemaNeige version from Riboust et al. (2019) is used. Compared to the original version, this version of CemaNeige needs two more parameters and it includes a representation of the hysteretic relationship between the Snow Cover Area (SCA) and the Snow Water Equivalent (SWE) in the catchment. The hysteresis included in airGR is the Modified Linear hysteresis (LH*); it is represented on panel b) of Fig. 3 in Riboust et al. (2019). Riboust et al. (2019) advise to use the LH* version of CemaNeige with parameters calibrated using an objective function combining 75 \% of KGE calculated on discharge simulated from a rainfall-runoff model compared to observed discharge and 5 \% of KGE calculated on SCA on 5 CemaNeige elevation bands compared to satellite (e.g. MODIS) SCA (see Eq. (18), Table 3 and Fig. 6). Riboust et al. (2019)'s tests were realized with GR4J as the chosen rainfall-runoff model. \cr
 
-If \code{InputsModel} parameter has been created for using a semi-distributed (SD) model (See \code{\link{CreateInputsModel}}), the parameter \code{isSD} should be set to \code{TRUE}.
+## --- Semi-distributed mode
+
+If \code{InputsModel} parameter has been created for using a semi-distributed (SD) model (See \code{\link{CreateInputsModel}}), the parameter \code{IsSD} should be set to \code{TRUE}.
 }
 
 

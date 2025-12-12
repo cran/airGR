@@ -3,7 +3,8 @@
 StoreStableExampleResults <- function(
   package = "airGR",
   path = file.path("tests/tmp", Sys.getenv("R_VERSION"), "stable"),
-  ...) {
+  ...
+) {
   install.packages(package, repos = "http://cran.r-project.org")
   StoreExampleResults(package = package, path = path, ...)
 }
@@ -11,7 +12,8 @@ StoreStableExampleResults <- function(
 StoreDevExampleResults <- function(
   package = "airGR",
   path = file.path("tests/tmp", Sys.getenv("R_VERSION"), "dev"),
-  ...) {
+  ...
+) {
   StoreExampleResults(package = package, path = path, ...)
 }
 
@@ -26,8 +28,12 @@ StoreDevExampleResults <- function(
 #' @export
 #'
 #' @examples
-StoreExampleResults <- function(package, path, run.dontrun = FALSE, run.donttest = TRUE) {
-
+StoreExampleResults <- function(
+  package,
+  path,
+  run.dontrun = FALSE,
+  run.donttest = TRUE
+) {
   # Install and load stable version of the package
   library(package, character.only = TRUE)
 
@@ -40,13 +46,22 @@ StoreExampleResults <- function(package, path, run.dontrun = FALSE, run.donttest
   lapply(
     rd,
     StoreTopicResults,
-    package, path, run.dontrun = run.dontrun, run.donttest = run.donttest
+    package,
+    path,
+    run.dontrun = run.dontrun,
+    run.donttest = run.donttest
   )
-
 }
 
-StoreTopicResults <- function(topic, package, path, run.dontrun = TRUE, run.donttest = TRUE) {
-
+StoreTopicResults <- function(
+  topic,
+  package,
+  path,
+  run.dontrun = TRUE,
+  run.donttest = TRUE,
+  items_ignored = "FUN_.*",
+  max_item_depth = 4
+) {
   cat("*******************************\n")
   cat("*", topic, "\n")
   cat("*******************************\n")
@@ -59,17 +74,29 @@ StoreTopicResults <- function(topic, package, path, run.dontrun = TRUE, run.dont
   start_time = Sys.time()
 
   example(
-    topic, package = package, character.only = TRUE, echo = FALSE, ask = FALSE, local = FALSE, setRNG = TRUE,
-    run.dontrun = run.dontrun, run.donttest = run.donttest
+    topic,
+    package = package,
+    character.only = TRUE,
+    echo = FALSE,
+    ask = FALSE,
+    local = FALSE,
+    setRNG = TRUE,
+    run.dontrun = run.dontrun,
+    run.donttest = run.donttest
   )
 
-  end_time = Sys.time()
+  end_time <- Sys.time()
   dev.off()
 
-  write.table(data.frame(topic = topic, time = end_time - start_time),
-            file.path(path, "timing.tsv"),
-            row.names = FALSE, col.names = FALSE, quote = FALSE,
-            sep = "\t", append = TRUE)
+  write.table(
+    data.frame(topic = topic, time = end_time - start_time),
+    file.path(path, "timing.tsv"),
+    row.names = FALSE,
+    col.names = FALSE,
+    quote = FALSE,
+    sep = "\t",
+    append = TRUE
+  )
 
   varAfter <- ls(envir = globalenv())
 
@@ -79,16 +106,44 @@ StoreTopicResults <- function(topic, package, path, run.dontrun = TRUE, run.dont
     path <- file.path(path, topic)
     dir.create(path, showWarnings = FALSE, recursive = TRUE)
     lapply(varToSave, function(x) {
-      saveRDS(get(x), file = file.path(path, paste0(x, ".rds")))
+      v <- get(x)
+      if (is.function(v)) {
+        return(NULL)
+      }
+      # If v is a list, remove ignored items recursively
+      remove_ignored_items <- function(
+        x,
+        depth = 0,
+        max_depth = max_item_depth
+      ) {
+        if (depth > max_depth) {
+          return(x)
+        }
+
+        # Only recurse into plain lists (avoid breaking data.frames)
+        if (is.list(x) && !inherits(x, "data.frame")) {
+          # Recurse first
+          x <- lapply(x, function(item) remove_ignored_items(item, depth + 1))
+          # Drop named elements matching the pattern
+          nm <- names(x)
+          if (!is.null(nm)) {
+            keep <- !grepl(items_ignored, nm)
+            x <- x[keep]
+          }
+        }
+        x
+      }
+      v <- remove_ignored_items(v)
+      saveRDS(v, file = file.path(path, paste0(x, ".rds")))
     })
   }
 
   rm(list = varToSave, envir = globalenv())
-
 }
 
 CompareStableDev <- function() {
-  res <- testthat::test_file("tests/testthat/regression.R")
+  Sys.setenv(RUN_REGRESSION_TESTS = "true")
+  res <- testthat::test_file("tests/testthat/test-regression.R")
   dRes <- as.data.frame(res)
   if (any(dRes[, "failed"] > 0) | any(dRes[, "error"])) {
     quit(status = 1)
@@ -109,12 +164,14 @@ lActions <- list(
 )
 
 if (length(Args) == 1 && Args %in% names(lActions)) {
-  lActions[[Args]]()
+  invisible(lActions[[Args]]())
 } else {
-  stop("This script should be run with one argument in the command line:\n",
-       "`Rscript tests/regression_tests.R [stable|dev|compare]`.\n",
-       "Available arguments are:\n",
-       "- stable: install stable version from CRAN, run and store examples\n",
-       "- dev: install dev version from current directory, run and store examples\n",
-       "- compare: stored results of both versions")
+  stop(
+    "This script should be run with one argument in the command line:\n",
+    "`Rscript tests/regression_tests.R [stable|dev|compare]`.\n",
+    "Available arguments are:\n",
+    "- stable: install stable version from CRAN, run and store examples\n",
+    "- dev: install dev version from current directory, run and store examples\n",
+    "- compare: stored results of both versions"
+  )
 }

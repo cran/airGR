@@ -19,10 +19,11 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
 
   ## index time series
   if (!is.null(IndPeriod_Plot)) {
-    if (length(IndPeriod_Plot) == 0) {
+    if (length(IndPeriod_Plot) <= 1 || any(IndPeriod_Plot <= 0)) {
       IndPeriod_Plot <- seq_along(OutputsModel$DatesR)
+      stop('IndPeriod_Plot must be a positive vector of length > 0')
     }
-    IndPeriod_Plot <- seq_along(IndPeriod_Plot)
+    # IndPeriod_Plot <- seq_along(IndPeriod_Plot)
     OutputsModel <- .IndexOutputsModel(OutputsModel, IndPeriod_Plot)
     Qobs <- Qobs[IndPeriod_Plot]
   } else {
@@ -202,7 +203,7 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
   }
   PsolLayerMean <- NULL
   if (BOOL_Psol) {
-    for (iLayer in 1:NLayers) {
+    for (iLayer in seq_len(NLayers)) {
       if (iLayer == 1) {
         PsolLayerMean <- OutputsModel$CemaNeigeLayers[[iLayer]]$Psol / NLayers
       } else {
@@ -442,7 +443,7 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
     mar <- c(3, 5, 1, 5)
     par(new = FALSE, mar = mar)
     ylim1 <- c(+99999, -99999)
-    for (iLayer in 1:NLayers) {
+    for (iLayer in seq_len(NLayers)) {
       ylim1[1] <- min(ylim1[1], OutputsModel$CemaNeigeLayers[[iLayer]]$Temp)
       ylim1[2] <- max(ylim1[2], OutputsModel$CemaNeigeLayers[[iLayer]]$Temp)
       if (iLayer == 1) {
@@ -452,7 +453,7 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
       }
     }
     plot(Xaxis, SnowPackLayerMean, type = "n", ylim = ylim1, xlab = "", ylab = "", xaxt = "n", yaxt = "n", ...)
-    for (iLayer in 1:NLayers) {
+    for (iLayer in seq_len(NLayers)) {
       lines(Xaxis, OutputsModel$CemaNeigeLayers[[iLayer]]$Temp, lty = 3, col = "orchid", lwd = lwd * lwdk * 0.8)
     }
     abline(h = 0, col = "grey", lty = 2)
@@ -477,7 +478,7 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
     mar <- c(3, 5, 1, 5)
     par(new = FALSE, mar = mar)
     ylim1 <- c(+99999, -99999)
-    for (iLayer in 1:NLayers) {
+    for (iLayer in seq_len(NLayers)) {
       ylim1[1] <- min(ylim1[1], OutputsModel$CemaNeigeLayers[[iLayer]]$SnowPack)
       ylim1[2] <- max(ylim1[2], OutputsModel$CemaNeigeLayers[[iLayer]]$SnowPack)
       if (iLayer == 1) {
@@ -487,7 +488,7 @@ plot.OutputsModel <- function(x, Qobs = NULL, IndPeriod_Plot = NULL, BasinArea =
       }
     }
     plot(Xaxis, SnowPackLayerMean, type = "l", ylim = ylim1, lwd = lwd * lwdk * 1.2, col = "royalblue", xlab = "", ylab = "", xaxt = "n", yaxt = "n", ...)
-    for (iLayer in 1:NLayers) {
+    for (iLayer in seq_len(NLayers)) {
       lines(Xaxis, OutputsModel$CemaNeigeLayers[[iLayer]]$SnowPack, lty = 3, col = "royalblue", lwd = lwd * lwdk * 0.8)
     }
     axis(side = 2, at = pretty(ylim1), labels = pretty(ylim1), cex.axis = cex.axis, ...)

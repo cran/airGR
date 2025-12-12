@@ -8,18 +8,18 @@ vignette: >
   %\VignetteIndexEntry{Using CemaNeige with Hysteresis}
   %\VignetteEncoding{UTF-8}
 ---
-
-
+  
+  
 ```{r, warning=FALSE, include=FALSE}
-library(airGR)
-load(system.file("vignettesData/vignetteCNHysteresis.rda", package = "airGR"))
+  library(airGR)
+  load(system.file("vignettesData/vignetteCNHysteresis.rda", package = "airGR"))
 ```
-
-
+  
+  
 # Introduction
-
+  
 ## Scope
-
+  
 Rainfall-runoff models that include a snow accumulation and melt module are still often calibrated using only discharge observations. This can result in poor snow modeling as the swnow module parameters can distorted in order to allow skilful discharge simulation.
   
 After the work of @riboust_revisiting_2019, we propose now in **airGR** an improved version of the degree-day CemaNeige snow and accumulation module. This new version is based on a more accurate representation of the relationship that exists at the basin scale between the Snow Water Equivalent (SWE) and the Snow Cover Area (SCA). To do so, a linear SWE-SCA hysteresis, which represents the fact that snow accumulation is rather homogeneous on the basin and snow melt is more heterogeneous, was implemented.
@@ -38,6 +38,7 @@ We load an example data set from the package. Please note that this data set inc
   
   
 ## loading catchment data
+
 ```{r, warning=FALSE, eval=FALSE}
 data(X0310010)
 summary(BasinObs)
@@ -80,15 +81,51 @@ Ind_Val <- seq(which(format(BasinObs$DatesR, format = "%Y-%m-%d") == "2005-09-01
 In order to use the Linear Hysteresis, a new argument (`IsHyst`) is added in the `CreateRunOptions()` and `CreateCalibOptions()` functions and has to be set to `TRUE`. 
 
 ```{r, warning=FALSE, eval=FALSE}
+SolidPrecip <- as.data.frame(t(sapply(seq_along(InputsModel$LayerFracSolidPrecip), FUN = function(iLayer) {
+  c(Cal = mean(InputsModel$LayerFracSolidPrecip[[iLayer]][Ind_Cal] * 
+                 InputsModel$LayerPrecip[[iLayer]][Ind_Cal]),
+    Val = mean(InputsModel$LayerFracSolidPrecip[[iLayer]][Ind_Val] * 
+                 InputsModel$LayerPrecip[[iLayer]][Ind_Val]))
+})))
+Freqs <- c(hourly = 365.25*24, daily = 365.25, monthly = 12, yearly = 1)
+Freq <- intersect(class(InputsModel), names(Freqs))
+SolidPrecip$Cal <- SolidPrecip$Cal * Freqs[Freq]
+SolidPrecip$Val <- SolidPrecip$Val * Freqs[Freq]
+
+
+# Calcul des précipitations solides par zone d'altitude, pour calibration et validation
+SolidPrecip <- lapply(seq_along(InputsModel$LayerFracSolidPrecip), FUN = function(iLayer) {
+  Cal <- mean(InputsModel$LayerFracSolidPrecip[[iLayer]][Ind_Cal] *
+                InputsModel$LayerPrecip[[iLayer]][Ind_Cal], na.rm = TRUE)
+  Val <- mean(InputsModel$LayerFracSolidPrecip[[iLayer]][Ind_Val] *
+                InputsModel$LayerPrecip[[iLayer]][Ind_Val], na.rm = TRUE)
+  c(Cal = Cal, Val = Val)
+})
+SolidPrecip <- Map(function(frac, precip) {
+  c(Cal = mean(frac[Ind_Cal] * precip[Ind_Cal], na.rm = TRUE),
+    Val = mean(frac[Ind_Val] * precip[Ind_Val], na.rm = TRUE))
+  },
+  InputsModel$LayerFracSolidPrecip,
+  InputsModel$LayerPrecip)
+SolidPrecip <- as.data.frame(do.call("rbind", SolidPrecip))
+
+Freqs <- c(hourly = 365.25 * 24, daily = 365.25, monthly = 12, yearly = 1)
+Freq <- intersect(class(InputsModel), names(Freqs))
+
+SolidPrecip <- SolidPrecip * Freqs[Freq]
+
+
 ## preparation of the RunOptions object for the calibration period
 RunOptions_Cal <- CreateRunOptions(FUN_MOD = RunModel_CemaNeigeGR4J,
                                    InputsModel = InputsModel, IndPeriod_Run = Ind_Cal,
-                                   IsHyst = TRUE)
+                                   IsHyst = TRUE, 
+                                   MeanAnSolidPrecip = SolidPrecip$Cal)
 
 ## preparation of the RunOptions object for the validation period
 RunOptions_Val <- CreateRunOptions(FUN_MOD = RunModel_CemaNeigeGR4J,
                                    InputsModel = InputsModel, IndPeriod_Run = Ind_Val,
-                                   IsHyst = TRUE)
+                                   IsHyst = TRUE,
+                                   MeanAnSolidPrecip = SolidPrecip$Val)
 
 ## preparation of the CalibOptions object
 CalibOptions <- CreateCalibOptions(FUN_MOD = RunModel_CemaNeigeGR4J,

@@ -24,7 +24,7 @@ DataAltiExtrapolation_Valery <- function(DatesR,
     nreste <- 100 %% NLayers
     ncont  <- 0
 
-    for (iLayer in 1:NLayers) {
+    for (iLayer in seq_len(NLayers)) {
       if (nreste > 0) {
         nn <- nmoy + 1
         nreste <- nreste - 1
@@ -56,7 +56,7 @@ DataAltiExtrapolation_Valery <- function(DatesR,
     ##Extrapolation
     ##Thresold_of_inputs_median_elevation
     Zthreshold <- 4000
-    LayerPrecip_mat <- sapply(1:NLayers, function(iLayer) {
+    LayerPrecip_mat <- sapply(seq_len(NLayers), function(iLayer) {
       ##If_layer_elevation_smaller_than_Zthreshold
       if (ZLayers[iLayer] <= Zthreshold) {
         prcp <- as.double(Precip * exp(TabGradP * (ZLayers[iLayer] - ZInputs)))
@@ -102,7 +102,7 @@ DataAltiExtrapolation_Valery <- function(DatesR,
     TabGradT <- GradT[iday, c("grad_Tmean", "grad_Tmin", "grad_Tmax")]
     ##Extrapolation
     ##On_each_elevation_layer...
-    for (iLayer in 1:NLayers) {
+    for (iLayer in seq_len(NLayers)) {
       LayerTempMean[[iLayer]] <- as.double(TempMean + (ZInputs - ZLayers[iLayer]) * abs(TabGradT[, "grad_Tmean"]) /  100)
       if (!is.null(TempMin) & !is.null(TempMax)) {
         LayerTempMin[[iLayer]]  <- as.double(TempMin  + (ZInputs - ZLayers[iLayer]) * abs(TabGradT[, "grad_Tmin"]) /  100)
@@ -128,7 +128,7 @@ DataAltiExtrapolation_Valery <- function(DatesR,
   }
 
   ##On_each_elevation_layer...
-  for (iLayer in 1:NLayers) {
+  for (iLayer in seq_len(NLayers)) {
 
     ##Turcotte_formula_from_Hydrotel
     if (Option == "Hydrotel") {

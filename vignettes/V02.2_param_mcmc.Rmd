@@ -69,7 +69,7 @@ Note that we do not use here any discharge transformation, although applying Box
 LogLikeGR4J <- function(ParamOptim) {
   ## Transformation to real space
   RawParamOptim <- airGR::TransfoParam_GR4J(ParamIn = ParamOptim,
-                                              Direction = "TR")
+                                            Direction = "TR")
   ## Simulation given a parameter set
   OutputsModel <- airGR::RunModel_GR4J(InputsModel = InputsModel,
                                        RunOptions = RunOptions,

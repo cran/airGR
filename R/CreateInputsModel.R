@@ -1,14 +1,21 @@
-CreateInputsModel <- function(FUN_MOD,
-                              DatesR,
-                              Precip, PrecipScale = TRUE,
-                              PotEvap = NULL,
-                              TempMean = NULL, TempMin = NULL, TempMax = NULL,
-                              ZInputs = NULL, HypsoData = NULL, NLayers = 5,
-                              Qupstream = NULL, LengthHydro = NULL, BasinAreas = NULL,
-                              QupstrUnit = "mm",
-                              verbose = TRUE) {
-
-
+CreateInputsModel <- function(
+  FUN_MOD,
+  DatesR,
+  Precip,
+  PrecipScale = TRUE,
+  PotEvap = NULL,
+  TempMean = NULL,
+  TempMin = NULL,
+  TempMax = NULL,
+  ZInputs = NULL,
+  HypsoData = NULL,
+  NLayers = 5,
+  Qupstream = NULL,
+  LengthHydro = NULL,
+  BasinAreas = NULL,
+  QupstrUnit = "mm",
+  verbose = TRUE
+) {
   ObjectClass <- NULL
 
   ## check DatesR
@@ -31,7 +38,6 @@ CreateInputsModel <- function(FUN_MOD,
   FeatFUN_MOD <- .GetFeatModel(FUN_MOD = FUN_MOD, DatesR = DatesR)
   ObjectClass <- FeatFUN_MOD$Class
   TimeStep <- FeatFUN_MOD$TimeStep
-
 
   ##check_arguments
 
@@ -106,12 +112,14 @@ CreateInputsModel <- function(FUN_MOD,
     }
     if (is.null(HypsoData)) {
       if (verbose) {
-        warning("'HypsoData' is missing: a single layer is used and no extrapolation is made")
+        warning(
+          "'HypsoData' is missing: a single layer is used and no extrapolation is made",
+          call. = FALSE
+        )
       }
       HypsoData <- as.numeric(rep(NA, 101))
-      ZInputs   <- as.numeric(NA)
-      NLayers   <- as.integer(1)
-
+      ZInputs <- as.numeric(NA)
+      NLayers <- as.integer(1)
     }
     if (is.null(ZInputs)) {
       if (verbose & !identical(HypsoData, as.numeric(rep(NA, 101)))) {
@@ -123,7 +131,13 @@ CreateInputsModel <- function(FUN_MOD,
       stop("'NLayers' must be a positive integer value")
     }
     if (NLayers != as.integer(NLayers)) {
-      warning("Coerce 'NLayers' to be of integer type (",  NLayers, ": ", as.integer(NLayers), ")")
+      warning(
+        "Coerce 'NLayers' to be of integer type (",
+        NLayers,
+        ": ",
+        as.integer(NLayers),
+        ")"
+      )
       NLayers <- as.integer(NLayers)
     }
   }
@@ -131,21 +145,35 @@ CreateInputsModel <- function(FUN_MOD,
   ## check semi-distributed mode
   if (!is.null(Qupstream) & !is.null(LengthHydro) & !is.null(BasinAreas)) {
     ObjectClass <- c(ObjectClass, "SD")
-  } else if (verbose & !all(c(is.null(Qupstream), is.null(LengthHydro), is.null(BasinAreas)))) {
-    warning("Missing argument: 'Qupstream', 'LengthHydro' and 'BasinAreas' must all be set to run in a semi-distributed mode. The lumped mode will be used")
+  } else if (
+    verbose &
+      !all(c(is.null(Qupstream), is.null(LengthHydro), is.null(BasinAreas)))
+  ) {
+    warning(
+      "Missing argument: 'Qupstream', 'LengthHydro' and 'BasinAreas' must all be set to run in a semi-distributed mode. The lumped mode will be used"
+    )
   }
   if ("SD" %in% ObjectClass) {
     if (!("daily" %in% ObjectClass) & !("hourly" %in% ObjectClass)) {
-      stop("Only daily and hourly time steps can be used in a semi-distributed mode")
+      stop(
+        "Only daily and hourly time steps can be used in a semi-distributed mode"
+      )
     }
     if (!is.matrix(Qupstream) | !is.numeric(Qupstream)) {
       stop("'Qupstream' must be a matrice of numeric values")
     }
-    if (!is.vector(LengthHydro) | !is.vector(BasinAreas) | !is.numeric(LengthHydro) | !is.numeric(BasinAreas)) {
+    if (
+      !is.vector(LengthHydro) |
+        !is.vector(BasinAreas) |
+        !is.numeric(LengthHydro) |
+        !is.numeric(BasinAreas)
+    ) {
       stop("'LengthHydro' and 'BasinAreas' must be vectors of numeric values")
     }
     if (ncol(Qupstream) != length(LengthHydro)) {
-      stop("'Qupstream' number of columns and 'LengthHydro' length must be equal")
+      stop(
+        "'Qupstream' number of columns and 'LengthHydro' length must be equal"
+      )
     }
     if (length(LengthHydro) + 1 != length(BasinAreas)) {
       stop("'BasinAreas' must have one more element than 'LengthHydro'")
@@ -157,19 +185,24 @@ CreateInputsModel <- function(FUN_MOD,
       warning("'Qupstream' contains NA values: model outputs will contain NAs")
     }
     if (any(LengthHydro > 1000)) {
-      warning("The unit of 'LengthHydro' has changed from m to km in airGR >= 1.6.12: values superior to 1000 km seem unrealistic")
+      warning(
+        "The unit of 'LengthHydro' has changed from m to km in airGR >= 1.6.12: values superior to 1000 km seem unrealistic"
+      )
     }
     QupstrUnit <- tolower(QupstrUnit)
-    QupstrUnit <- match.arg(arg = QupstrUnit, choices = c("mm", "m3", "m3/s", "l/s"))
+    QupstrUnit <- match.arg(
+      arg = QupstrUnit,
+      choices = c("mm", "m3", "m3/s", "l/s")
+    )
   }
 
   ##check_NA_values
   BOOL_NA <- rep(FALSE, length(DatesR))
 
   if ("GR" %in% ObjectClass) {
-    BOOL_NA_TMP <- (Precip  < 0) | is.na(Precip)
+    BOOL_NA_TMP <- (Precip < 0) | is.na(Precip)
     if (sum(BOOL_NA_TMP) != 0) {
-      BOOL_NA <- BOOL_NA |  BOOL_NA_TMP
+      BOOL_NA <- BOOL_NA | BOOL_NA_TMP
       if (verbose) {
         warning("Values < 0 or NA values detected in 'Precip' series")
       }
@@ -183,7 +216,7 @@ CreateInputsModel <- function(FUN_MOD,
     }
   }
   if ("CemaNeige" %in% ObjectClass) {
-    BOOL_NA_TMP <- (Precip  < 0) | is.na(Precip)
+    BOOL_NA_TMP <- (Precip < 0) | is.na(Precip)
     if (sum(BOOL_NA_TMP) != 0) {
       BOOL_NA <- BOOL_NA | BOOL_NA_TMP
       if (verbose) {
@@ -216,19 +249,25 @@ CreateInputsModel <- function(FUN_MOD,
   }
   if (sum(BOOL_NA) != 0) {
     WTxt <- NULL
-    WTxt <- paste(WTxt, "\t Missing values are not allowed in 'InputsModel'", sep = "")
+    WTxt <- paste(
+      WTxt,
+      "\t Missing values are not allowed in 'InputsModel'",
+      sep = ""
+    )
 
     Select <- (max(which(BOOL_NA)) + 1):length(BOOL_NA)
 
     if (Select[1L] > Select[2L]) {
-      stop("time series could not be trunced since missing values were detected at the last time-step")
+      stop(
+        "time series could not be trunced since missing values were detected at the last time-step"
+      )
     }
     if ("GR" %in% ObjectClass) {
-      Precip  <- Precip[Select]
+      Precip <- Precip[Select]
       PotEvap <- PotEvap[Select]
     }
     if ("CemaNeige" %in% ObjectClass) {
-      Precip   <- Precip[Select]
+      Precip <- Precip[Select]
       TempMean <- TempMean[Select]
       if (!is.null(TempMin) & !is.null(TempMax)) {
         TempMin <- TempMin[Select]
@@ -238,7 +277,10 @@ CreateInputsModel <- function(FUN_MOD,
 
     DatesR <- DatesR[Select]
 
-    WTxt <- paste0(WTxt, "\t -> data were trunced to keep the most recent available time-steps")
+    WTxt <- paste0(
+      WTxt,
+      "\t -> data were trunced to keep the most recent available time-steps"
+    )
     WTxt <- paste0(WTxt, "\t -> ", length(Select), " time-steps were kept")
 
     if (!is.null(WTxt) & verbose) {
@@ -246,54 +288,79 @@ CreateInputsModel <- function(FUN_MOD,
     }
   }
 
-
   ##DataAltiExtrapolation_Valery
   if ("CemaNeige" %in% ObjectClass) {
-    RESULT <- DataAltiExtrapolation_Valery(DatesR = DatesR,
-                                           Precip = Precip, PrecipScale = PrecipScale,
-                                           TempMean = TempMean, TempMin = TempMin, TempMax = TempMax,
-                                           ZInputs = ZInputs, HypsoData = HypsoData, NLayers = NLayers,
-                                           verbose = verbose)
+    RESULT <- DataAltiExtrapolation_Valery(
+      DatesR = DatesR,
+      Precip = Precip,
+      PrecipScale = PrecipScale,
+      TempMean = TempMean,
+      TempMin = TempMin,
+      TempMax = TempMax,
+      ZInputs = ZInputs,
+      HypsoData = HypsoData,
+      NLayers = NLayers,
+      verbose = verbose
+    )
     if (verbose) {
       if (NLayers == 1) {
-        message("input series were successfully created on 1 elevation layer for use by CemaNeige")
+        message(
+          "input series were successfully created on 1 elevation layer for use by CemaNeige"
+        )
       } else {
-        message( "input series were successfully created on ", NLayers, " elevation layers for use by CemaNeige")
+        message(
+          "input series were successfully created on ",
+          NLayers,
+          " elevation layers for use by CemaNeige"
+        )
       }
     }
   }
 
-
   ##Create_InputsModel
   InputsModel <- list(DatesR = DatesR)
   if ("GR" %in% ObjectClass) {
-    InputsModel <- c(InputsModel, list(Precip = as.double(Precip), PotEvap = as.double(PotEvap)))
+    InputsModel <- c(
+      InputsModel,
+      list(Precip = as.double(Precip), PotEvap = as.double(PotEvap))
+    )
   }
   if ("CemaNeige" %in% ObjectClass) {
-    InputsModel <- c(InputsModel, list(LayerPrecip          = RESULT$LayerPrecip,
-                                       LayerTempMean        = RESULT$LayerTempMean,
-                                       LayerFracSolidPrecip = RESULT$LayerFracSolidPrecip,
-                                       ZLayers              = RESULT$ZLayers))
+    InputsModel <- c(
+      InputsModel,
+      list(
+        LayerPrecip = RESULT$LayerPrecip,
+        LayerTempMean = RESULT$LayerTempMean,
+        LayerFracSolidPrecip = RESULT$LayerFracSolidPrecip,
+        ZLayers = RESULT$ZLayers
+      )
+    )
   }
   if ("SD" %in% ObjectClass) {
     # Qupstream is internally stored in m3/time step
     if (QupstrUnit == "mm") {
       iConvBasins <- which(!is.na(BasinAreas[seq.int(length(LengthHydro))]))
-      Qupstream[, iConvBasins] <- Qupstream[, iConvBasins] * rep(BasinAreas[iConvBasins], each = LLL) * 1e3
+      Qupstream[, iConvBasins] <- Qupstream[, iConvBasins] *
+        rep(BasinAreas[iConvBasins], each = LLL) *
+        1e3
     } else if (QupstrUnit == "m3/s") {
       Qupstream <- Qupstream * TimeStep
     } else if (QupstrUnit == "l/s") {
       Qupstream <- Qupstream * TimeStep / 1e3
     }
-    InputsModel <- c(InputsModel, list(Qupstream = Qupstream,
-                                       LengthHydro = LengthHydro,
-                                       BasinAreas = BasinAreas))
+    InputsModel <- c(
+      InputsModel,
+      list(
+        Qupstream = Qupstream,
+        LengthHydro = LengthHydro,
+        BasinAreas = BasinAreas
+      )
+    )
   }
+
+  attr(InputsModel, "FeatFUN_MOD") <- FeatFUN_MOD
 
   class(InputsModel) <- c("InputsModel", ObjectClass)
 
   return(InputsModel)
-
-
-
 }

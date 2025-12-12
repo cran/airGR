@@ -33,8 +33,8 @@ ErrorCrit_NSE <- function(InputsCrit, OutputsModel, warnings = TRUE, verbose = T
   ## Output
   OutputsCrit <- list(CritValue       = CritValue,
                       CritName        = EC$CritName,
-                      CritBestValue   = EC$CritBestValue,
-                      Multiplier      = EC$Multiplier,
+                      CritBestValue   = +1,
+                      Multiplier      = -1,
                       Ind_notcomputed = EC$Ind_TS_ignore)
 
   class(OutputsCrit) <- c("NSE", "ErrorCrit")

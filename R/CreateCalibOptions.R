@@ -2,6 +2,7 @@ CreateCalibOptions <- function(FUN_MOD,
                                FUN_CALIB = Calibration_Michel,
                                FUN_TRANSFO = NULL,
                                IsHyst = FALSE,
+                               IsIntStore = FALSE,
                                IsSD = FALSE,
                                FixedParam = NULL,
                                SearchRanges = NULL,
@@ -18,6 +19,9 @@ CreateCalibOptions <- function(FUN_MOD,
   if (!is.logical(IsHyst) | length(IsHyst) != 1L) {
     stop("'IsHyst' must be a logical of length 1")
   }
+  if (!is.logical(IsIntStore) | length(IsIntStore) != 1L) {
+    stop("'IsIntStore' must be a logical of length 1")
+  }
   if (!is.logical(IsSD) | length(IsSD) != 1L) {
     stop("'IsSD' must be a logical of length 1")
   }
@@ -25,14 +29,18 @@ CreateCalibOptions <- function(FUN_MOD,
   ## check FUN_MOD
   FeatFUN_MOD <- .GetFeatModel(FUN_MOD = FUN_MOD)
   FeatFUN_MOD$IsHyst <- IsHyst
+  FeatFUN_MOD$IsIntStore <- IsIntStore # useless if !is.null(StartParamList) || !is.null(StartParamDistrib)
   FeatFUN_MOD$IsSD <- IsSD
   ObjectClass <- FeatFUN_MOD$Class
 
   if (identical(FUN_MOD, RunModel_Lag) && IsSD) {
-      stop("RunModel_Lag should not be used with 'isSD=TRUE'")
+      stop("RunModel_Lag should not be used with 'IsSD=TRUE'")
   }
   if (IsHyst) {
     ObjectClass <- c(ObjectClass, "hysteresis")
+  }
+  if (IsIntStore) {
+    ObjectClass <- c(ObjectClass, "interception")
   }
   if (IsSD) {
     ObjectClass <- c(ObjectClass, "SD")

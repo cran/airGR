@@ -12,7 +12,7 @@ ErrorCrit_RMSE <- function(InputsCrit, OutputsModel, warnings = TRUE, verbose = 
   if (EC$CritCompute) {
     ## ErrorCrit
     Numer <- sum((EC$VarSim - EC$VarObs)^2, na.rm = TRUE)
-    Denom <- sum(!is.na(EC$VarObs))
+    Denom <- sum(!is.na(EC$VarObs) & !is.na(EC$VarSim))
 
     if (Numer == 0) {
       Crit <- 0
@@ -33,8 +33,8 @@ ErrorCrit_RMSE <- function(InputsCrit, OutputsModel, warnings = TRUE, verbose = 
   ## Output
   OutputsCrit <- list(CritValue       = CritValue,
                       CritName        = EC$CritName,
-                      CritBestValue   = EC$CritBestValue,
-                      Multiplier      = EC$Multiplier,
+                      CritBestValue   = +1,
+                      Multiplier      = +1,
                       Ind_notcomputed = EC$Ind_TS_ignore)
 
   class(OutputsCrit) <- c("RMSE", "ErrorCrit")

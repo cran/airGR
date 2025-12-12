@@ -204,10 +204,10 @@ The Lavenne criterion is initialised with the a priori parameter set and the val
 
 ```{r}
 IC_Lavenne <- CreateInputsCrit_Lavenne(InputsModel = InputsModelDown2,
-                                    RunOptions = RunOptionsDown,
-                                    Obs = QObsDown[Ind_Run],
-                                    AprParamR = ParamDownTheo,
-                                    AprCrit = OutputsCalibUp$CritFinal)
+                                       RunOptions = RunOptionsDown,
+                                       Obs = QObsDown[Ind_Run],
+                                       AprParamR = ParamDownTheo,
+                                       AprCrit = OutputsCalibUp$CritFinal)
 ```
 
 The Lavenne criterion is used instead of the KGE for calibration with regularisation

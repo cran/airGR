@@ -33,8 +33,8 @@ CreateErrorCrit_GAPX <- function(FUN_TRANSFO) {
     ## Output
     OutputsCrit <- list(CritValue       = CritValue,
                         CritName        = EC$CritName,
-                        CritBestValue   = EC$CritBestValue,
-                        Multiplier      = EC$Multiplier,
+                        CritBestValue   = +1,
+                        Multiplier      = -1,
                         Ind_notcomputed = EC$Ind_TS_ignore)
 
     class(OutputsCrit) <- c("GAPX", "ErrorCrit")

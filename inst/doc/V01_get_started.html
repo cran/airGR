@@ -49,6 +49,7 @@ overflow: visible;
 }
 </style>
 <style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
@@ -149,6 +150,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 div.csl-bib-body { }
 div.csl-entry {
 clear: both;
+margin-bottom: 0em;
 }
 .hanging div.csl-entry {
 margin-left:2em;
@@ -368,12 +370,12 @@ Coron</h4>
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
 <p><strong>airGR</strong> is a package that brings into the <a href="https://cran.r-project.org/"><strong>R software</strong></a> the
-hydrological modelling tools used and developed at the <a href="https://webgr.inrae.fr/home/">Catchment Hydrology Research
-Group</a> at <a href="https://www.inrae.fr/en">INRAE (France)</a>,
-including the <a href="https://webgr.inrae.fr/models/"><strong>GR
+hydrological modelling tools used and developed at the <a href="https://webgr.inrae.fr/eng">Catchment Hydrology Research Group</a>
+at <a href="https://www.inrae.fr/en">INRAE (France)</a>, including the
+<a href="https://webgr.inrae.fr/eng/tools/hydrological-models/"><strong>GR
 rainfall-runoff models</strong></a> that can be applied either on a
 <strong>lumped</strong> or <strong>semi-distributed</strong> way. A snow
-accumulation and melt model (<a href="https://webgr.inrae.fr/models/snow-model/"><strong>CemaNeige</strong></a>)
+accumulation and melt model (<a href="https://webgr.inrae.fr/eng/tools/hydrological-models/snow-model/"><strong>CemaNeige</strong></a>)
 and the associated functions for the calibration and evaluation of
 models are also included. Each model core is coded in
 <strong>Fortran</strong> to ensure low computational time. The other
@@ -427,8 +429,8 @@ Perrin 2014; Riboust et al. 2019)</span></li>
 <li><code>RunModel_CemaNeigeGR6J()</code>: combined use of
 <strong>GR6J</strong> and <strong>CemaNeige</strong></li>
 </ul>
-<p>The <a href="https://webgr.inrae.fr/models/hydrological-forecasting-model-grp/"><strong>GRP</strong></a>
-forecasting model and the <a href="https://webgr.inrae.fr/software/otamin/"><strong>Otamin</strong></a>
+<p>The <a href="https://webgr.inrae.fr/eng/tools/hydrological-models/hydrological-forecasting-model-grp/"><strong>GRP</strong></a>
+forecasting model and the <a href="https://webgr.inrae.fr/eng/tools/software/otamin"><strong>Otamin</strong></a>
 predictive uncertainty tool are not available in
 <strong>airGR</strong>.</p>
 <p>In this vignette, we show how to prepare and run a calibration and a
@@ -517,6 +519,18 @@ evapotranspiration) are <strong>not allowed</strong>.</p>
 ##  $ DatesR : POSIXlt[1:10593], format: &quot;1984-01-01&quot; &quot;1984-01-02&quot; ...
 ##  $ Precip : num [1:10593] 4.1 15.9 0.8 0 0 0 0 0 2.9 0 ...
 ##  $ PotEvap: num [1:10593] 0.2 0.2 0.3 0.3 0.1 0.3 0.4 0.4 0.5 0.5 ...
+##  - attr(*, &quot;FeatFUN_MOD&quot;)=List of 11
+##   ..$ CodeMod     : chr &quot;GR4J&quot;
+##   ..$ NameMod     : chr &quot;GR4J&quot;
+##   ..$ NbParam     : int 4
+##   ..$ TimeUnit    : chr &quot;daily&quot;
+##   ..$ Id          : logi NA
+##   ..$ Class       : chr [1:2] &quot;daily&quot; &quot;GR&quot;
+##   ..$ Pkg         : chr &quot;airGR&quot;
+##   ..$ NameFunMod  : chr &quot;RunModel_GR4J&quot;
+##   ..$ TimeStep    : num 86400
+##   ..$ TimeStepMean: int 86400
+##   ..$ CodeModHydro: chr &quot;GR4J&quot;
 ##  - attr(*, &quot;class&quot;)= chr [1:3] &quot;InputsModel&quot; &quot;daily&quot; &quot;GR&quot;</code></pre>
 </div>
 <div id="runoptions-object" class="section level2">
@@ -565,11 +579,19 @@ model, to be defined in the same format as
 <span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>                               <span class="at">IniStates =</span> <span class="cn">NULL</span>, <span class="at">IniResLevels =</span> <span class="cn">NULL</span>, <span class="at">IndPeriod_WarmUp =</span> <span class="cn">NULL</span>)</span></code></pre></div>
 <pre><code>## Warning in CreateRunOptions(FUN_MOD = RunModel_GR4J, InputsModel = InputsModel, : model warm up period not defined: default configuration used
 ##   the year preceding the run period is used</code></pre>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">str</span>(RunOptions)</span></code></pre></div>
+<pre><code>## Warning in CreateIniStates(FUN_MOD = FUN_MOD, InputsModel = InputsModel, :
+## &#39;RunModel_GR4J&#39; does not require &#39;ExpStore&#39;. Value set to NA</code></pre>
+<pre><code>## Warning in CreateIniStates(FUN_MOD = FUN_MOD, InputsModel = InputsModel, :
+## &#39;RunModel_GR4J&#39; does not require &#39;IntStore&#39;. Values set to NA</code></pre>
+<pre><code>## Warning in CreateIniStates(FUN_MOD = FUN_MOD, InputsModel = InputsModel, :
+## &#39;RunModel_GR4J&#39; does not require &#39;GCemaNeigeLayers&#39; &#39;GCemaNeigeLayers&#39;,
+## &#39;GthrCemaNeigeLayers&#39; and &#39;GlocmaxCemaNeigeLayers&#39;. Values set to NA</code></pre>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="fu">str</span>(RunOptions)</span></code></pre></div>
 <pre><code>## List of 8
 ##  $ IndPeriod_WarmUp: int [1:365] 1828 1829 1830 1831 1832 1833 1834 1835 1836 1837 ...
 ##  $ IndPeriod_Run   : int [1:3652] 2193 2194 2195 2196 2197 2198 2199 2200 2201 2202 ...
-##  $ IniStates       : num [1:67] 0 0 0 0 0 0 0 0 0 0 ...
+##  $ IniStates       : Named num [1:71] 350 90 0 0 0 0 0 0 0 0 ...
+##   ..- attr(*, &quot;names&quot;)= chr [1:71] &quot;Store.Prod&quot; &quot;Store.Rout&quot; &quot;Store.Exp&quot; &quot;Store.Int&quot; ...
 ##  $ IniResLevels    : num [1:4] 0.3 0.5 NA NA
 ##  $ Outputs_Cal     : chr [1:2] &quot;Qsim&quot; &quot;Param&quot;
 ##  $ Outputs_Sim     : Named chr [1:22] &quot;DatesR&quot; &quot;PotEvap&quot; &quot;Precip&quot; &quot;Prod&quot; ...
@@ -629,9 +651,9 @@ In this case, users have to provide lists to the following arguments
 (some of the are optional): <code>FUN_CRIT</code>, <code>Obs</code>,
 <code>VarObs</code>, <code>BoolCrit</code>, <code>transfo</code>,
 <code>Weights.</code></p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>InputsCrit <span class="ot">&lt;-</span> <span class="fu">CreateInputsCrit</span>(<span class="at">FUN_CRIT =</span> ErrorCrit_NSE, <span class="at">InputsModel =</span> InputsModel, </span>
-<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>                               <span class="at">RunOptions =</span> RunOptions, <span class="at">VarObs =</span> <span class="st">&quot;Q&quot;</span>, <span class="at">Obs =</span> BasinObs<span class="sc">$</span>Qmm[Ind_Run])</span>
-<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a><span class="fu">str</span>(InputsCrit)</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>InputsCrit <span class="ot">&lt;-</span> <span class="fu">CreateInputsCrit</span>(<span class="at">FUN_CRIT =</span> ErrorCrit_NSE, <span class="at">InputsModel =</span> InputsModel, </span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>                               <span class="at">RunOptions =</span> RunOptions, <span class="at">VarObs =</span> <span class="st">&quot;Q&quot;</span>, <span class="at">Obs =</span> BasinObs<span class="sc">$</span>Qmm[Ind_Run])</span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a><span class="fu">str</span>(InputsCrit)</span></code></pre></div>
 <pre><code>## List of 8
 ##  $ FUN_CRIT:function (InputsCrit, OutputsModel, warnings = TRUE, verbose = TRUE)  
 ##   ..- attr(*, &quot;class&quot;)= chr [1:2] &quot;FUN_CRIT&quot; &quot;function&quot;
@@ -654,8 +676,8 @@ define the following arguments:</p>
 <li><code>FUN_MOD</code>: the name of the model function</li>
 <li><code>FUN_CALIB</code>: the name of the calibration algorithm</li>
 </ul>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>CalibOptions <span class="ot">&lt;-</span> <span class="fu">CreateCalibOptions</span>(<span class="at">FUN_MOD =</span> RunModel_GR4J, <span class="at">FUN_CALIB =</span> Calibration_Michel)</span>
-<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a><span class="fu">str</span>(CalibOptions)</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>CalibOptions <span class="ot">&lt;-</span> <span class="fu">CreateCalibOptions</span>(<span class="at">FUN_MOD =</span> RunModel_GR4J, <span class="at">FUN_CALIB =</span> Calibration_Michel)</span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a><span class="fu">str</span>(CalibOptions)</span></code></pre></div>
 <pre><code>## List of 4
 ##  $ FixedParam       : logi [1:4] NA NA NA NA
 ##  $ SearchRanges     : num [1:2, 1:4] 4.59e-05 2.18e+04 -1.09e+04 1.09e+04 4.59e-05 ...
@@ -702,9 +724,9 @@ rough predefined grid or a user-defined list of parameter sets</li>
 <li>a simple steepest descent local search algorithm is performed from
 the best set of parameters found at the first step</li>
 </ol>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>OutputsCalib <span class="ot">&lt;-</span> <span class="fu">Calibration_Michel</span>(<span class="at">InputsModel =</span> InputsModel, <span class="at">RunOptions =</span> RunOptions,</span>
-<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>                                   <span class="at">InputsCrit =</span> InputsCrit, <span class="at">CalibOptions =</span> CalibOptions,</span>
-<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a>                                   <span class="at">FUN_MOD =</span> RunModel_GR4J)</span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>OutputsCalib <span class="ot">&lt;-</span> <span class="fu">Calibration_Michel</span>(<span class="at">InputsModel =</span> InputsModel, <span class="at">RunOptions =</span> RunOptions,</span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a>                                   <span class="at">InputsCrit =</span> InputsCrit, <span class="at">CalibOptions =</span> CalibOptions,</span>
+<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a>                                   <span class="at">FUN_MOD =</span> RunModel_GR4J)</span></code></pre></div>
 <pre><code>## Grid-Screening in progress (0% 20% 40% 60% 80% 100%)
 ##   Screening completed (81 runs)
 ##       Param =  247.151,   -0.020,   83.096,    2.384
@@ -713,8 +735,8 @@ the best set of parameters found at the first step</li>
 ##   Calibration completed (21 iterations, 234 runs)
 ##       Param =  257.238,    1.012,   88.235,    2.208
 ##       Crit. NSE[Q]       = 0.7988</code></pre>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a>Param <span class="ot">&lt;-</span> OutputsCalib<span class="sc">$</span>ParamFinalR</span>
-<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>Param</span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a>Param <span class="ot">&lt;-</span> OutputsCalib<span class="sc">$</span>ParamFinalR</span>
+<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a>Param</span></code></pre></div>
 <pre><code>## [1] 257.237556   1.012237  88.234673   2.207958</code></pre>
 <p>The <code>Calibration_Michel()</code> function is the only one
 implemented in the <strong>airGR</strong> package to calibrate the
@@ -750,8 +772,8 @@ several performance criteria.</p>
 functions (<code>InputsModel</code>, <code>RunOptions</code> and
 parameters). All the data needed have already been prepared in the
 previous steps defined in this guide.</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a>OutputsModel <span class="ot">&lt;-</span> <span class="fu">RunModel_GR4J</span>(<span class="at">InputsModel =</span> InputsModel, <span class="at">RunOptions =</span> RunOptions, <span class="at">Param =</span> Param)</span>
-<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a><span class="fu">str</span>(OutputsModel)</span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a>OutputsModel <span class="ot">&lt;-</span> <span class="fu">RunModel_GR4J</span>(<span class="at">InputsModel =</span> InputsModel, <span class="at">RunOptions =</span> RunOptions, <span class="at">Param =</span> Param)</span>
+<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a><span class="fu">str</span>(OutputsModel)</span></code></pre></div>
 <pre><code>## List of 21
 ##  $ DatesR    : POSIXlt[1:3652], format: &quot;1990-01-01&quot; &quot;1990-01-02&quot; ...
 ##  $ PotEvap   : num [1:3652] 0.3 0.4 0.4 0.3 0.1 0.1 0.1 0.2 0.2 0.3 ...
@@ -776,11 +798,12 @@ previous steps defined in this guide.</p>
 ##   ..$ WarmUpQsim: num [1:365] 0.779 0.815 0.807 0.731 0.675 ...
 ##   ..$ Param     : num [1:4] 257.24 1.01 88.23 2.21
 ##  $ StateEnd  :List of 3
-##   ..$ Store          :List of 4
+##   ..$ Store          :List of 5
 ##   .. ..$ Prod: num 189
 ##   .. ..$ Rout: num 48.9
 ##   .. ..$ Exp : num NA
 ##   .. ..$ Int : num NA
+##   .. ..$ Rest: num [1:3] NA NA NA
 ##   ..$ UH             :List of 2
 ##   .. ..$ UH1: num [1:20] 0.514 0.54 0.148 0 0 ...
 ##   .. ..$ UH2: num [1:40] 0.056306 0.057176 0.042253 0.012187 0.000578 ...
@@ -810,7 +833,7 @@ discharge if provided)</li>
 <li>correlation plot between simulated and observed discharge (if
 observed discharge provided)</li>
 </ul>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="fu">plot</span>(OutputsModel, <span class="at">Qobs =</span> BasinObs<span class="sc">$</span>Qmm[Ind_Run])</span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a><span class="fu">plot</span>(OutputsModel, <span class="at">Qobs =</span> BasinObs<span class="sc">$</span>Qmm[Ind_Run])</span></code></pre></div>
 <p>Moreover, if the CemaNeige model is used, the air temperature and the
 simulated snowpack water equivalent time series are plotted.</p>
 </div>
@@ -819,9 +842,9 @@ simulated snowpack water equivalent time series are plotted.</p>
 <p>To evaluate the efficiency of the model, it is possible to use the
 same criterion as defined at the calibration step or to use another
 criterion.</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a>OutputsCrit <span class="ot">&lt;-</span> <span class="fu">ErrorCrit_NSE</span>(<span class="at">InputsCrit =</span> InputsCrit, <span class="at">OutputsModel =</span> OutputsModel)</span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a>OutputsCrit <span class="ot">&lt;-</span> <span class="fu">ErrorCrit_NSE</span>(<span class="at">InputsCrit =</span> InputsCrit, <span class="at">OutputsModel =</span> OutputsModel)</span></code></pre></div>
 <pre><code>## Crit. NSE[Q] = 0.7988</code></pre>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a><span class="fu">str</span>(OutputsCrit)</span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a><span class="fu">str</span>(OutputsCrit)</span></code></pre></div>
 <pre><code>## List of 5
 ##  $ CritValue      : num 0.799
 ##  $ CritName       : chr &quot;NSE[Q]&quot;
@@ -829,12 +852,12 @@ criterion.</p>
 ##  $ Multiplier     : num -1
 ##  $ Ind_notcomputed: int [1:57] 2405 2406 2407 2408 2409 2410 2411 2412 2413 2414 ...
 ##  - attr(*, &quot;class&quot;)= chr [1:2] &quot;NSE&quot; &quot;ErrorCrit&quot;</code></pre>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a>OutputsCrit <span class="ot">&lt;-</span> <span class="fu">ErrorCrit_KGE</span>(<span class="at">InputsCrit =</span> InputsCrit, <span class="at">OutputsModel =</span> OutputsModel)</span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" tabindex="-1"></a>OutputsCrit <span class="ot">&lt;-</span> <span class="fu">ErrorCrit_KGE</span>(<span class="at">InputsCrit =</span> InputsCrit, <span class="at">OutputsModel =</span> OutputsModel)</span></code></pre></div>
 <pre><code>## Crit. KGE[Q] = 0.7854</code></pre>
 <pre><code>##  SubCrit. KGE[Q] cor(sim, obs, &quot;pearson&quot;) = 0.8985 
 ##  SubCrit. KGE[Q] sd(sim)/sd(obs)          = 0.8161 
 ##  SubCrit. KGE[Q] mean(sim)/mean(obs)      = 1.0437</code></pre>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" tabindex="-1"></a><span class="fu">str</span>(OutputsCrit)</span></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" tabindex="-1"></a><span class="fu">str</span>(OutputsCrit)</span></code></pre></div>
 <pre><code>## List of 7
 ##  $ CritValue      : num 0.785
 ##  $ CritName       : chr &quot;KGE[Q]&quot;
@@ -845,15 +868,21 @@ criterion.</p>
 ##  $ Ind_notcomputed: int [1:57] 2405 2406 2407 2408 2409 2410 2411 2412 2413 2414 ...
 ##  - attr(*, &quot;class&quot;)= chr [1:2] &quot;KGE&quot; &quot;ErrorCrit&quot;</code></pre>
 </div>
+<div id="features-diagram" class="section level2">
+<h2>Features diagram</h2>
+<p>The figure below presents the implementation flow of the
+<strong>airGR</strong> functions. <br><br>
+<img role="img" aria-label="airGR features diagram" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjwhLS0gQ3JlYXRlZCB3aXRoIElua3NjYXBlIChodHRwOi8vd3d3Lmlua3NjYXBlLm9yZy8pIC0tPgo8c3ZnIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgeG1sbnM6Y2M9Imh0dHA6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL25zIyIgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIiB4bWxuczpzdmc9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnNvZGlwb2RpPSJodHRwOi8vc29kaXBvZGkuc291cmNlZm9yZ2UubmV0L0RURC9zb2RpcG9kaS0wLmR0ZCIgeG1sbnM6aW5rc2NhcGU9Imh0dHA6Ly93d3cuaW5rc2NhcGUub3JnL25hbWVzcGFjZXMvaW5rc2NhcGUiIGlkPSJzdmcyIiB2ZXJzaW9uPSIxLjEiIGlua3NjYXBlOnZlcnNpb249IjAuOTEgcjEzNzI1IiB4bWw6c3BhY2U9InByZXNlcnZlIiB3aWR0aD0iOTAwIiBoZWlnaHQ9IjY3NSIgdmlld0JveD0iMCAwIDkwMCA2NzUiIHNvZGlwb2RpOmRvY25hbWU9ImFpckdSX2ZlYXR1cmVzLnN2ZyI+PG1ldGFkYXRhIGlkPSJtZXRhZGF0YTgiPjxyZGY6UkRGPjxjYzpXb3JrIHJkZjphYm91dD0iIj48ZGM6Zm9ybWF0PmltYWdlL3N2Zyt4bWw8L2RjOmZvcm1hdD48ZGM6dHlwZSByZGY6cmVzb3VyY2U9Imh0dHA6Ly9wdXJsLm9yZy9kYy9kY21pdHlwZS9TdGlsbEltYWdlIi8+PGRjOnRpdGxlLz48L2NjOldvcms+PC9yZGY6UkRGPjwvbWV0YWRhdGE+PGRlZnMgaWQ9ImRlZnM2Ij48Y2xpcFBhdGggY2xpcFBhdGhVbml0cz0idXNlclNwYWNlT25Vc2UiIGlkPSJjbGlwUGF0aDE2Ij48cGF0aCBkPSJtIDAsMS4yMjA3ZS00IDcyMCwwIDAsNTM5Ljk5OTk5NzkzIC03MjAsMCBMIDAsMS4yMjA3ZS00IFoiIGlkPSJwYXRoMTgiIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiIHN0eWxlPSJjbGlwLXJ1bGU6ZXZlbm9kZCIvPjwvY2xpcFBhdGg+PGNsaXBQYXRoIGNsaXBQYXRoVW5pdHM9InVzZXJTcGFjZU9uVXNlIiBpZD0iY2xpcFBhdGgyNiI+PHBhdGggZD0iTSAzLjA4ZS03LDEuMjIwN2UtNCA3MjAsMS4yMjA3ZS00IDcyMCw1NDAuMDAwMTIgMy4wOGUtNyw1NDAuMDAwMTIgbCAwLC01MzkuOTk5OTk3OTMgeiIgaWQ9InBhdGgyOCIgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIgc3R5bGU9ImNsaXAtcnVsZTpldmVub2RkIi8+PC9jbGlwUGF0aD48Y2xpcFBhdGggY2xpcFBhdGhVbml0cz0idXNlclNwYWNlT25Vc2UiIGlkPSJjbGlwUGF0aDEwMiI+PHBhdGggZD0iTSAtMi42NDVlLTYsNTQwIDcyMCw1NDAgNzIwLDEuMjIwN2UtNCAtNi41ODJlLTYsMS4yMjA3ZS00IiBpZD0icGF0aDEwNCIgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIgc3R5bGU9ImNsaXAtcnVsZTpldmVub2RkIi8+PC9jbGlwUGF0aD48Y2xpcFBhdGggY2xpcFBhdGhVbml0cz0idXNlclNwYWNlT25Vc2UiIGlkPSJjbGlwUGF0aDExNiI+PHBhdGggZD0iTSAtMS4xNjFlLTYsNTQwIDcyMCw1NDAgNzIwLDEuMjIwN2UtNCBsIC03MjAuMDAwMDAxMTYxLDAiIGlkPSJwYXRoMTE4IiBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIiBzdHlsZT0iY2xpcC1ydWxlOmV2ZW5vZGQiLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBjbGlwUGF0aFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgaWQ9ImNsaXBQYXRoMTMyIj48cGF0aCBkPSJNIC0yLjcyOGUtNiw1NDAgNzIwLDU0MCA3MjAsMS4yMjA3ZS00IGwgLTcyMC4wMDAwMDY2NjUsMCIgaWQ9InBhdGgxMzQiIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiIHN0eWxlPSJjbGlwLXJ1bGU6ZXZlbm9kZCIvPjwvY2xpcFBhdGg+PGNsaXBQYXRoIGNsaXBQYXRoVW5pdHM9InVzZXJTcGFjZU9uVXNlIiBpZD0iY2xpcFBhdGgxNzgiPjxwYXRoIGQ9Ik0gLTEuNTJlLTYsNTQwIDcyMCw1NDAgNzIwLDYuMTA0ZS02IC0xLjUyZS02LDYuMTA0ZS02IiBpZD0icGF0aDE4MCIgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIgc3R5bGU9ImNsaXAtcnVsZTpldmVub2RkIi8+PC9jbGlwUGF0aD48L2RlZnM+PHNvZGlwb2RpOm5hbWVkdmlldyBwYWdlY29sb3I9IiNmZmZmZmYiIGJvcmRlcmNvbG9yPSIjNjY2NjY2IiBib3JkZXJvcGFjaXR5PSIxIiBvYmplY3R0b2xlcmFuY2U9IjEwIiBncmlkdG9sZXJhbmNlPSIxMCIgZ3VpZGV0b2xlcmFuY2U9IjEwIiBpbmtzY2FwZTpwYWdlb3BhY2l0eT0iMCIgaW5rc2NhcGU6cGFnZXNoYWRvdz0iMiIgaW5rc2NhcGU6d2luZG93LXdpZHRoPSIxOTIwIiBpbmtzY2FwZTp3aW5kb3ctaGVpZ2h0PSIxMTMyIiBpZD0ibmFtZWR2aWV3NCIgc2hvd2dyaWQ9ImZhbHNlIiBpbmtzY2FwZTp6b29tPSIwLjk4ODkwMTkzIiBpbmtzY2FwZTpjeD0iMzMzLjY0NjYzIiBpbmtzY2FwZTpjeT0iNDI1Ljg0OTUyIiBpbmtzY2FwZTp3aW5kb3cteD0iLTgiIGlua3NjYXBlOndpbmRvdy15PSItOCIgaW5rc2NhcGU6d2luZG93LW1heGltaXplZD0iMSIgaW5rc2NhcGU6Y3VycmVudC1sYXllcj0iZzEwIi8+PGcgaWQ9ImcxMCIgaW5rc2NhcGU6Z3JvdXBtb2RlPSJsYXllciIgaW5rc2NhcGU6bGFiZWw9ImFpckdSX2ZlYXR1cmVzIiB0cmFuc2Zvcm09Im1hdHJpeCgxLjI1LDAsMCwtMS4yNSwwLDY3NSkiPjxnIGlkPSJnMTIiPjxnIGlkPSJnMTQiIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDE2KSI+PHBhdGggZD0ibSAwLDYuMTA0ZS02IDcyMCwwIEwgNzIwLDU0MC4wMDAwMSBsIC03MjAsMCBMIDAsNi4xMDRlLTYgWiIgc3R5bGU9ImZpbGw6I2ZmZmZmZjtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6ZXZlbm9kZDtzdHJva2U6bm9uZSIgaWQ9InBhdGgyMCIgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIvPjwvZz48L2c+PGcgaWQ9ImcyMiI+PGcgaWQ9ImcyNCIgY2xpcC1wYXRoPSJ1cmwoI2NsaXBQYXRoMjYpIj48cGF0aCBkPSJNIDM5MS41LDU0MCAzOTAuODUsLTIuMTU2MiIgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6IzdmN2Y3ZjtzdHJva2Utd2lkdGg6MjtzdHJva2UtbGluZWNhcDpidXR0O3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxMDtzdHJva2UtZGFzaGFycmF5OjgsIDY7c3Ryb2tlLWRhc2hvZmZzZXQ6MDtzdHJva2Utb3BhY2l0eToxIiBpZD0icGF0aDMwIiBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIi8+PC9nPjwvZz48cGF0aCBkPSJtIDMwOC45NywzMDQuMDIgYyAwLDMuNjUgMi45Niw2LjYxIDYuNjIsNi42MSBsIDE1MS4xOSwwIGMgMy42NiwwIDYuNjIsLTIuOTYgNi42MiwtNi42MSBsIDAsLTI2LjQ2IGMgMCwtMy42NSAtMi45NiwtNi42MiAtNi42MiwtNi42MiBsIC0xNTEuMTksMCBjIC0zLjY2LDAgLTYuNjIsMi45NyAtNi42Miw2LjYyIGwgMCwyNi40NiB6IiBzdHlsZT0iZmlsbDojMDBiMGYwO2ZpbGwtb3BhY2l0eTowLjI7ZmlsbC1ydWxlOmV2ZW5vZGQ7c3Ryb2tlOm5vbmUiIGlkPSJwYXRoMzIiIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiLz48ZyBpZD0iZzM0Ij48cGF0aCBkPSJtIDMwOC45NywzMDQuMDIgYyAwLDMuNjUgMi45Niw2LjYxIDYuNjIsNi42MSBsIDE1MS4xOSwwIGMgMy42NiwwIDYuNjIsLTIuOTYgNi42MiwtNi42MSBsIDAsLTI2LjQ2IGMgMCwtMy42NSAtMi45NiwtNi42MiAtNi42MiwtNi42MiBsIC0xNTEuMTksMCBjIC0zLjY2LDAgLTYuNjIsMi45NyAtNi42Miw2LjYyIGwgMCwyNi40NiB6IiBzdHlsZT0iZmlsbDpub25lO3N0cm9rZTojMDBiMGYwO3N0cm9rZS13aWR0aDozO3N0cm9rZS1saW5lY2FwOmJ1dHQ7c3Ryb2tlLWxpbmVqb2luOnJvdW5kO3N0cm9rZS1taXRlcmxpbWl0OjEwO3N0cm9rZS1kYXNoYXJyYXk6OSwgMztzdHJva2UtZGFzaG9mZnNldDowO3N0cm9rZS1vcGFjaXR5OjEiIGlkPSJwYXRoMzYiIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiLz48L2c+PHRleHQgdHJhbnNmb3JtPSJtYXRyaXgoMSwwLDAsLTEsMzIwLjU3LDI4NC43NCkiIHN0eWxlPSJmb250LXZhcmlhbnQ6bm9ybWFsO2ZvbnQtd2VpZ2h0Om5vcm1hbDtmb250LXNpemU6MThweDtmb250LWZhbWlseTpDYWxpYnJpOy1pbmtzY2FwZS1mb250LXNwZWNpZmljYXRpb246Q2FsaWJyaTt3cml0aW5nLW1vZGU6bHItdGI7ZmlsbDojMDAwMDAwO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIiBpZD0idGV4dDM4Ij48dHNwYW4geD0iMCA5LjU5Mzk5OTkgMTUuNjA2IDI0LjU3IDMzLjExOTk5OSAzOC44ODAwMDEgNDcuODQ0MDAyIDUyLjQxNiA2MS44NjYwMDEgNzEuMzUxOTk3IDgwLjgwMjAwMiA4Ni44MzIwMDEgOTMuODcwMDAzIDEwOS4yNiAxMTguNzQ2IDEyOC4xOTYgMTM3LjIxNCIgeT0iMCIgc29kaXBvZGk6cm9sZT0ibGluZSIgaWQ9InRzcGFuNDAiPkNyZWF0ZUlucHV0c01vZGVsPC90c3Bhbj48L3RleHQ+CjxwYXRoIGQ9Im0gNDgxLjQ3LDQ3My4xNyBjIDAsMy42NiAyLjk2LDYuNjIgNi42MSw2LjYyIGwgMTUxLjIsMCBjIDMuNjUsMCA2LjYxLC0yLjk2IDYuNjEsLTYuNjIgbCAwLC0yNi40NiBjIDAsLTMuNjUgLTIuOTYsLTYuNjEgLTYuNjEsLTYuNjEgbCAtMTUxLjIsMCBjIC0zLjY1LDAgLTYuNjEsMi45NiAtNi42MSw2LjYxIGwgMCwyNi40NiB6IiBzdHlsZT0iZmlsbDojY2MwMGNjO2ZpbGwtb3BhY2l0eTowLjI7ZmlsbC1ydWxlOmV2ZW5vZGQ7c3Ryb2tlOm5vbmUiIGlkPSJwYXRoNDIiIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiLz48ZyBpZD0iZzQ0Ij48cGF0aCBkPSJtIDQ4MS40Nyw0NzMuMTcgYyAwLDMuNjYgMi45Niw2LjYyIDYuNjEsNi42MiBsIDE1MS4yLDAgYyAzLjY1LDAgNi42MSwtMi45NiA2LjYxLC02LjYyIGwgMCwtMjYuNDYgYyAwLC0zLjY1IC0yLjk2LC02LjYxIC02LjYxLC02LjYxIGwgLTE1MS4yLDAgYyAtMy42NSwwIC02LjYxLDIuOTYgLTYuNjEsNi42MSBsIDAsMjYuNDYgeiIgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6I2NjMDBjYztzdHJva2Utd2lkdGg6MztzdHJva2UtbGluZWNhcDpidXR0O3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxMDtzdHJva2UtZGFzaGFycmF5OjksIDM7c3Ryb2tlLWRhc2hvZmZzZXQ6MDtzdHJva2Utb3BhY2l0eToxIiBpZD0icGF0aDQ2IiBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIi8+PC9nPjx0ZXh0IHRyYW5zZm9ybT0ibWF0cml4KDEsMCwwLC0xLDQ5My4yLDQ1My45NCkiIHN0eWxlPSJmb250LXZhcmlhbnQ6bm9ybWFsO2ZvbnQtd2VpZ2h0Om5vcm1hbDtmb250LXNpemU6MThweDtmb250LWZhbWlseTpDYWxpYnJpOy1pbmtzY2FwZS1mb250LXNwZWNpZmljYXRpb246Q2FsaWJyaTt3cml0aW5nLW1vZGU6bHItdGI7ZmlsbDojMDAwMDAwO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIiBpZD0idGV4dDQ4Ij48dHNwYW4geD0iMCA5LjU5Mzk5OTkgMTUuNjA2IDI0LjU3IDMzLjExOTk5OSAzOC44ODAwMDEgNDcuODQ0MDAyIDU3LjQzOCA2Ni4wOTYwMDEgNzAuMTgxOTk5IDc0LjI2Nzk5OCA4My43MTgwMDIgOTUuNjM0MDAzIDEwNC45OTQgMTExLjAyNCAxMTUuMDc0IDEyNC41NiAxMzQuMDA5OTkiIHk9IjAiIHNvZGlwb2RpOnJvbGU9ImxpbmUiIGlkPSJ0c3BhbjUwIj5DcmVhdGVDYWxpYk9wdGlvbnM8L3RzcGFuPjwvdGV4dD4KPHBhdGggZD0ibSA0ODEuNSw0MDAuMzggYyAwLDMuNjYgMi45Niw2LjYyIDYuNjEsNi42MiBsIDE1MS4yLDAgYyAzLjY2LDAgNi42MiwtMi45NiA2LjYyLC02LjYyIGwgMCwtMjYuNDUgYyAwLC0zLjY2IC0yLjk2LC02LjYyIC02LjYyLC02LjYyIGwgLTE1MS4yLDAgYyAtMy42NSwwIC02LjYxLDIuOTYgLTYuNjEsNi42MiBsIDAsMjYuNDUgeiIgc3R5bGU9ImZpbGw6I2NjMDBjYztmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6ZXZlbm9kZDtzdHJva2U6bm9uZSIgaWQ9InBhdGg1MiIgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIvPjx0ZXh0IHRyYW5zZm9ybT0ibWF0cml4KDEsMCwwLC0xLDQ5NC44MSwzODEuMTIpIiBzdHlsZT0iZm9udC12YXJpYW50Om5vcm1hbDtmb250LXdlaWdodDpub3JtYWw7Zm9udC1zaXplOjE4cHg7Zm9udC1mYW1pbHk6Q2FsaWJyaTstaW5rc2NhcGUtZm9udC1zcGVjaWZpY2F0aW9uOkNhbGlicmk7d3JpdGluZy1tb2RlOmxyLXRiO2ZpbGw6I2ZmZmZmZjtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIgaWQ9InRleHQ1NCI+PHRzcGFuIHg9IjAgOS41OTM5OTk5IDE4LjIxNiAyMi4zNTYwMDEgMjYuNDA2IDM1Ljg1NTk5OSA0MS43NTk5OTggNTAuMjczOTk4IDU2LjMwNDAwMSA2MC4zNTQgNjkuODM5OTk2IDc5LjI5MDAwMSA4OC4yOTAwMDEgMTAzLjY4IDEwNy43MyAxMTUuMjkgMTI0Ljc0IDEzMy43NTgiIHk9IjAiIHNvZGlwb2RpOnJvbGU9ImxpbmUiIGlkPSJ0c3BhbjU2Ij5DYWxpYnJhdGlvbl9NaWNoZWw8L3RzcGFuPjwvdGV4dD4KPHBhdGggZD0ibSAzMDguOTcsMTMxLjkyIGMgMCwzLjY2IDIuOTYsNi42MiA2LjYxLDYuNjIgbCAxNTEuMiwwIGMgMy42NiwwIDYuNjIsLTIuOTYgNi42MiwtNi42MiBsIDAsLTI2LjQ1IGMgMCwtMy42NiAtMi45NiwtNi42MTggLTYuNjIsLTYuNjE4IGwgLTE1MS4yLDAgYyAtMy42NSwwIC02LjYxLDIuOTU4IC02LjYxLDYuNjE4IGwgMCwyNi40NSB6IiBzdHlsZT0iZmlsbDojOTJkMDUwO2ZpbGwtb3BhY2l0eTowLjMwMTk2MDAxO2ZpbGwtcnVsZTpldmVub2RkO3N0cm9rZTpub25lIiBpZD0icGF0aDU4IiBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIi8+PGcgaWQ9Imc2MCI+PHBhdGggZD0ibSAzMDguOTcsMTMxLjkyIGMgMCwzLjY2IDIuOTYsNi42MiA2LjYxLDYuNjIgbCAxNTEuMiwwIGMgMy42NiwwIDYuNjIsLTIuOTYgNi42MiwtNi42MiBsIDAsLTI2LjQ1IGMgMCwtMy42NiAtMi45NiwtNi42MTggLTYuNjIsLTYuNjE4IGwgLTE1MS4yLDAgYyAtMy42NSwwIC02LjYxLDIuOTU4IC02LjYxLDYuNjE4IGwgMCwyNi40NSB6IiBzdHlsZT0iZmlsbDpub25lO3N0cm9rZTojOTJkMDUwO3N0cm9rZS13aWR0aDozO3N0cm9rZS1saW5lY2FwOmJ1dHQ7c3Ryb2tlLWxpbmVqb2luOnJvdW5kO3N0cm9rZS1taXRlcmxpbWl0OjEwO3N0cm9rZS1kYXNoYXJyYXk6OSwgMztzdHJva2UtZGFzaG9mZnNldDowO3N0cm9rZS1vcGFjaXR5OjEiIGlkPSJwYXRoNjIiIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiLz48L2c+PHRleHQgdHJhbnNmb3JtPSJtYXRyaXgoMSwwLDAsLTEsMzMxLjI1LDExMi42MSkiIHN0eWxlPSJmb250LXZhcmlhbnQ6bm9ybWFsO2ZvbnQtd2VpZ2h0Om5vcm1hbDtmb250LXNpemU6MThweDtmb250LWZhbWlseTpDYWxpYnJpOy1pbmtzY2FwZS1mb250LXNwZWNpZmljYXRpb246Q2FsaWJyaTt3cml0aW5nLW1vZGU6bHItdGI7ZmlsbDojMDAwMDAwO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIiBpZD0idGV4dDY0Ij48dHNwYW4geD0iMCA5LjU5Mzk5OTkgMTUuNjA2IDI0LjU3IDMzLjExOTk5OSAzOC44ODAwMDEgNDcuODQ0MDAyIDUyLjQxNiA2MS44NjYwMDEgNzEuMzUxOTk3IDgwLjgwMjAwMiA4Ni44MzIwMDEgOTMuODcwMDAzIDEwMy40NjQgMTA5Ljc0NiAxMTMuODMyIiB5PSIwIiBzb2RpcG9kaTpyb2xlPSJsaW5lIiBpZD0idHNwYW42NiI+Q3JlYXRlSW5wdXRzQ3JpdDwvdHNwYW4+PC90ZXh0Pgo8cGF0aCBkPSJtIDMxLjE0NSwxMzIuMDMgYyAwLDMuNjYgMi45NjEsNi42MiA2LjYxNSw2LjYyIGwgNDkuMTM5LDAgYyAzLjY1MywwIDYuNjE1LC0yLjk2IDYuNjE1LC02LjYyIGwgMCwtMjYuNDYgYyAwLC0zLjY1IC0yLjk2MiwtNi42MSAtNi42MTUsLTYuNjEgbCAtNDkuMTM5LDAgYyAtMy42NTQsMCAtNi42MTUsMi45NiAtNi42MTUsNi42MSBsIDAsMjYuNDYgeiIgc3R5bGU9ImZpbGw6IzkyZDA1MDtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6ZXZlbm9kZDtzdHJva2U6bm9uZSIgaWQ9InBhdGg2OCIgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIvPjx0ZXh0IHRyYW5zZm9ybT0ibWF0cml4KDEsMCwwLC0xLDQ3Ljc4NCwxMTIuNzMpIiBzdHlsZT0iZm9udC12YXJpYW50Om5vcm1hbDtmb250LXdlaWdodDpub3JtYWw7Zm9udC1zaXplOjE4cHg7Zm9udC1mYW1pbHk6Q2FsaWJyaTstaW5rc2NhcGUtZm9udC1zcGVjaWZpY2F0aW9uOkNhbGlicmk7d3JpdGluZy1tb2RlOmxyLXRiO2ZpbGw6I2ZmZmZmZjtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIgaWQ9InRleHQ3MCI+PHRzcGFuIHg9IjAgOS40NDk5OTk4IDEzLjU5IDIzLjA3NiIgeT0iMCIgc29kaXBvZGk6cm9sZT0ibGluZSIgaWQ9InRzcGFuNzIiPnBsb3Q8L3RzcGFuPjwvdGV4dD4KPHBhdGggZD0ibSA0ODEuNSwzODUuNTMgLTIzLjksMCBjIC0wLjg5LDAgLTEuNjIsMC43MyAtMS42MiwxLjYyIGwgMCwwLjAzIDEuNjIsLTEuNjMgLTE1Ljc3LDAgMCwzLjI1IDE1Ljc3LDAgYyAwLjksMCAxLjYzLC0wLjcyIDEuNjMsLTEuNjIgbCAwLC0wLjAzIC0xLjYzLDEuNjMgMjMuOSwwIDAsLTMuMjUgeiBtIC0zOC4wNCwtMy4yMyAtOS43NSw0Ljg4IDkuNzUsNC44NyAwLC05Ljc1IHoiIHN0eWxlPSJmaWxsOiNjYzAwY2M7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiIGlkPSJwYXRoNzQiIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiLz48cGF0aCBkPSJtIDMwOC45NywxMjAuMzIgLTE0LjE3LDAgYyAtMC45LDAgLTEuNjMsLTAuNzMgLTEuNjMsLTEuNjMgbCAwLC0wLjA5IDEuNjMsMS42MiAtNi4wNSwwIDAsLTMuMjUgNi4wNSwwIGMgMC44OSwwIDEuNjIsMC43MyAxLjYyLDEuNjMgbCAwLDAuMDkgLTEuNjIsLTEuNjIgMTQuMTcsMCAwLDMuMjUgeiBtIC0xOC42LDMuMTUgLTkuNzUsLTQuODcgOS43NSwtNC44OCAwLDkuNzUgeiIgc3R5bGU9ImZpbGw6IzkyZDA1MDtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIgaWQ9InBhdGg3NiIgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIvPjxwYXRoIGQ9Im0gMTIwLjIyLDM4OC44IC01Ny44OTEsMCBjIC0wLjg5NywwIC0xLjYyNSwtMC43MiAtMS42MjUsLTEuNjIgbCAwLC0yNDAuNDEgMy4yNSwwIDAsMjQwLjQxIC0xLjYyNSwtMS42MyA1Ny44OTEsMCAwLDMuMjUgeiBtIC02Mi43NjYsLTI0MC40IDQuODc1LC05Ljc1IDQuODc1LDkuNzUgLTkuNzUsMCB6IiBzdHlsZT0iZmlsbDojNzAzMGEwO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIiBpZD0icGF0aDc4IiBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIi8+PHBhdGggZD0ibSAzMDguOTcsMjg5LjE2IC03Ny45NiwwIGMgLTAuOSwwIC0xLjYyLDAuNzMgLTEuNjIsMS42MyBsIDAsNjguMzkgMy4yNSwwIDAsLTY4LjM5IC0xLjYzLDEuNjIgNzcuOTYsMCAwLC0zLjI1IHogbSAtODIuODMsNjguNCA0LjksOS43NCA0Ljg1LC05Ljc2IC05Ljc1LDAuMDIgeiIgc3R5bGU9ImZpbGw6IzAwYjBmMDtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIgaWQ9InBhdGg4MCIgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIvPjxwYXRoIGQ9Im0gMzA4Ljk3LDIyMC41MiAtNzguMTksMCBjIC0wLjg5LDAgLTEuNjIsMC43MiAtMS42MiwxLjYyIGwgMCwxMzcuMDcgMy4yNSwwIDAsLTEzNy4wNyAtMS42MywxLjYzIDc4LjE5LDAgMCwtMy4yNSB6IG0gLTgzLjA2LDEzNy4wNiA0Ljg3LDkuNzUgNC44OCwtOS43NSAtOS43NSwwIHoiIHN0eWxlPSJmaWxsOiMwMGIwZjA7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiIGlkPSJwYXRoODIiIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiLz48cGF0aCBkPSJtIDQ3My40LDIyMC41MiA5MC4zMSwwIGMgMC45LDAgMS42MywwLjcyIDEuNjMsMS42MiBsIDAsMTM3LjA1IC0zLjI1LDAgMCwtMTM3LjA1IDEuNjIsMS42MyAtOTAuMzEsMCAwLC0zLjI1IHogbSA5NS4xOSwxMzcuMDQgLTQuODgsOS43NSAtNC44NywtOS43NSA5Ljc1LDAgeiIgc3R5bGU9ImZpbGw6IzAwYjBmMDtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIgaWQ9InBhdGg4NCIgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIvPjxwYXRoIGQ9Im0gMzY1LjY3LDUxLjAyNyAtMzAzLjM0MSwwIGMgLTAuODk3LDAgLTEuNjI1LDAuNzI4IC0xLjYyNSwxLjYyNSBsIDAsMzguMTgzIDMuMjUsMCAwLC0zOC4xODMgLTEuNjI1LDEuNjI1IDMwMy4zNDEsMCAwLC0zLjI1IHogTSA1Ny40NTQsODkuMjEgbCA0Ljg3NSw5Ljc1IDQuODc1LC05Ljc1IC05Ljc1LDAgeiIgc3R5bGU9ImZpbGw6I2U0NmMwYTtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIgaWQ9InBhdGg4NiIgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIvPjxwYXRoIGQ9Im0gNDczLjQsMjg5LjE2IDkwLjMxLDAgYyAwLjksMCAxLjYzLDAuNzMgMS42MywxLjYzIGwgMCw2OC40IC0zLjI1LDAgMCwtNjguNCAxLjYyLDEuNjIgLTkwLjMxLDAgMCwtMy4yNSB6IG0gOTUuMTksNjguNCAtNC44OCw5Ljc1IC00Ljg3LC05Ljc1IDkuNzUsMCB6IiBzdHlsZT0iZmlsbDojMDBiMGYwO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIiBpZD0icGF0aDg4IiBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIi8+PHBhdGggZD0ibSAzNDIuOTksMzg3LjE4IDkuOTIsMTkuODQgNzAuODgsMCA5LjkyLC0xOS44NCAtOS45MiwtMTkuODUgLTcwLjg4LDAgLTkuOTIsMTkuODUgeiIgc3R5bGU9ImZpbGw6IzAwNTA4YztmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6ZXZlbm9kZDtzdHJva2U6bm9uZSIgaWQ9InBhdGg5MCIgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIvPjx0ZXh0IHRyYW5zZm9ybT0ibWF0cml4KDEsMCwwLC0xLDM2NS4xMSwzODEuMTQpIiBzdHlsZT0iZm9udC12YXJpYW50Om5vcm1hbDtmb250LXdlaWdodDpub3JtYWw7Zm9udC1zaXplOjE4cHg7Zm9udC1mYW1pbHk6Q2FsaWJyaTstaW5rc2NhcGUtZm9udC1zcGVjaWZpY2F0aW9uOkNhbGlicmk7d3JpdGluZy1tb2RlOmxyLXRiO2ZpbGw6I2ZmZmZmZjtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIgaWQ9InRleHQ5MiI+PHRzcGFuIHg9IjAgOC44NzM5OTk2IDE3LjQ5NiAyMy40IDMyLjAyMTk5OSIgeT0iMCIgc29kaXBvZGk6cm9sZT0ibGluZSIgaWQ9InRzcGFuOTQiPlBhcmFtPC90c3Bhbj48L3RleHQ+CjxwYXRoIGQ9Im0gNTY0LjEyLDE3My4zNiAtMTcyLjk0LDAgYyAtMC44OSwwIC0xLjYyLC0wLjczIC0xLjYyLC0xLjYzIGwgMCwtMjUuMDcgMy4yNSwwIDAsMjUuMDcgLTEuNjMsLTEuNjIgMTcyLjk0LDAgMCwzLjI1IHogbSAtMTc3LjgxLC0yNS4wNyA0Ljg3LC05Ljc1IDQuODgsOS43NSAtOS43NSwwIHoiIHN0eWxlPSJmaWxsOiMwMGIwZjA7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiIGlkPSJwYXRoOTYiIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiLz48ZyBpZD0iZzk4Ij48ZyBpZD0iZzEwMCIgY2xpcC1wYXRoPSJ1cmwoI2NsaXBQYXRoMTAyKSI+PHBhdGggZD0ibSA1NjIuMDYsNDQwLjEgMCwtMTYuNTUgYyAwLC0wLjkgMC43MiwtMS42MyAxLjYyLC0xLjYzIGwgMC4wMywwIC0xLjYyLDEuNjMgMCwtOC40MyAzLjI1LDAgMCw4LjQzIGMgMCwwLjkgLTAuNzMsMS42MiAtMS42MywxLjYyIGwgLTAuMDMsMCAxLjYzLC0xLjYyIDAsMTYuNTUgLTMuMjUsMCB6IG0gLTMuMjIsLTIzLjM1IDQuODcsLTkuNzUgNC44OCw5Ljc1IC05Ljc1LDAgeiIgc3R5bGU9ImZpbGw6I2NjMDBjYztmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIgaWQ9InBhdGgxMDYiIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiLz48L2c+PC9nPjxwYXRoIGQ9Im0gNDczLjQsMTE3LjA3IDEyNC43NCwwIGMgMC44OSwwIDEuNjIsMC43MyAxLjYyLDEuNjIgbCAwLDI0MC40OSAtMy4yNSwwIDAsLTI0MC40OSAxLjYzLDEuNjMgLTEyNC43NCwwIDAsLTMuMjUgeiBtIDEyOS42MSwyNDAuNDggLTQuODcsOS43NSAtNC44OCwtOS43NSA5Ljc1LDAgeiIgc3R5bGU9ImZpbGw6IzkyZDA1MDtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIgaWQ9InBhdGgxMDgiIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiLz48cGF0aCBkPSJtIDM1NC4zMywzODguOCAtMzQuODQsMCBjIC0wLjksMCAtMS42MywtMC43MiAtMS42MywtMS42MiBsIDAsMCAxLjYzLDEuNjIgLTI2LjcyLDAgMCwtMy4yNSAyNi43MiwwIGMgMC45LDAgMS42MiwwLjczIDEuNjIsMS42MyBsIDAsMCAtMS42MiwtMS42MyAzNC44NCwwIDAsMy4yNSB6IG0gLTU5LjkzLDMuMjUgLTkuNzUsLTQuODcgOS43NSwtNC44OCAwLDkuNzUgeiIgc3R5bGU9ImZpbGw6IzAwNTA4YztmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIgaWQ9InBhdGgxMTAiIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiLz48ZyBpZD0iZzExMiI+PGcgaWQ9ImcxMTQiIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDExNikiPjxwYXRoIGQ9Im0gMjAwLjAzLDM2Ny4zMyAwLC0xMTQuNDQgYyAwLC0wLjkgLTAuNzMsLTEuNjMgLTEuNjIsLTEuNjMgbCAwLDAgMS42MiwxLjYzIDAsLTEwNi4zMiAtMy4yNSwwIDAsMTA2LjMyIGMgMCwwLjg5IDAuNzMsMS42MiAxLjYzLDEuNjIgbCAwLDAgLTEuNjMsLTEuNjIgMCwxMTQuNDQgMy4yNSwwIHogbSAzLjI1LC0yMTkuMTQgLTQuODcsLTkuNzUgLTQuODgsOS43NSA5Ljc1LDAgeiIgc3R5bGU9ImZpbGw6IzcwMzBhMDtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIgaWQ9InBhdGgxMjAiIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiLz48L2c+PC9nPjxwYXRoIGQ9Im0gMTIwLjIyLDQwMC40MSBjIDAsMy42NSAyLjk2LDYuNjEgNi42Miw2LjYxIGwgMTUxLjE5LDAgYyAzLjY2LDAgNi42MiwtMi45NiA2LjYyLC02LjYxIGwgMCwtMjYuNDYgYyAwLC0zLjY2IC0yLjk2LC02LjYyIC02LjYyLC02LjYyIGwgLTE1MS4xOSwwIGMgLTMuNjYsMCAtNi42MiwyLjk2IC02LjYyLDYuNjIgbCAwLDI2LjQ2IHoiIHN0eWxlPSJmaWxsOiM3MDMwYTA7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOmV2ZW5vZGQ7c3Ryb2tlOm5vbmUiIGlkPSJwYXRoMTIyIiBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIi8+PHRleHQgdHJhbnNmb3JtPSJtYXRyaXgoMSwwLDAsLTEsMTY0LjQyLDM4MS4xNCkiIHN0eWxlPSJmb250LXZhcmlhbnQ6bm9ybWFsO2ZvbnQtd2VpZ2h0Om5vcm1hbDtmb250LXNpemU6MThweDtmb250LWZhbWlseTpDYWxpYnJpOy1pbmtzY2FwZS1mb250LXNwZWNpZmljYXRpb246Q2FsaWJyaTt3cml0aW5nLW1vZGU6bHItdGI7ZmlsbDojZmZmZmZmO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIiBpZD0idGV4dDEyNCI+PHRzcGFuIHg9IjAgOS43NzQwMDAyIDE5LjIyNDAwMSAyOC42NzQgNDQuMDYzOTk5IDUzLjU0OTk5OSA2MyA3MS45NjM5OTciIHk9IjAiIHNvZGlwb2RpOnJvbGU9ImxpbmUiIGlkPSJ0c3BhbjEyNiI+UnVuTW9kZWw8L3RzcGFuPjwvdGV4dD4KPGcgaWQ9ImcxMjgiPjxnIGlkPSJnMTMwIiBjbGlwLXBhdGg9InVybCgjY2xpcFBhdGgxMzIpIj48cGF0aCBkPSJtIDM4OS41NiwyNzAuOTQgMCwtMTQuNDcgYyAwLC0wLjkgMC43MywtMS42MyAxLjYyLC0xLjYzIGwgMCwwIC0xLjYyLDEuNjMgMCwtNi4zNiAzLjI1LDAgMCw2LjM2IGMgMCwwLjg5IC0wLjczLDEuNjIgLTEuNjMsMS42MiBsIDAsMCAxLjYzLC0xLjYyIDAsMTQuNDcgLTMuMjUsMCB6IG0gLTMuMjUsLTE5LjIgNC44NywtOS43NSA0Ljg4LDkuNzUgLTkuNzUsMCB6IiBzdHlsZT0iZmlsbDojMDBiMGYwO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIiBpZD0icGF0aDEzNiIgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIvPjwvZz48L2c+PHRleHQgdHJhbnNmb3JtPSJtYXRyaXgoMSwwLDAsLTEsNTA5LjksNTA5LjcxKSIgc3R5bGU9ImZvbnQtdmFyaWFudDpub3JtYWw7Zm9udC13ZWlnaHQ6Ym9sZDtmb250LXNpemU6MjRweDtmb250LWZhbWlseTpDYWxpYnJpOy1pbmtzY2FwZS1mb250LXNwZWNpZmljYXRpb246J0NhbGlicmkgQm9sZCc7d3JpdGluZy1tb2RlOmxyLXRiO2ZpbGw6IzVmNWY1ZjtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIgaWQ9InRleHQxMzgiPjx0c3BhbiB4PSIwIDEyLjY5NiAyNC41NTIgMzAuNDU1OTk5IDM2LjM2MDAwMSA0OS4yNDgwMDEgNTcuMjQwMDAyIDY4Ljg3OTk5NyA3Ny4yMDggODMuMTEyIDk2LjAyNDAwMiIgeT0iMCIgc29kaXBvZGk6cm9sZT0ibGluZSIgaWQ9InRzcGFuMTQwIj5DYWxpYnJhdGlvbjwvdHNwYW4+PC90ZXh0Pgo8dGV4dCB0cmFuc2Zvcm09Im1hdHJpeCgxLDAsMCwtMSwxNDIuNzUsNTA5LjM4KSIgc3R5bGU9ImZvbnQtdmFyaWFudDpub3JtYWw7Zm9udC13ZWlnaHQ6Ym9sZDtmb250LXNpemU6MjRweDtmb250LWZhbWlseTpDYWxpYnJpOy1pbmtzY2FwZS1mb250LXNwZWNpZmljYXRpb246J0NhbGlicmkgQm9sZCc7d3JpdGluZy1tb2RlOmxyLXRiO2ZpbGw6IzVmNWY1ZjtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIgaWQ9InRleHQxNDIiPjx0c3BhbiB4PSIwIDExLjM1MiAxNy4yNTYwMDEgMzYuODQgNDkuNzI4MDAxIDU1LjYzMiA2Ny4xOTk5OTcgNzUuNTI4IDgxLjQzMTk5OSA5NC4zNDQwMDIiIHk9IjAiIHNvZGlwb2RpOnJvbGU9ImxpbmUiIGlkPSJ0c3BhbjE0NCI+U2ltdWxhdGlvbjwvdHNwYW4+PC90ZXh0Pgo8cGF0aCBkPSJtIDMwOC45NywyMzUuMzcgYyAwLDMuNjUgMi45Niw2LjYyIDYuNjIsNi42MiBsIDE1MS4xOSwwIGMgMy42NiwwIDYuNjIsLTIuOTcgNi42MiwtNi42MiBsIDAsLTI2LjQ2IGMgMCwtMy42NSAtMi45NiwtNi42MSAtNi42MiwtNi42MSBsIC0xNTEuMTksMCBjIC0zLjY2LDAgLTYuNjIsMi45NiAtNi42Miw2LjYxIGwgMCwyNi40NiB6IiBzdHlsZT0iZmlsbDojMDBiMGYwO2ZpbGwtb3BhY2l0eTowLjI7ZmlsbC1ydWxlOmV2ZW5vZGQ7c3Ryb2tlOm5vbmUiIGlkPSJwYXRoMTQ2IiBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIi8+PGcgaWQ9ImcxNDgiPjxwYXRoIGQ9Im0gMzA4Ljk3LDIzNS4zNyBjIDAsMy42NSAyLjk2LDYuNjIgNi42Miw2LjYyIGwgMTUxLjE5LDAgYyAzLjY2LDAgNi42MiwtMi45NyA2LjYyLC02LjYyIGwgMCwtMjYuNDYgYyAwLC0zLjY1IC0yLjk2LC02LjYxIC02LjYyLC02LjYxIGwgLTE1MS4xOSwwIGMgLTMuNjYsMCAtNi42MiwyLjk2IC02LjYyLDYuNjEgbCAwLDI2LjQ2IHoiIHN0eWxlPSJmaWxsOm5vbmU7c3Ryb2tlOiMwMGIwZjA7c3Ryb2tlLXdpZHRoOjM7c3Ryb2tlLWxpbmVjYXA6YnV0dDtzdHJva2UtbGluZWpvaW46cm91bmQ7c3Ryb2tlLW1pdGVybGltaXQ6MTA7c3Ryb2tlLWRhc2hhcnJheTo5LCAzO3N0cm9rZS1kYXNob2Zmc2V0OjA7c3Ryb2tlLW9wYWNpdHk6MSIgaWQ9InBhdGgxNTAiIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiLz48L2c+PHRleHQgdHJhbnNmb3JtPSJtYXRyaXgoMSwwLDAsLTEsMzI0LjI5LDIxNi4wNykiIHN0eWxlPSJmb250LXZhcmlhbnQ6bm9ybWFsO2ZvbnQtd2VpZ2h0Om5vcm1hbDtmb250LXNpemU6MThweDtmb250LWZhbWlseTpDYWxpYnJpOy1pbmtzY2FwZS1mb250LXNwZWNpZmljYXRpb246Q2FsaWJyaTt3cml0aW5nLW1vZGU6bHItdGI7ZmlsbDojMDAwMDAwO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIiBpZD0idGV4dDE1MiI+PHRzcGFuIHg9IjAgOS41OTM5OTk5IDE1LjYwNiAyNC41NyAzMy4xMTk5OTkgMzguODgwMDAxIDQ3Ljg0NDAwMiA1Ny42MTggNjcuMDY4MDAxIDc2LjUxNzk5OCA4OC40MzM5OTggOTcuNzkzOTk5IDEwMy44MjQgMTA3Ljg3NCAxMTcuMzYgMTI2LjgxIiB5PSIwIiBzb2RpcG9kaTpyb2xlPSJsaW5lIiBpZD0idHNwYW4xNTQiPkNyZWF0ZVJ1bk9wdGlvbnM8L3RzcGFuPjwvdGV4dD4KPHBhdGggZD0ibSAxMTYuMTksNDAwLjQxIGMgMCwzLjY1IDIuOTYsNi42MSA2LjYyLDYuNjEgbCAxNTEuMiwwIGMgMy42NSwwIDYuNjEsLTIuOTYgNi42MSwtNi42MSBsIDAsLTI2LjQ2IGMgMCwtMy42NiAtMi45NiwtNi42MiAtNi42MSwtNi42MiBsIC0xNTEuMiwwIGMgLTMuNjYsMCAtNi42MiwyLjk2IC02LjYyLDYuNjIgbCAwLDI2LjQ2IHoiIHN0eWxlPSJmaWxsOiM3MDMwYTA7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOmV2ZW5vZGQ7c3Ryb2tlOm5vbmUiIGlkPSJwYXRoMTU2IiBpbmtzY2FwZTpjb25uZWN0b3ItY3VydmF0dXJlPSIwIi8+PHRleHQgdHJhbnNmb3JtPSJtYXRyaXgoMSwwLDAsLTEsMTYwLjM5LDM4MS4xNCkiIHN0eWxlPSJmb250LXZhcmlhbnQ6bm9ybWFsO2ZvbnQtd2VpZ2h0Om5vcm1hbDtmb250LXNpemU6MThweDtmb250LWZhbWlseTpDYWxpYnJpOy1pbmtzY2FwZS1mb250LXNwZWNpZmljYXRpb246Q2FsaWJyaTt3cml0aW5nLW1vZGU6bHItdGI7ZmlsbDojZmZmZmZmO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIiBpZD0idGV4dDE1OCI+PHRzcGFuIHg9IjAgOS43NzQwMDAyIDE5LjIyNDAwMSAyOC42NzQgNDQuMDYzOTk5IDUzLjU0OTk5OSA2MyA3MS45NjM5OTciIHk9IjAiIHNvZGlwb2RpOnJvbGU9ImxpbmUiIGlkPSJ0c3BhbjE2MCI+UnVuTW9kZWw8L3RzcGFuPjwvdGV4dD4KPHBhdGggZD0ibSAxMTYuMTksMTMxLjgzIGMgMCwzLjY1IDIuOTYsNi42MSA2LjYyLDYuNjEgbCAxNTEuMiwwIGMgMy42NSwwIDYuNjEsLTIuOTYgNi42MSwtNi42MSBsIDAsLTI2LjQ2IGMgMCwtMy42NiAtMi45NiwtNi42MTggLTYuNjEsLTYuNjE4IGwgLTE1MS4yLDAgYyAtMy42NiwwIC02LjYyLDIuOTU4IC02LjYyLDYuNjE4IGwgMCwyNi40NiB6IiBzdHlsZT0iZmlsbDojOTJkMDUwO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpldmVub2RkO3N0cm9rZTpub25lIiBpZD0icGF0aDE2MiIgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIvPjx0ZXh0IHRyYW5zZm9ybT0ibWF0cml4KDEsMCwwLC0xLDE2Ny4xMSwxMTIuNTEpIiBzdHlsZT0iZm9udC12YXJpYW50Om5vcm1hbDtmb250LXdlaWdodDpub3JtYWw7Zm9udC1zaXplOjE4cHg7Zm9udC1mYW1pbHk6Q2FsaWJyaTstaW5rc2NhcGUtZm9udC1zcGVjaWZpY2F0aW9uOkNhbGlicmk7d3JpdGluZy1tb2RlOmxyLXRiO2ZpbGw6I2ZmZmZmZjtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZSIgaWQ9InRleHQxNjQiPjx0c3BhbiB4PSIwIDguNzg0MDAwNCAxNC45OTQgMjAuOTg4MDAxIDMwLjQ3NDAwMSAzNi43NTYwMDEgNDYuMzQ5OTk4IDUyLjU0MiA1Ni42Mjc5OTgiIHk9IjAiIHNvZGlwb2RpOnJvbGU9ImxpbmUiIGlkPSJ0c3BhbjE2NiI+RXJyb3JDcml0PC90c3Bhbj48L3RleHQ+CjxwYXRoIGQ9Im0gMzUxLjg1LDUyLjY1MiA5LjkyLDE5Ljg0NSA1OS41MywwIDkuOTMsLTE5Ljg0NSAtOS45MywtMTkuODQ0IC01OS41MywwIC05LjkyLDE5Ljg0NCB6IiBzdHlsZT0iZmlsbDojZTQ2YzBhO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpldmVub2RkO3N0cm9rZTpub25lIiBpZD0icGF0aDE2OCIgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIvPjx0ZXh0IHRyYW5zZm9ybT0ibWF0cml4KDEsMCwwLC0xLDM3Mi41LDQ2LjU2KSIgc3R5bGU9ImZvbnQtdmFyaWFudDpub3JtYWw7Zm9udC13ZWlnaHQ6bm9ybWFsO2ZvbnQtc2l6ZToxOHB4O2ZvbnQtZmFtaWx5OkNhbGlicmk7LWlua3NjYXBlLWZvbnQtc3BlY2lmaWNhdGlvbjpDYWxpYnJpO3dyaXRpbmctbW9kZTpsci10YjtmaWxsOiNmZmZmZmY7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOm5vbmUiIGlkPSJ0ZXh0MTcwIj48dHNwYW4geD0iMCAxMi4xMTQgMjEuNiAzMC45NTk5OTkiIHk9IjAiIHNvZGlwb2RpOnJvbGU9ImxpbmUiIGlkPSJ0c3BhbjE3MiI+UW9iczwvdHNwYW4+PC90ZXh0Pgo8ZyBpZD0iZzE3NCI+PGcgaWQ9ImcxNzYiIGNsaXAtcGF0aD0idXJsKCNjbGlwUGF0aDE3OCkiPjxwYXRoIGQ9Im0gMzkyLjgxLDcxLjc3IDAsMTMuNTQxIGMgMCwwLjg5NyAtMC43MywxLjYyNSAtMS42MywxLjYyNSBsIDAsMCAxLjYzLC0xLjYyNSAwLDUuNDE2IC0zLjI1LDAgMCwtNS40MTYgYyAwLC0wLjg5NyAwLjczLC0xLjYyNSAxLjYyLC0xLjYyNSBsIDAsMCAtMS42MiwxLjYyNSAwLC0xMy41NDEgMy4yNSwwIHogbSAzLjI1LDE3LjMzMiAtNC44OCw5Ljc1IC00Ljg3LC05Ljc1IDkuNzUsMCB6IiBzdHlsZT0iZmlsbDojZTQ2YzBhO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lIiBpZD0icGF0aDE4MiIgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIvPjwvZz48L2c+PHBhdGggZD0ibSA1NjMuNzEsMjIyLjc1IDAuNjIsLTUwLjI5IiBzdHlsZT0iZmlsbDpub25lO3N0cm9rZTojMDBiMGYwO3N0cm9rZS13aWR0aDozLjI1O3N0cm9rZS1saW5lY2FwOmJ1dHQ7c3Ryb2tlLWxpbmVqb2luOnJvdW5kO3N0cm9rZS1taXRlcmxpbWl0OjEwO3N0cm9rZS1kYXNoYXJyYXk6bm9uZTtzdHJva2Utb3BhY2l0eToxIiBpZD0icGF0aDE4NCIgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIvPjwvZz48L3N2Zz4=" alt="airGR features diagram" width="75%" /></p>
+</div>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1 class="unnumbered">References</h1>
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
 <div id="ref-ficchi_adaptive_2017" class="csl-entry">
 Ficchi, Andrea. 2017. <span>“An Adaptive Hydrological Model for Multiple
 Time-Steps: Diagnostics and Improvements Based on Fluxes
-Consistency.”</span> PhD thesis, Université Pierre et Marie Curie, Paris
-6. <a href="https://www.theses.fr/2017PA066097">https://www.theses.fr/2017PA066097</a>.
+Consistency.”</span> PhD thesis, Université Pierre-et-Marie-Curie, Paris
+6. <a href="https://theses.hal.science/tel-01619102">https://theses.hal.science/tel-01619102</a>.
 </div>
 <div id="ref-ficchi_hydrological_2019" class="csl-entry">
 Ficchì, Andrea, Charles Perrin, and Vazken Andréassian. 2019.
@@ -864,19 +893,19 @@ June. <a href="https://doi.org/10.1016/j.jhydrol.2019.05.084">https://doi.org/10
 <div id="ref-le_moine_bassin_2008" class="csl-entry">
 Le Moine, Nicolas. 2008. <span>“Le Bassin Versant de Surface Vu Par Le
 Souterrain : Une Voie d’amélioration Des Performances Et Du Réalisme Des
-Modèles Pluie-Débit ?”</span> PhD thesis, Université Pierre et Marie
-Curie, Paris 6. <a href="http://webgr.irstea.fr/wp-content/uploads/2012/07/2008-LE_MOINE-THESE.pdf">http://webgr.irstea.fr/wp-content/uploads/2012/07/2008-LE_MOINE-THESE.pdf</a>.
+Modèles Pluie-Débit ?”</span> PhD thesis, Université
+Pierre-et-Marie-Curie, Paris 6. <a href="https://theses.hal.science/tel-02591478">https://theses.hal.science/tel-02591478</a>.
 </div>
 <div id="ref-mathevet_quels_2005" class="csl-entry">
 Mathevet, Thibault. 2005. <span>“Quels Modèles Pluie-Débit Globaux Au
 Pas de Temps Horaire ? <span>Développements</span> Empiriques Et
 Comparaison de Modèles Sur Un Large Échantillon de Bassins
-Versants.”</span> PhD thesis, Paris: ENGREF. <a href="http://webgr.irstea.fr/wp-content/uploads/2012/07/2005-MATHEVET-THESE.pdf">http://webgr.irstea.fr/wp-content/uploads/2012/07/2005-MATHEVET-THESE.pdf</a>.
+Versants.”</span> PhD thesis, ENGREF Paris. <a href="https://theses.hal.science/tel-02587642">https://theses.hal.science/tel-02587642</a>.
 </div>
 <div id="ref-mouelhi_vers_2003" class="csl-entry">
 Mouelhi, Safouane. 2003. <span>“Vers Une Chaîne Cohérente de Modèles
 Pluie-Débit Conceptuels Globaux Aux Pas de Temps Pluriannuel, Annuel,
-Mensuel Et Journalier.”</span> PhD thesis, Paris, ENGREF. <a href="http://webgr.irstea.fr/wp-content/uploads/2012/07/2003-MOUELHI-THESE.pdf">http://webgr.irstea.fr/wp-content/uploads/2012/07/2003-MOUELHI-THESE.pdf</a>.
+Mensuel Et Journalier.”</span> PhD thesis, ENGREF Paris. <a href="https://theses.hal.science/tel-00005696">https://theses.hal.science/tel-00005696</a>.
 </div>
 <div id="ref-mouelhi_stepwise_2006" class="csl-entry">
 Mouelhi, Safouane, Claude Michel, Charles Perrin, and Vazken

@@ -82,8 +82,8 @@ ErrorCrit_KGE <- function(InputsCrit, OutputsModel, warnings = TRUE, verbose = T
                       CritName        = EC$CritName,
                       SubCritValues   = SubCritValues,
                       SubCritNames    = SubCritNames,
-                      CritBestValue   = EC$CritBestValue,
-                      Multiplier      = EC$Multiplier,
+                      CritBestValue   = +1,
+                      Multiplier      = -1,
                       Ind_notcomputed = EC$Ind_TS_ignore)
 
   class(OutputsCrit) <- c("KGE", "ErrorCrit")

@@ -11,7 +11,7 @@ vignette: >
 
 # Introduction
 
-**airGR** is a package that brings into the [**R software**](https://cran.r-project.org/) the hydrological modelling tools used and developed at the [Catchment Hydrology Research Group](https://webgr.inrae.fr/home/) at [INRAE (France)](https://www.inrae.fr/en), including the [**GR rainfall-runoff models**](https://webgr.inrae.fr/models/) that can be applied either on a **lumped** or **semi-distributed** way. A snow accumulation and melt model ([**CemaNeige**](https://webgr.inrae.fr/models/snow-model/)) and the associated functions for the calibration and evaluation of models are also included. Each model core is coded in **Fortran** to ensure low computational time. The other package functions (i.e. mainly the calibration algorithm and the efficiency criteria calculation) are coded in **R**. 
+**airGR** is a package that brings into the [**R software**](https://cran.r-project.org/) the hydrological modelling tools used and developed at the [Catchment Hydrology Research Group](https://webgr.inrae.fr/eng) at [INRAE (France)](https://www.inrae.fr/en), including the [**GR rainfall-runoff models**](https://webgr.inrae.fr/eng/tools/hydrological-models/) that can be applied either on a **lumped** or **semi-distributed** way. A snow accumulation and melt model ([**CemaNeige**](https://webgr.inrae.fr/eng/tools/hydrological-models/snow-model/)) and the associated functions for the calibration and evaluation of models are also included. Each model core is coded in **Fortran** to ensure low computational time. The other package functions (i.e. mainly the calibration algorithm and the efficiency criteria calculation) are coded in **R**. 
 
 
 The **airGR** package has been designed to fulfill two major requirements: to facilitate the use by non-expert users and to allow flexibility regarding the addition of external criteria, models or calibration algorithms. The names of the functions and their arguments were chosen to this end. **airGR** also contains basics plotting facilities. 
@@ -36,7 +36,7 @@ The models can be called within **airGR** using the following functions:
   * `RunModel_CemaNeigeGR5J()`: combined use of **GR5J** and **CemaNeige** 
   * `RunModel_CemaNeigeGR6J()`: combined use of **GR6J** and **CemaNeige** 
 
-The [**GRP**](https://webgr.inrae.fr/models/hydrological-forecasting-model-grp/) forecasting model and the [**Otamin**](https://webgr.inrae.fr/software/otamin/) predictive uncertainty tool are not available in **airGR**.
+The [**GRP**](https://webgr.inrae.fr/eng/tools/hydrological-models/hydrological-forecasting-model-grp/) forecasting model and the [**Otamin**](https://webgr.inrae.fr/eng/tools/software/otamin) predictive uncertainty tool are not available in **airGR**.
 
 In this vignette, we show how to prepare and run a calibration and a simulation with airGR hydrological models.
 
@@ -48,7 +48,7 @@ In the following example, we use a data sample contained in the package. For rea
 
 First, it is necessary to load the **airGR** package:
 
-```{r}
+```{r, warning=FALSE}
 library(airGR)
 ```
 
@@ -98,7 +98,6 @@ str(InputsModel)
 ```
 
 
-
 ## RunOptions object
 
 The `CreateRunOptions()` function allows to prepare the options required to the `RunModel*()` functions, which are the actual models functions.
@@ -140,7 +139,6 @@ The `CreateRunOptions()` function returns warnings if the default initialization
 
 ## InputsCrit object
 
-
 The `CreateInputsCrit()` function allows to prepare the input in order to calculate a criterion. It is possible to define the following arguments:
 
   * `FUN_CRIT`: the name of the error criterion function (the available functions are introduced later on)
@@ -158,6 +156,7 @@ InputsCrit <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsMod
                                RunOptions = RunOptions, VarObs = "Q", Obs = BasinObs$Qmm[Ind_Run])
 str(InputsCrit)
 ```
+
 
 ## CalibOptions object
 
@@ -224,7 +223,6 @@ Performing a model control with **airGR** is similar to running a simulation (se
 
 # Simulation
 
-
 ## Simulation run
 
 To run a model, the user has to use the `RunModel*()` functions (`InputsModel`, `RunOptions` and parameters).
@@ -234,7 +232,6 @@ All the data needed have already been prepared in the previous steps defined in 
 OutputsModel <- RunModel_GR4J(InputsModel = InputsModel, RunOptions = RunOptions, Param = Param)
 str(OutputsModel)
 ```
-
 
 
 ## Results preview
@@ -266,6 +263,12 @@ OutputsCrit <- ErrorCrit_KGE(InputsCrit = InputsCrit, OutputsModel = OutputsMode
 str(OutputsCrit)
 ```
 
+
+## Features diagram
+
+The figure below presents the implementation flow of the **airGR** functions.
+<br><br>
+<img src="fig/airGR_features_diagram.svg" alt="airGR features diagram" width=75% />
 
 
 # References

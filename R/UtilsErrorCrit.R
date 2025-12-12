@@ -31,14 +31,6 @@
   }
   CritName  <- gsub(pattern = "CritVar", replacement = CritVar, x = CritName)
   CritValue <- NA
-  if (Crit %in% c("RMSE")) {
-    CritBestValue <- +1
-    Multiplier    <- +1
-  }
-  if (Crit %in% c("NSE", "KGE", "KGE2", "GAPX")) {
-    CritBestValue <- +1
-    Multiplier    <- -1
-  }
 
 
   ## Data preparation
@@ -127,8 +119,6 @@
   OutputsCritCheck <- list(WarningTS = WarningTS,
                            VarObs = VarObs,
                            VarSim = VarSim,
-                           CritBestValue = CritBestValue,
-                           Multiplier = Multiplier,
                            CritName = CritName,
                            CritVar = CritVar,
                            CritCompute = CritCompute,

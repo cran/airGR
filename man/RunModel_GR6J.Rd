@@ -72,7 +72,7 @@ For further details on the model, see the references section. \cr
 For further details on the argument structures and initialisation options, see \code{\link{CreateRunOptions}}.
 \cr
 \cr
-\if{html}{\figure{diagramGR6J-EN.png}{options: width="60\%" alt="Figure: diagramGR6J-EN.png"}}
+\if{html}{\figure{diagramGR6J-EN.png}{options: style="width: 60\%;" alt="Figure: diagramGR6J-EN.png"}}
 \if{latex}{\figure{diagramGR6J-EN.pdf}{options: width=6cm}}
 }
 

@@ -83,13 +83,7 @@ SeriesAggreg.data.frame <- function(x,
   }
   ## check TimeLag
   msgTimeLag <- "'TimeLag' should be a single vector of a positive numeric value"
-  if (!is.vector(TimeLag)) {
-    stop(msgTimeLag)
-  }
-  if (!is.numeric(TimeLag)) {
-    stop(msgTimeLag)
-  }
-  if (length(TimeLag) != 1 | !any(TimeLag >= 0)) {
+  if (!(is.numeric(TimeLag) && is.atomic(TimeLag) && length(TimeLag) == 1 && TimeLag >= 0)) {
     stop(msgTimeLag)
   }
 
@@ -104,25 +98,20 @@ SeriesAggreg.data.frame <- function(x,
                      as.numeric(format(TabSeries2$DatesR[1L], format = "%Y")) - 1)
     stop  <- sprintf("%i-12-31 00:00:00",
                      as.numeric(format(TabSeries2$DatesR[nrow(TabSeries2)], format = "%Y")) + 1)
-    unitTs <- format(diff(x[1:2, 1]))
-    if (gsub("[0-9]+ ", "", unitTs) == "hours") {
-      byTs <- "hours"
-    } else {
-      if (gsub(" days$", "", unitTs) == "1") {
-        byTs <- "days"
-      } else {
-        byTs <- "months"
-      }
-    }
+    unitTs <- .GetTimeStep(x[[1]][1:2])
+    byTs <- paste(unitTs, collapse = " ")
     fakeTs <- data.frame(DatesR = seq(from = as.POSIXct(start, tz = "UTC"),
                                       to   = as.POSIXct(stop , tz = "UTC"),
                                       by   = byTs) + TimeLag)
-    TabSeries2 <- merge(fakeTs, TabSeries2, by = "DatesR", all.x = TRUE)
+    TabSeries2 <- merge(x = fakeTs,
+                        y = TabSeries2,
+                        by = "DatesR",
+                        all.x = TRUE)
   }
   TabSeries2$DatesRini <- TabSeries2$DatesR %in% TabSeries0$DatesR
 
 
-  TabSeries2$Selec2 <- format(TabSeries2$DatesR, Format)
+  TabSeries2$Selec2 <- format(TabSeries2$DatesR, format = Format)
 
   if (nchar(Format) > 2 | Format == "%Y") {
     # Compute aggregation
@@ -135,8 +124,8 @@ SeriesAggreg.data.frame <- function(x,
       yfm <- sprintf("%02.f", YearFirstMonth)
       spF1 <- "%m"
       spF2 <- "%Y-%m"
-      TabSeries2$Selec1 <- format(TabSeries2$DatesR, spF1)
-      TabSeries2$Selec2 <- format(TabSeries2$DatesR, spF2)
+      TabSeries2$Selec1 <- format(TabSeries2$DatesR, format = spF1)
+      TabSeries2$Selec2 <- format(TabSeries2$DatesR, format = spF2)
       TabSeries2$Selec <- !duplicated(TabSeries2$Selec2) & TabSeries2$Selec1 == yfm
     }
     TabSeries2$Fac2 <- cumsum(TabSeries2$Selec)
@@ -144,12 +133,12 @@ SeriesAggreg.data.frame <- function(x,
     # Compute regime
     if (Format == "%d") {
       spF2 <- "%m-%d"
-      TabSeries2$Selec2 <- format(TabSeries2$DatesR, spF2)
+      TabSeries2$Selec2 <- format(TabSeries2$DatesR, format = spF2)
     }
     TabSeries2$Fac2 <- TabSeries2$Selec2
     TabSeries2$Selec <- !duplicated(TabSeries2$Selec2)
   }
-  listTsAggreg <- lapply(names(listConvertFun), function(y) {
+  listTsAggreg <- lapply(names(listConvertFun), FUN = function(y) {
     if (any(ConvertFun == y)) {
       colTsAggreg <- c("Fac2", colnames(x)[-1L][ConvertFun == y])
       if (grepl("^q\\d+$", y, ignore.case = TRUE)) {
@@ -157,19 +146,21 @@ SeriesAggreg.data.frame <- function(x,
         if (probs < 0 || probs > 1) {
           stop("'Q...' format of argument 'ConvertFun' must be an integer between 0 and 100")
         }
-        aggregate(. ~ Fac2,
-                  data = TabSeries2[, colTsAggreg],
-                  FUN = quantile,
-                  na.action = na.pass,
-                  probs = probs,
-                  type = 8,
-                  na.rm = TRUE)
+        res <- aggregate(. ~ Fac2,
+                         data = TabSeries2[, colTsAggreg],
+                         FUN = quantile,
+                         na.action = na.pass,
+                         probs = probs,
+                         type = 8,
+                         na.rm = TRUE)
       } else {
-        aggregate(. ~ Fac2,
-                  data = TabSeries2[, colTsAggreg],
-                  FUN = listConvertFun[[y]],
-                  na.action = na.pass)
+        res <- aggregate(. ~ Fac2,
+                         data = TabSeries2[, colTsAggreg],
+                         FUN = listConvertFun[[y]],
+                         na.action = na.pass)
       }
+      colnames(res)[-1L] <- colTsAggreg[-1L]
+      res
     } else {
       NULL
     }
@@ -177,8 +168,8 @@ SeriesAggreg.data.frame <- function(x,
   listTsAggreg <- listTsAggreg[!sapply(listTsAggreg, is.null)]
   tsAggreg <- do.call(cbind, listTsAggreg)
   tsAggreg <- tsAggreg[, !duplicated(colnames(tsAggreg))]
-  tsAggreg <- merge(tsAggreg,
-                    TabSeries2[, c("Fac2", "DatesR", "DatesRini", "Selec")],
+  tsAggreg <- merge(x = tsAggreg,
+                    y = TabSeries2[, c("Fac2", "DatesR", "DatesRini", "Selec")],
                     by = "Fac2",
                     all.x = TRUE,
                     all.y = FALSE)

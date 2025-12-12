@@ -1,4 +1,3 @@
-
 ## =================================================================================
 ## function to check
 ## =================================================================================
@@ -11,55 +10,59 @@
 #   }
 # }
 
-
-
 ## =================================================================================
 ## function to extract model features
 ## =================================================================================
 
-## table of feature models
-.FeatModels <- function() {
-  path <- system.file("modelsFeatures/FeatModelsGR.csv", package = "airGR")
-  read.table(path, header = TRUE, sep = ";", stringsAsFactors = FALSE)
-}
-
+## table of feature models (run only once to produce the rda file)
+# .FeatModels <- read.table("inst/modelsFeatures/FeatModelsGR.csv",
+#                           header = TRUE, sep = ";", stringsAsFactors = FALSE)
+# usethis::use_data(.FeatModels, internal = TRUE, overwrite = TRUE)
 
 ## function to extract model features
 .GetFeatModel <- function(FUN_MOD, DatesR = NULL) {
-  FeatMod <- .FeatModels()
-  NameFunMod <- ifelse(test = FeatMod$Pkg %in% "airGR",
-                       yes  = paste("RunModel", FeatMod$NameMod, sep = "_"),
-                       no   = FeatMod$NameMod)
+  NameFunMod <- ifelse(
+    test = .FeatModels$Pkg %in% "airGR",
+    yes = paste("RunModel", .FeatModels$NameMod, sep = "_"),
+    no = .FeatModels$NameMod
+  )
   FunMod <- lapply(NameFunMod, FUN = match.fun)
   IdMod <- which(sapply(FunMod, FUN = function(x) identical(FUN_MOD, x)))
   if (length(IdMod) < 1) {
     stop("'FUN_MOD' must be one of ", paste(NameFunMod, collapse = ", "))
   } else {
-    res <- as.list(FeatMod[IdMod, ])
+    res <- as.list(.FeatModels[IdMod, ])
     res$NameFunMod <- NameFunMod[IdMod]
     if (!is.null(DatesR)) {
-      DiffTimeStep <- as.numeric(difftime(DatesR[length(DatesR)],
-                                          DatesR[length(DatesR)-1],
-                                          units = "secs"))
+      DiffTimeStep <- as.numeric(difftime(
+        DatesR[length(DatesR)],
+        DatesR[length(DatesR) - 1],
+        units = "secs"
+      ))
       if (is.na(res$TimeUnit)) {
-        if (any(DiffTimeStep %in% 3600:3601)) { # 3601: leap second
+        if (any(DiffTimeStep %in% 3600:3601)) {
+          # 3601: leap second
           res$TimeUnit <- "hourly"
         } else {
           res$TimeUnit <- "daily"
         }
       }
     }
-    res$TimeStep <- switch(res$TimeUnit,
-                           hourly  =       1,
-                           daily   =       1 * 24,
-                           monthly =   28:31 * 24,
-                           yearly  = 365:366 * 24)
-    res$TimeStepMean <- switch(res$TimeUnit,
-                               hourly  =           1,
-                               daily   =           1 * 24,
-                               monthly = 365.25 / 12 * 24,
-                               yearly  =      365.25 * 24)
-    res$TimeStep     <- res$TimeStep * 3600
+    res$TimeStep <- switch(
+      res$TimeUnit,
+      hourly = 1,
+      daily = 1 * 24,
+      monthly = 28:31 * 24,
+      yearly = 365:366 * 24
+    )
+    res$TimeStepMean <- switch(
+      res$TimeUnit,
+      hourly = 1,
+      daily = 1 * 24,
+      monthly = 365.25 / 12 * 24,
+      yearly = 365.25 * 24
+    )
+    res$TimeStep <- res$TimeStep * 3600
     res$TimeStepMean <- as.integer(res$TimeStepMean * 3600)
     res$Class <- c(res$TimeUnit, res$Class)
     res$CodeModHydro <- res$CodeMod
@@ -78,13 +81,11 @@
 }
 
 
-
 ## =================================================================================
 ## function to manage Fortran outputs
 ## =================================================================================
 
 .FortranOutputs <- function(GR = NULL, isCN = FALSE) {
-
   outGR <- NULL
   outCN <- NULL
 
@@ -92,58 +93,108 @@
     GR <- ""
   }
   if (GR == "GR1A") {
-    outGR <- c("PotEvap", "Precip",
-               "Qsim")
+    outGR <- c("PotEvap", "Precip", "Qsim")
   } else if (GR == "GR2M") {
-    outGR <- c("PotEvap", "Precip", "Prod", "Pn", "Ps",
-               "AE",
-               "Perc", "PR",
-               "Rout",
-               "AExch",
-               "Qsim")
+    outGR <- c(
+      "PotEvap",
+      "Precip",
+      "Prod",
+      "Pn",
+      "Ps",
+      "AE",
+      "Perc",
+      "PR",
+      "Rout",
+      "AExch",
+      "Qsim"
+    )
   } else if (GR == "GR5H") {
-    outGR <- c("PotEvap", "Precip", "Interc", "Prod", "Pn", "Ps",
-               "AE", "EI", "ES",
-               "Perc", "PR",
-               "Q9", "Q1",
-               "Rout", "Exch",
-               "AExch1", "AExch2",
-               "AExch", "QR",
-               "QD",
-               "Qsim")
+    outGR <- c(
+      "PotEvap",
+      "Precip",
+      "Interc",
+      "Prod",
+      "Pn",
+      "Ps",
+      "AE",
+      "EI",
+      "ES",
+      "Perc",
+      "PR",
+      "Q9",
+      "Q1",
+      "Rout",
+      "Exch",
+      "AExch1",
+      "AExch2",
+      "AExch",
+      "QR",
+      "QD",
+      "Qsim"
+    )
   } else if (GR %in% c("GR4J", "GR5J", "GR4H")) {
-    outGR <- c("PotEvap", "Precip", "Prod", "Pn", "Ps",
-               "AE",
-               "Perc", "PR",
-               "Q9", "Q1",
-               "Rout", "Exch",
-               "AExch1", "AExch2",
-               "AExch", "QR",
-               "QD",
-               "Qsim")
+    outGR <- c(
+      "PotEvap",
+      "Precip",
+      "Prod",
+      "Pn",
+      "Ps",
+      "AE",
+      "Perc",
+      "PR",
+      "Q9",
+      "Q1",
+      "Rout",
+      "Exch",
+      "AExch1",
+      "AExch2",
+      "AExch",
+      "QR",
+      "QD",
+      "Qsim"
+    )
   } else if (GR == "GR6J") {
-    outGR <- c("PotEvap", "Precip", "Prod", "Pn", "Ps",
-               "AE",
-               "Perc", "PR",
-               "Q9", "Q1",
-               "Rout", "Exch",
-               "AExch1", "AExch2",
-               "AExch", "QR",
-               "QRExp", "Exp",
-               "QD",
-               "Qsim")
+    outGR <- c(
+      "PotEvap",
+      "Precip",
+      "Prod",
+      "Pn",
+      "Ps",
+      "AE",
+      "Perc",
+      "PR",
+      "Q9",
+      "Q1",
+      "Rout",
+      "Exch",
+      "AExch1",
+      "AExch2",
+      "AExch",
+      "QR",
+      "QRExp",
+      "Exp",
+      "QD",
+      "Qsim"
+    )
   }
   if (isCN) {
-    outCN <- c("Pliq", "Psol",
-               "SnowPack", "ThermalState", "Gratio",
-               "PotMelt", "Melt", "PliqAndMelt", "Temp",
-               "Gthreshold", "Glocalmax")
+    outCN <- c(
+      "Pliq",
+      "Psol",
+      "SnowPack",
+      "ThermalState",
+      "Gratio",
+      "PotMelt",
+      "Melt",
+      "PliqAndMelt",
+      "Temp",
+      "Gthreshold",
+      "Glocalmax"
+    )
   }
 
   res <- list(GR = outGR, CN = outCN)
-
 }
-
 
 
 ## =================================================================================
@@ -174,9 +225,9 @@
   }
   if (inherits(x, "SD")) {
     res$LengthHydro <- x$LengthHydro
-    res$BasinAreas  <- x$BasinAreas
+    res$BasinAreas <- x$BasinAreas
   }
-  class(res) <- class(x)
+  attributes(res) <- attributes(x)
   res
 }
 
@@ -199,7 +250,7 @@
 
 .ExtractOutputsModel <- function(x, i) {
   res <- lapply(x, function(x) {
-    if (is.matrix(x)  && length(dim(x)) == 2L) {
+    if (is.matrix(x) && length(dim(x)) == 2L) {
       res0 <- x[i, ]
     }
     if (is.array(x) && length(dim(x)) == 3L) {
@@ -239,17 +290,18 @@
 }
 
 
-
 ## =================================================================================
 ## function to try to set local time in English
 ## =================================================================================
 
 .TrySetLcTimeEN <- function() {
-  locale <- list("English_United Kingdom",
-                 "en_US",
-                 "en_US.UTF-8",
-                 "en_US.utf8",
-                 "en")
+  locale <- list(
+    "English_United Kingdom",
+    "en_US",
+    "en_US.UTF-8",
+    "en_US.utf8",
+    "en"
+  )
   dateTest <- as.POSIXct("2000-02-15", tz = "UTC", format = "%Y-%m-%d")
   monthTestTarget <- "February"
   monthTest <- function() {

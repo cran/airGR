@@ -1,4 +1,4 @@
-## -----------------------------------------------------------------------------
+## ----warning=FALSE------------------------------------------------------------
 library(airGR)
 
 ## -----------------------------------------------------------------------------
@@ -42,7 +42,7 @@ OutputsModel <- RunModel_GR4J(InputsModel = InputsModel, RunOptions = RunOptions
 str(OutputsModel)
 
 ## ----eval=F-------------------------------------------------------------------
-#  plot(OutputsModel, Qobs = BasinObs$Qmm[Ind_Run])
+# plot(OutputsModel, Qobs = BasinObs$Qmm[Ind_Run])
 
 ## -----------------------------------------------------------------------------
 OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)

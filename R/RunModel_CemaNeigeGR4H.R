@@ -32,7 +32,7 @@ RunModel_CemaNeigeGR4H <- function(InputsModel, RunOptions, Param) {
     RunOptions$IndPeriod_WarmUp <- NULL
   }
   IndPeriod1     <- c(RunOptions$IndPeriod_WarmUp, RunOptions$IndPeriod_Run)
-  LInputSeries   <- as.integer(length(IndPeriod1))
+  LInputSeries   <- length(IndPeriod1)
   IndPeriod2     <- (length(RunOptions$IndPeriod_WarmUp)+1):LInputSeries
   ParamCemaNeige <- Param[(length(Param) - 1 - 2 * as.integer(IsHyst)):length(Param)]
   NParamMod      <- as.integer(length(Param) - (2 + 2 * as.integer(IsHyst)))
@@ -58,7 +58,9 @@ RunModel_CemaNeigeGR4H <- function(InputsModel, RunOptions, Param) {
 
 
     ## Call CemaNeige Fortran_________________________
-    for (iLayer in 1:NLayers) {
+    OutputsIni  <- matrix(-99e9, nrow = LInputSeries, ncol = length(IndOutputsCemaNeige))
+    StateEndIni <- rep(-99e9, NStates)
+    for (iLayer in seq_len(NLayers)) {
 
       if (!IsHyst) {
         StateStartCemaNeige <- RunOptions$IniStates[(7 + 20*24 + 40*24) + c(iLayer, iLayer+NLayers)]
@@ -77,11 +79,11 @@ RunModel_CemaNeigeGR4H <- function(InputsModel, RunOptions, Param) {
                           NStates = as.integer(NStates),                                                  ### number of state variables used for model initialising = 4
                           StateStart = StateStartCemaNeige,                                               ### state variables used when the model run starts
                           IsHyst = as.integer(IsHyst),                                                    ### use of hysteresis
-                          NOutputs = as.integer(length(IndOutputsCemaNeige)),                             ### number of output series
+                          NOutputs = length(IndOutputsCemaNeige),                                         ### number of output series
                           IndOutputs = IndOutputsCemaNeige,                                               ### indices of output series
                           ## outputs
-                          Outputs = matrix(as.double(-99e9), nrow = LInputSeries, ncol = length(IndOutputsCemaNeige)), ### output series [mm, mm/h or degC]
-                          StateEnd = rep(as.double(-99e9), as.integer(NStates))                                        ### state variables at the end of the model run
+                          Outputs = OutputsIni,                                                           ### output series [mm, mm/h or degC]
+                          StateEnd = StateEndIni                                                          ### state variables at the end of the model run
       )
       RESULTS$Outputs[RESULTS$Outputs   <= -99e8] <- NA
       RESULTS$StateEnd[RESULTS$StateEnd <= -99e8] <- NA
@@ -138,8 +140,8 @@ RunModel_CemaNeigeGR4H <- function(InputsModel, RunOptions, Param) {
                       NOutputs = as.integer(length(IndOutputsMod)),    ### number of output series
                       IndOutputs = IndOutputsMod,                      ### indices of output series
                       ## outputs
-                      Outputs = matrix(as.double(-99e9), nrow = LInputSeries, ncol = length(IndOutputsMod)), ### output series [mm or mm/h]
-                      StateEnd = rep(as.double(-99e9), NStatesMod)                                           ### state variables at the end of the model run
+                      Outputs = matrix(-99e9, nrow = LInputSeries, ncol = length(IndOutputsMod)), ### output series [mm or mm/h]
+                      StateEnd = rep(-99e9, NStatesMod)                                           ### state variables at the end of the model run
   )
   RESULTS$Outputs[RESULTS$Outputs   <= -99e8] <- NA
   RESULTS$StateEnd[RESULTS$StateEnd <= -99e8] <- NA

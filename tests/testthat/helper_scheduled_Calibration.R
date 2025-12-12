@@ -103,7 +103,7 @@ PrepareCalibration <- function(model) {
 ModelCalibration <- function(model) {
 
   e <- PrepareCalibration(model)
-  for(n in ls(e, all.names=TRUE)) assign(n, get(n, e))
+  for(n in ls(e, all.names = TRUE)) assign(n, get(n, e))
 
   # calibration
   suppressWarnings(OutputsCalib <- Calibration(InputsModel = InputsModel, RunOptions = RunOptions,
@@ -132,3 +132,4 @@ fakeHourlyTemp <- function(start_date = "2004-01-01", end_date = "2008-12-31") {
   TH <- TH + varT * 5 # For a mean daily amplitude of 10°
   TH
 }
+

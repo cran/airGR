@@ -170,7 +170,6 @@ optDE <- DEoptim::DEoptim(fn = OptimGR4J,
 #                  repos = NULL, type = "source", dependencies = TRUE)
 ```
 
-
 ```{r hydroPSO2, warning=FALSE, results='hide', message=FALSE, eval=FALSE}
 optPSO <- hydroPSO::hydroPSO(fn = OptimGR4J,
                              lower = lowerGR4J, upper = upperGR4J,
@@ -180,7 +179,7 @@ optPSO <- hydroPSO::hydroPSO(fn = OptimGR4J,
 
 ## MA-LS-Chains
 
-```{r, warning=FALSE, results='hide', eval=FALSE}
+```{r optMALS, warning=FALSE, results='hide', eval=FALSE}
 optMALS <- Rmalschains::malschains(fn = OptimGR4J,
                                    lower = lowerGR4J, upper = upperGR4J,
                                    maxEvals = 2000)
@@ -192,7 +191,7 @@ optMALS <- Rmalschains::malschains(fn = OptimGR4J,
 
 As it can be seen in the table below, the four additional optimization strategies tested lead to very close optima.
 
-```{r resGLOB, warning=FALSE, echo=FALSE, eval=FALSE}
+```{r resGLOB1, warning=FALSE, echo=FALSE, eval=FALSE}
 resGLOB <- data.frame(Algo = c("airGR", "PORT", "DE", "PSO", "MA-LS"),
                       round(rbind(
                         OutputsCalib$ParamFinalR,
@@ -202,7 +201,7 @@ resGLOB <- data.frame(Algo = c("airGR", "PORT", "DE", "PSO", "MA-LS"),
                         airGR::TransfoParam_GR4J(ParamIn = optMALS$sol                    , Direction = "TR")),
                         digits = 3))
 ```
-```{r, warning=FALSE, echo=FALSE}
+```{r resGLOB2, warning=FALSE, echo=FALSE}
 resGLOB
 ```
 

@@ -107,10 +107,10 @@ ParamDownTheo <- c(Velocity, OutputsCalibUp$ParamFinalR)
 
 ## -----------------------------------------------------------------------------
 IC_Lavenne <- CreateInputsCrit_Lavenne(InputsModel = InputsModelDown2,
-                                    RunOptions = RunOptionsDown,
-                                    Obs = QObsDown[Ind_Run],
-                                    AprParamR = ParamDownTheo,
-                                    AprCrit = OutputsCalibUp$CritFinal)
+                                       RunOptions = RunOptionsDown,
+                                       Obs = QObsDown[Ind_Run],
+                                       AprParamR = ParamDownTheo,
+                                       AprCrit = OutputsCalibUp$CritFinal)
 
 ## -----------------------------------------------------------------------------
 OutputsCalibDown3 <- Calibration_Michel(InputsModel = InputsModelDown2,
