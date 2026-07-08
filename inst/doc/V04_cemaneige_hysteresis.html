@@ -150,7 +150,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 div.csl-bib-body { }
 div.csl-entry {
 clear: both;
-margin-bottom: 0em;
 }
 .hanging div.csl-entry {
 margin-left:2em;
@@ -444,56 +443,57 @@ CemaNeige will be used in coupling with GR4J in this vignette.</p>
 (<code>IsHyst</code>) is added in the <code>CreateRunOptions()</code>
 and <code>CreateCalibOptions()</code> functions and has to be set to
 <code>TRUE</code>.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>SolidPrecip <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">t</span>(<span class="fu">sapply</span>(<span class="fu">seq_along</span>(InputsModel<span class="sc">$</span>LayerFracSolidPrecip), <span class="at">FUN =</span> <span class="cf">function</span>(iLayer) {</span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  <span class="fu">c</span>(<span class="at">Cal =</span> <span class="fu">mean</span>(InputsModel<span class="sc">$</span>LayerFracSolidPrecip[[iLayer]][Ind_Cal] <span class="sc">*</span> </span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>                 InputsModel<span class="sc">$</span>LayerPrecip[[iLayer]][Ind_Cal]),</span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>    <span class="at">Val =</span> <span class="fu">mean</span>(InputsModel<span class="sc">$</span>LayerFracSolidPrecip[[iLayer]][Ind_Val] <span class="sc">*</span> </span>
-<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>                 InputsModel<span class="sc">$</span>LayerPrecip[[iLayer]][Ind_Val]))</span>
-<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>})))</span>
-<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>Freqs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">hourly =</span> <span class="fl">365.25</span><span class="sc">*</span><span class="dv">24</span>, <span class="at">daily =</span> <span class="fl">365.25</span>, <span class="at">monthly =</span> <span class="dv">12</span>, <span class="at">yearly =</span> <span class="dv">1</span>)</span>
-<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>Freq <span class="ot">&lt;-</span> <span class="fu">intersect</span>(<span class="fu">class</span>(InputsModel), <span class="fu">names</span>(Freqs))</span>
-<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>SolidPrecip<span class="sc">$</span>Cal <span class="ot">&lt;-</span> SolidPrecip<span class="sc">$</span>Cal <span class="sc">*</span> Freqs[Freq]</span>
-<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>SolidPrecip<span class="sc">$</span>Val <span class="ot">&lt;-</span> SolidPrecip<span class="sc">$</span>Val <span class="sc">*</span> Freqs[Freq]</span>
-<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a></span>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="do">## annual mean of average solid precipitation for each layer</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>SolidPrecip <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">t</span>(<span class="fu">sapply</span>(<span class="fu">seq_along</span>(InputsModel<span class="sc">$</span>LayerFracSolidPrecip), <span class="at">FUN =</span> <span class="cf">function</span>(iLayer) {</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>  <span class="fu">c</span>(<span class="at">Cal =</span> <span class="fu">mean</span>(InputsModel<span class="sc">$</span>LayerFracSolidPrecip[[iLayer]][Ind_Cal] <span class="sc">*</span> </span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>                 InputsModel<span class="sc">$</span>LayerPrecip[[iLayer]][Ind_Cal]),</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>    <span class="at">Val =</span> <span class="fu">mean</span>(InputsModel<span class="sc">$</span>LayerFracSolidPrecip[[iLayer]][Ind_Val] <span class="sc">*</span> </span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>                 InputsModel<span class="sc">$</span>LayerPrecip[[iLayer]][Ind_Val]))</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>})))</span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>Freqs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">hourly =</span> <span class="fl">365.25</span><span class="sc">*</span><span class="dv">24</span>, <span class="at">daily =</span> <span class="fl">365.25</span>, <span class="at">monthly =</span> <span class="dv">12</span>, <span class="at">yearly =</span> <span class="dv">1</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>Freq <span class="ot">&lt;-</span> <span class="fu">intersect</span>(<span class="fu">class</span>(InputsModel), <span class="fu">names</span>(Freqs))</span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>SolidPrecip<span class="sc">$</span>Cal <span class="ot">&lt;-</span> SolidPrecip<span class="sc">$</span>Cal <span class="sc">*</span> Freqs[Freq]</span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>SolidPrecip<span class="sc">$</span>Val <span class="ot">&lt;-</span> SolidPrecip<span class="sc">$</span>Val <span class="sc">*</span> Freqs[Freq]</span>
 <span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a></span>
-<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co"># Calcul des précipitations solides par zone d&#39;altitude, pour calibration et validation</span></span>
-<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>SolidPrecip <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="fu">seq_along</span>(InputsModel<span class="sc">$</span>LayerFracSolidPrecip), <span class="at">FUN =</span> <span class="cf">function</span>(iLayer) {</span>
-<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a>  Cal <span class="ot">&lt;-</span> <span class="fu">mean</span>(InputsModel<span class="sc">$</span>LayerFracSolidPrecip[[iLayer]][Ind_Cal] <span class="sc">*</span></span>
-<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a>                InputsModel<span class="sc">$</span>LayerPrecip[[iLayer]][Ind_Cal], <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a>  Val <span class="ot">&lt;-</span> <span class="fu">mean</span>(InputsModel<span class="sc">$</span>LayerFracSolidPrecip[[iLayer]][Ind_Val] <span class="sc">*</span></span>
-<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a>                InputsModel<span class="sc">$</span>LayerPrecip[[iLayer]][Ind_Val], <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a>  <span class="fu">c</span>(<span class="at">Cal =</span> Cal, <span class="at">Val =</span> Val)</span>
-<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a>})</span>
-<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a>SolidPrecip <span class="ot">&lt;-</span> <span class="fu">Map</span>(<span class="cf">function</span>(frac, precip) {</span>
-<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a>  <span class="fu">c</span>(<span class="at">Cal =</span> <span class="fu">mean</span>(frac[Ind_Cal] <span class="sc">*</span> precip[Ind_Cal], <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a>    <span class="at">Val =</span> <span class="fu">mean</span>(frac[Ind_Val] <span class="sc">*</span> precip[Ind_Val], <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a>  },</span>
-<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a>  InputsModel<span class="sc">$</span>LayerFracSolidPrecip,</span>
-<span id="cb3-26"><a href="#cb3-26" tabindex="-1"></a>  InputsModel<span class="sc">$</span>LayerPrecip)</span>
-<span id="cb3-27"><a href="#cb3-27" tabindex="-1"></a>SolidPrecip <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">do.call</span>(<span class="st">&quot;rbind&quot;</span>, SolidPrecip))</span>
-<span id="cb3-28"><a href="#cb3-28" tabindex="-1"></a></span>
-<span id="cb3-29"><a href="#cb3-29" tabindex="-1"></a>Freqs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">hourly =</span> <span class="fl">365.25</span> <span class="sc">*</span> <span class="dv">24</span>, <span class="at">daily =</span> <span class="fl">365.25</span>, <span class="at">monthly =</span> <span class="dv">12</span>, <span class="at">yearly =</span> <span class="dv">1</span>)</span>
-<span id="cb3-30"><a href="#cb3-30" tabindex="-1"></a>Freq <span class="ot">&lt;-</span> <span class="fu">intersect</span>(<span class="fu">class</span>(InputsModel), <span class="fu">names</span>(Freqs))</span>
-<span id="cb3-31"><a href="#cb3-31" tabindex="-1"></a></span>
-<span id="cb3-32"><a href="#cb3-32" tabindex="-1"></a>SolidPrecip <span class="ot">&lt;-</span> SolidPrecip <span class="sc">*</span> Freqs[Freq]</span>
-<span id="cb3-33"><a href="#cb3-33" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="do">## calculation of solid precipitation by altitude zone, for calibration and validation periods</span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a>SolidPrecip <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="fu">seq_along</span>(InputsModel<span class="sc">$</span>LayerFracSolidPrecip), <span class="at">FUN =</span> <span class="cf">function</span>(iLayer) {</span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a>  Cal <span class="ot">&lt;-</span> <span class="fu">mean</span>(InputsModel<span class="sc">$</span>LayerFracSolidPrecip[[iLayer]][Ind_Cal] <span class="sc">*</span></span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a>                InputsModel<span class="sc">$</span>LayerPrecip[[iLayer]][Ind_Cal], <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a>  Val <span class="ot">&lt;-</span> <span class="fu">mean</span>(InputsModel<span class="sc">$</span>LayerFracSolidPrecip[[iLayer]][Ind_Val] <span class="sc">*</span></span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a>                InputsModel<span class="sc">$</span>LayerPrecip[[iLayer]][Ind_Val], <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a>  <span class="fu">c</span>(<span class="at">Cal =</span> Cal, <span class="at">Val =</span> Val)</span>
+<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a>})</span>
+<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a>SolidPrecip <span class="ot">&lt;-</span> <span class="fu">Map</span>(<span class="cf">function</span>(frac, precip) {</span>
+<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a>  <span class="fu">c</span>(<span class="at">Cal =</span> <span class="fu">mean</span>(frac[Ind_Cal] <span class="sc">*</span> precip[Ind_Cal], <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a>    <span class="at">Val =</span> <span class="fu">mean</span>(frac[Ind_Val] <span class="sc">*</span> precip[Ind_Val], <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a>  },</span>
+<span id="cb3-26"><a href="#cb3-26" tabindex="-1"></a>  InputsModel<span class="sc">$</span>LayerFracSolidPrecip,</span>
+<span id="cb3-27"><a href="#cb3-27" tabindex="-1"></a>  InputsModel<span class="sc">$</span>LayerPrecip)</span>
+<span id="cb3-28"><a href="#cb3-28" tabindex="-1"></a>SolidPrecip <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">do.call</span>(<span class="st">&quot;rbind&quot;</span>, SolidPrecip))</span>
+<span id="cb3-29"><a href="#cb3-29" tabindex="-1"></a></span>
+<span id="cb3-30"><a href="#cb3-30" tabindex="-1"></a>Freqs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">hourly =</span> <span class="fl">365.25</span> <span class="sc">*</span> <span class="dv">24</span>, <span class="at">daily =</span> <span class="fl">365.25</span>, <span class="at">monthly =</span> <span class="dv">12</span>, <span class="at">yearly =</span> <span class="dv">1</span>)</span>
+<span id="cb3-31"><a href="#cb3-31" tabindex="-1"></a>Freq <span class="ot">&lt;-</span> <span class="fu">intersect</span>(<span class="fu">class</span>(InputsModel), <span class="fu">names</span>(Freqs))</span>
+<span id="cb3-32"><a href="#cb3-32" tabindex="-1"></a></span>
+<span id="cb3-33"><a href="#cb3-33" tabindex="-1"></a>SolidPrecip <span class="ot">&lt;-</span> SolidPrecip <span class="sc">*</span> Freqs[Freq]</span>
 <span id="cb3-34"><a href="#cb3-34" tabindex="-1"></a></span>
-<span id="cb3-35"><a href="#cb3-35" tabindex="-1"></a><span class="do">## preparation of the RunOptions object for the calibration period</span></span>
-<span id="cb3-36"><a href="#cb3-36" tabindex="-1"></a>RunOptions_Cal <span class="ot">&lt;-</span> <span class="fu">CreateRunOptions</span>(<span class="at">FUN_MOD =</span> RunModel_CemaNeigeGR4J,</span>
-<span id="cb3-37"><a href="#cb3-37" tabindex="-1"></a>                                   <span class="at">InputsModel =</span> InputsModel, <span class="at">IndPeriod_Run =</span> Ind_Cal,</span>
-<span id="cb3-38"><a href="#cb3-38" tabindex="-1"></a>                                   <span class="at">IsHyst =</span> <span class="cn">TRUE</span>, </span>
-<span id="cb3-39"><a href="#cb3-39" tabindex="-1"></a>                                   <span class="at">MeanAnSolidPrecip =</span> SolidPrecip<span class="sc">$</span>Cal)</span>
-<span id="cb3-40"><a href="#cb3-40" tabindex="-1"></a></span>
-<span id="cb3-41"><a href="#cb3-41" tabindex="-1"></a><span class="do">## preparation of the RunOptions object for the validation period</span></span>
-<span id="cb3-42"><a href="#cb3-42" tabindex="-1"></a>RunOptions_Val <span class="ot">&lt;-</span> <span class="fu">CreateRunOptions</span>(<span class="at">FUN_MOD =</span> RunModel_CemaNeigeGR4J,</span>
-<span id="cb3-43"><a href="#cb3-43" tabindex="-1"></a>                                   <span class="at">InputsModel =</span> InputsModel, <span class="at">IndPeriod_Run =</span> Ind_Val,</span>
-<span id="cb3-44"><a href="#cb3-44" tabindex="-1"></a>                                   <span class="at">IsHyst =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb3-45"><a href="#cb3-45" tabindex="-1"></a>                                   <span class="at">MeanAnSolidPrecip =</span> SolidPrecip<span class="sc">$</span>Val)</span>
-<span id="cb3-46"><a href="#cb3-46" tabindex="-1"></a></span>
-<span id="cb3-47"><a href="#cb3-47" tabindex="-1"></a><span class="do">## preparation of the CalibOptions object</span></span>
-<span id="cb3-48"><a href="#cb3-48" tabindex="-1"></a>CalibOptions <span class="ot">&lt;-</span> <span class="fu">CreateCalibOptions</span>(<span class="at">FUN_MOD =</span> RunModel_CemaNeigeGR4J,</span>
-<span id="cb3-49"><a href="#cb3-49" tabindex="-1"></a>                                   <span class="at">FUN_CALIB =</span> Calibration_Michel,</span>
-<span id="cb3-50"><a href="#cb3-50" tabindex="-1"></a>                                   <span class="at">IsHyst =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<span id="cb3-35"><a href="#cb3-35" tabindex="-1"></a></span>
+<span id="cb3-36"><a href="#cb3-36" tabindex="-1"></a><span class="do">## preparation of the RunOptions object for the calibration period</span></span>
+<span id="cb3-37"><a href="#cb3-37" tabindex="-1"></a>RunOptions_Cal <span class="ot">&lt;-</span> <span class="fu">CreateRunOptions</span>(<span class="at">FUN_MOD =</span> RunModel_CemaNeigeGR4J,</span>
+<span id="cb3-38"><a href="#cb3-38" tabindex="-1"></a>                                   <span class="at">InputsModel =</span> InputsModel, <span class="at">IndPeriod_Run =</span> Ind_Cal,</span>
+<span id="cb3-39"><a href="#cb3-39" tabindex="-1"></a>                                   <span class="at">IsHyst =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb3-40"><a href="#cb3-40" tabindex="-1"></a>                                   <span class="at">MeanAnSolidPrecip =</span> SolidPrecip<span class="sc">$</span>Cal)</span>
+<span id="cb3-41"><a href="#cb3-41" tabindex="-1"></a></span>
+<span id="cb3-42"><a href="#cb3-42" tabindex="-1"></a><span class="do">## preparation of the RunOptions object for the validation period</span></span>
+<span id="cb3-43"><a href="#cb3-43" tabindex="-1"></a>RunOptions_Val <span class="ot">&lt;-</span> <span class="fu">CreateRunOptions</span>(<span class="at">FUN_MOD =</span> RunModel_CemaNeigeGR4J,</span>
+<span id="cb3-44"><a href="#cb3-44" tabindex="-1"></a>                                   <span class="at">InputsModel =</span> InputsModel, <span class="at">IndPeriod_Run =</span> Ind_Val,</span>
+<span id="cb3-45"><a href="#cb3-45" tabindex="-1"></a>                                   <span class="at">IsHyst =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb3-46"><a href="#cb3-46" tabindex="-1"></a>                                   <span class="at">MeanAnSolidPrecip =</span> SolidPrecip<span class="sc">$</span>Val)</span>
+<span id="cb3-47"><a href="#cb3-47" tabindex="-1"></a></span>
+<span id="cb3-48"><a href="#cb3-48" tabindex="-1"></a><span class="do">## preparation of the CalibOptions object</span></span>
+<span id="cb3-49"><a href="#cb3-49" tabindex="-1"></a>CalibOptions <span class="ot">&lt;-</span> <span class="fu">CreateCalibOptions</span>(<span class="at">FUN_MOD =</span> RunModel_CemaNeigeGR4J,</span>
+<span id="cb3-50"><a href="#cb3-50" tabindex="-1"></a>                                   <span class="at">FUN_CALIB =</span> Calibration_Michel,</span>
+<span id="cb3-51"><a href="#cb3-51" tabindex="-1"></a>                                   <span class="at">IsHyst =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <p>In order to calibrate and assess the model performance, we will
 follow the recommendations of <span class="citation">Riboust et al.
 (2019)</span>. This is now possible in <strong>airGR</strong> with the
@@ -727,7 +727,7 @@ calibration in CemaNeige.</p>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1 class="unnumbered">References</h1>
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-riboust_revisiting_2019" class="csl-entry">
 Riboust, Philippe, Guillaume Thirel, Nicolas Le Moine, and Pierre
 Ribstein. 2019. <span>“Revisiting a <span>Simple</span>

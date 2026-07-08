@@ -65,7 +65,8 @@
 
 #' Detect the time step
 #'
-#' @x POSIX class
+#' @param x POSIX class
+#' @noRd
 .GetTimeStep <- function(x) {
   unit <- NA
   step <- NA

@@ -302,7 +302,7 @@ CreateRunOptions <- function(
   } else {
     NLayers <- 0
   }
-  if (!is.null(IniStates) && !"monthly" %in% ObjectClass) {
+  if (!is.null(IniStates)) {
     if (!inherits(IniStates, "IniStates")) {
       stop("'IniStates' must be an object of class 'IniStates'")
     }
@@ -413,7 +413,7 @@ CreateRunOptions <- function(
       eTGCemaNeigeLayers = rep(0, NLayers),
       GthrCemaNeigeLayers = rep(0, NLayers),
       GlocmaxCemaNeigeLayers = rep(0, NLayers),
-      verbose = warnings
+      verbose = FALSE
     )
   }
   IniStates <- unlist(IniStates)

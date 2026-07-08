@@ -129,7 +129,7 @@ OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsMode
 
 ## --- version of CemaNeige with the Linear Hysteresis
 
-## Annual mean of average solid precipitation for each layer
+## annual mean of average solid precipitation for each layer
 SolidPrecip <- sapply(seq_along(InputsModel$LayerFracSolidPrecip), FUN = function(iLayer) {
   iLayerFracSolidPrecip <- InputsModel$LayerFracSolidPrecip[[iLayer]][Ind_Run]
   iLayerPrecip <- InputsModel$LayerPrecip[[iLayer]][Ind_Run]

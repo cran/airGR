@@ -28,6 +28,7 @@
 #                which(format(BasinObs$DatesR, format = "%Y-%m-%d") == "2010-07-31"))
 
 ## ----warning=FALSE, eval=FALSE------------------------------------------------
+# ## annual mean of average solid precipitation for each layer
 # SolidPrecip <- as.data.frame(t(sapply(seq_along(InputsModel$LayerFracSolidPrecip), FUN = function(iLayer) {
 #   c(Cal = mean(InputsModel$LayerFracSolidPrecip[[iLayer]][Ind_Cal] *
 #                  InputsModel$LayerPrecip[[iLayer]][Ind_Cal]),
@@ -40,7 +41,7 @@
 # SolidPrecip$Val <- SolidPrecip$Val * Freqs[Freq]
 # 
 # 
-# # Calcul des précipitations solides par zone d'altitude, pour calibration et validation
+# ## calculation of solid precipitation by altitude zone, for calibration and validation periods
 # SolidPrecip <- lapply(seq_along(InputsModel$LayerFracSolidPrecip), FUN = function(iLayer) {
 #   Cal <- mean(InputsModel$LayerFracSolidPrecip[[iLayer]][Ind_Cal] *
 #                 InputsModel$LayerPrecip[[iLayer]][Ind_Cal], na.rm = TRUE)

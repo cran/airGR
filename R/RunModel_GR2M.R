@@ -10,7 +10,7 @@ RunModel_GR2M <- function(InputsModel, RunOptions, Param) {
     Param[1L] <- Param_X1X2_threshold
   }
   if (Param[2L] < Param_X1X2_threshold) {
-    warning(sprintf("Param[2] (X2: routing store capacity [mm]) < %.2f\n X2 set to %.2f", Param_X1X2_threshold, Param_X1X2_threshold))
+    warning(sprintf("Param[2] (X2: groundwater exchange coefficient [-]) < %.2f\n X2 set to %.2f", Param_X1X2_threshold, Param_X1X2_threshold))
     Param[2L] <- Param_X1X2_threshold
   }
 
@@ -34,10 +34,10 @@ RunModel_GR2M <- function(InputsModel, RunOptions, Param) {
   ## Use of IniResLevels
   if (!is.null(RunOptions$IniResLevels)) {
     RunOptions$IniStates[1] <- RunOptions$IniResLevels[1] * Param[1] ### production store level (mm)
-    RunOptions$IniStates[2] <- RunOptions$IniResLevels[2] * Param[2] ### routing store level (mm)
+    RunOptions$IniStates[2] <- 60 * RunOptions$IniResLevels[2] * Param[2] ### routing store level (mm)
   }
 
-  ## Call GR model Fortan
+  ## Call GR model Fortran
   RESULTS <- .Fortran("frun_gr2m", PACKAGE = "airGR",
                       ## inputs
                       LInputs = LInputSeries,                             ### length of input and output series

@@ -150,7 +150,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
 div.csl-bib-body { }
 div.csl-entry {
 clear: both;
-margin-bottom: 0em;
 }
 .hanging div.csl-entry {
 margin-left:2em;
@@ -399,11 +398,11 @@ following functions:</p>
 <li><code>RunModel_GR4H()</code>: four-parameter hourly lumped
 hydrological model <span class="citation">(Mathevet 2005)</span></li>
 <li><code>RunModel_GR5H()</code>: five-parameter hourly lumped
-hydrological model <span class="citation">(Ficchi 2017; Ficchì, Perrin,
-and Andréassian 2019)</span></li>
+hydrological model <span class="citation">(Ficchi 2017; Ficchì et al.
+2019)</span></li>
 <li><code>RunModel_GR4J()</code>: four-parameter daily lumped
-hydrological model <span class="citation">(Perrin, Michel, and
-Andréassian 2003)</span></li>
+hydrological model <span class="citation">(Perrin et al.
+2003)</span></li>
 <li><code>RunModel_GR5J()</code>: five-parameter daily lumped
 hydrological model <span class="citation">(Le Moine 2008)</span></li>
 <li><code>RunModel_GR6J()</code>: six-parameter daily lumped
@@ -411,13 +410,13 @@ hydrological model <span class="citation">(Pushpalatha et al.
 2011)</span></li>
 <li><code>RunModel_GR2M()</code>: two-parameter monthly lumped
 hydrological model <span class="citation">(Mouelhi 2003; Mouelhi et al.
-2006a)</span></li>
+2006b)</span></li>
 <li><code>RunModel_GR1A()</code>: one-parameter yearly lumped
 hydrological model <span class="citation">(Mouelhi 2003; Mouelhi et al.
-2006b)</span></li>
+2006a)</span></li>
 <li><code>RunModel_CemaNeige()</code>: two-parameter degree-day snowmelt
-and accumulation model <span class="citation">(Valéry, Andréassian, and
-Perrin 2014; Riboust et al. 2019)</span></li>
+and accumulation model <span class="citation">(Valéry et al. 2014;
+Riboust et al. 2019)</span></li>
 <li><code>RunModel_CemaNeigeGR4H()</code>: combined use of
 <strong>GR4H</strong> and <strong>CemaNeige</strong></li>
 <li><code>RunModel_CemaNeigeGR5H()</code>: combined use of
@@ -474,7 +473,7 @@ included in the <strong>airGR</strong> package that contains:</p>
 ##  Mean   : 6130   Mean   : 1.473  
 ##  3rd Qu.: 7850   3rd Qu.: 1.884  
 ##  Max.   :99500   Max.   :23.880  
-##  NA&#39;s   :772     NA&#39;s   :802</code></pre>
+##  NAs    :772     NAs    :802</code></pre>
 <p>The usual functions (e.g. <code>read.table()</code>) can be used to
 load real-case data sets.</p>
 </div>
@@ -579,14 +578,7 @@ model, to be defined in the same format as
 <span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>                               <span class="at">IniStates =</span> <span class="cn">NULL</span>, <span class="at">IniResLevels =</span> <span class="cn">NULL</span>, <span class="at">IndPeriod_WarmUp =</span> <span class="cn">NULL</span>)</span></code></pre></div>
 <pre><code>## Warning in CreateRunOptions(FUN_MOD = RunModel_GR4J, InputsModel = InputsModel, : model warm up period not defined: default configuration used
 ##   the year preceding the run period is used</code></pre>
-<pre><code>## Warning in CreateIniStates(FUN_MOD = FUN_MOD, InputsModel = InputsModel, :
-## &#39;RunModel_GR4J&#39; does not require &#39;ExpStore&#39;. Value set to NA</code></pre>
-<pre><code>## Warning in CreateIniStates(FUN_MOD = FUN_MOD, InputsModel = InputsModel, :
-## &#39;RunModel_GR4J&#39; does not require &#39;IntStore&#39;. Values set to NA</code></pre>
-<pre><code>## Warning in CreateIniStates(FUN_MOD = FUN_MOD, InputsModel = InputsModel, :
-## &#39;RunModel_GR4J&#39; does not require &#39;GCemaNeigeLayers&#39; &#39;GCemaNeigeLayers&#39;,
-## &#39;GthrCemaNeigeLayers&#39; and &#39;GlocmaxCemaNeigeLayers&#39;. Values set to NA</code></pre>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="fu">str</span>(RunOptions)</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">str</span>(RunOptions)</span></code></pre></div>
 <pre><code>## List of 8
 ##  $ IndPeriod_WarmUp: int [1:365] 1828 1829 1830 1831 1832 1833 1834 1835 1836 1837 ...
 ##  $ IndPeriod_Run   : int [1:3652] 2193 2194 2195 2196 2197 2198 2199 2200 2201 2202 ...
@@ -651,9 +643,9 @@ In this case, users have to provide lists to the following arguments
 (some of the are optional): <code>FUN_CRIT</code>, <code>Obs</code>,
 <code>VarObs</code>, <code>BoolCrit</code>, <code>transfo</code>,
 <code>Weights.</code></p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>InputsCrit <span class="ot">&lt;-</span> <span class="fu">CreateInputsCrit</span>(<span class="at">FUN_CRIT =</span> ErrorCrit_NSE, <span class="at">InputsModel =</span> InputsModel, </span>
-<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>                               <span class="at">RunOptions =</span> RunOptions, <span class="at">VarObs =</span> <span class="st">&quot;Q&quot;</span>, <span class="at">Obs =</span> BasinObs<span class="sc">$</span>Qmm[Ind_Run])</span>
-<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a><span class="fu">str</span>(InputsCrit)</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>InputsCrit <span class="ot">&lt;-</span> <span class="fu">CreateInputsCrit</span>(<span class="at">FUN_CRIT =</span> ErrorCrit_NSE, <span class="at">InputsModel =</span> InputsModel, </span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>                               <span class="at">RunOptions =</span> RunOptions, <span class="at">VarObs =</span> <span class="st">&quot;Q&quot;</span>, <span class="at">Obs =</span> BasinObs<span class="sc">$</span>Qmm[Ind_Run])</span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a><span class="fu">str</span>(InputsCrit)</span></code></pre></div>
 <pre><code>## List of 8
 ##  $ FUN_CRIT:function (InputsCrit, OutputsModel, warnings = TRUE, verbose = TRUE)  
 ##   ..- attr(*, &quot;class&quot;)= chr [1:2] &quot;FUN_CRIT&quot; &quot;function&quot;
@@ -676,8 +668,8 @@ define the following arguments:</p>
 <li><code>FUN_MOD</code>: the name of the model function</li>
 <li><code>FUN_CALIB</code>: the name of the calibration algorithm</li>
 </ul>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>CalibOptions <span class="ot">&lt;-</span> <span class="fu">CreateCalibOptions</span>(<span class="at">FUN_MOD =</span> RunModel_GR4J, <span class="at">FUN_CALIB =</span> Calibration_Michel)</span>
-<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a><span class="fu">str</span>(CalibOptions)</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>CalibOptions <span class="ot">&lt;-</span> <span class="fu">CreateCalibOptions</span>(<span class="at">FUN_MOD =</span> RunModel_GR4J, <span class="at">FUN_CALIB =</span> Calibration_Michel)</span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a><span class="fu">str</span>(CalibOptions)</span></code></pre></div>
 <pre><code>## List of 4
 ##  $ FixedParam       : logi [1:4] NA NA NA NA
 ##  $ SearchRanges     : num [1:2, 1:4] 4.59e-05 2.18e+04 -1.09e+04 1.09e+04 4.59e-05 ...
@@ -724,9 +716,9 @@ rough predefined grid or a user-defined list of parameter sets</li>
 <li>a simple steepest descent local search algorithm is performed from
 the best set of parameters found at the first step</li>
 </ol>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>OutputsCalib <span class="ot">&lt;-</span> <span class="fu">Calibration_Michel</span>(<span class="at">InputsModel =</span> InputsModel, <span class="at">RunOptions =</span> RunOptions,</span>
-<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a>                                   <span class="at">InputsCrit =</span> InputsCrit, <span class="at">CalibOptions =</span> CalibOptions,</span>
-<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a>                                   <span class="at">FUN_MOD =</span> RunModel_GR4J)</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>OutputsCalib <span class="ot">&lt;-</span> <span class="fu">Calibration_Michel</span>(<span class="at">InputsModel =</span> InputsModel, <span class="at">RunOptions =</span> RunOptions,</span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>                                   <span class="at">InputsCrit =</span> InputsCrit, <span class="at">CalibOptions =</span> CalibOptions,</span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a>                                   <span class="at">FUN_MOD =</span> RunModel_GR4J)</span></code></pre></div>
 <pre><code>## Grid-Screening in progress (0% 20% 40% 60% 80% 100%)
 ##   Screening completed (81 runs)
 ##       Param =  247.151,   -0.020,   83.096,    2.384
@@ -735,8 +727,8 @@ the best set of parameters found at the first step</li>
 ##   Calibration completed (21 iterations, 234 runs)
 ##       Param =  257.238,    1.012,   88.235,    2.208
 ##       Crit. NSE[Q]       = 0.7988</code></pre>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a>Param <span class="ot">&lt;-</span> OutputsCalib<span class="sc">$</span>ParamFinalR</span>
-<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a>Param</span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a>Param <span class="ot">&lt;-</span> OutputsCalib<span class="sc">$</span>ParamFinalR</span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>Param</span></code></pre></div>
 <pre><code>## [1] 257.237556   1.012237  88.234673   2.207958</code></pre>
 <p>The <code>Calibration_Michel()</code> function is the only one
 implemented in the <strong>airGR</strong> package to calibrate the
@@ -772,8 +764,8 @@ several performance criteria.</p>
 functions (<code>InputsModel</code>, <code>RunOptions</code> and
 parameters). All the data needed have already been prepared in the
 previous steps defined in this guide.</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a>OutputsModel <span class="ot">&lt;-</span> <span class="fu">RunModel_GR4J</span>(<span class="at">InputsModel =</span> InputsModel, <span class="at">RunOptions =</span> RunOptions, <span class="at">Param =</span> Param)</span>
-<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a><span class="fu">str</span>(OutputsModel)</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a>OutputsModel <span class="ot">&lt;-</span> <span class="fu">RunModel_GR4J</span>(<span class="at">InputsModel =</span> InputsModel, <span class="at">RunOptions =</span> RunOptions, <span class="at">Param =</span> Param)</span>
+<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a><span class="fu">str</span>(OutputsModel)</span></code></pre></div>
 <pre><code>## List of 21
 ##  $ DatesR    : POSIXlt[1:3652], format: &quot;1990-01-01&quot; &quot;1990-01-02&quot; ...
 ##  $ PotEvap   : num [1:3652] 0.3 0.4 0.4 0.3 0.1 0.1 0.1 0.2 0.2 0.3 ...
@@ -833,7 +825,7 @@ discharge if provided)</li>
 <li>correlation plot between simulated and observed discharge (if
 observed discharge provided)</li>
 </ul>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a><span class="fu">plot</span>(OutputsModel, <span class="at">Qobs =</span> BasinObs<span class="sc">$</span>Qmm[Ind_Run])</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="fu">plot</span>(OutputsModel, <span class="at">Qobs =</span> BasinObs<span class="sc">$</span>Qmm[Ind_Run])</span></code></pre></div>
 <p>Moreover, if the CemaNeige model is used, the air temperature and the
 simulated snowpack water equivalent time series are plotted.</p>
 </div>
@@ -842,9 +834,9 @@ simulated snowpack water equivalent time series are plotted.</p>
 <p>To evaluate the efficiency of the model, it is possible to use the
 same criterion as defined at the calibration step or to use another
 criterion.</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a>OutputsCrit <span class="ot">&lt;-</span> <span class="fu">ErrorCrit_NSE</span>(<span class="at">InputsCrit =</span> InputsCrit, <span class="at">OutputsModel =</span> OutputsModel)</span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a>OutputsCrit <span class="ot">&lt;-</span> <span class="fu">ErrorCrit_NSE</span>(<span class="at">InputsCrit =</span> InputsCrit, <span class="at">OutputsModel =</span> OutputsModel)</span></code></pre></div>
 <pre><code>## Crit. NSE[Q] = 0.7988</code></pre>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a><span class="fu">str</span>(OutputsCrit)</span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a><span class="fu">str</span>(OutputsCrit)</span></code></pre></div>
 <pre><code>## List of 5
 ##  $ CritValue      : num 0.799
 ##  $ CritName       : chr &quot;NSE[Q]&quot;
@@ -852,12 +844,12 @@ criterion.</p>
 ##  $ Multiplier     : num -1
 ##  $ Ind_notcomputed: int [1:57] 2405 2406 2407 2408 2409 2410 2411 2412 2413 2414 ...
 ##  - attr(*, &quot;class&quot;)= chr [1:2] &quot;NSE&quot; &quot;ErrorCrit&quot;</code></pre>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" tabindex="-1"></a>OutputsCrit <span class="ot">&lt;-</span> <span class="fu">ErrorCrit_KGE</span>(<span class="at">InputsCrit =</span> InputsCrit, <span class="at">OutputsModel =</span> OutputsModel)</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a>OutputsCrit <span class="ot">&lt;-</span> <span class="fu">ErrorCrit_KGE</span>(<span class="at">InputsCrit =</span> InputsCrit, <span class="at">OutputsModel =</span> OutputsModel)</span></code></pre></div>
 <pre><code>## Crit. KGE[Q] = 0.7854</code></pre>
 <pre><code>##  SubCrit. KGE[Q] cor(sim, obs, &quot;pearson&quot;) = 0.8985 
 ##  SubCrit. KGE[Q] sd(sim)/sd(obs)          = 0.8161 
 ##  SubCrit. KGE[Q] mean(sim)/mean(obs)      = 1.0437</code></pre>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" tabindex="-1"></a><span class="fu">str</span>(OutputsCrit)</span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" tabindex="-1"></a><span class="fu">str</span>(OutputsCrit)</span></code></pre></div>
 <pre><code>## List of 7
 ##  $ CritValue      : num 0.785
 ##  $ CritName       : chr &quot;KGE[Q]&quot;
@@ -877,7 +869,7 @@ criterion.</p>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1 class="unnumbered">References</h1>
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-ficchi_adaptive_2017" class="csl-entry">
 Ficchi, Andrea. 2017. <span>“An Adaptive Hydrological Model for Multiple
 Time-Steps: Diagnostics and Improvements Based on Fluxes
@@ -888,7 +880,7 @@ Consistency.”</span> PhD thesis, Université Pierre-et-Marie-Curie, Paris
 Ficchì, Andrea, Charles Perrin, and Vazken Andréassian. 2019.
 <span>“Hydrological Modelling at Multiple Sub-Daily Time Steps: Model
 Improvement via Flux-Matching.”</span> <em>Journal of Hydrology</em>,
-June. <a href="https://doi.org/10.1016/j.jhydrol.2019.05.084">https://doi.org/10.1016/j.jhydrol.2019.05.084</a>.
+ahead of print, June. <a href="https://doi.org/10.1016/j.jhydrol.2019.05.084">https://doi.org/10.1016/j.jhydrol.2019.05.084</a>.
 </div>
 <div id="ref-le_moine_bassin_2008" class="csl-entry">
 Le Moine, Nicolas. 2008. <span>“Le Bassin Versant de Surface Vu Par Le
@@ -907,16 +899,17 @@ Mouelhi, Safouane. 2003. <span>“Vers Une Chaîne Cohérente de Modèles
 Pluie-Débit Conceptuels Globaux Aux Pas de Temps Pluriannuel, Annuel,
 Mensuel Et Journalier.”</span> PhD thesis, ENGREF Paris. <a href="https://theses.hal.science/tel-00005696">https://theses.hal.science/tel-00005696</a>.
 </div>
+<div id="ref-mouelhi_linking_2006" class="csl-entry">
+Mouelhi, Safouane, Claude Michel, Charles Perrin, and Vazken
+Andréassian. 2006a. <span>“Linking Stream Flow to Rainfall at the Annual
+Time Step: <span>The</span> <span>Manabe</span> Bucket Model
+Revisited.”</span> <em>Journal of Hydrology</em> 328 (1-2): 283–96. <a href="https://doi.org/10.1016/j.jhydrol.2005.12.022">https://doi.org/10.1016/j.jhydrol.2005.12.022</a>.
+</div>
 <div id="ref-mouelhi_stepwise_2006" class="csl-entry">
 Mouelhi, Safouane, Claude Michel, Charles Perrin, and Vazken
-Andréassian. 2006a. <span>“Stepwise Development of a Two-Parameter
+Andréassian. 2006b. <span>“Stepwise Development of a Two-Parameter
 Monthly Water Balance Model.”</span> <em>Journal of Hydrology</em> 318
 (1-4): 200–214. <a href="https://doi.org/10.1016/j.jhydrol.2005.06.014">https://doi.org/10.1016/j.jhydrol.2005.06.014</a>.
-</div>
-<div id="ref-mouelhi_linking_2006" class="csl-entry">
-———. 2006b. <span>“Linking Stream Flow to Rainfall at the Annual Time
-Step: <span>The</span> <span>Manabe</span> Bucket Model
-Revisited.”</span> <em>Journal of Hydrology</em> 328 (1-2): 283–96. <a href="https://doi.org/10.1016/j.jhydrol.2005.12.022">https://doi.org/10.1016/j.jhydrol.2005.12.022</a>.
 </div>
 <div id="ref-perrin_improvement_2003" class="csl-entry">
 Perrin, Charles, Claude Michel, and Vazken Andréassian. 2003.

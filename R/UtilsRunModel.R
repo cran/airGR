@@ -10,14 +10,15 @@
 #' @return OutputsModel object
 #' @noRd
 #'
-.GetOutputsModelGR <- function(InputsModel,
-                               RunOptions,
-                               RESULTS,
-                               LInputSeries,
-                               Param,
-                               CemaNeigeLayers = NULL) {
-
-  IndPeriod2 <- (length(RunOptions$IndPeriod_WarmUp)+1):LInputSeries
+.GetOutputsModelGR <- function(
+  InputsModel,
+  RunOptions,
+  RESULTS,
+  LInputSeries,
+  Param,
+  CemaNeigeLayers = NULL
+) {
+  IndPeriod2 <- (length(RunOptions$IndPeriod_WarmUp) + 1):LInputSeries
   FortranOutputs <- RunOptions$FortranOutputs$GR
 
   IndOutputs <- which(FortranOutputs %in% RunOptions$Outputs_Sim)
@@ -31,15 +32,23 @@
   seqOutputs <- seq_len(RESULTS$NOutputs)
   names(seqOutputs) <- FortranOutputs[IndOutputs]
 
-  OutputsModel <- c(OutputsModel,
-                    lapply(seqOutputs, function(i) RESULTS$Outputs[IndPeriod2, i]))
+  OutputsModel <- c(
+    OutputsModel,
+    lapply(seqOutputs, function(i) RESULTS$Outputs[IndPeriod2, i])
+  )
 
   if (!is.null(CemaNeigeLayers)) {
     OutputsModel$CemaNeigeLayers <- CemaNeigeLayers
   }
-  if ("WarmUpQsim" %in% RunOptions$Outputs_Sim && !identical(RunOptions$IndPeriod_WarmUp, 0L)) {
-    OutputsModel$RunOptions$WarmUpQsim <- RESULTS$Outputs[seq_len(length(RunOptions$IndPeriod_WarmUp)),
-                                               which(FortranOutputs == "Qsim")]
+  if (
+    "WarmUpQsim" %in%
+      RunOptions$Outputs_Sim &&
+      !identical(RunOptions$IndPeriod_WarmUp, 0L)
+  ) {
+    OutputsModel$RunOptions$WarmUpQsim <- RESULTS$Outputs[
+      seq_len(length(RunOptions$IndPeriod_WarmUp)),
+      which(names(seqOutputs) == "Qsim")
+    ]
     # class(OutputsModel$RunOptions$WarmUpQsim) <- c("WarmUpOutputsModelItem", class(OutputsModel$RunOptions$WarmUpQsim))
   }
 
@@ -50,7 +59,6 @@
   if ("StateEnd" %in% RunOptions$Outputs_Sim) {
     OutputsModel$StateEnd <- RESULTS$StateEnd
   }
-
 
   class(OutputsModel) <- c("OutputsModel", class(RunOptions)[-1])
 
@@ -72,7 +80,11 @@
     stop("'InputsModel' must be of class 'InputsModel'")
   }
   if (!inherits(InputsModel, RunOptions$FeatFUN_MOD$TimeUnit)) {
-    stop("'InputsModel' must be of class '", RunOptions$FeatFUN_MOD$TimeUnit, "'")
+    stop(
+      "'InputsModel' must be of class '",
+      RunOptions$FeatFUN_MOD$TimeUnit,
+      "'"
+    )
   }
   if (!inherits(InputsModel, "GR")) {
     stop("'InputsModel' must be of class 'GR'")
@@ -101,6 +113,10 @@
     stop("'Param' must be a numeric vector")
   }
   if (sum(!is.na(Param)) != RunOptions$FeatFUN_MOD$NbParam) {
-    stop(paste("'Param' must be a vector of length", RunOptions$FeatFUN_MOD$NbParam, "and contain no NA"))
+    stop(paste(
+      "'Param' must be a vector of length",
+      RunOptions$FeatFUN_MOD$NbParam,
+      "and contain no NA"
+    ))
   }
 }

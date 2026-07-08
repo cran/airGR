@@ -2,43 +2,68 @@
 
 
 
+### 1.7.9 Release Notes (2026-07-08)
+
+#### Bug fixes
+
+- `CreateRunOptions()` no longer displays irrelevant warnings about unused initial states (e.g., CemaNeige or Interception states) when `IniStates` is not provided by the user. ([#204](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/204))
+- `CreateRunOptions()` now correctly takes into account the `IniStates` argument when using the `RunModel_GR2M()` function. ([#209](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/209))
+- `RunModel_GR2M()` now uses the fixed 60 mm capacity of the routing reservoir to calculate its initial state, instead of incorrectly using the groundwater exchange coefficient (X2). This fix only impacts results when no warm-up period is used (i.e., when the simulation starts at the  first time step). ([#206](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/206))
+- Fixed a crash in the internal `.GetOutputsModelGR()` function that occurred when `WarmUpQsim` was explicitly requested in the `Outputs_Sim` argument of `CreateRunOptions()`. ([#208](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/208))
+
+
+#### Minor user-visible changes
+
+- `RunModel_GR2M()` warning message for the X2 parameter threshold has been corrected to display the proper parameter name and unit ([-]). ([#206](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/206))
+- `RunModel_Lag()` has been cleaned of experimental code related to leaks on routed flows that was unintentionally included in the previous release. ([#207](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/207))
+
+
+#### Version control and issue tracking
+
+- Updated project URLs to reflect the migration from the old IRSTEA GitLab to the new INRAE Forge. ([#210](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/210))
+- Added several regression tests for `CreateRunOptions()` to ensure `IniStates` handling, correct output lists, and the absence of intempestive warnings. ([#209](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/209), [#204](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/204), [#208](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/208))
+
+____________________________________________________________________________________
+
+
+
 ### 1.7.8 Release Notes (2025-12-12)
 
 #### Bug fixes
 
-- `RunModel_CemaNeige()` now run alone without GR models at the hourly time step. ([#179](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/179))
-- `SeriesAggreg()` now correctly handles time series provided with diverse input time steps (e.g., 15-minute data aggregated to monthly values). ([#149](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/149))
-- `SeriesAggreg()` now correctly compute `LayerFracSolidPrecip`. This variable, representing a fraction, was previously aggregated using a sum, which was incorrect. It is now recalculated from the aggregated liquid and solid precipitation values to ensure physically consistent results. ([#160](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/160))
-- `SeriesAggreg()` now correctly handles inputs provided as `tibble` format. ([#187](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/187))
-- Restored the missing `IsIntStore` argument in `CreateCalibOptions()`, which had been unintentionally since version 1.4.1.18. Without it, the GR5H model with interception storage was using the parameter transformations of the version without interception, leading to suboptimal calibration results. ([#165](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/165))
-- `CreateRunOptions()` now run when used with `RunModel_Lag()`, preventing the error and ensuring compatibility with RunModel_Lag() and potential future non-GR models. ([#167](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/167))
-- `CreateRunOptions()` and `RunModel_GR5H*()` now properly handle cases where the Imax argument is set to `NULL`. Previously, no error was raised and a default warm-up configuration was silently applied, which could lead to incorrect simulations. ([#181](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/181))
+- `RunModel_CemaNeige()` now run alone without GR models at the hourly time step. ([#179](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/179))
+- `SeriesAggreg()` now correctly handles time series provided with diverse input time steps (e.g., 15-minute data aggregated to monthly values). ([#149](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/149))
+- `SeriesAggreg()` now correctly compute `LayerFracSolidPrecip`. This variable, representing a fraction, was previously aggregated using a sum, which was incorrect. It is now recalculated from the aggregated liquid and solid precipitation values to ensure physically consistent results. ([#160](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/160))
+- `SeriesAggreg()` now correctly handles inputs provided as `tibble` format. ([#187](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/187))
+- Restored the missing `IsIntStore` argument in `CreateCalibOptions()`, which had been unintentionally since version 1.4.1.18. Without it, the GR5H model with interception storage was using the parameter transformations of the version without interception, leading to suboptimal calibration results. ([#165](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/165))
+- `CreateRunOptions()` now run when used with `RunModel_Lag()`, preventing the error and ensuring compatibility with RunModel_Lag() and potential future non-GR models. ([#167](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/167))
+- `CreateRunOptions()` and `RunModel_GR5H*()` now properly handle cases where the Imax argument is set to `NULL`. Previously, no error was raised and a default warm-up configuration was silently applied, which could lead to incorrect simulations. ([#181](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/181))
 - `ErrorCrit_RMSE()` now correctly ignores missing values in either the observed or the simulated time series due to inv" or "log" transformations producing additional `NA` values in simulated flows.
 
 
 #### Major user-visible changes
 
 - `RunModel_*()` and `Calibration_Michel()` now run faster thanks to multiple optimizations: 
-`.GetFeatModel()` now preloads `.FeatModels` from an RDA file instead of a CSV file, model features are stored as an attribute of InputsModel (eliminating redundant calls in `CreateIniStates()`), and unnecessary sentinel-to-NA conversions have been removed. ([#176](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/176))
+`.GetFeatModel()` now preloads `.FeatModels` from an RDA file instead of a CSV file, model features are stored as an attribute of InputsModel (eliminating redundant calls in `CreateIniStates()`), and unnecessary sentinel-to-NA conversions have been removed. ([#176](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/176))
 
 
 #### Minor user-visible changes
 
 - `RunModel_CemaNeigeGR4J()` example and the 'cemaneige_hysteresis' vignette now reflect the correct use of the CemaNeige hysteresis formulation as described in Riboust et al. (2019).
-The `MeanAnSolidPrecip` argument of `CreateRunOptions()` must now be specified with distinct values for each elevation zone when hysteresis is activated. ([#141](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/141))
-- Added the features diagram to the 'Get Started' vignette to provide a visual summary of the main airGR functions and their relationships. ([#186](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/186))
-- Refactored the handling of criterion logic to decentralize the definition of CritBestValue and Multiplier across the individual `ErrorCrit_*()` functions. ([#199](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/199))
-- `citation("airGR")` now returns the digital object identifier (DOI) provided by the CRAN ([#189](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/189))
+The `MeanAnSolidPrecip` argument of `CreateRunOptions()` must now be specified with distinct values for each elevation zone when hysteresis is activated. ([#141](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/141))
+- Added the features diagram to the 'Get Started' vignette to provide a visual summary of the main airGR functions and their relationships. ([#186](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/186))
+- Refactored the handling of criterion logic to decentralize the definition of CritBestValue and Multiplier across the individual `ErrorCrit_*()` functions. ([#199](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/199))
+- `citation("airGR")` now returns the digital object identifier (DOI) provided by the CRAN ([#189](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/189))
 
 
 #### Version control and issue tracking
 
-- Removed embedded functions from regression test lists to avoid false positives in test comparisons. ([#202](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/202))
+- Removed embedded functions from regression test lists to avoid false positives in test comparisons. ([#202](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/202))
 
 
 #### CRAN-compatibility updates
 
-- Now depends on R >= 3.6.0. ([#176](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/176))
+- Now depends on R >= 3.5.0. ([#176](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/176))
 
 ____________________________________________________________________________________
 
@@ -47,21 +72,21 @@ ________________________________________________________________________________
 
 #### Bug fixes
 
-- `CreateCalibOptions()` now uses parameter screening for `RunModel_Lag()` which are now expressed in the transformed space instead of the parameter space. ([#156](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/156))
-- `RunModel_CemaNeige*()` now takes into account the case when `dG = 0`. ([#178](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/178))
+- `CreateCalibOptions()` now uses parameter screening for `RunModel_Lag()` which are now expressed in the transformed space instead of the parameter space. ([#156](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/156))
+- `RunModel_CemaNeige*()` now takes into account the case when `dG = 0`. ([#178](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/178))
 
 
 #### Minor user-visible changes
 
-- `Calibration_Michel()` now runs faster as the `ProposeCandidatesGrid()` was improved to create the propose candidates grid. ([#157](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/157)) 
-- `TransfoParamGR5J()` now returns the correct error message when the number of parameters is incorrect. ([#168](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/168)) 
+- `Calibration_Michel()` now runs faster as the `ProposeCandidatesGrid()` was improved to create the propose candidates grid. ([#157](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/157)) 
+- `TransfoParamGR5J()` now returns the correct error message when the number of parameters is incorrect. ([#168](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/168)) 
 
 
 #### CRAN-compatibility updates
 
-- `frun_*` Fortran subroutine does not use anymore the 'DLLEXPORT' command. ([#180](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/180))
-- The 'Rmalschains' package is back on CRAN and it is again suggested (cf. the 'param_optim' vignette). ([#175](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/175))
-- The 'hydroPSO' package is no longer suggested (but the code linked to its use and is always present in the 'param_optim' vignette). ([#182](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/182))
+- `frun_*` Fortran subroutine does not use anymore the 'DLLEXPORT' command. ([#180](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/180))
+- The 'Rmalschains' package is back on CRAN and it is again suggested (cf. the 'param_optim' vignette). ([#175](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/175))
+- The 'hydroPSO' package is no longer suggested (but the code linked to its use and is always present in the 'param_optim' vignette). ([#182](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/182))
 
 ____________________________________________________________________________________
 
@@ -70,8 +95,8 @@ ________________________________________________________________________________
 
 #### CRAN-compatibility updates
 
-- The 'Rmalschains' package is no longer suggested (but the code linked to its use and is always present in the 'param_optim' vignette). ([#172](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/172))
-- `.ErrorCrit()` and `.FeatModels` function are no more exported. ([#173](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/173))
+- The 'Rmalschains' package is no longer suggested (but the code linked to its use and is always present in the 'param_optim' vignette). ([#172](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/172))
+- `.ErrorCrit()` and `.FeatModels` function are no more exported. ([#173](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/173))
 
 ____________________________________________________________________________________
 
@@ -80,47 +105,47 @@ ________________________________________________________________________________
 
 #### New features
 
-- Semi-distributed modelling mode can now use the regularisation calibration proposed by [Lavenne et al. (2019)](https://doi.org/10.1029/2018WR024266). Added the `CreateInputsCrit_Lavenne()` to define a composite criterion based on the formula. Added the `CreateErrorCrit_GAPX()` function to compute an error criterion based on the GAPX formula. ([#111](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/111))
-- `OutputsModel`, returned by the `RunModel_*GR*()` function, gains a `RunOptions` element which is a list and contains 2 sub-elements: `WarmUpQsim` (vector series of simulated discharge on the warm-up period) and `Param` (vector of the model parameter values). ([#123](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/123))
-- `plot.OutputsModel()` gains a `AxisTS` argument in order to manage x-axis representing calendar dates and times. It avoids to display ugly x-axis. ([#122](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/122))
+- Semi-distributed modelling mode can now use the regularisation calibration proposed by [Lavenne et al. (2019)](https://doi.org/10.1029/2018WR024266). Added the `CreateInputsCrit_Lavenne()` to define a composite criterion based on the formula. Added the `CreateErrorCrit_GAPX()` function to compute an error criterion based on the GAPX formula. ([#111](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/111))
+- `OutputsModel`, returned by the `RunModel_*GR*()` function, gains a `RunOptions` element which is a list and contains 2 sub-elements: `WarmUpQsim` (vector series of simulated discharge on the warm-up period) and `Param` (vector of the model parameter values). ([#123](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/123))
+- `plot.OutputsModel()` gains a `AxisTS` argument in order to manage x-axis representing calendar dates and times. It avoids to display ugly x-axis. ([#122](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/122))
 
 
 #### Deprecated and defunct
 
-- The deprecated `LatRad` argument has been removed from the `PEdaily_Oudin()` function. ([#81](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/81))
-- The deprecated `Qobs` argument has been removed from the `CreateInputsCrit()` function. ([#81](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/81))
-- The deprecated `Ind_zeroes` argument has been removed from the `CreateInputsCrit()` function. ([#81](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/81))
-- The deprecated `verbose` argument has been removed from the `CreateInputsCrit()` function. ([#81](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/81))
-- The deprecated `FUN_CRIT` argument has been removed from the `ErrorCrit()` function. ([#81](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/81))
+- The deprecated `LatRad` argument has been removed from the `PEdaily_Oudin()` function. ([#81](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/81))
+- The deprecated `Qobs` argument has been removed from the `CreateInputsCrit()` function. ([#81](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/81))
+- The deprecated `Ind_zeroes` argument has been removed from the `CreateInputsCrit()` function. ([#81](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/81))
+- The deprecated `verbose` argument has been removed from the `CreateInputsCrit()` function. ([#81](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/81))
+- The deprecated `FUN_CRIT` argument has been removed from the `ErrorCrit()` function. ([#81](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/81))
 
 
 #### Bug fixes
 
-- `SeriesAggreg()` now correctly reorders regime time series when the monthly regime is computed from a time series that does not start in January. It also keeps original `data.frame` column names. ([#133](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/133))
-- `DataAltiExtrapolation_Valery()` now correctly extract HypsoData values for each elevation layers. The selected indices were wrong (one less than expected) ([#144](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/144))
-- `CreateIniStates()` does not return anymore an error message when `IntStore` is set and `RunModel_GR5H` is used. ([#144](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/145))
+- `SeriesAggreg()` now correctly reorders regime time series when the monthly regime is computed from a time series that does not start in January. It also keeps original `data.frame` column names. ([#133](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/133))
+- `DataAltiExtrapolation_Valery()` now correctly extract HypsoData values for each elevation layers. The selected indices were wrong (one less than expected) ([#144](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/144))
+- `CreateIniStates()` does not return anymore an error message when `IntStore` is set and `RunModel_GR5H` is used. ([#144](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/145))
 
 
 #### Major user-visible changes
 
-- `RunModel_Lag()` now handles warm-up period simulation (set in `CreateRunOptions()`). ([#132](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/132))
+- `RunModel_Lag()` now handles warm-up period simulation (set in `CreateRunOptions()`). ([#132](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/132))
 
 
 #### Minor user-visible changes
 
-- `PE_Oudin()` can use inconsistent time series. It allows to mixing time series from different stations. ([#134](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/134))
-- Added the use of `.GetFeatModel()` in `CreateCalibOptions()` and `CreateIniStates()` functions in order to simplified their codes. ([#111](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/111))
-- Added the `.FunTransfo` in order to manage the parameter transformations and to simplified the code of the `CreateCalibOptions()` function ([#111](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/111))
-- Added the `.ArgumentsCheckGR()` function in order to check the arguments of the` RunModel_*()` functions and simplified their codes. ([#129](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/129))
-- Added the `.GetOutputsModelGR()` function in order to manage the outputs of the` RunModel_*()` functions and simplified their codes. ([#129](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/129))
-- The code of the `plot.OutputsModel()` function has been slightly simplified. ([#122](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/122), [#147](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/147))
+- `PE_Oudin()` can use inconsistent time series. It allows to mixing time series from different stations. ([#134](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/134))
+- Added the use of `.GetFeatModel()` in `CreateCalibOptions()` and `CreateIniStates()` functions in order to simplified their codes. ([#111](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/111))
+- Added the `.FunTransfo` in order to manage the parameter transformations and to simplified the code of the `CreateCalibOptions()` function ([#111](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/111))
+- Added the `.ArgumentsCheckGR()` function in order to check the arguments of the` RunModel_*()` functions and simplified their codes. ([#129](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/129))
+- Added the `.GetOutputsModelGR()` function in order to manage the outputs of the` RunModel_*()` functions and simplified their codes. ([#129](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/129))
+- The code of the `plot.OutputsModel()` function has been slightly simplified. ([#122](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/122), [#147](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/147))
 
 
 #### Version control and issue tracking
 
-- Added tests to check that the parameter sets returned by calibration algorithm do not change for any of the models. ([#120](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/120))
-- Added tests to detect Decreased performance of calibration execution time. ([#136](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/136))
-- Fixed the reverse package dependencies checked by the CI pipelines. ([#146](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/146))
+- Added tests to check that the parameter sets returned by calibration algorithm do not change for any of the models. ([#120](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/120))
+- Added tests to detect Decreased performance of calibration execution time. ([#136](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/136))
+- Fixed the reverse package dependencies checked by the CI pipelines. ([#146](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/146))
 
 ____________________________________________________________________________________
 
@@ -129,38 +154,38 @@ ________________________________________________________________________________
 
 #### New features
 
-- `CreateInputsModel()` gains a `QupstrUnit` argument in order to manage the unit of the flow in the `Qupstream` argument in case of the use of a semi-distributed version of a hydrological model. ([#110](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/110))
-- `RunModel_Lag()` gains a `QcontribDown` argument containing the time series of the runoff contribution of the downstream sub-basin in case of the use of a semi-distributed version of a hydrological model. ([#109](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/109))
+- `CreateInputsModel()` gains a `QupstrUnit` argument in order to manage the unit of the flow in the `Qupstream` argument in case of the use of a semi-distributed version of a hydrological model. ([#110](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/110))
+- `RunModel_Lag()` gains a `QcontribDown` argument containing the time series of the runoff contribution of the downstream sub-basin in case of the use of a semi-distributed version of a hydrological model. ([#109](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/109))
 
 
 #### Bug fixes
 
-- Fixed bug in `RunModel`. The `RunModel_Lag()` can now be passed to the `FUN_MOD` argument. ([#108](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/108))
-- Fixed bug in `RunModel_Lag()`. The function no longer returns two values for a single time step run. ([#102](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/102))
-- Fixed bug in `RunModel_Lag()`. The `StateEnd` value is now correct when there are more than a single upstream basin. ([#103](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/103))
-- Fixed bug in `RunModel_Lag()`. The `StateEnd` value is now correct when the upstream flow unit is mm/time step. ([#104](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/104))
-- Fixed bug in `RunModel_CemaNeigeGR5H()`. The solid precipitation are now taken into account in the GR5H model. ([#105](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/105))
-- Fixed bug in `RunModel_CemaNeige()` and `CreateInputsModel()`. `RunModel_CemaNeige()` now runs at the hourly time step. ([#106](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/106))
-- Fixed the 'param_optim' vignette. The starting points used for the multi-start approach are now in the transformed space.([#101](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/101))
+- Fixed bug in `RunModel`. The `RunModel_Lag()` can now be passed to the `FUN_MOD` argument. ([#108](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/108))
+- Fixed bug in `RunModel_Lag()`. The function no longer returns two values for a single time step run. ([#102](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/102))
+- Fixed bug in `RunModel_Lag()`. The `StateEnd` value is now correct when there are more than a single upstream basin. ([#103](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/103))
+- Fixed bug in `RunModel_Lag()`. The `StateEnd` value is now correct when the upstream flow unit is mm/time step. ([#104](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/104))
+- Fixed bug in `RunModel_CemaNeigeGR5H()`. The solid precipitation are now taken into account in the GR5H model. ([#105](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/105))
+- Fixed bug in `RunModel_CemaNeige()` and `CreateInputsModel()`. `RunModel_CemaNeige()` now runs at the hourly time step. ([#106](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/106))
+- Fixed the 'param_optim' vignette. The starting points used for the multi-start approach are now in the transformed space.([#101](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/101))
 
 
 #### Major user-visible changes
 
-- `LengthHydro` must now be set in kilometers (not anymore in meters) in the `CreateInputsModel()` function. ([#112](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/112))
-- `TransfoParam_GR5H()` now use the same transformation as `TransfoParam_GR4H()` for the X1 parameter. The previous transformation set by Ficchì seems unnecessary as it provokes irrealistically high X1 values. ([#50](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/50))
+- `LengthHydro` must now be set in kilometers (not anymore in meters) in the `CreateInputsModel()` function. ([#112](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/112))
+- `TransfoParam_GR5H()` now use the same transformation as `TransfoParam_GR4H()` for the X1 parameter. The previous transformation set by Ficchì seems unnecessary as it provokes irrealistically high X1 values. ([#50](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/50))
 
 
 #### Minor user-visible changes
 
-- The `RunModel*()` functions now run faster. The computation times are significantly shorter for long times series with many time steps (e.g. hourly times series), due to a better management of the missing values in and out the Fortran codes. Only simulation computation times have been improved (it is largely invisible to the user for calibration computation times). ([#113](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/113))
+- The `RunModel*()` functions now run faster. The computation times are significantly shorter for long times series with many time steps (e.g. hourly times series), due to a better management of the missing values in and out the Fortran codes. Only simulation computation times have been improved (it is largely invisible to the user for calibration computation times). ([#113](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/113))
 - The external calibration algorithms used in 'param_optim' and 'param_mcmc' vignettes now run faster. The `RunModel_*()` functions used during the parameter estimation process now run faster because the outputs contain only the simulated flows (see the `Outputs_Sim` argument in the `CreateRunOptions()` help page).
-- Added `.FeatModels()` and `.GetFeatModel()` functions in order to repectively store and get model features (e.g. name, number of parameters, time unit). Therefore the codes of the `CreateInputsModel()` and the `CreateRunOptions()` functions have been simplified. ([#106](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/106))
+- Added `.FeatModels()` and `.GetFeatModel()` functions in order to repectively store and get model features (e.g. name, number of parameters, time unit). Therefore the codes of the `CreateInputsModel()` and the `CreateRunOptions()` functions have been simplified. ([#106](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/106))
 
 
 #### Version control and issue tracking
 
-- The CI pipelines now fail when the checks return a warning message (and not just an error message). ([#86](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/86))
-- The reverse dependencies packages (e.g. the 'airGRteaching' or the 'airGRdatassim') are now checked by the CI pipelines. ([#86](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/86))
+- The CI pipelines now fail when the checks return a warning message (and not just an error message). ([#86](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/86))
+- The reverse dependencies packages (e.g. the 'airGRteaching' or the 'airGRdatassim') are now checked by the CI pipelines. ([#86](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/86))
 
 ____________________________________________________________________________________
 
@@ -169,22 +194,22 @@ ________________________________________________________________________________
 
 #### New features
 
-- Added a section 'param_optim' vignette to explain how to manage with multiobjective optimization using the 'caRamel' package. ([#61](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/61))
+- Added a section 'param_optim' vignette to explain how to manage with multiobjective optimization using the 'caRamel' package. ([#61](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/61))
 
 
 #### Major user-visible changes
 
-- `Imax()` now returns an error message when `IndPeriod_Run` doesn't select 24 hours by day, instead of `numeric(0)`. ([#92](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/92))
+- `Imax()` now returns an error message when `IndPeriod_Run` doesn't select 24 hours by day, instead of `numeric(0)`. ([#92](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/92))
 
 
 #### Minor user-visible changes
 
-- Fixed warning returned by GCC Fortran when compiling `frun_GR5H.f90`. ([#93](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/93))
+- Fixed warning returned by GCC Fortran when compiling `frun_GR5H.f90`. ([#93](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/93))
 
 
 #### CRAN-compatibility updates
 
-- Coerce `character` dates into `POSIXlt` in `RunModel_GR1A()` example and in `SeriesAggreg()` tests in order to avoid bad subsetting on time series due to mixing UTC and local time (error returned on macOS flavors). ([#94](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/94))
+- Coerce `character` dates into `POSIXlt` in `RunModel_GR1A()` example and in `SeriesAggreg()` tests in order to avoid bad subsetting on time series due to mixing UTC and local time (error returned on macOS flavors). ([#94](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/94))
 
 ____________________________________________________________________________________
 
@@ -193,61 +218,61 @@ ________________________________________________________________________________
 
 #### New features
 
-- Added `SeriesAggreg` S3 method with functions for `InputsModel`, `OutputsModel`, `list`, `data.frame` class objects. This new version of the `SeriesAggreg()` function also allows to compute regimes. ([#25](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/25))
+- Added `SeriesAggreg` S3 method with functions for `InputsModel`, `OutputsModel`, `list`, `data.frame` class objects. This new version of the `SeriesAggreg()` function also allows to compute regimes. ([#25](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/25))
 - Added `.GetAggregConvertFun()` private function in order to choose automatically the `ConvertFun` to apply on each element of objects used in `SeriesAggreg.InputsModel()` and `SeriesAggreg.OutputsModel()`.
 - Added `.AggregConvertFunTable` data.frame that allows the user to see what names of list items or data.frame column names are guessed and eventually customise this correspondence table.
-- `PE_Oudin()` now presents a `RunFortran` argument to run the code in Fortran or in R. The Fortran mode is the fastest. ([#62](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/62))
-- Added `RunModel_Lag()` which allows to perform a single run for the Lag model over the test period in order to run semi-distributed GR models. ([#34](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/34))
-- Added the 'sd_model' vignette to explain how to manage the use of semi-distributed GR models. ([#34](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/34))
-- Added `[` S3 method for `InputsModel` class object in order to extract subsets of it. ([#67](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/67))
+- `PE_Oudin()` now presents a `RunFortran` argument to run the code in Fortran or in R. The Fortran mode is the fastest. ([#62](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/62))
+- Added `RunModel_Lag()` which allows to perform a single run for the Lag model over the test period in order to run semi-distributed GR models. ([#34](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/34))
+- Added the 'sd_model' vignette to explain how to manage the use of semi-distributed GR models. ([#34](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/34))
+- Added `[` S3 method for `InputsModel` class object in order to extract subsets of it. ([#67](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/67))
 
 
 #### Deprecated and defunct
 
-- The `TimeFormat` argument is now deprecated in `SeriesAggreg()`. ([#41](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/41))
-- The `NewTimeFormat` argument is now deprecated in `SeriesAggreg()` and replaced by the `Format` argument. ([#41](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/41))
-- The deprecated `RunSnowModule` argument has been removed from the `CreateRunOptions()` function. ([#23](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/23))
+- The `TimeFormat` argument is now deprecated in `SeriesAggreg()`. ([#41](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/41))
+- The `NewTimeFormat` argument is now deprecated in `SeriesAggreg()` and replaced by the `Format` argument. ([#41](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/41))
+- The deprecated `RunSnowModule` argument has been removed from the `CreateRunOptions()` function. ([#23](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/23))
 
 
 #### Bug fixes
 
 - Fixed bug in`SeriesAggreg()`. The function now runs when `TimeLag >= 3600`.
-([#41](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/41))
-- Fixed bug in`SeriesAggreg()`. The function now runs when the time series contain some columns entirely filled with missing values. ([#43](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/43))
-- Fixed bug in `RunModel_GR1A()`. Reversed PotEvap and Precip outputs are now reordered (in the previous versions PotEvap contained the precipitation values and Precip contained the evapotranspiration values, the Qsim values were already correct). ([#65](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/65))
+([#41](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/41))
+- Fixed bug in`SeriesAggreg()`. The function now runs when the time series contain some columns entirely filled with missing values. ([#43](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/43))
+- Fixed bug in `RunModel_GR1A()`. Reversed PotEvap and Precip outputs are now reordered (in the previous versions PotEvap contained the precipitation values and Precip contained the evapotranspiration values, the Qsim values were already correct). ([#65](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/65))
 
 
 #### Major user-visible changes
 
-- Added output to `RunModel_GR2M()` function (Ps). ([#51](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/51))
-- `PE_Oudin()` can now run for several locations (i.e. several latitudes) in the Fortran mode (`RunFortran = TRUE`). In this case `Lat` must be of the same length as `Temp`. ([#62](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/62))
-- `RunModel()` now allows to run semi-distributed GR models. ([#34](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/34))
-- The `ConvertFun` argument of the `SeriesAggreg()` function can now be set to names of aggregation functions that return value of length 1 (not only `"sum"` or `"mean"`, but e.g. `"min"`, `"max"`, `"Q95"`). ([#82](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/82))
+- Added output to `RunModel_GR2M()` function (Ps). ([#51](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/51))
+- `PE_Oudin()` can now run for several locations (i.e. several latitudes) in the Fortran mode (`RunFortran = TRUE`). In this case `Lat` must be of the same length as `Temp`. ([#62](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/62))
+- `RunModel()` now allows to run semi-distributed GR models. ([#34](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/34))
+- The `ConvertFun` argument of the `SeriesAggreg()` function can now be set to names of aggregation functions that return value of length 1 (not only `"sum"` or `"mean"`, but e.g. `"min"`, `"max"`, `"Q95"`). ([#82](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/82))
 
 
 #### Minor user-visible changes
 
 - The `.FortranOutputs()` function is no longer exported in the namespace.
-- `RunModel_GR1A()` now uses the Fortran version of the model code. This code is no longer duplicated: the R version which was used was removed. ([#65](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/65))
-- Character argument verification now use partial matching in `PE_Oudin()` and `SeriesAggreg()` functions. ([#37](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/37))
-- `RunModel_*()` funcions were cleaned up, with no effect on their outputs. ([#14](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/14))
-- `.ErrorCrit()` function now returns a warning message when a criterion computed on less than 10 time-steps (whatever the unit of the time step). ([#14](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/14))
-- Added the diagram of GR5H in the `RunModel_GR5H()` documentation. ([#49](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/49))
-- The `Exch` was renames `AExch` in the `RunModel_GR2M()` output. ([#87](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/87))
-- Added 'Es' and 'Ps' on the GR2M diagram available in the `RunModel_GR2M()` help page. ([#88](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/88))
-- The `plot.OutputsModel()` function does not check anymore the time step by comparing the calculation of the difference of the last two time steps because it is already checked by the class of the `OutputsModel` object, which is therefore assumed to be necessarily valid. ([#56](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/56))
+- `RunModel_GR1A()` now uses the Fortran version of the model code. This code is no longer duplicated: the R version which was used was removed. ([#65](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/65))
+- Character argument verification now use partial matching in `PE_Oudin()` and `SeriesAggreg()` functions. ([#37](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/37))
+- `RunModel_*()` funcions were cleaned up, with no effect on their outputs. ([#14](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/14))
+- `.ErrorCrit()` function now returns a warning message when a criterion computed on less than 10 time-steps (whatever the unit of the time step). ([#14](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/14))
+- Added the diagram of GR5H in the `RunModel_GR5H()` documentation. ([#49](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/49))
+- The `Exch` was renames `AExch` in the `RunModel_GR2M()` output. ([#87](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/87))
+- Added 'Es' and 'Ps' on the GR2M diagram available in the `RunModel_GR2M()` help page. ([#88](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/88))
+- The `plot.OutputsModel()` function does not check anymore the time step by comparing the calculation of the difference of the last two time steps because it is already checked by the class of the `OutputsModel` object, which is therefore assumed to be necessarily valid. ([#56](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/56))
 
 
 #### Version control and issue tracking
 
-- Implement automatic tests in the package. ([#52](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/52))
+- Implement automatic tests in the package. ([#52](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/52))
 
 
 #### CRAN-compatibility updates
 
 - 'airGR' now depends on R >= 3.1.0 because of the use of the `anyNA` function.
-- The 'hydroPSO' package is back on CRAN and it is again suggested (cf. the 'param_optim' vignette). ([#38](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/38))
-- For more safety, the following "basic" packages are now imported : 'graphics', 'grDevices', 'stats', 'utils. ([#74](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/74))
+- The 'hydroPSO' package is back on CRAN and it is again suggested (cf. the 'param_optim' vignette). ([#38](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/38))
+- For more safety, the following "basic" packages are now imported : 'graphics', 'grDevices', 'stats', 'utils. ([#74](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/74))
 
 ____________________________________________________________________________________
 
@@ -280,14 +305,14 @@ ________________________________________________________________________________
 
 #### New features
 
-- `plot.Outputsmodel()` now allows to draw actual evapotranspiration when `which = "ActEvap"` or `which = "All"` (overlaid to potential evapotranspiration if already drawn). ([#2](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/2))
-- Added `RunModel_GR5H()` and `RunModel_CemaNeigeGR5H()` functions to run the hourly model GR5H (with or without the CemaNeige module). These models present an optional additionnal interception store. ([#13](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/13))
-- Added `Imax()` which allows to estimate the maximum capacity of the GR5H interception store. ([#13](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/13))
+- `plot.Outputsmodel()` now allows to draw actual evapotranspiration when `which = "ActEvap"` or `which = "All"` (overlaid to potential evapotranspiration if already drawn). ([#2](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/2))
+- Added `RunModel_GR5H()` and `RunModel_CemaNeigeGR5H()` functions to run the hourly model GR5H (with or without the CemaNeige module). These models present an optional additionnal interception store. ([#13](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/13))
+- Added `Imax()` which allows to estimate the maximum capacity of the GR5H interception store. ([#13](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/13))
 
 
 #### Bug fixes
 
-- Fixed bug in `TransfoParam_GR1A()`. The number of model parameters was wrong (2 instead of 1) which caused an error during the GR1A model calibration. ([#1](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/1))
+- Fixed bug in `TransfoParam_GR1A()`. The number of model parameters was wrong (2 instead of 1) which caused an error during the GR1A model calibration. ([#1](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/1))
 - Fixed bug in `plot.OutputsModel()`. The function does not return any error message when `log_scale = TRUE`, `Qobs = NULL` and user want to draw flows time series.
 - Fixed bug in `RunModel_*GR*()`. The functions do not return any error message anymore due to slightly negative values returned by GR4H, GR4J, GR5J or GR6J Fortran codes (the message was returned by `CreateIniStates()` when the final states were created). The `RunModel_*GR*()` functions now return zero instead of these slightly negative values, except for the ExpStore where negatives values are allowed.
 - Fixed bug in the `.ErrorCrit()` function. The Box-Cox transformation formula is now corrected when the `ErrorCrit*()` functions are used.
@@ -301,7 +326,7 @@ ________________________________________________________________________________
 #### Minor user-visible changes
 
 - Added the diagram of GR2M in the `RunModel_GR2M()` documentation.
-- Fortran codes cleaned and translated from F77 to F90. ([#18](https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/issues/18))
+- Fortran codes cleaned and translated from F77 to F90. ([#18](https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items/18))
 
 
 #### CRAN-compatibility updates
@@ -316,7 +341,7 @@ ________________________________________________________________________________
 
 #### Version control and issue tracking
 
-- Users can now track changes (`https://gitlab.irstea.fr/HYCAR-Hydro/airgr`) and issues (`https://gitlab.irstea.fr/HYCAR-Hydro/airgr/issues`).
+- Users can now track changes (`https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr`) and issues (`https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr/-/work_items`).
 
 
 #### Bug fixes

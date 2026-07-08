@@ -48,11 +48,6 @@ RunModel_Lag <- function(InputsModel, RunOptions, Param, QcontribDown) {
         )
       }
     }
-    if (isTRUE(RunOptions$HasRoutedFlowLeaks) && is.null(QcontribDown$Exch)) {
-      stop(
-        "'QcontribDown' should contain a key 'Exch' containing the output of the water exchange function"
-      )
-    }
   } else if (is.vector(QcontribDown) && is.numeric(QcontribDown)) {
     if (length(QcontribDown) != length(RunOptions$IndPeriod_Run)) {
       stop(
@@ -71,7 +66,6 @@ RunModel_Lag <- function(InputsModel, RunOptions, Param, QcontribDown) {
   IndPeriod1 <- c(RunOptions$IndPeriod_WarmUp, RunOptions$IndPeriod_Run)
   LInputSeries <- as.integer(length(IndPeriod1))
   IndPeriod2 <- (length(RunOptions$IndPeriod_WarmUp) + 1):LInputSeries
-  HasRoutedFlowLeaks <- FALSE
 
   if (inherits(QcontribDown, "OutputsModel")) {
     OutputsModel <- QcontribDown
@@ -82,15 +76,6 @@ RunModel_Lag <- function(InputsModel, RunOptions, Param, QcontribDown) {
       )
     }
     QsimDown <- c(OutputsModel$RunOptions$WarmUpQsim, OutputsModel$Qsim)
-    if (isTRUE(RunOptions$HasRoutedFlowLeaks)) {
-      HasRoutedFlowLeaks <- TRUE
-      Exch <- sapply(OutputsModel$Exch, min, 0)
-      OutputsModel$UpstreamLeaks <- matrix(
-        0,
-        ncol = length(InputsModel$LengthHydro),
-        nrow = length(IndPeriod2)
-      )
-    }
   } else if (is.vector(QcontribDown) && is.numeric(QcontribDown)) {
     OutputsModel <- list()
     class(OutputsModel) <- c("OutputsModel", class(RunOptions)[-1])
@@ -152,33 +137,6 @@ RunModel_Lag <- function(InputsModel, RunOptions, Param, QcontribDown) {
       IniStates[[upstream_basin]],
       InputsModel$Qupstream[IndPeriod1, upstream_basin]
     )
-    # Leaks application on routed flows
-    if (HasRoutedFlowLeaks) {
-      # Leak are applied based on downstream sub-basin area and residence time
-      Eup <- Exch *
-        PT[upstream_basin] *
-        InputsModel$BasinAreas[length(InputsModel$BasinAreas)] *
-        1e3
-      # Leaks are shared between upstream flows based on their routing length
-      if (sum(InputsModel$LengthHydro) > 0) {
-        Eup <- Eup *
-          InputsModel$LengthHydro[upstream_basin] /
-          sum(InputsModel$LengthHydro)
-      }
-      I2 <- IndPeriod2 + 1
-      # Cap leaks to upstream flow
-      iOverLeaks <- which(Qupstream[I2] + Eup < 0)
-      if (length(iOverLeaks) > 0) {
-        Eup[iOverLeaks] <- -Qupstream[iOverLeaks]
-      }
-      # Don't apply leaks on upstream negative flows (distant abstractions)
-      Eup[Qupstream[I2] < 0] <- 0
-      # Store Eup separately for each upstream flow
-      OutputsModel$UpstreamLeaks[, upstream_basin] <- Eup
-      # Apply leaks on upstream flow
-      Qupstream[I2] <- Qupstream[I2] + Eup
-    }
-
     # message("Qupstream[", upstream_basin, "]: ", paste(Qupstream, collapse = ", "))
     Qsim_m3 <- Qsim_m3 +
       Qupstream[2:(1 + LInputSeries)] * HUTRANS[1, upstream_basin] +
